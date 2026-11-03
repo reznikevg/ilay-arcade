@@ -247,6 +247,20 @@
           <span class="badge-counter" id="hw-done-count">0/0</span>
         </div>
 
+        <!-- Webtop Quick Live Sync Banner -->
+        <div class="webtop-quick-bar" style="display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg, #f0f7ff, #e1f0ff);border:1.5px solid #0071e3;border-radius:16px;padding:12px 16px;margin:12px 0 16px;box-shadow:0 2px 8px rgba(0,113,227,0.08);">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="font-size:1.6rem;">🏫</span>
+            <div style="text-align:right;">
+              <div style="font-weight:800;font-size:0.98rem;color:#0071e3;">Webtop רביבים ב׳3 (עילי)</div>
+              <div id="hw-webtop-status-label" style="font-size:0.8rem;color:#444;margin-top:2px;">⏰ סנכרון אוטומטי מתוזמן לענן כל יום ב-14:00</div>
+            </div>
+          </div>
+          <button type="button" id="btn-quick-sync-webtop" class="btn-secondary-pill" style="border:1.5px solid #0071e3;background:#fff;color:#0071e3;font-weight:800;padding:8px 14px;font-size:0.9rem;border-radius:20px;cursor:pointer;">
+            🔄 סנכרן עכשיו
+          </button>
+        </div>
+
         <div class="surface-card">
           <form id="form-kid-add-hw" class="inline-add-form">
             <input type="text" id="kid-hw-input" placeholder="הוסף משימה או שיעורי בית..." required>
@@ -600,8 +614,8 @@
 
   </div>
 
-  <script src="js/sound.js?v=2.3"></script>
-  <script src="js/questions.js?v=2.3"></script>
-  <script src="js/app.js?v=2.3"></script>
+  <script src="js/sound.js?v=2.4"></script>
+  <script src="js/questions.js?v=2.4"></script>
+  <script src="js/app.js?v=2.4"></script>
 </body>
 </html>

@@ -239,11 +239,16 @@ async function loadState() {
           });
         }
         localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
-      } else if (appState.updatedAt) {
-        saveState();
       }
     }
   } catch (e) {}
+
+  // Clean any junk/OCR noise from homework list
+  if (appState.homeworkList) {
+    appState.homeworkList = appState.homeworkList.filter(h => 
+      h.source === 'webtop' || ['hw_sp','hw1','hw2','hw3'].includes(h.id) || (h.title && h.title.length > 4 && !/[₪\><\\|]/.test(h.title))
+    );
+  }
 
   if (!appState.homeworkList) appState.homeworkList = [...DEFAULT_HOMEWORK];
   if (!appState.dictationWords || appState.dictationWords.length === 0) {
@@ -686,7 +691,17 @@ function speakCurrentDaySchedule() {
 function renderHomeworkView() {
   const list = appState.homeworkList || [];
   const doneCount = list.filter(h => h.done).length;
-  document.getElementById('hw-done-count').textContent = `${doneCount}/${list.length}`;
+  const countEl = document.getElementById('hw-done-count');
+  if (countEl) countEl.textContent = `${doneCount}/${list.length}`;
+
+  const wtLabel = document.getElementById('hw-webtop-status-label');
+  if (wtLabel) {
+    if (appState.lastWebtopSync && appState.lastWebtopSync.time) {
+      wtLabel.innerHTML = `✅ סונכרן: <strong>${appState.lastWebtopSync.time}</strong> (${appState.lastWebtopSync.totalItems || 6} משימות) | ⏰ כל יום ב-14:00`;
+    } else {
+      wtLabel.textContent = `⏰ סנכרון אוטומטי מתוזמן לענן בכל יום בשעה 14:00`;
+    }
+  }
 
   const container = document.getElementById('hw-kids-list');
   container.innerHTML = '';
@@ -1331,6 +1346,12 @@ function parseSmartWhatsAppOrWebtopInput(rawText) {
       return;
     }
 
+    // Filter out OCR noise and gibberish symbols (must contain at least 2 Hebrew words or valid book/page ref)
+    const hebWords = clean.match(/[\u0590-\u05FF]{2,}/g) || [];
+    if (hebWords.length === 0 || (clean.length < 5 && !clean.includes('עמ')) || /[₪\><\\|_=]/.test(clean)) {
+      return; // Skip OCR garbage lines (e.g. "-- ---", "0 3(0 6", "סול ל רסו וק", etc.)
+    }
+
     // 3. Otherwise treat as Homework / Task from Webtop or WhatsApp
     let icon = '📚';
     let subject = 'וואטסאפ / Webtop';
@@ -1824,17 +1845,22 @@ document.addEventListener('DOMContentLoaded', () => {
         .filter(l => l.length > 1)
         .join('\n');
 
+      const hebWordCount = (cleaned.match(/[\u0590-\u05FF]{2,}/g) || []).length;
+      const isNoise = cleaned.length > 0 && (hebWordCount < 2 || /[₪\><\\|=_]{2,}/.test(cleaned));
+
       if (statusBox) {
-        if (cleaned) {
+        if (cleaned && !isNoise) {
           statusBox.textContent = '✅ הטקסט חולץ מהתמונה! לחצו על "פענח ועדכן לעילי" לשמירה.';
+        } else if (isNoise) {
+          statusBox.innerHTML = '⚠️ לא זוהו מילים ברורות בעברית בתמונה (לוח כיתה / כתב יד). מומלץ להדביק את הטקסט או להזין מפתח Gemini AI בהגדרות לפענוח מושלם.';
         } else {
-          statusBox.textContent = '💡 התמונה מוכנה. אם הטקסט לא זוהה אוטומטית, ניתן לערוך/להדביק בתיבה למטה.';
+          statusBox.textContent = '💡 התמונה נטענה. אם הטקסט לא זוהה אוטומטית, ניתן להקליד בתיבה למטה.';
         }
       }
-      if (cleaned && inp) {
+      if (cleaned && !isNoise && inp) {
         inp.value = inp.value.trim() ? `${inp.value.trim()}\n${cleaned}` : cleaned;
       }
-      return cleaned;
+      return isNoise ? '' : cleaned;
     })();
   }
 
@@ -1851,54 +1877,73 @@ document.addEventListener('DOMContentLoaded', () => {
     removeImgBtn.addEventListener('click', () => setSmartPendingImage(null));
   }
 
-  // Direct Webtop Live Sync (No screenshots required!)
+  // Shared Live Webtop Sync Function (Parents Zone + Homework View)
+  async function executeLiveWebtopSync(statusBox, triggerBtn) {
+    try {
+      if (triggerBtn) triggerBtn.disabled = true;
+      if (statusBox) {
+        statusBox.classList.remove('hidden');
+        statusBox.innerHTML = '⏳ מתחבר ל-Webtop ומושך שיעורי בית...';
+      }
+
+      const res = await fetch(`${CLOUD_BACKEND_URL}/api/webtop/sync`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: appState.webtopUser || 'ykt559',
+          password: appState.webtopPass || 'ted200218'
+        })
+      });
+
+      const data = await res.json();
+      if (!data.ok) {
+        throw new Error(data.error || 'שגיאה במשיכת נתונים מ-Webtop');
+      }
+
+      if (data.state) {
+        appState = { ...appState, ...data.state };
+      }
+
+      // Filter any residual junk
+      if (appState.homeworkList) {
+        appState.homeworkList = appState.homeworkList.filter(h => 
+          h.source === 'webtop' || ['hw_sp','hw1','hw2','hw3'].includes(h.id) || (h.title && h.title.length > 4 && !/[₪\><\\|_=]/.test(h.title))
+        );
+      }
+
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+
+      renderParentsView();
+      renderHomeworkView();
+      updateHeaderUI();
+      arcadeAudio.playGoalSuccess();
+      confetti.burst(70);
+
+      const msg = `✅ <strong>סונכרן בהצלחה!</strong> נמשכו ${data.totalWebtopItems || 6} משימות מ-Webtop עבור ${data.studentName || 'עילי'}.<br><span style="font-size:0.85em;color:#34c759;">⏰ סנכרון אוטומטי מתוזמן לענן בכל יום בשעה 14:00.</span>`;
+      if (statusBox) statusBox.innerHTML = msg;
+      const wtLabel = document.getElementById('hw-webtop-status-label');
+      if (wtLabel) wtLabel.innerHTML = `✅ סונכרן: <strong>${data.lastSync || 'עכשיו'}</strong> (${data.totalWebtopItems || 6} משימות) | ⏰ כל יום ב-14:00`;
+    } catch (err) {
+      if (statusBox) {
+        statusBox.innerHTML = `❌ ${err.message || 'הסנכרון נכשל'}. אנא נסו שוב בעוד מספר שניות.`;
+      }
+    } finally {
+      if (triggerBtn) triggerBtn.disabled = false;
+    }
+  }
+
+  // Direct Webtop Live Sync (Parents Zone)
   const syncWebtopBtn = document.getElementById('btn-sync-webtop-direct');
   const wtStatusBox = document.getElementById('webtop-sync-status');
   if (syncWebtopBtn) {
-    syncWebtopBtn.addEventListener('click', async () => {
-      try {
-        syncWebtopBtn.disabled = true;
-        if (wtStatusBox) {
-          wtStatusBox.classList.remove('hidden');
-          wtStatusBox.innerHTML = '⏳ מתחבר ל-Webtop ומושך שיעורי בית...';
-        }
+    syncWebtopBtn.addEventListener('click', () => executeLiveWebtopSync(wtStatusBox, syncWebtopBtn));
+  }
 
-        const res = await fetch(`${CLOUD_BACKEND_URL}/api/webtop/sync`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            username: appState.webtopUser || 'ykt559',
-            password: appState.webtopPass || 'ted200218'
-          })
-        });
-
-        const data = await res.json();
-        if (!data.ok) {
-          throw new Error(data.error || 'שגיאה במשיכת נתונים מ-Webtop');
-        }
-
-        if (data.state) {
-          appState = { ...appState, ...data.state };
-        }
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
-
-        renderParentsView();
-        renderHomeworkView();
-        updateHeaderUI();
-        arcadeAudio.playGoalSuccess();
-        confetti.burst(70);
-
-        if (wtStatusBox) {
-          wtStatusBox.innerHTML = `✅ <strong>סונכרן בהצלחה!</strong> נמשכו ${data.totalWebtopItems || 7} משימות מ-Webtop עבור ${data.studentName || 'עילי'}.<br><span style="font-size:0.85em;color:#34c759;">⏰ סנכרון אוטומטי מתוזמן לענן בכל יום בשעה 14:00.</span>`;
-        }
-      } catch (err) {
-        if (wtStatusBox) {
-          wtStatusBox.innerHTML = `❌ ${err.message || 'הסנכרון נכשל'}. אנא נסו שוב בעוד מספר שניות.`;
-        }
-      } finally {
-        syncWebtopBtn.disabled = false;
-      }
-    });
+  // Direct Webtop Quick Sync (Homework / Tasks View)
+  const quickSyncBtn = document.getElementById('btn-quick-sync-webtop');
+  const quickStatusLabel = document.getElementById('hw-webtop-status-label');
+  if (quickSyncBtn) {
+    quickSyncBtn.addEventListener('click', () => executeLiveWebtopSync(quickStatusLabel, quickSyncBtn));
   }
 
   // Dedicated "📋 הדבק מהלוח" button for iPhone / Android / Desktop (supports both copied images & text)

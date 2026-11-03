@@ -73,19 +73,24 @@ class ArcadeAudio {
     if (!text) return '';
     let t = String(text);
 
-    // 1. Phonetic replacement for Ilay -> עילאי (so iOS/Android TTS pronounces "Ilai" perfectly!)
-    t = t.replace(/(^|[\s,.\-—"'(])עילי([,.\-—"')\s]|$)/g, '$1עילאי$2');
-    t = t.replace(/(^|[\s,.\-—"'(])וְ?עִילִי([,.\-—"')\s]|$)/g, '$1וְעִילַאי$2');
-    t = t.replace(/(^|[\s,.\-—"'(])לְ?עִילִי([,.\-—"')\s]|$)/g, '$1לְעִילַאי$2');
-    t = t.replace(/(^|[\s,.\-—"'(])שְ?עִילִי([,.\-—"')\s]|$)/g, '$1שְׁעִילַאי$2');
-    t = t.replace(/(^|[\s,.\-—"'(])מֵ?עִילִי([,.\-—"')\s]|$)/g, '$1מֵעִילַאי$2');
-    t = t.replace(/(^|[\s,.\-—"'(])בְּ?עִילִי([,.\-—"')\s]|$)/g, '$1בְּעִילַאי$2');
-
-    t = t.replace(/(^|[\s,.\-—"'(])ועילי([,.\-—"')\s]|$)/g, '$1ועילאי$2');
-    t = t.replace(/(^|[\s,.\-—"'(])לעילי([,.\-—"')\s]|$)/g, '$1לעילאי$2');
-    t = t.replace(/(^|[\s,.\-—"'(])שעילי([,.\-—"')\s]|$)/g, '$1שעילאי$2');
-    t = t.replace(/(^|[\s,.\-—"'(])מעילי([,.\-—"')\s]|$)/g, '$1מעילאי$2');
-    t = t.replace(/(^|[\s,.\-—"'(])בעילי([,.\-—"')\s]|$)/g, '$1בעילאי$2');
+    // 1. Universal Phonetic replacement for Ilay -> עִילַאי (with full vocalization for Apple Siri / Carmit & Android)
+    // Strip any existing partial nikud first
+    t = t.replace(/עִ?ילַ?י|עִ?ילַ?א?י/g, 'עילי');
+    const prefixMap = {
+      '': 'עִילַאי',
+      'ו': 'וְעִילַאי',
+      'ל': 'לְעִילַאי',
+      'ש': 'שֶׁעִילַאי',
+      'מ': 'מֵעִילַאי',
+      'ב': 'בְּעִילַאי',
+      'וכ': 'וּכְעִילַאי',
+      'ול': 'וּלְעִילַאי',
+      'וש': 'וְשֶׁעִילַאי'
+    };
+    t = t.replace(/(^|[^\u0590-\u05FF])(וכ|ול|וש|[ולשמב])?עילי([^\u0590-\u05FF]|$)/g, (match, before, p, after) => {
+      const vocalized = prefixMap[p || ''] || (p + 'עִילַאי');
+      return before + vocalized + after;
+    });
 
     // 2. Remove emojis and UI decorative icons
     t = t.replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, ' ');
