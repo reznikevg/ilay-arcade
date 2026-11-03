@@ -1694,6 +1694,57 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Parents: Webtop / WhatsApp Screenshot Image Upload (OCR in Hebrew)
+  const imgUpload = document.getElementById('webtop-image-upload');
+  if (imgUpload) {
+    imgUpload.addEventListener('change', async (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const statusBox = document.getElementById('ocr-status-box');
+      const txtArea = document.getElementById('smart-import-text');
+      if (statusBox) {
+        statusBox.classList.remove('hidden');
+        statusBox.textContent = '⏳ קורא את הטקסט מתוך צילום המסך מ-Webtop... אנא המתן...';
+      }
+
+      try {
+        if (!window.Tesseract) {
+          await new Promise((resolve, reject) => {
+            const s = document.createElement('script');
+            s.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
+            s.onload = resolve;
+            s.onerror = reject;
+            document.head.appendChild(s);
+          });
+        }
+        const result = await window.Tesseract.recognize(file, 'heb', {});
+        const extracted = (result && result.data && result.data.text ? result.data.text : '')
+          .split('\n')
+          .map(l => l.trim())
+          .filter(l => l.length > 2)
+          .join('\n');
+
+        if (statusBox) statusBox.classList.add('hidden');
+        if (extracted) {
+          txtArea.value = extracted;
+          const res = parseSmartWhatsAppOrWebtopInput(extracted);
+          arcadeAudio.playGoalSuccess();
+          const resBox = document.getElementById('smart-import-result');
+          if (resBox) {
+            resBox.classList.remove('hidden');
+            resBox.innerHTML = `📸✅ <strong>צילום המסך מ-Webtop פוענח ועודכן לעילי!</strong> (נוספו ${res.addedHw} משימות, ${res.addedDict} מילים להכתבה). ניתן גם לערוך את הטקסט בתיבה למעלה אם צריך.`;
+          }
+        } else {
+          alert('לא הצלחתי לזהות טקסט ברור בתמונה. נסה לצלם שוב מקרוב או להדביק טקסט.');
+        }
+      } catch (err) {
+        if (statusBox) statusBox.classList.add('hidden');
+        alert('שגיאה בקריאת התמונה. מומלץ באייפון ללחוץ לחיצה ארוכה על הטקסט בתוך התמונה (Live Text) ולהדביק כאן!');
+      }
+      imgUpload.value = '';
+    });
+  }
+
   // Support URL Share Shortcut (?import=...) from iOS Shortcuts / Webtop Share
   try {
     const urlParams = new URLSearchParams(window.location.search);

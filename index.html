@@ -409,13 +409,22 @@
       </div>
 
       <div class="parents-grid">
-        <!-- 0. Smart Import from WhatsApp Group & Webtop! -->
+        <!-- 0. Smart Import from WhatsApp Group & Webtop (Screenshot OCR + Text)! -->
         <div class="parent-card" style="border-right: 5px solid #10b981;">
-          <h3>📲 קליטה חכמה מקבוצת וואטסאפ ו-Webtop</h3>
-          <p style="font-size:0.88rem;color:#64748b;margin-bottom:10px;">העתקתם הודעה של המורה מהוואטסאפ או שיעורי בית מ-Webtop? הדביקו כאן והמערכת תזהה לבד שיעורי בית, מילים להכתבה ואירועים למערכת!</p>
+          <h3>📲 קליטה מ-Webtop ומוואטסאפ (צילום מסך או טקסט!)</h3>
+          <p style="font-size:0.88rem;color:#64748b;margin-bottom:10px;">נכנסת ל-Webtop עם Face ID? פשוט <strong>צלם מסך (Screenshot)</strong> והעלה לכאן (או הדבק הודעה מוואטסאפ) — המערכת תקרא את התמונה ותעדכן לעילי שיעורי בית, הכתבה ומערכת!</p>
+
+          <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
+            <label for="webtop-image-upload" class="arcade-btn btn-gold" style="flex:1;text-align:center;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;">
+              📸 העלה צילום מסך מ-Webtop / וואטסאפ
+            </label>
+            <input type="file" id="webtop-image-upload" accept="image/*" class="hidden">
+          </div>
+          <div id="ocr-status-box" class="hint-box hidden" style="margin-bottom:10px;">⏳ קורא את צילום המסך מ-Webtop... אנא המתן מספר שניות...</div>
+
           <form id="form-smart-import" class="custom-form">
             <div class="form-row">
-              <textarea id="smart-import-text" rows="4" placeholder="הדבק כאן הודעה מוואטסאפ הכיתה או מ-Webtop...&#10;למשל:&#10;שלום הורים, שיעורי בית בחשבון עמ' 50-51.&#10;מילים להכתבה ביום שישי: שמחה, כדורגל, ירושלים, אלוף.&#10;מחר יש להביא חולצה לבנה ושיעור ספורט." required></textarea>
+              <textarea id="smart-import-text" rows="3" placeholder="או הדבק כאן הודעה מוואטסאפ / טקסט מ-Webtop..." required></textarea>
             </div>
             <button type="submit" class="arcade-btn btn-check">🪄 פענח ועדכן לעילי אוטומטית</button>
           </form>
