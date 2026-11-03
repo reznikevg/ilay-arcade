@@ -209,34 +209,9 @@ let speechSession = {
   heardTranscript: ''
 };
 
-// ==================== INITIALIZATION & LIVE 24/7 CLOUD FAMILY SYNC ====================
+// ==================== INITIALIZATION & LIVE 24/7 CLOUD FAMILY SYNC (CLOUDFLARE) ====================
 
-const CLOUD_SYNC_KEY = 'zehcx4w8';
-const CLOUD_API_BASE = `https://keyvalue.immanuel.co/api/KeyVal`;
-
-function encodeCloudState(stateObj) {
-  // Strip large audio blobs before cloud sync so payload stays fast & compact
-  const copy = { ...stateObj };
-  if (copy.speechLogs) {
-    copy.speechLogs = copy.speechLogs.map(l => ({
-      date: l.date,
-      phrase: l.phrase,
-      heardText: l.heardText
-    }));
-  }
-  const jsonStr = JSON.stringify(copy);
-  return btoa(unescape(encodeURIComponent(jsonStr)))
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/, '');
-}
-
-function decodeCloudState(b64Url) {
-  if (!b64Url || b64Url.length < 10) return null;
-  const b64 = b64Url.replace(/-/g, '+').replace(/_/g, '/');
-  const jsonStr = decodeURIComponent(escape(atob(b64)));
-  return JSON.parse(jsonStr);
-}
+const CLOUD_BACKEND_URL = 'https://ilay-backend.reznikevg.workers.dev';
 
 async function loadState() {
   try {
@@ -249,14 +224,12 @@ async function loadState() {
     console.warn('Could not load saved state:', e);
   }
 
-  // Pull from 24/7 Cloud Sync
+  // Pull from Cloudflare KV
   try {
-    const res = await fetch(`${CLOUD_API_BASE}/GetValue/${CLOUD_SYNC_KEY}/ilay_v3`, { cache: 'no-store' });
+    const res = await fetch(`${CLOUD_BACKEND_URL}/api/state`, { cache: 'no-store' });
     if (res.ok) {
-      const text = (await res.text()).replace(/^"|"$/g, '');
-      const remote = decodeCloudState(text);
+      const remote = await res.json();
       if (remote && remote.updatedAt && (!appState.updatedAt || remote.updatedAt >= appState.updatedAt)) {
-        // Preserve any local audio recordings while merging cloud state
         const localLogs = appState.speechLogs || [];
         appState = { ...appState, ...remote };
         if (remote.speechLogs && localLogs.length > 0) {
@@ -266,7 +239,7 @@ async function loadState() {
           });
         }
         localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
-      } else {
+      } else if (appState.updatedAt) {
         saveState();
       }
     }
@@ -294,17 +267,9 @@ function saveState() {
     console.warn('Could not save state:', e);
   }
 
-  // Push to 24/7 Cloud Sync
+  // Push to Cloudflare KV 24/7 Sync
   try {
-    const encoded = encodeCloudState(appState);
-    fetch(`${CLOUD_API_BASE}/UpdateValue/${CLOUD_SYNC_KEY}/ilay_v3/${encoded}`, {
-      method: 'POST'
-    }).catch(() => {});
-  } catch (e) {}
-
-  // Also push to local server if running
-  try {
-    fetch('/api/state', {
+    fetch(`${CLOUD_BACKEND_URL}/api/state`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(appState)
@@ -314,22 +279,21 @@ function saveState() {
 
 setInterval(async () => {
   try {
-    const res = await fetch(`${CLOUD_API_BASE}/GetValue/${CLOUD_SYNC_KEY}/ilay_v3`, { cache: 'no-store' });
+    const res = await fetch(`${CLOUD_BACKEND_URL}/api/state`, { cache: 'no-store' });
     if (!res.ok) return;
-    const text = (await res.text()).replace(/^"|"$/g, '');
-    const remote = decodeCloudState(text);
+    const remote = await res.json();
     if (remote && remote.updatedAt && (!appState.updatedAt || remote.updatedAt > appState.updatedAt)) {
       const currentDay = appState.selectedDay;
       const currentCat = appState.selectedCategory;
       appState = { ...appState, ...remote, selectedDay: currentDay, selectedCategory: currentCat };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
       updateHeaderUI();
-      if (document.getElementById('view-schedule').classList.contains('active')) renderScheduleView();
-      if (document.getElementById('view-homework').classList.contains('active')) renderHomeworkView();
-      if (document.getElementById('view-parents').classList.contains('active')) renderParentsView();
+      if (document.getElementById('view-schedule')?.classList.contains('active')) renderScheduleView();
+      if (document.getElementById('view-homework')?.classList.contains('active')) renderHomeworkView();
+      if (document.getElementById('view-parents')?.classList.contains('active')) renderParentsView();
     }
   } catch (e) {}
-}, 7000);
+}, 5000);
 
 function getRankTitle(trophies, solved) {
   if (trophies >= 15 || solved >= 120) return 'אגדת טדי והברנבאו 👑🦁';
@@ -1711,21 +1675,40 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   async function extractTextFromImageSmart(dataUrl, statusBox) {
-    // 1. If Gemini API Key is set, use Gemini 2.5 Flash Vision (100% accurate Hebrew screenshot reader)
-    if (appState.geminiApiKey && appState.geminiApiKey.trim().length > 10) {
+    // 1. Try Gemini Vision via backend or direct key
+    const gemKey = appState.geminiApiKey?.trim();
+    try {
+      if (statusBox) statusBox.textContent = '✨ מפענח טקסט ועברית באמצעות AI...';
+      const ocrRes = await fetch(`${CLOUD_BACKEND_URL}/api/ocr`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          imageBase64: dataUrl,
+          apiKey: gemKey || undefined
+        })
+      });
+      if (ocrRes.ok) {
+        const ocrJson = await ocrRes.json();
+        if (ocrJson.ok && ocrJson.text && ocrJson.text.length > 2) {
+          return ocrJson.text.trim();
+        }
+      }
+    } catch (e) {}
+
+    // 2. Direct client-side Gemini if key is provided
+    if (gemKey && gemKey.length > 10) {
       try {
-        if (statusBox) statusBox.textContent = '✨ מפענח תמונה באמצעות Gemini AI...';
         const base64Data = dataUrl.split(',')[1];
         const mimeType = dataUrl.substring(dataUrl.indexOf(':') + 1, dataUrl.indexOf(';')) || 'image/jpeg';
         const gemRes = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(appState.geminiApiKey.trim())}`,
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(gemKey)}`,
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               contents: [{
                 parts: [
-                  { text: 'חלץ את כל הטקסט בעברית מתוך צילום המסך (שיעורי בית, משימות מ-Webtop, מילים להכתבה או הודעות וואטסאפ). החזר אך ורק את שורות הטקסט הנקיות בעברית, שורה אחר שורה, ללא הקדמות.' },
+                  { text: 'חלץ את כל הטקסט בעברית מתוך צילום המסך או המחברת. החזר אך ורק שורות טקסט נקיות בעברית, ללא הערות או תוספות באנגלית.' },
                   { inline_data: { mime_type: mimeType, data: base64Data } }
                 ]
               }]
@@ -1737,12 +1720,10 @@ document.addEventListener('DOMContentLoaded', () => {
           const text = gemJson?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
           if (text && text.length > 2) return text;
         }
-      } catch (e) {
-        console.warn('Gemini Vision fallback:', e);
-      }
+      } catch (e) {}
     }
 
-    // 2. Try Cloud OCR API (OCR.space Hebrew engine)
+    // 3. Fallback: Cloud OCR engine
     try {
       if (statusBox) statusBox.textContent = '⏳ קורא טקסט מתוך התמונה...';
       const fd = new FormData();
@@ -1764,9 +1745,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } catch (e) {}
 
-    // 3. Reliable In-Browser Hebrew OCR via Tesseract.js v5 with live percentage progress
+    // 4. Fallback: In-Browser Tesseract
     try {
-      if (statusBox) statusBox.textContent = '⏳ טוען קורא עברית חכם...';
+      if (statusBox) statusBox.textContent = '⏳ טוען קורא עברית...';
       if (!window.Tesseract) {
         await new Promise((resolve, reject) => {
           const s = document.createElement('script');
@@ -1786,7 +1767,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       return (ret && ret.data && ret.data.text ? ret.data.text : '').trim();
     } catch (err) {
-      console.error('Tesseract fallback error:', err);
       return '';
     }
   }
@@ -1859,6 +1839,64 @@ document.addEventListener('DOMContentLoaded', () => {
   const removeImgBtn = document.getElementById('btn-remove-smart-img');
   if (removeImgBtn) {
     removeImgBtn.addEventListener('click', () => setSmartPendingImage(null));
+  }
+
+  // Direct Webtop Live Sync (No screenshots required!)
+  const syncWebtopBtn = document.getElementById('btn-sync-webtop-direct');
+  const wtStatusBox = document.getElementById('webtop-sync-status');
+  if (syncWebtopBtn) {
+    syncWebtopBtn.addEventListener('click', async () => {
+      try {
+        syncWebtopBtn.disabled = true;
+        if (wtStatusBox) {
+          wtStatusBox.classList.remove('hidden');
+          wtStatusBox.textContent = '⏳ מתחבר ל-Webtop ומושך שיעורי בית ומערכת שעות...';
+        }
+
+        const res = await fetch(`${CLOUD_BACKEND_URL}/api/webtop/sync`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: appState.webtopUser || 'ykt559',
+            password: appState.webtopPass || 'ted200218'
+          })
+        });
+
+        const data = await res.json();
+        if (!data.ok) {
+          throw new Error(data.error || 'שגיאה במשיכת נתונים מ-Webtop');
+        }
+
+        let addedCount = 0;
+        if (!appState.homeworkList) appState.homeworkList = [];
+
+        (data.items || []).forEach(newItem => {
+          const exists = appState.homeworkList.some(
+            hw => hw.title === newItem.title || (hw.id && hw.id === newItem.id)
+          );
+          if (!exists) {
+            appState.homeworkList.unshift(newItem);
+            addedCount++;
+          }
+        });
+
+        saveState();
+        renderParentsView();
+        updateHeaderUI();
+        arcadeAudio.playGoalSuccess();
+        confetti.burst(60);
+
+        if (wtStatusBox) {
+          wtStatusBox.textContent = `✅ סונכרן בהצלחה עבור ${data.studentName}! נוספו ${addedCount} משימות מ-Webtop לרשימה של עילי.`;
+        }
+      } catch (err) {
+        if (wtStatusBox) {
+          wtStatusBox.textContent = `❌ ${err.message || 'הסנכרון נכשל'}`;
+        }
+      } finally {
+        syncWebtopBtn.disabled = false;
+      }
+    });
   }
 
   // Dedicated "📋 הדבק מהלוח" button for iPhone / Android / Desktop (supports both copied images & text)

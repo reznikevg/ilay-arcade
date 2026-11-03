@@ -403,17 +403,31 @@
 
         <div class="parents-stack">
 
-          <!-- 1. Commercial-Grade Image / Screenshot / Text Importer -->
+          <!-- 1. Direct Webtop Live Sync + Photo/Text Importer -->
           <div class="surface-card parent-highlight-card">
             <div class="card-title-row">
-              <h3>📲 קליטה מ-Webtop ומוואטסאפ (תמונה או טקסט)</h3>
+              <h3>🏫 סנכרון ישיר מ-Webtop (חיבור ישיר)</h3>
             </div>
-            <p class="card-desc">בחרו צילום מסך מהגלריה של האייפון, הדביקו תמונה, או הדביקו הודעה — המערכת תקרא את הטקסט מהתמונה ותעדכן לעילי שיעורי בית, הכתבה ומערכת.</p>
+            <p class="card-desc">האפליקציה מחוברת ישירות לחשבון ה-Webtop של עילי (בית ספר רביבים, כיתה ב׳3). לחיצה אחת מושכת את כל שיעורי הבית והמשימות ישירות מהמערכת — ללא צורך בצילומי מסך!</p>
+            
+            <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px;">
+              <button type="button" class="btn-primary-large" id="btn-sync-webtop-direct" style="background:#0a84ff;font-size:1.05rem;">
+                🔄 סנכרן שיעורי בית מ-Webtop עכשיו
+              </button>
+              <div id="webtop-sync-status" class="ocr-progress-banner hidden"></div>
+            </div>
+
+            <hr class="divider-line" style="margin:16px 0;">
+
+            <div class="card-title-row">
+              <h3>📲 הוספת דף עבודה, מחברת או הודעת וואטסאפ</h3>
+            </div>
+            <p class="card-desc">לדפי עבודה מהמחברת, דפי קשר או הודעות מקבוצת הוואטסאפ הכיתתית — בחרו תמונה מהגלריה, הדביקו תמונה או הדביקו טקסט:</p>
 
             <!-- Native iOS/Android Compatible File Picker Label + Paste Button -->
             <div class="upload-actions-row">
               <label class="native-file-btn">
-                <span>🖼️ בחר תמונה מהגלריה / צילום מסך</span>
+                <span>🖼️ בחר תמונה מהגלריה / מצלמה</span>
                 <input type="file" id="webtop-image-upload" accept="image/*" class="sr-file-input">
               </label>
               <button type="button" class="btn-secondary-pill" id="btn-paste-clipboard">📋 הדבק מהלוח</button>
