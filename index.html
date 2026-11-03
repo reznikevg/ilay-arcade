@@ -406,15 +406,15 @@
           <!-- 1. Direct Webtop Live Sync + Photo/Text Importer -->
           <div class="surface-card parent-highlight-card">
             <div class="card-title-row">
-              <h3>🏫 סנכרון ישיר מ-Webtop (חיבור ישיר)</h3>
+              <h3>🏫 סנכרון ישיר מ-Webtop (רביבים ב׳3)</h3>
             </div>
-            <p class="card-desc">האפליקציה מחוברת ישירות לחשבון ה-Webtop של עילי (בית ספר רביבים, כיתה ב׳3). לחיצה אחת מושכת את כל שיעורי הבית והמשימות ישירות מהמערכת — ללא צורך בצילומי מסך!</p>
+            <p class="card-desc">האפליקציה מחוברת ישירות לחשבון של עילי. <strong>הסנכרון רץ אוטומטית בענן כל יום בשעה 14:00</strong> ומכניס את כל שיעורי הבית מבית הספר למשימות של עילי. ניתן גם לסנכרן ידנית בכל רגע:</p>
             
             <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px;">
               <button type="button" class="btn-primary-large" id="btn-sync-webtop-direct" style="background:#0a84ff;font-size:1.05rem;">
                 🔄 סנכרן שיעורי בית מ-Webtop עכשיו
               </button>
-              <div id="webtop-sync-status" class="ocr-progress-banner hidden"></div>
+              <div id="webtop-sync-status" class="ocr-progress-banner">⏰ סנכרון אוטומטי פעיל: כל יום ב-14:00</div>
             </div>
 
             <hr class="divider-line" style="margin:16px 0;">
@@ -600,8 +600,8 @@
 
   </div>
 
-  <script src="js/sound.js"></script>
-  <script src="js/questions.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/sound.js?v=2.2"></script>
+  <script src="js/questions.js?v=2.2"></script>
+  <script src="js/app.js?v=2.2"></script>
 </body>
 </html>

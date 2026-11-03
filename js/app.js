@@ -1469,6 +1469,16 @@ function renderParentsView() {
   const gemInp = document.getElementById('sec-gemini-key');
   if (gemInp) gemInp.value = appState.geminiApiKey || '';
 
+  // Webtop Live Status in Parents View
+  const wtStatusBox = document.getElementById('webtop-sync-status');
+  if (wtStatusBox) {
+    if (appState.lastWebtopSync) {
+      wtStatusBox.innerHTML = `✅ סנכרון Webtop אחרון: <strong>${appState.lastWebtopSync.time}</strong> (${appState.lastWebtopSync.totalItems} משימות ב-Webtop)<br><span style="font-size:0.85em;color:#34c759;">⏰ סנכרון אוטומטי מתוזמן לענן בכל יום בשעה 14:00.</span>`;
+    } else {
+      wtStatusBox.innerHTML = `⏰ סנכרון אוטומטי מתוזמן לענן בכל יום בשעה 14:00. ניתן ללחוץ בכל עת לסנכרון מיידי.`;
+    }
+  }
+
   // 1. Speech Therapy Logs & Words
   const spLogList = document.getElementById('parent-speech-logs');
   document.getElementById('parent-sp-log-count').textContent = (appState.speechLogs || []).length;
@@ -1850,7 +1860,7 @@ document.addEventListener('DOMContentLoaded', () => {
         syncWebtopBtn.disabled = true;
         if (wtStatusBox) {
           wtStatusBox.classList.remove('hidden');
-          wtStatusBox.textContent = '⏳ מתחבר ל-Webtop ומושך שיעורי בית ומערכת שעות...';
+          wtStatusBox.innerHTML = '⏳ מתחבר ל-Webtop ומושך שיעורי בית...';
         }
 
         const res = await fetch(`${CLOUD_BACKEND_URL}/api/webtop/sync`, {
@@ -1867,31 +1877,23 @@ document.addEventListener('DOMContentLoaded', () => {
           throw new Error(data.error || 'שגיאה במשיכת נתונים מ-Webtop');
         }
 
-        let addedCount = 0;
-        if (!appState.homeworkList) appState.homeworkList = [];
+        if (data.state) {
+          appState = { ...appState, ...data.state };
+        }
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
 
-        (data.items || []).forEach(newItem => {
-          const exists = appState.homeworkList.some(
-            hw => hw.title === newItem.title || (hw.id && hw.id === newItem.id)
-          );
-          if (!exists) {
-            appState.homeworkList.unshift(newItem);
-            addedCount++;
-          }
-        });
-
-        saveState();
         renderParentsView();
+        renderHomeworkView();
         updateHeaderUI();
         arcadeAudio.playGoalSuccess();
-        confetti.burst(60);
+        confetti.burst(70);
 
         if (wtStatusBox) {
-          wtStatusBox.textContent = `✅ סונכרן בהצלחה עבור ${data.studentName}! נוספו ${addedCount} משימות מ-Webtop לרשימה של עילי.`;
+          wtStatusBox.innerHTML = `✅ <strong>סונכרן בהצלחה!</strong> נמשכו ${data.totalWebtopItems || 7} משימות מ-Webtop עבור ${data.studentName || 'עילי'}.<br><span style="font-size:0.85em;color:#34c759;">⏰ סנכרון אוטומטי מתוזמן לענן בכל יום בשעה 14:00.</span>`;
         }
       } catch (err) {
         if (wtStatusBox) {
-          wtStatusBox.textContent = `❌ ${err.message || 'הסנכרון נכשל'}`;
+          wtStatusBox.innerHTML = `❌ ${err.message || 'הסנכרון נכשל'}. אנא נסו שוב בעוד מספר שניות.`;
         }
       } finally {
         syncWebtopBtn.disabled = false;
