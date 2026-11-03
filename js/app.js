@@ -163,7 +163,7 @@ let appState = {
   speechLogs: [], // [{ date, phrase, heardText, audioDataUrl }]
   schedule: JSON.parse(JSON.stringify(DEFAULT_SCHEDULE)),
   familyPin: '1936', // Default Beitar Jerusalem founding year!
-  allowedEmails: [],
+  allowedEmails: ['reznikevg@gmail.com', 'natalieazu@gmail.com'],
   googleClientId: '',
   devRequests: [] // [{ id, date, text, status }]
 };
@@ -251,6 +251,12 @@ async function loadState() {
   }
 
   if (!appState.homeworkList) appState.homeworkList = [...DEFAULT_HOMEWORK];
+  if (!appState.allowedEmails) appState.allowedEmails = [];
+  ['reznikevg@gmail.com', 'natalieazu@gmail.com'].forEach(em => {
+    if (!appState.allowedEmails.some(ae => ae.toLowerCase() === em)) {
+      appState.allowedEmails.push(em);
+    }
+  });
   if (!appState.dictationWords || appState.dictationWords.length === 0) {
     appState.dictationWords = [...DEFAULT_DICTATION_WORDS];
   }
