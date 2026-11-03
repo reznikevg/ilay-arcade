@@ -1,0 +1,12 @@
+{
+  "name": "האקדמיה של עילי 💛🖤👑",
+  "short_name": "עילי האלוף",
+  "description": "משחקי חשבון, שפה, הכתבה ושיעורי בית של עילי - בית\"ר ירושלים וריאל מדריד",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#09090b",
+  "theme_color": "#facc15",
+  "lang": "he",
+  "dir": "rtl"
+}
