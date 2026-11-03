@@ -1677,19 +1677,50 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Parents: Unified Smart WhatsApp & Webtop Import (Text + Image Paste / Upload / Drop)
   let pendingSmartImageFile = null;
+  let pendingSmartImageDataUrl = null;
 
-  function setSmartPendingImage(file) {
+  function resizeImageFileToDataUrl(file, maxWidth = 1400) {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let w = img.width;
+          let h = img.height;
+          if (w > maxWidth) {
+            h = Math.round((h * maxWidth) / w);
+            w = maxWidth;
+          }
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          resolve(canvas.toDataURL('image/jpeg', 0.88));
+        };
+        img.onerror = () => resolve(ev.target.result);
+        img.src = ev.target.result;
+      };
+      reader.onerror = () => resolve(null);
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function setSmartPendingImage(file) {
     pendingSmartImageFile = file;
     const prevBox = document.getElementById('smart-img-preview-box');
     const prevImg = document.getElementById('smart-img-preview');
     const nameLbl = document.getElementById('attached-img-name');
     if (file) {
-      if (nameLbl) nameLbl.textContent = file.name || 'תמונה מהלוח';
-      if (prevImg && prevBox) {
-        prevImg.src = URL.createObjectURL(file);
+      if (nameLbl) nameLbl.textContent = '⏳ טוען תמונה...';
+      pendingSmartImageDataUrl = await resizeImageFileToDataUrl(file);
+      if (nameLbl) nameLbl.textContent = file.name || 'צילום מסך מוכן לפענוח ✅';
+      if (prevImg && prevBox && pendingSmartImageDataUrl) {
+        prevImg.src = pendingSmartImageDataUrl;
         prevBox.classList.remove('hidden');
       }
     } else {
+      pendingSmartImageDataUrl = null;
       if (nameLbl) nameLbl.textContent = '';
       if (prevBox) prevBox.classList.add('hidden');
       const imgInput = document.getElementById('webtop-image-upload');
@@ -1697,7 +1728,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  const triggerUploadBtn = document.getElementById('btn-trigger-img-upload');
   const imgUpload = document.getElementById('webtop-image-upload');
+  if (triggerUploadBtn && imgUpload) {
+    triggerUploadBtn.addEventListener('click', () => {
+      imgUpload.click();
+    });
+  }
   if (imgUpload) {
     imgUpload.addEventListener('change', (e) => {
       const file = e.target.files && e.target.files[0];
@@ -1724,6 +1761,51 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  async function extractTextFromImageSmart(dataUrl, statusBox) {
+    // 1. Try fast Cloud OCR API (OCR.space free tier - supports Hebrew & English!)
+    try {
+      if (statusBox) statusBox.textContent = '⏳ מפענח תמונה בענן (שלב 1/2)...';
+      const fd = new FormData();
+      fd.append('base64Image', dataUrl);
+      fd.append('language', 'heb');
+      fd.append('isOverlayRequired', 'false');
+      fd.append('scale', 'true');
+      const r = await fetch('https://api.ocr.space/parse/image', {
+        method: 'POST',
+        headers: { 'apikey': 'helloworld' },
+        body: fd
+      });
+      if (r.ok) {
+        const j = await r.json();
+        if (j && j.ParsedResults && j.ParsedResults[0] && j.ParsedResults[0].ParsedText) {
+          const t = j.ParsedResults[0].ParsedText.trim();
+          if (t.length > 2) return t;
+        }
+      }
+    } catch (e) {}
+
+    // 2. Fallback to Tesseract.js in browser (Hebrew)
+    try {
+      if (statusBox) statusBox.textContent = '⏳ קורא עברית מהתמונה (שלב 2/2)...';
+      if (!window.Tesseract) {
+        await new Promise((resolve, reject) => {
+          const s = document.createElement('script');
+          s.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
+          s.onload = resolve;
+          s.onerror = reject;
+          document.head.appendChild(s);
+        });
+      }
+      const worker = await window.Tesseract.createWorker('heb');
+      const ret = await worker.recognize(dataUrl);
+      await worker.terminate();
+      return (ret && ret.data && ret.data.text ? ret.data.text : '').trim();
+    } catch (err) {
+      console.error('Tesseract fallback error:', err);
+      return '';
+    }
+  }
+
   const smartForm = document.getElementById('form-smart-import');
   if (smartForm) {
     smartForm.addEventListener('submit', async (e) => {
@@ -1735,50 +1817,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
       let combinedText = inp.value.trim();
 
-      // If an image is attached, decode it with Hebrew + English OCR!
-      if (pendingSmartImageFile) {
+      if (pendingSmartImageDataUrl) {
         if (statusBox) {
           statusBox.classList.remove('hidden');
-          statusBox.textContent = '⏳ מפענח את הטקסט מתוך התמונה... אנא המתן מספר שניות...';
+          statusBox.textContent = '⏳ מפענח את הטקסט מתוך התמונה... אנא המתן...';
         }
         if (submitBtn) submitBtn.disabled = true;
 
-        try {
-          if (!window.Tesseract) {
-            await new Promise((resolve, reject) => {
-              const s = document.createElement('script');
-              s.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
-              s.onload = resolve;
-              s.onerror = reject;
-              document.head.appendChild(s);
-            });
-          }
-          const result = await window.Tesseract.recognize(pendingSmartImageFile, 'heb+eng', {});
-          const extracted = (result && result.data && result.data.text ? result.data.text : '')
-            .split('\n')
-            .map(l => l.trim())
-            .filter(l => l.length > 2)
-            .join('\n');
-
-          if (extracted) {
-            combinedText = combinedText ? `${combinedText}\n${extracted}` : extracted;
-          }
-        } catch (err) {
-          console.error('OCR Error:', err);
-        }
+        const rawExtracted = await extractTextFromImageSmart(pendingSmartImageDataUrl, statusBox);
+        const extracted = rawExtracted
+          .split('\n')
+          .map(l => l.trim())
+          .filter(l => l.length > 2)
+          .join('\n');
 
         if (statusBox) statusBox.classList.add('hidden');
         if (submitBtn) submitBtn.disabled = false;
         setSmartPendingImage(null);
+
+        if (extracted) {
+          combinedText = combinedText ? `${combinedText}\n${extracted}` : extracted;
+          inp.value = combinedText; // Show decoded text in the box so user can see/edit it!
+        } else if (!combinedText) {
+          alert('התמונה עלתה אך לא זוהה בה טקסט ברור בעברית. נסה לחתוך את צילום המסך רק לאזור הטקסט או להדביק את המילים.');
+          return;
+        }
       }
 
       if (!combinedText) {
-        alert('אנא הדבק טקסט או בחר/הדבק תמונה של ההודעה מ-Webtop / וואטסאפ כדי לפענח!');
+        alert('אנא הדבק טקסט או בחר תמונה מ-Webtop / וואטסאפ תחילה!');
         return;
       }
 
       const res = parseSmartWhatsAppOrWebtopInput(combinedText);
-      inp.value = '';
       arcadeAudio.playGoalSuccess();
       if (resBox) {
         resBox.classList.remove('hidden');

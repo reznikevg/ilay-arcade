@@ -419,10 +419,10 @@
               <textarea id="smart-import-text" rows="3" placeholder="כתוב/הדבק כאן הודעה או הדבק תמונה (Ctrl+V)..."></textarea>
               
               <div class="smart-attach-row">
-                <label for="webtop-image-upload" class="attach-img-pill">
-                  📷 צרף תמונה / צילום מסך מ-Webtop
-                </label>
-                <input type="file" id="webtop-image-upload" accept="image/*" class="hidden">
+                <button type="button" class="attach-img-pill" id="btn-trigger-img-upload">
+                  📷 בחר תמונה / צילום מסך מ-Webtop
+                </button>
+                <input type="file" id="webtop-image-upload" accept="image/*" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;">
                 <span id="attached-img-name" class="attached-img-name"></span>
               </div>
 
