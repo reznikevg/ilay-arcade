@@ -69,18 +69,86 @@ class ArcadeAudio {
     this.playTone(1174.66, 'triangle', 0.35, 0.2, 0.25);
   }
 
-  speak(text, lang = 'he-IL', rate = 0.92) {
-    if (!('speechSynthesis' in window)) return;
+  cleanTextForHebrewTTS(text) {
+    if (!text) return '';
+    let t = String(text);
+
+    // 1. Phonetic replacement for Ilay -> עילאי (so iOS/Android TTS pronounces "Ilai" perfectly!)
+    t = t.replace(/(^|[\s,.\-—"'(])עילי([,.\-—"')\s]|$)/g, '$1עילאי$2');
+    t = t.replace(/(^|[\s,.\-—"'(])וְ?עִילִי([,.\-—"')\s]|$)/g, '$1וְעִילַאי$2');
+    t = t.replace(/(^|[\s,.\-—"'(])לְ?עִילִי([,.\-—"')\s]|$)/g, '$1לְעִילַאי$2');
+    t = t.replace(/(^|[\s,.\-—"'(])שְ?עִילִי([,.\-—"')\s]|$)/g, '$1שְׁעִילַאי$2');
+    t = t.replace(/(^|[\s,.\-—"'(])מֵ?עִילִי([,.\-—"')\s]|$)/g, '$1מֵעִילַאי$2');
+    t = t.replace(/(^|[\s,.\-—"'(])בְּ?עִילִי([,.\-—"')\s]|$)/g, '$1בְּעִילַאי$2');
+
+    t = t.replace(/(^|[\s,.\-—"'(])ועילי([,.\-—"')\s]|$)/g, '$1ועילאי$2');
+    t = t.replace(/(^|[\s,.\-—"'(])לעילי([,.\-—"')\s]|$)/g, '$1לעילאי$2');
+    t = t.replace(/(^|[\s,.\-—"'(])שעילי([,.\-—"')\s]|$)/g, '$1שעילאי$2');
+    t = t.replace(/(^|[\s,.\-—"'(])מעילי([,.\-—"')\s]|$)/g, '$1מעילאי$2');
+    t = t.replace(/(^|[\s,.\-—"'(])בעילי([,.\-—"')\s]|$)/g, '$1בעילאי$2');
+
+    // 2. Remove emojis and UI decorative icons
+    t = t.replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, ' ');
+    t = t.replace(/[⚽🏆🔥🪙⭐🥅🧤🎙️💡🎯⏱️🦁👑💛🖤🤍💜🎉👟🛡️💎🎩🏃📜🔬🎨🎵🕯️📌✔✖☐•]/g, ' ');
+
+    // 3. Common Hebrew abbreviations that TTS stumbles on
+    t = t.replace(/\bבית"ר\b/g, 'ביתר ירושלים');
+    t = t.replace(/\bבי"ס\b/g, 'בית ספר');
+    t = t.replace(/\bאחה"צ\b/g, 'אחר הצהריים');
+    t = t.replace(/\bאחה״צ\b/g, 'אחר הצהריים');
+    t = t.replace(/\bעמ'\b/g, 'עמוד');
+    t = t.replace(/\bדק'\b/g, 'דקות');
+    t = t.replace(/\bב-(\d+)\b/g, 'ב $1');
+    t = t.replace(/\bה-(\d+)\b/g, 'ה $1');
+
+    // 4. Mathematical and inequality expressions for natural Hebrew reading
+    t = t.replace(/□/g, ' המספר החסר ');
+    t = t.replace(/\s*>\s*/g, ' גדול מ- ');
+    t = t.replace(/\s*<\s*/g, ' קטן מ- ');
+    t = t.replace(/(\d+)\s*\+\s*(\d+)/g, '$1 ועוד $2');
+    t = t.replace(/(\d+)\s*-\s*(\d+)/g, '$1 פחות $2');
+    t = t.replace(/(\d+)\s*=\s*(\d+)/g, '$1 שווה $2');
+    t = t.replace(/(\d+)\s*[*×]\s*(\d+)/g, '$1 כפול $2');
+
+    // 5. Clean punctuation and spaces
+    t = t.replace(/\s+/g, ' ').trim();
+    return t;
+  }
+
+  getBestVoice(lang = 'he-IL') {
+    if (!('speechSynthesis' in window)) return null;
+    const voices = window.speechSynthesis.getVoices() || [];
+    if (voices.length === 0) return null;
+
+    const heVoices = voices.filter(v => v.lang && (v.lang === 'he-IL' || v.lang === 'he_IL' || v.lang.startsWith('he')));
+    if (heVoices.length === 0) return null;
+
+    // Priority 1: Apple Siri or Enhanced/Premium voices on iOS
+    const premium = heVoices.find(v => /siri|enhanced|premium|natural/i.test(v.name));
+    if (premium) return premium;
+
+    // Priority 2: Google Hebrew
+    const google = heVoices.find(v => /google/i.test(v.name));
+    if (google) return google;
+
+    return heVoices[0];
+  }
+
+  speak(text, lang = 'he-IL', rate = 0.86) {
+    if (!('speechSynthesis' in window) || !text) return;
     try {
       window.speechSynthesis.cancel();
-      const cleanText = text
-        .replace(/[⚽🏆🔥🪙⭐🥅🧤🎙️💡🎯⏱️🦁👑💛🖤🤍💜]/g, '')
-        .replace(/□/g, 'המספר החסר')
-        .replace(/>/g, 'גדול מ-')
-        .replace(/</g, 'קטן מ-');
+      const cleanText = this.cleanTextForHebrewTTS(text);
+      if (!cleanText) return;
+
       const utter = new SpeechSynthesisUtterance(cleanText);
       utter.lang = lang;
-      utter.rate = rate;
+      utter.rate = rate; // Calm, clear pace for 2nd grade
+      utter.pitch = 1.05; // Slightly warmer child-friendly pitch
+
+      const voice = this.getBestVoice(lang);
+      if (voice) utter.voice = voice;
+
       window.speechSynthesis.speak(utter);
     } catch (e) {
       console.warn('TTS error:', e);
