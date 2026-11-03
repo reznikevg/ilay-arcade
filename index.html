@@ -2,599 +2,590 @@
 <html lang="he" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="עילי ⚽">
+  <meta name="apple-mobile-web-app-title" content="עילי">
   <meta name="theme-color" content="#ffffff">
   <link rel="manifest" href="manifest.json">
-  <title>האפליקציה של עילי ⚽</title>
+  <title>עילי - למידה ומשימות</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body class="theme-beitar">
-  <!-- ==================== SIMPLE SECURITY GATE ==================== -->
+
+  <!-- ==================== LOCK SCREEN (FAMILY PIN / GOOGLE SSO) ==================== -->
   <div class="auth-gate-overlay" id="auth-gate-overlay">
     <div class="auth-gate-card">
-      <div class="auth-crest-icons">🦁 ⚽ 👑</div>
-      <h2>שלום עילי!</h2>
-      <p>הכנס קוד כניסה או התחבר עם גוגל</p>
+      <div class="auth-logo-circle">🦁</div>
+      <h2>האפליקציה של עילי</h2>
+      <p>הזן קוד משפחתי כדי להיכנס</p>
 
       <form id="form-family-pin" class="pin-login-form">
         <input
-          type="password"
+          type="tel"
           id="family-pin-input"
           class="pin-input"
-          placeholder="קוד (1936)"
+          placeholder="1936"
           inputmode="numeric"
+          maxlength="8"
           autocomplete="off"
           required
         />
-        <button type="submit" class="arcade-btn btn-gold">כניסה ⚽</button>
+        <button type="submit" class="btn-primary-large">כניסה</button>
       </form>
 
-      <div class="auth-divider"><span>או להורים</span></div>
+      <div class="auth-divider"><span>או כניסת הורים</span></div>
 
       <div class="google-sso-box" id="google-sso-box">
         <div id="g-signin-btn-container"></div>
         <button type="button" class="google-custom-btn" id="btn-google-sso">
-          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="G" width="20" height="20">
-          <span>כניסה עם Google</span>
+          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="" width="18" height="18">
+          <span>התחברות עם Google</span>
         </button>
       </div>
 
-      <div class="auth-error hidden" id="auth-error-msg">קוד שגוי, נסה שוב!</div>
+      <div class="auth-error hidden" id="auth-error-msg">קוד שגוי, נסה שוב</div>
     </div>
   </div>
 
-  <!-- Confetti Canvas -->
   <canvas id="confetti-canvas"></canvas>
 
-  <!-- Clean, Minimal Top Header -->
-  <header class="app-header">
-    <div class="header-right">
-      <button class="avatar-badge" id="btn-profile">
-        <span class="avatar-icon" id="current-avatar">🦁</span>
-        <span class="player-name" id="player-name-display">עילי</span>
-        <span class="hidden" id="player-rank-display"></span>
-      </button>
+  <!-- ==================== MOBILE APP SHELL ==================== -->
+  <div class="app-shell">
 
-      <div class="team-switcher" id="team-switcher">
-        <button class="team-btn active" data-team="beitar" id="btn-team-beitar">💛 בית"ר</button>
-        <button class="team-btn" data-team="real" id="btn-team-real">👑 ריאל</button>
+    <!-- Sticky iOS-Style Top Bar -->
+    <header class="app-header">
+      <div class="header-user" id="btn-profile">
+        <div class="avatar-circle" id="current-avatar">🦁</div>
+        <div class="user-meta">
+          <span class="user-name" id="player-name-display">עילי</span>
+          <span class="user-sub" id="player-rank-display">כיתה ב׳</span>
+        </div>
       </div>
-    </div>
 
-    <div class="header-left">
-      <div class="stat-pill coins-pill">
-        <span>🪙</span>
-        <span id="stat-coins">0</span>
-      </div>
-      <div class="stat-pill trophies-pill">
-        <span>🏆</span>
-        <span id="stat-trophies">0</span>
-      </div>
-      <div class="stat-pill streak-pill hidden" id="streak-pill">
-        <span>🔥</span>
-        <span id="stat-streak">0</span>
-      </div>
-      <button class="icon-btn sound-toggle" id="btn-sound-toggle">🔊</button>
-      <button class="nav-btn parent-top-btn" data-view="parents" id="nav-parents">⚙️ הורים</button>
-    </div>
-  </header>
+      <div class="header-actions">
+        <div class="team-pill-toggle" id="team-switcher">
+          <button type="button" class="team-btn active" data-team="beitar" id="btn-team-beitar">בית"ר</button>
+          <button type="button" class="team-btn" data-team="real" id="btn-team-real">ריאל</button>
+        </div>
 
-  <!-- Main Content Container -->
-  <main class="main-container">
+        <div class="score-chip">
+          <span>🪙</span>
+          <span id="stat-coins">0</span>
+        </div>
+        <div class="score-chip trophy-chip">
+          <span>🏆</span>
+          <span id="stat-trophies">0</span>
+        </div>
+        <div class="hidden" id="streak-pill"><span id="stat-streak">0</span></div>
 
-    <!-- ==================== VIEW 1: HOME (CLEAN & SIMPLE) ==================== -->
-    <section id="view-home" class="view-section active">
-      <!-- 4 Simple Big Action Cards -->
-      <div class="big-visual-tiles">
-        <div class="visual-tile tile-speech" id="quick-open-speech">
-          <span class="v-tile-icon">🎙️</span>
-          <div class="v-tile-text">
-            <div class="v-tile-title">אימון ש׳ ו-ס׳</div>
-            <div class="v-tile-sub" id="quick-speech-summary">קלינאית</div>
+        <button type="button" class="icon-circle-btn" id="btn-sound-toggle" aria-label="צליל">🔊</button>
+        <button type="button" class="icon-circle-btn nav-btn" data-view="parents" id="nav-parents" aria-label="הגדרות הורים">⚙️</button>
+      </div>
+    </header>
+
+    <!-- Scrollable Viewport -->
+    <main class="main-container">
+
+      <!-- ==================== VIEW 1: HOME ==================== -->
+      <section id="view-home" class="view-section active">
+        <!-- Daily Overview Card -->
+        <div class="hero-card" id="btn-daily-match">
+          <div class="hero-card-info">
+            <span class="hero-tag">אתגר יומי • בונוס כפול</span>
+            <h3>משחק האלופים המהיר</h3>
+            <p>8 שאלות בחשבון ושפה על גביע יומי</p>
           </div>
+          <div class="hero-play-circle">▶</div>
         </div>
 
-        <div class="visual-tile tile-hw" id="quick-open-hw">
-          <span class="v-tile-icon">✅</span>
-          <div class="v-tile-text">
-            <div class="v-tile-title">משימות</div>
-            <div class="v-tile-sub" id="quick-hw-summary">שיעורי בית</div>
-          </div>
-        </div>
-
-        <div class="visual-tile tile-dict" id="quick-open-dict">
-          <span class="v-tile-icon">🎧</span>
-          <div class="v-tile-text">
-            <div class="v-tile-title">הכתבה</div>
-            <div class="v-tile-sub" id="quick-dict-summary">שמיעה וכתיבה</div>
-          </div>
-        </div>
-
-        <div class="visual-tile tile-schedule" id="quick-open-schedule">
-          <span class="v-tile-icon">📅</span>
-          <div class="v-tile-text">
-            <div class="v-tile-title">היום שלי</div>
-            <div class="v-tile-sub" id="quick-sched-summary">מערכת וחוגים</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Simple Subject Filter -->
-      <div class="section-Header-row">
-        <h2 class="clean-section-title">⚽ משחקי תרגול</h2>
-        <div class="category-tabs">
-          <button class="cat-tab active" data-cat="all">הכל</button>
-          <button class="cat-tab" data-cat="math">🔢 חשבון</button>
-          <button class="cat-tab" data-cat="hebrew">📖 שפה</button>
-          <button class="cat-tab" data-cat="english">🌍 ABC</button>
-          <button class="cat-tab" data-cat="custom" id="tab-custom">⭐ מיוחד</button>
-        </div>
-      </div>
-
-      <!-- Hidden selectors kept for JS compatibility -->
-      <div class="hidden" id="difficulty-selector">
-        <button class="pill-opt" data-diff="easy"></button>
-        <button class="pill-opt active" data-diff="medium"></button>
-        <button class="pill-opt" data-diff="hard"></button>
-      </div>
-      <div class="hidden" id="gamemode-selector">
-        <button class="pill-opt active" data-mode="practice"></button>
-      </div>
-      <div class="hidden" id="btn-daily-match"></div>
-
-      <!-- Clean Topics Grid -->
-      <div class="topics-grid" id="topics-grid"></div>
-    </section>
-
-    <!-- ==================== VIEW 2: SPEECH THERAPY STUDIO (ש׳ ו-ס׳) ==================== -->
-    <section id="view-speech" class="view-section">
-      <div class="clean-top-bar">
-        <button class="back-btn" id="btn-leave-speech">➔ חזרה</button>
-        <h3>🎙️ אימון ש׳ ו-ס׳</h3>
-        <span class="step-pill"><span id="sp-current-num">1</span> / <span id="sp-total-num">5</span></span>
-        <div class="hidden" id="sp-progress-fill"></div>
-      </div>
-
-      <div class="question-card">
-        <div class="mouth-coach-banner">
-          <span class="mouth-icon">😁🦷</span>
-          <span class="mouth-tip-text">סוגרים שיניים לחיוך, הלשון נשארת <strong>מאחורי השיניים</strong>!</span>
-          <button class="speak-btn" id="btn-sp-model-listen">🔊 שמע</button>
-        </div>
-
-        <div class="speech-target-box">
-          <div class="sp-emoji-huge" id="sp-emoji">⚽</div>
-          <div class="sp-target-phrase" id="sp-phrase">שַׁעַר שֶׁל שׁוּעָה!</div>
-        </div>
-
-        <div class="speech-controls-zone">
-          <button class="mic-record-btn" id="btn-sp-record">
-            <span id="sp-mic-icon">🎙️</span>
-            <span id="sp-mic-label">לחץ ואמור בקול</span>
+        <!-- 4 Core Daily Modules (2x2 Native iOS Grid) -->
+        <div class="bento-grid">
+          <button type="button" class="bento-card bento-speech" id="quick-open-speech">
+            <div class="bento-icon-wrap">🎙️</div>
+            <div class="bento-title">תרגול ש׳ ו-ס׳</div>
+            <div class="bento-sub" id="quick-speech-summary">קלינאית תקשורת</div>
           </button>
-          <button class="play-my-voice-btn hidden" id="btn-sp-play-self">▶️ שמע את עצמך</button>
+
+          <button type="button" class="bento-card bento-hw" id="quick-open-hw">
+            <div class="bento-icon-wrap">✅</div>
+            <div class="bento-title">שיעורי בית</div>
+            <div class="bento-sub" id="quick-hw-summary">משימות להיום</div>
+          </button>
+
+          <button type="button" class="bento-card bento-dict" id="quick-open-dict">
+            <div class="bento-icon-wrap">🎧</div>
+            <div class="bento-title">הכתבה</div>
+            <div class="bento-sub" id="quick-dict-summary">שמיעה וכתיבה</div>
+          </button>
+
+          <button type="button" class="bento-card bento-sched" id="quick-open-schedule">
+            <div class="bento-icon-wrap">📅</div>
+            <div class="bento-title">היום שלי</div>
+            <div class="bento-sub" id="quick-sched-summary">מערכת וחוגים</div>
+          </button>
         </div>
 
-        <div class="sp-wave-bars hidden" id="sp-wave-bars">
-          <span></span><span></span><span></span><span></span><span></span>
-        </div>
-
-        <div class="sp-recognized-box hidden" id="sp-recognized-box">
-          <strong id="sp-recognized-text"></strong>
-        </div>
-
-        <div class="question-footer">
-          <span id="sp-status-lbl" class="attempt-counter">🪙 +20 מטבעות</span>
-          <div class="feedback-banner hidden" id="sp-feedback-banner"></div>
-          <button class="arcade-btn btn-next hidden" id="btn-sp-next">הבא ⬅</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ==================== VIEW 3: MY DAY / SCHEDULE (היום שלי) ==================== -->
-    <section id="view-schedule" class="view-section">
-      <div class="clean-top-bar">
-        <button class="back-btn" onclick="switchView('home')">➔ חזרה</button>
-        <h3>📅 היום שלי</h3>
-        <button class="speak-btn" id="btn-speak-day">🔊 הקרא</button>
-      </div>
-
-      <div class="day-tabs-bar" id="day-tabs-bar">
-        <button class="day-tab" data-day="0"><span class="d-num">א׳</span></button>
-        <button class="day-tab" data-day="1"><span class="d-num">ב׳</span></button>
-        <button class="day-tab" data-day="2"><span class="d-num">ג׳</span></button>
-        <button class="day-tab" data-day="3"><span class="d-num">ד׳</span></button>
-        <button class="day-tab" data-day="4"><span class="d-num">ה׳</span></button>
-        <button class="day-tab" data-day="5"><span class="d-num">ו׳</span></button>
-        <button class="day-tab" data-day="6"><span class="d-num">ש׳</span></button>
-      </div>
-
-      <div class="kid-quick-add-bar">
-        <span class="kqa-label">➕ הוסף:</span>
-        <button class="kqa-btn" data-icon="⚽" data-title="אימון כדורגל">⚽ כדורגל</button>
-        <button class="kqa-btn" data-icon="🌍" data-title="שיעור אנגלית">🌍 אנגלית</button>
-        <button class="kqa-btn" data-icon="🎙️" data-title="תרגול ש׳ ו-ס׳">🎙️ דיבור</button>
-        <button class="kqa-btn" data-icon="👦" data-title="חבר">👦 חבר</button>
-      </div>
-
-      <div class="schedule-columns">
-        <div class="sched-col school-col">
-          <div class="sched-col-header">
-            <span>🏫</span>
-            <h3>בוקר (בית ספר)</h3>
-          </div>
-          <div class="sched-visual-grid" id="sched-school-list"></div>
-        </div>
-
-        <div class="sched-col after-col">
-          <div class="sched-col-header">
-            <span>⚽</span>
-            <h3>אחרי הצהריים</h3>
-          </div>
-          <div class="sched-visual-grid" id="sched-after-list"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ==================== VIEW 4: HOMEWORK & TASKS (משימות) ==================== -->
-    <section id="view-homework" class="view-section">
-      <div class="clean-top-bar">
-        <button class="back-btn" onclick="switchView('home')">➔ חזרה</button>
-        <h3>✅ המשימות שלי</h3>
-        <span class="step-pill" id="hw-done-count">0/0</span>
-      </div>
-
-      <div class="hw-board-card">
-        <form id="form-kid-add-hw" class="kid-add-task-row">
-          <input type="text" id="kid-hw-input" placeholder="➕ הוסף משימה חדשה..." required>
-          <button type="submit" class="arcade-btn btn-gold">הוסף</button>
-        </form>
-
-        <div id="hw-kids-list" class="hw-kids-list"></div>
-        <div class="hw-all-done-banner hidden" id="hw-all-done-banner">
-          🏆 אלוף! סיימת את כל המשימות להיום!
-        </div>
-      </div>
-    </section>
-
-    <!-- ==================== VIEW 5: DICTATION (הכתבה) ==================== -->
-    <section id="view-dictation" class="view-section">
-      <div class="clean-top-bar">
-        <button class="back-btn" id="btn-leave-dictation">➔ חזרה</button>
-        <h3>🎧 אימון הכתבה</h3>
-        <span class="step-pill"><span id="dict-current-num">1</span> / <span id="dict-total-num">10</span></span>
-        <div class="hidden" id="dict-progress-fill"></div>
-      </div>
-
-      <div class="question-card">
-        <div class="dictation-top-controls">
-          <button class="dict-listen-big-btn" id="btn-dict-speak">🔊 שמע מילה</button>
-          <button class="dict-listen-slow-btn" id="btn-dict-speak-slow">🐢 לאט</button>
-          <button class="hint-btn" id="btn-dict-peek">👀 רמז</button>
-        </div>
-
-        <div class="dict-sentence-context" id="dict-sentence-context"></div>
-        <div class="hint-box hidden" id="dict-peek-box"></div>
-        <div class="dict-letter-slots" id="dict-letter-slots"></div>
-
-        <div class="dict-input-wrapper">
-          <input
-            type="text"
-            id="dict-user-input"
-            class="dict-text-input"
-            placeholder="כתוב כאן..."
-            autocomplete="off"
-            autocorrect="off"
-            autocapitalize="off"
-            spellcheck="false"
-          />
-          <button class="dict-clear-btn" id="btn-dict-backspace">⌫</button>
-        </div>
-
-        <div class="hebrew-keyboard" id="hebrew-keyboard"></div>
-
-        <div class="question-footer">
-          <span class="attempt-counter" id="dict-attempt-counter">ניסיון 1</span>
-          <div class="feedback-banner hidden" id="dict-feedback-banner"></div>
-          <div class="action-buttons">
-            <button class="arcade-btn btn-check" id="btn-dict-check">בדיקה ⚽</button>
-            <button class="arcade-btn btn-next hidden" id="btn-dict-next">הבא ⬅</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ==================== VIEW 6: GAME ARENA ==================== -->
-    <section id="view-arena" class="view-section">
-      <div class="clean-top-bar">
-        <button class="back-btn" id="btn-leave-arena">➔ חזרה</button>
-        <h3 id="arena-topic-title">חשבון</h3>
-        <span class="step-pill"><span id="q-current-num">1</span> / <span id="q-total-num">10</span></span>
-        <div class="hidden" id="arena-timer"><span id="timer-seconds">60</span></div>
-        <div class="hidden" id="q-progress-fill"></div>
-      </div>
-
-      <!-- Hidden soccer elements kept for JS compatibility -->
-      <div class="hidden">
-        <div id="goalkeeper"></div>
-        <div id="soccer-ball-shot"></div>
-        <div id="penalty-balls-track"></div>
-        <div id="commentator-text"></div>
-      </div>
-
-      <div class="question-card" id="question-card">
-        <div class="question-header">
-          <button class="speak-btn" id="btn-speak-question">🔊 הקרא</button>
-          <div class="question-instruction" id="q-instruction"></div>
-          <button class="hint-btn" id="btn-hint">💡 רמז</button>
-        </div>
-
-        <div class="hint-box hidden" id="hint-box"></div>
-        <div class="question-stimulus" id="q-stimulus" dir="ltr"></div>
-        <div class="options-container" id="q-options-container"></div>
-
-        <div class="question-footer">
-          <div class="attempt-counter" id="attempt-counter">ניסיון 1</div>
-          <div class="feedback-banner hidden" id="feedback-banner"></div>
-          <div class="action-buttons">
-            <button class="arcade-btn btn-check" id="btn-check-answer">בדיקה ⚽</button>
-            <button class="arcade-btn btn-next hidden" id="btn-next-question">הבא ⬅</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ==================== VIEW 7: MATCH SUMMARY ==================== -->
-    <section id="view-summary" class="view-section">
-      <div class="summary-card">
-        <div class="summary-trophy-anim" id="summary-icon">🏆</div>
-        <h2 class="summary-title" id="summary-title">כל הכבוד עילי!</h2>
-        <p class="summary-subtitle" id="summary-subtitle"></p>
-
-        <div class="summary-stats-grid">
-          <div class="sum-stat-box">
-            <span class="sum-stat-icon">⚽</span>
-            <span class="sum-stat-val" id="sum-correct">0/10</span>
-            <span class="sum-stat-lbl">תשובות נכונות</span>
-          </div>
-          <div class="sum-stat-box">
-            <span class="sum-stat-icon">🪙</span>
-            <span class="sum-stat-val" id="sum-coins">+0</span>
-            <span class="sum-stat-lbl">מטבעות</span>
-          </div>
-          <div class="sum-stat-box">
-            <span class="sum-stat-icon">🔥</span>
-            <span class="sum-stat-val" id="sum-streak">0</span>
-            <span class="sum-stat-lbl">רצף</span>
+        <!-- Practice Games Section -->
+        <div class="section-bar">
+          <h2 class="section-heading">תרגול לימודי</h2>
+          <div class="segmented-tabs">
+            <button type="button" class="cat-tab active" data-cat="all">הכל</button>
+            <button type="button" class="cat-tab" data-cat="math">חשבון</button>
+            <button type="button" class="cat-tab" data-cat="hebrew">שפה</button>
+            <button type="button" class="cat-tab" data-cat="english">אנגלית</button>
+            <button type="button" class="cat-tab" data-cat="custom" id="tab-custom">מיוחד</button>
           </div>
         </div>
 
-        <div class="summary-actions">
-          <button class="arcade-btn btn-gold" id="btn-play-again">🔄 שחק שוב</button>
-          <button class="arcade-btn btn-primary" id="btn-summary-shop">🏅 לאלבום</button>
-          <button class="arcade-btn btn-secondary" id="btn-summary-home">🏠 ראשי</button>
+        <div class="hidden" id="difficulty-selector">
+          <button class="pill-opt" data-diff="easy"></button>
+          <button class="pill-opt active" data-diff="medium"></button>
+          <button class="pill-opt" data-diff="hard"></button>
         </div>
-      </div>
-    </section>
-
-    <!-- ==================== VIEW 8: STICKER ALBUM & SHOP ==================== -->
-    <section id="view-shop" class="view-section">
-      <div class="clean-top-bar">
-        <button class="back-btn" onclick="switchView('home')">➔ חזרה</button>
-        <h3>🏅 אלבום הקלפים (<span id="album-count">0/20</span>)</h3>
-        <button class="arcade-btn btn-gold" id="btn-buy-pack" style="padding:8px 16px;font-size:0.95rem;">🎁 פתח קלף (🪙50)</button>
-        <div class="hidden" id="shop-coins-balance"></div>
-        <div class="hidden" id="album-progress-fill"></div>
-      </div>
-
-      <div class="stickers-grid" id="stickers-grid"></div>
-    </section>
-
-    <!-- ==================== VIEW 9: PARENTS ZONE ==================== -->
-    <section id="view-parents" class="view-section">
-      <div class="clean-top-bar">
-        <button class="back-btn" onclick="switchView('home')">➔ חזרה</button>
-        <h3>⚙️ אזור הורים</h3>
-        <div style="display:flex;gap:8px;">
-          <button class="arcade-btn btn-secondary" id="btn-logout-device" style="padding:6px 12px;font-size:0.85rem;">🔒 נעל</button>
-          <button class="arcade-btn btn-secondary" id="btn-reset-progress" style="padding:6px 12px;font-size:0.85rem;">איפוס</button>
+        <div class="hidden" id="gamemode-selector">
+          <button class="pill-opt active" data-mode="practice"></button>
         </div>
-      </div>
 
-      <div class="parents-grid">
-        <!-- 0. Smart Import from WhatsApp Group & Webtop (Unified Text + Image)! -->
-        <div class="parent-card" style="border-right: 5px solid #10b981;">
-          <h3>📲 פענוח ועדכון חכם (מוואטסאפ ו-Webtop)</h3>
-          <p style="font-size:0.88rem;color:#64748b;margin-bottom:10px;">הדבק טקסט, הדבק תמונה, או צרף צילום מסך מ-Webtop / וואטסאפ ולחץ על הכפתור — המערכת תפענח גם תמונה וגם טקסט ותעדכן לעילי הכל!</p>
+        <div class="topics-list" id="topics-grid"></div>
+      </section>
 
-          <form id="form-smart-import" class="custom-form">
-            <div class="smart-dropzone" id="smart-dropzone">
-              <textarea id="smart-import-text" rows="3" placeholder="כתוב/הדבק כאן הודעה או הדבק תמונה (Ctrl+V)..."></textarea>
-              
-              <div class="smart-attach-row">
-                <button type="button" class="attach-img-pill" id="btn-trigger-img-upload">
-                  📷 בחר תמונה / צילום מסך מ-Webtop
-                </button>
-                <input type="file" id="webtop-image-upload" accept="image/*" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;">
-                <span id="attached-img-name" class="attached-img-name"></span>
-              </div>
+      <!-- ==================== VIEW 2: SPEECH THERAPY (ש׳ ו-ס׳) ==================== -->
+      <section id="view-speech" class="view-section">
+        <div class="screen-nav-bar">
+          <button type="button" class="btn-back" id="btn-leave-speech">‹ חזרה</button>
+          <span class="screen-title">תרגול הגייה (ש׳ / ס׳)</span>
+          <span class="badge-counter"><span id="sp-current-num">1</span>/<span id="sp-total-num">5</span></span>
+          <div class="hidden" id="sp-progress-fill"></div>
+        </div>
 
-              <div id="smart-img-preview-box" class="smart-img-preview-box hidden">
-                <img id="smart-img-preview" src="" alt="תצוגה מקדימה">
-                <button type="button" id="btn-remove-smart-img" class="del-q-btn">✕ הסר תמונה</button>
+        <div class="surface-card">
+          <div class="coach-tip-row">
+            <div class="coach-tip-text">
+              <strong>איך הוגים נכון?</strong> סוגרים שיניים לחיוך 😁 והלשון נשארת מאחורי השיניים.
+            </div>
+            <button type="button" class="btn-chip" id="btn-sp-model-listen">🔊 הדגמה</button>
+          </div>
+
+          <div class="speech-stage">
+            <div class="sp-emoji-huge" id="sp-emoji">⚽</div>
+            <div class="sp-target-phrase" id="sp-phrase">שַׁעַר שֶׁל שׁוּעָה!</div>
+          </div>
+
+          <div class="speech-action-stack">
+            <button type="button" class="btn-record-main" id="btn-sp-record">
+              <span id="sp-mic-icon">🎙️</span>
+              <span id="sp-mic-label">לחץ להקלטה</span>
+            </button>
+            <button type="button" class="btn-secondary-pill hidden" id="btn-sp-play-self">▶️ השמע את ההקלטה שלי</button>
+          </div>
+
+          <div class="sp-wave-bars hidden" id="sp-wave-bars">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+
+          <div class="sp-recognized-box hidden" id="sp-recognized-box">
+            <strong id="sp-recognized-text"></strong>
+          </div>
+
+          <div class="card-footer-bar">
+            <span id="sp-status-lbl" class="muted-note">בונוס: +20 מטבעות</span>
+            <div class="feedback-banner hidden" id="sp-feedback-banner"></div>
+            <button type="button" class="btn-primary-action hidden" id="btn-sp-next">המשך ⬅</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 3: SCHEDULE (היום שלי) ==================== -->
+      <section id="view-schedule" class="view-section">
+        <div class="screen-nav-bar">
+          <button type="button" class="btn-back" onclick="switchView('home')">‹ חזרה</button>
+          <span class="screen-title">מערכת שעות וחוגים</span>
+          <button type="button" class="btn-chip" id="btn-speak-day">🔊 הקרא</button>
+        </div>
+
+        <div class="day-selector-strip" id="day-tabs-bar">
+          <button type="button" class="day-tab" data-day="0">א׳</button>
+          <button type="button" class="day-tab" data-day="1">ב׳</button>
+          <button type="button" class="day-tab" data-day="2">ג׳</button>
+          <button type="button" class="day-tab" data-day="3">ד׳</button>
+          <button type="button" class="day-tab" data-day="4">ה׳</button>
+          <button type="button" class="day-tab" data-day="5">ו׳</button>
+          <button type="button" class="day-tab" data-day="6">ש׳</button>
+        </div>
+
+        <div class="quick-tags-bar kid-quick-add-bar">
+          <span class="quick-tags-lbl">+ הוסף להיום:</span>
+          <button type="button" class="kqa-btn" data-icon="⚽" data-title="אימון כדורגל">⚽ כדורגל</button>
+          <button type="button" class="kqa-btn" data-icon="🌍" data-title="שיעור אנגלית">🌍 אנגלית</button>
+          <button type="button" class="kqa-btn" data-icon="🎙️" data-title="תרגול ש׳ ו-ס׳">🎙️ דיבור</button>
+          <button type="button" class="kqa-btn" data-icon="👦" data-title="חבר">👦 חבר</button>
+        </div>
+
+        <div class="schedule-stack">
+          <div class="surface-card">
+            <h4 class="group-subtitle">🏫 בוקר בבית הספר</h4>
+            <div class="sched-grid" id="sched-school-list"></div>
+          </div>
+
+          <div class="surface-card">
+            <h4 class="group-subtitle">⚽ אחר הצהריים (חוגים ואימונים)</h4>
+            <div class="sched-grid" id="sched-after-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 4: HOMEWORK & TASKS (משימות) ==================== -->
+      <section id="view-homework" class="view-section">
+        <div class="screen-nav-bar">
+          <button type="button" class="btn-back" onclick="switchView('home')">‹ חזרה</button>
+          <span class="screen-title">שיעורי בית ומשימות</span>
+          <span class="badge-counter" id="hw-done-count">0/0</span>
+        </div>
+
+        <div class="surface-card">
+          <form id="form-kid-add-hw" class="inline-add-form">
+            <input type="text" id="kid-hw-input" placeholder="הוסף משימה או שיעורי בית..." required>
+            <button type="submit" class="btn-primary-action">הוסף</button>
+          </form>
+
+          <div id="hw-kids-list" class="task-list"></div>
+
+          <div class="completion-banner hidden" id="hw-all-done-banner">
+            🏆 כל הכבוד! השלמת את כל המשימות להיום!
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 5: DICTATION (הכתבה) ==================== -->
+      <section id="view-dictation" class="view-section">
+        <div class="screen-nav-bar">
+          <button type="button" class="btn-back" id="btn-leave-dictation">‹ חזרה</button>
+          <span class="screen-title">הכנה להכתבה</span>
+          <span class="badge-counter"><span id="dict-current-num">1</span>/<span id="dict-total-num">10</span></span>
+          <div class="hidden" id="dict-progress-fill"></div>
+        </div>
+
+        <div class="surface-card">
+          <div class="dictation-audio-bar">
+            <button type="button" class="btn-listen-primary" id="btn-dict-speak">🔊 השמע מילה</button>
+            <button type="button" class="btn-chip" id="btn-dict-speak-slow">🐢 לאט</button>
+            <button type="button" class="btn-chip" id="btn-dict-peek">💡 רמז</button>
+          </div>
+
+          <div class="dict-hint-line" id="dict-sentence-context"></div>
+          <div class="hint-callout hidden" id="dict-peek-box"></div>
+          <div class="dict-letter-slots" id="dict-letter-slots"></div>
+
+          <div class="dict-input-row">
+            <input
+              type="text"
+              id="dict-user-input"
+              class="dict-text-input"
+              placeholder="הקלד את המילה..."
+              autocomplete="off"
+              autocorrect="off"
+              autocapitalize="off"
+              spellcheck="false"
+            />
+            <button type="button" class="btn-backspace" id="btn-dict-backspace">⌫</button>
+          </div>
+
+          <div class="hebrew-keyboard" id="hebrew-keyboard"></div>
+
+          <div class="card-footer-bar">
+            <span class="muted-note" id="dict-attempt-counter">ניסיון 1</span>
+            <div class="feedback-banner hidden" id="dict-feedback-banner"></div>
+            <div class="footer-btns">
+              <button type="button" class="btn-primary-action" id="btn-dict-check">בדיקה</button>
+              <button type="button" class="btn-success-action hidden" id="btn-dict-next">הבא ⬅</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 6: QUESTION ARENA ==================== -->
+      <section id="view-arena" class="view-section">
+        <div class="screen-nav-bar">
+          <button type="button" class="btn-back" id="btn-leave-arena">‹ חזרה</button>
+          <span class="screen-title" id="arena-topic-title">תרגול</span>
+          <span class="badge-counter"><span id="q-current-num">1</span>/<span id="q-total-num">10</span></span>
+          <div class="hidden" id="arena-timer"><span id="timer-seconds">60</span></div>
+          <div class="hidden" id="q-progress-fill"></div>
+        </div>
+
+        <div class="hidden">
+          <div id="goalkeeper"></div>
+          <div id="soccer-ball-shot"></div>
+          <div id="penalty-balls-track"></div>
+          <div id="commentator-text"></div>
+        </div>
+
+        <div class="surface-card" id="question-card">
+          <div class="q-top-row">
+            <button type="button" class="btn-chip" id="btn-speak-question">🔊 הקרא</button>
+            <div class="q-instruction-text" id="q-instruction"></div>
+            <button type="button" class="btn-chip" id="btn-hint">💡 רמז</button>
+          </div>
+
+          <div class="hint-callout hidden" id="hint-box"></div>
+          <div class="q-stimulus-box" id="q-stimulus" dir="ltr"></div>
+          <div class="options-container" id="q-options-container"></div>
+
+          <div class="card-footer-bar">
+            <span class="muted-note" id="attempt-counter">ניסיון 1</span>
+            <div class="feedback-banner hidden" id="feedback-banner"></div>
+            <div class="footer-btns">
+              <button type="button" class="btn-primary-action" id="btn-check-answer">בדיקה</button>
+              <button type="button" class="btn-success-action hidden" id="btn-next-question">הבא ⬅</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 7: SUMMARY ==================== -->
+      <section id="view-summary" class="view-section">
+        <div class="surface-card summary-view-card">
+          <div class="summary-medal" id="summary-icon">🏆</div>
+          <h2 id="summary-title">כל הכבוד עילי!</h2>
+          <p class="muted-note" id="summary-subtitle">סיימת את האימון בהצלחה</p>
+
+          <div class="summary-metrics">
+            <div class="metric-box">
+              <span class="metric-val" id="sum-correct">0/10</span>
+              <span class="metric-lbl">נכונות</span>
+            </div>
+            <div class="metric-box">
+              <span class="metric-val" id="sum-coins">+0</span>
+              <span class="metric-lbl">מטבעות</span>
+            </div>
+            <div class="metric-box">
+              <span class="metric-val" id="sum-streak">0</span>
+              <span class="metric-lbl">רצף</span>
+            </div>
+          </div>
+
+          <div class="summary-btn-row">
+            <button type="button" class="btn-primary-action" id="btn-play-again">שחק שוב</button>
+            <button type="button" class="btn-secondary-pill" id="btn-summary-shop">לאלבום הקלפים</button>
+            <button type="button" class="btn-secondary-pill" id="btn-summary-home">מסך הבית</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 8: ALBUM ==================== -->
+      <section id="view-shop" class="view-section">
+        <div class="screen-nav-bar">
+          <button type="button" class="btn-back" onclick="switchView('home')">‹ חזרה</button>
+          <span class="screen-title">אלבום הקלפים (<span id="album-count">0/20</span>)</span>
+          <button type="button" class="btn-primary-action" id="btn-buy-pack" style="padding:7px 14px;font-size:0.85rem;">🎁 פתח קלף (🪙50)</button>
+          <div class="hidden" id="shop-coins-balance"></div>
+          <div class="hidden" id="album-progress-fill"></div>
+        </div>
+
+        <div class="stickers-grid" id="stickers-grid"></div>
+      </section>
+
+      <!-- ==================== VIEW 9: PARENTS ZONE ==================== -->
+      <section id="view-parents" class="view-section">
+        <div class="screen-nav-bar">
+          <button type="button" class="btn-back" onclick="switchView('home')">‹ חזרה</button>
+          <span class="screen-title">אזור הורים וניהול</span>
+          <div style="display:flex;gap:6px;">
+            <button type="button" class="btn-chip" id="btn-logout-device">🔒 נעל</button>
+            <button type="button" class="btn-chip" id="btn-reset-progress">איפוס</button>
+          </div>
+        </div>
+
+        <div class="parents-stack">
+
+          <!-- 1. Commercial-Grade Image / Screenshot / Text Importer -->
+          <div class="surface-card parent-highlight-card">
+            <div class="card-title-row">
+              <h3>📲 קליטה מ-Webtop ומוואטסאפ (תמונה או טקסט)</h3>
+            </div>
+            <p class="card-desc">בחרו צילום מסך מהגלריה של האייפון, הדביקו תמונה, או הדביקו הודעה — המערכת תקרא את הטקסט מהתמונה ותעדכן לעילי שיעורי בית, הכתבה ומערכת.</p>
+
+            <!-- Native iOS/Android Compatible File Picker Label + Paste Button -->
+            <div class="upload-actions-row">
+              <label class="native-file-btn">
+                <span>🖼️ בחר תמונה מהגלריה / צילום מסך</span>
+                <input type="file" id="webtop-image-upload" accept="image/*" class="sr-file-input">
+              </label>
+              <button type="button" class="btn-secondary-pill" id="btn-paste-clipboard">📋 הדבק מהלוח</button>
+            </div>
+
+            <!-- Live Image Preview -->
+            <div id="smart-img-preview-box" class="img-preview-card hidden">
+              <img id="smart-img-preview" src="" alt="תצוגה מקדימה">
+              <div class="img-preview-meta">
+                <span id="attached-img-name">צילום מסך נבחר</span>
+                <button type="button" id="btn-remove-smart-img" class="btn-text-danger">הסר תמונה</button>
               </div>
             </div>
 
-            <div id="ocr-status-box" class="hint-box hidden" style="margin-bottom:6px;">⏳ מפענח את הטקסט מתוך התמונה... אנא המתן...</div>
+            <div id="ocr-status-box" class="ocr-progress-banner hidden">⏳ קורא את הטקסט מתוך התמונה...</div>
 
-            <button type="submit" class="arcade-btn btn-check" id="btn-smart-submit">🪄 פענח ועדכן לעילי (טקסט / תמונה)</button>
-          </form>
-          <div id="smart-import-result" class="hint-box hidden" style="margin-top:10px;margin-bottom:0;"></div>
-        </div>
+            <form id="form-smart-import" class="stack-form">
+              <textarea id="smart-import-text" rows="3" placeholder="הטקסט שיפוענח מהתמונה יופיע כאן (או הדבק כאן הודעה ישירות)..."></textarea>
+              <button type="submit" class="btn-primary-large" id="btn-smart-submit">פענח ועדכן לעילי</button>
+            </form>
 
-        <!-- 1. Direct Feature Request -->
-        <div class="parent-card">
-          <h3>🚀 בקשות פיתוח חדשות מהנייד</h3>
-          <form id="form-dev-request" class="custom-form">
-            <div class="form-row">
-              <textarea id="dev-req-input" rows="2" placeholder="כתוב כאן מה תרצה שאבנה או אוסיף לעילי..." required></textarea>
-            </div>
-            <button type="submit" class="arcade-btn btn-gold">📨 שלח בקשה</button>
-          </form>
-          <div id="dev-requests-list" class="custom-questions-list"></div>
-          <span id="dev-req-count" class="hidden">0</span>
-        </div>
+            <div id="smart-import-result" class="success-callout hidden"></div>
+          </div>
 
-        <!-- 2. Speech Therapy (קלינאית תקשורת) -->
-        <div class="parent-card">
-          <h3>🎙️ קלינאית תקשורת (ש׳ ו-ס׳)</h3>
-          <div id="parent-speech-logs" class="custom-questions-list" style="margin-bottom:12px;"></div>
-          <span id="parent-sp-log-count" class="hidden">0</span>
-          <form id="form-save-speech" class="custom-form">
-            <div class="form-row">
-              <label>מילים/משפטים לתרגול:</label>
+          <!-- 2. Homework Manager -->
+          <div class="surface-card">
+            <h3>✅ ניהול שיעורי בית ומשימות</h3>
+            <form id="form-add-hw" class="stack-form">
+              <div class="two-col-inputs">
+                <select id="hw-subject">
+                  <option value="🔢|חשבון">🔢 חשבון</option>
+                  <option value="📖|עברית ושפה">📖 שפה</option>
+                  <option value="🎧|אימון הכתבה">🎧 הכתבה</option>
+                  <option value="🎙️|תרגול קלינאית (ש׳ ו-ס׳)">🎙️ קלינאית</option>
+                  <option value="🌍|אנגלית">🌍 אנגלית</option>
+                </select>
+                <input type="text" id="hw-title" placeholder="פירוט המשימה..." required>
+              </div>
+              <button type="submit" class="btn-primary-action">+ הוסף משימה</button>
+            </form>
+            <div id="parent-hw-list" class="clean-admin-list"></div>
+          </div>
+
+          <!-- 3. Speech Therapy Manager -->
+          <div class="surface-card">
+            <h3>🎙️ קלינאית תקשורת (ש׳ ו-ס׳)</h3>
+            <div id="parent-speech-logs" class="clean-admin-list" style="margin-bottom:10px;"></div>
+            <span id="parent-sp-log-count" class="hidden">0</span>
+            <form id="form-save-speech" class="stack-form">
+              <label class="field-lbl">משפטים לתרגול יומי (שורה לכל משפט):</label>
               <textarea id="speech-words-textarea" rows="4"></textarea>
-            </div>
-            <button type="submit" class="arcade-btn btn-primary">💾 שמור משפטים</button>
-          </form>
-        </div>
+              <button type="submit" class="btn-primary-action">שמור משפטים</button>
+            </form>
+          </div>
 
-        <!-- 3. Homework Manager -->
-        <div class="parent-card">
-          <h3>✅ משימות ושיעורי בית</h3>
-          <form id="form-add-hw" class="custom-form">
-            <div class="form-row">
-              <select id="hw-subject">
-                <option value="🎙️|תרגול קלינאית (ש׳ ו-ס׳)">🎙️ תרגול קלינאית</option>
-                <option value="🔢|חשבון">🔢 חשבון</option>
-                <option value="📖|עברית ושפה">📖 שפה</option>
-                <option value="🎧|אימון הכתבה">🎧 הכתבה</option>
-                <option value="🌍|אנגלית">🌍 אנגלית</option>
-              </select>
-            </div>
-            <div class="form-row">
-              <input type="text" id="hw-title" placeholder="פירוט המשימה..." required>
-            </div>
-            <button type="submit" class="arcade-btn btn-primary">➕ הוסף משימה</button>
-          </form>
-          <div id="parent-hw-list" class="custom-questions-list"></div>
-        </div>
-
-        <!-- 4. Dictation Word List -->
-        <div class="parent-card">
-          <h3>🎧 מילים להכתבה</h3>
-          <form id="form-save-dictation" class="custom-form">
-            <div class="form-row">
+          <!-- 4. Dictation Word List -->
+          <div class="surface-card">
+            <h3>🎧 רשימת מילים להכתבה</h3>
+            <form id="form-save-dictation" class="stack-form">
+              <label class="field-lbl">מילה בכל שורה (למשל: ירושלים - עיר הבירה):</label>
               <textarea id="dict-words-textarea" rows="5"></textarea>
-            </div>
-            <button type="submit" class="arcade-btn btn-primary">💾 שמור מילים</button>
-          </form>
+              <button type="submit" class="btn-primary-action">שמור מילים להכתבה</button>
+            </form>
+          </div>
+
+          <!-- 5. Weekly Schedule Editor -->
+          <div class="surface-card">
+            <h3>📅 עריכת מערכת שעות וחוגים</h3>
+            <form id="form-add-schedule" class="stack-form">
+              <div class="two-col-inputs">
+                <select id="sched-day-select">
+                  <option value="0">יום ראשון</option>
+                  <option value="1">יום שני</option>
+                  <option value="2">יום שלישי</option>
+                  <option value="3">יום רביעי</option>
+                  <option value="4">יום חמישי</option>
+                  <option value="5">יום שישי</option>
+                  <option value="6">יום שבת</option>
+                </select>
+                <select id="sched-part-select">
+                  <option value="school">🏫 בוקר (בי"ס)</option>
+                  <option value="after">⚽ אחה״צ (חוג)</option>
+                </select>
+              </div>
+              <div class="two-col-inputs">
+                <select id="sched-preset-select">
+                  <option value="⚽|אימון כדורגל">⚽ אימון כדורגל</option>
+                  <option value="🎙️|קלינאית תקשורת">🎙️ קלינאית תקשורת</option>
+                  <option value="🌍|שיעור אנגלית">🌍 שיעור אנגלית</option>
+                  <option value="🔢|חשבון">🔢 חשבון</option>
+                  <option value="📖|עברית ושפה">📖 שפה</option>
+                  <option value="🏃|ספורט">🏃 ספורט</option>
+                  <option value="📜|תורה">📜 תורה</option>
+                </select>
+                <input type="text" id="sched-time-input" placeholder="שעה (17:00)">
+              </div>
+              <button type="submit" class="btn-primary-action">+ הוסף למערכת</button>
+            </form>
+            <div id="parent-sched-list" class="clean-admin-list"></div>
+          </div>
+
+          <!-- 6. Dev Feature Requests & Security -->
+          <div class="surface-card">
+            <h3>🚀 בקשות שדרוג ואבטחה</h3>
+            <form id="form-dev-request" class="stack-form" style="margin-bottom:14px;">
+              <textarea id="dev-req-input" rows="2" placeholder="כתוב כאן כל פיצ'ר שתרצה שאבנה לעילי..." required></textarea>
+              <button type="submit" class="btn-secondary-pill">שלח בקשת פיתוח</button>
+            </form>
+            <div id="dev-requests-list" class="clean-admin-list"></div>
+            <span id="dev-req-count" class="hidden">0</span>
+
+            <hr class="divider-line">
+            <form id="form-security-settings" class="stack-form">
+              <div class="two-col-inputs">
+                <div>
+                  <label class="field-lbl">קוד כניסה (<span id="current-pin-display">1936</span>):</label>
+                  <input type="text" id="sec-family-pin" placeholder="1936" required>
+                </div>
+                <div>
+                  <label class="field-lbl">מיילים מורשים (Google):</label>
+                  <input type="text" id="sec-allowed-emails" placeholder="email@gmail.com">
+                </div>
+              </div>
+              <label class="field-lbl" style="margin-top:4px;">מפתח Gemini AI לקריאת תמונות חכמה (אופציונלי):</label>
+              <input type="password" id="sec-gemini-key" placeholder="AIzaSy... (לפענוח תמונות מושלם עם Gemini Vision)">
+              <input type="text" id="sec-google-client-id" class="hidden">
+              <button type="submit" class="btn-secondary-pill">שמור הגדרות</button>
+            </form>
+            <div class="hidden" id="logged-in-user-badge"></div>
+            <div class="hidden" id="p-total-solved"></div>
+            <div class="hidden" id="p-accuracy"></div>
+            <div class="hidden" id="parent-topic-stats"></div>
+          </div>
+
         </div>
+      </section>
 
-        <!-- 5. Weekly Schedule Editor -->
-        <div class="parent-card">
-          <h3>📅 עריכת מערכת שעות וחוגים</h3>
-          <form id="form-add-schedule" class="custom-form">
-            <div class="form-row">
-              <select id="sched-day-select">
-                <option value="0">יום ראשון</option>
-                <option value="1">יום שני</option>
-                <option value="2">יום שלישי</option>
-                <option value="3">יום רביעי</option>
-                <option value="4">יום חמישי</option>
-                <option value="5">יום שישי</option>
-                <option value="6">יום שבת</option>
-              </select>
-            </div>
-            <div class="form-row">
-              <select id="sched-part-select">
-                <option value="school">🏫 בוקר (בית ספר)</option>
-                <option value="after">⚽ אחה״צ (אימון/חוג)</option>
-              </select>
-            </div>
-            <div class="form-row">
-              <select id="sched-preset-select">
-                <option value="⚽|אימון כדורגל">⚽ אימון כדורגל</option>
-                <option value="🎙️|קלינאית תקשורת">🎙️ קלינאית תקשורת</option>
-                <option value="🌍|שיעור אנגלית">🌍 שיעור אנגלית</option>
-                <option value="🔢|חשבון">🔢 חשבון</option>
-                <option value="📖|עברית ושפה">📖 שפה</option>
-                <option value="🏃|ספורט">🏃 ספורט</option>
-                <option value="📜|תורה">📜 תורה</option>
-              </select>
-            </div>
-            <div class="form-row">
-              <input type="text" id="sched-time-input" placeholder="שעה (למשל 17:00)">
-            </div>
-            <button type="submit" class="arcade-btn btn-primary">➕ הוסף למערכת</button>
-          </form>
-          <div id="parent-sched-list" class="custom-questions-list"></div>
-        </div>
+    </main>
 
-        <!-- 6. Security Settings -->
-        <div class="parent-card">
-          <h3>🔐 קוד כניסה ו-Google SSO</h3>
-          <form id="form-security-settings" class="custom-form">
-            <div class="form-row">
-              <label>קוד כניסה (<span id="current-pin-display">1936</span>):</label>
-              <input type="text" id="sec-family-pin" placeholder="1936" required>
-            </div>
-            <div class="form-row">
-              <label>כתובות Gmail מורשות:</label>
-              <input type="text" id="sec-allowed-emails" placeholder="email@gmail.com">
-            </div>
-            <input type="text" id="sec-google-client-id" class="hidden">
-            <button type="submit" class="arcade-btn btn-secondary">💾 שמור אבטחה</button>
-          </form>
-          <div class="hidden" id="logged-in-user-badge"></div>
-          <div class="hidden" id="p-total-solved"></div>
-          <div class="hidden" id="p-accuracy"></div>
-          <div class="hidden" id="parent-topic-stats"></div>
-        </div>
-      </div>
-    </section>
+    <!-- Fixed iOS Bottom Tab Bar -->
+    <nav class="bottom-nav">
+      <button type="button" class="nav-btn active" data-view="home" id="nav-home">
+        <span class="btn-icon">🏠</span>
+        <span class="btn-text">בית</span>
+      </button>
+      <button type="button" class="nav-btn" data-view="speech" id="nav-speech">
+        <span class="btn-icon">🎙️</span>
+        <span class="btn-text">הגייה</span>
+        <span class="shop-badge hidden" id="speech-notif">!</span>
+      </button>
+      <button type="button" class="nav-btn" data-view="homework" id="nav-homework">
+        <span class="btn-icon">✅</span>
+        <span class="btn-text">משימות</span>
+        <span class="shop-badge hidden" id="hw-notif">0</span>
+      </button>
+      <button type="button" class="nav-btn" data-view="dictation" id="nav-dictation">
+        <span class="btn-icon">🎧</span>
+        <span class="btn-text">הכתבה</span>
+      </button>
+      <button type="button" class="nav-btn" data-view="schedule" id="nav-schedule">
+        <span class="btn-icon">📅</span>
+        <span class="btn-text">מערכת</span>
+      </button>
+      <button type="button" class="nav-btn" data-view="shop" id="nav-shop">
+        <span class="btn-icon">🏅</span>
+        <span class="btn-text">אלבום</span>
+        <span class="shop-badge hidden" id="shop-notif">!</span>
+      </button>
+    </nav>
 
-  </main>
+  </div>
 
-  <!-- Clean Bottom Navigation Bar (Great for Mobile & Desktop) -->
-  <nav class="bottom-nav">
-    <button class="nav-btn active" data-view="home" id="nav-home">
-      <span class="btn-icon">🏠</span>
-      <span class="btn-text">ראשי</span>
-    </button>
-    <button class="nav-btn" data-view="speech" id="nav-speech">
-      <span class="btn-icon">🎙️</span>
-      <span class="btn-text">ש׳/ס׳</span>
-      <span class="shop-badge hidden" id="speech-notif">!</span>
-    </button>
-    <button class="nav-btn" data-view="homework" id="nav-homework">
-      <span class="btn-icon">✅</span>
-      <span class="btn-text">משימות</span>
-      <span class="shop-badge hidden" id="hw-notif">0</span>
-    </button>
-    <button class="nav-btn" data-view="dictation" id="nav-dictation">
-      <span class="btn-icon">🎧</span>
-      <span class="btn-text">הכתבה</span>
-    </button>
-    <button class="nav-btn" data-view="schedule" id="nav-schedule">
-      <span class="btn-icon">📅</span>
-      <span class="btn-text">היום שלי</span>
-    </button>
-    <button class="nav-btn" data-view="shop" id="nav-shop">
-      <span class="btn-icon">🏅</span>
-      <span class="btn-text">אלבום</span>
-      <span class="shop-badge hidden" id="shop-notif">!</span>
-    </button>
-  </nav>
-
-  <!-- Scripts -->
   <script src="js/sound.js"></script>
   <script src="js/questions.js"></script>
   <script src="js/app.js"></script>

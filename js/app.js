@@ -1049,7 +1049,7 @@ function renderCurrentQuestion() {
   hintBox.textContent = `💡 רמז: ${q.hint}`;
 
   const stim = document.getElementById('q-stimulus');
-  stim.className = 'question-stimulus' + (q.rtlStimulus ? ' rtl-stimulus' : '');
+  stim.className = 'q-stimulus-box' + (q.rtlStimulus ? ' rtl-stimulus' : '');
   stim.innerHTML = q.stimulusHtml;
 
   const optsContainer = document.getElementById('q-options-container');
@@ -1502,6 +1502,8 @@ function renderParentsView() {
   if (emailsInp) emailsInp.value = (appState.allowedEmails || []).join(', ');
   const cidInp = document.getElementById('sec-google-client-id');
   if (cidInp) cidInp.value = appState.googleClientId || '';
+  const gemInp = document.getElementById('sec-gemini-key');
+  if (gemInp) gemInp.value = appState.geminiApiKey || '';
 
   // 1. Speech Therapy Logs & Words
   const spLogList = document.getElementById('parent-speech-logs');
@@ -1675,11 +1677,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Parents: Unified Smart WhatsApp & Webtop Import (Text + Image Paste / Upload / Drop)
-  let pendingSmartImageFile = null;
+  // Parents: Unified Smart WhatsApp & Webtop Import (Gallery / Clipboard / Paste / Text)
   let pendingSmartImageDataUrl = null;
+  let activeOcrPromise = null;
 
-  function resizeImageFileToDataUrl(file, maxWidth = 1400) {
+  function resizeImageFileToDataUrl(file, maxWidth = 1500) {
     return new Promise((resolve) => {
       const reader = new FileReader();
       reader.onload = (ev) => {
@@ -1695,8 +1697,10 @@ document.addEventListener('DOMContentLoaded', () => {
           canvas.width = w;
           canvas.height = h;
           const ctx = canvas.getContext('2d');
+          ctx.fillStyle = '#FFFFFF';
+          ctx.fillRect(0, 0, w, h);
           ctx.drawImage(img, 0, 0, w, h);
-          resolve(canvas.toDataURL('image/jpeg', 0.88));
+          resolve(canvas.toDataURL('image/jpeg', 0.9));
         };
         img.onerror = () => resolve(ev.target.result);
         img.src = ev.target.result;
@@ -1706,65 +1710,41 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  async function setSmartPendingImage(file) {
-    pendingSmartImageFile = file;
-    const prevBox = document.getElementById('smart-img-preview-box');
-    const prevImg = document.getElementById('smart-img-preview');
-    const nameLbl = document.getElementById('attached-img-name');
-    if (file) {
-      if (nameLbl) nameLbl.textContent = '⏳ טוען תמונה...';
-      pendingSmartImageDataUrl = await resizeImageFileToDataUrl(file);
-      if (nameLbl) nameLbl.textContent = file.name || 'צילום מסך מוכן לפענוח ✅';
-      if (prevImg && prevBox && pendingSmartImageDataUrl) {
-        prevImg.src = pendingSmartImageDataUrl;
-        prevBox.classList.remove('hidden');
-      }
-    } else {
-      pendingSmartImageDataUrl = null;
-      if (nameLbl) nameLbl.textContent = '';
-      if (prevBox) prevBox.classList.add('hidden');
-      const imgInput = document.getElementById('webtop-image-upload');
-      if (imgInput) imgInput.value = '';
-    }
-  }
-
-  const triggerUploadBtn = document.getElementById('btn-trigger-img-upload');
-  const imgUpload = document.getElementById('webtop-image-upload');
-  if (triggerUploadBtn && imgUpload) {
-    triggerUploadBtn.addEventListener('click', () => {
-      imgUpload.click();
-    });
-  }
-  if (imgUpload) {
-    imgUpload.addEventListener('change', (e) => {
-      const file = e.target.files && e.target.files[0];
-      if (file) setSmartPendingImage(file);
-    });
-  }
-
-  const removeImgBtn = document.getElementById('btn-remove-smart-img');
-  if (removeImgBtn) {
-    removeImgBtn.addEventListener('click', () => setSmartPendingImage(null));
-  }
-
-  // Support pasting an image directly into the textarea/dropzone
-  const smartDropzone = document.getElementById('smart-dropzone');
-  if (smartDropzone) {
-    smartDropzone.addEventListener('paste', (e) => {
-      const items = (e.clipboardData || e.originalEvent.clipboardData || {}).items || [];
-      for (let i = 0; i < items.length; i++) {
-        if (items[i].type.indexOf('image') !== -1) {
-          const blob = items[i].getAsFile();
-          if (blob) setSmartPendingImage(blob);
-        }
-      }
-    });
-  }
-
   async function extractTextFromImageSmart(dataUrl, statusBox) {
-    // 1. Try fast Cloud OCR API (OCR.space free tier - supports Hebrew & English!)
+    // 1. If Gemini API Key is set, use Gemini 2.5 Flash Vision (100% accurate Hebrew screenshot reader)
+    if (appState.geminiApiKey && appState.geminiApiKey.trim().length > 10) {
+      try {
+        if (statusBox) statusBox.textContent = '✨ מפענח תמונה באמצעות Gemini AI...';
+        const base64Data = dataUrl.split(',')[1];
+        const mimeType = dataUrl.substring(dataUrl.indexOf(':') + 1, dataUrl.indexOf(';')) || 'image/jpeg';
+        const gemRes = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(appState.geminiApiKey.trim())}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{
+                parts: [
+                  { text: 'חלץ את כל הטקסט בעברית מתוך צילום המסך (שיעורי בית, משימות מ-Webtop, מילים להכתבה או הודעות וואטסאפ). החזר אך ורק את שורות הטקסט הנקיות בעברית, שורה אחר שורה, ללא הקדמות.' },
+                  { inline_data: { mime_type: mimeType, data: base64Data } }
+                ]
+              }]
+            })
+          }
+        );
+        if (gemRes.ok) {
+          const gemJson = await gemRes.json();
+          const text = gemJson?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+          if (text && text.length > 2) return text;
+        }
+      } catch (e) {
+        console.warn('Gemini Vision fallback:', e);
+      }
+    }
+
+    // 2. Try Cloud OCR API (OCR.space Hebrew engine)
     try {
-      if (statusBox) statusBox.textContent = '⏳ מפענח תמונה בענן (שלב 1/2)...';
+      if (statusBox) statusBox.textContent = '⏳ קורא טקסט מתוך התמונה...';
       const fd = new FormData();
       fd.append('base64Image', dataUrl);
       fd.append('language', 'heb');
@@ -1784,9 +1764,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } catch (e) {}
 
-    // 2. Fallback to Tesseract.js in browser (Hebrew)
+    // 3. Reliable In-Browser Hebrew OCR via Tesseract.js v5 with live percentage progress
     try {
-      if (statusBox) statusBox.textContent = '⏳ קורא עברית מהתמונה (שלב 2/2)...';
+      if (statusBox) statusBox.textContent = '⏳ טוען קורא עברית חכם...';
       if (!window.Tesseract) {
         await new Promise((resolve, reject) => {
           const s = document.createElement('script');
@@ -1796,15 +1776,155 @@ document.addEventListener('DOMContentLoaded', () => {
           document.head.appendChild(s);
         });
       }
-      const worker = await window.Tesseract.createWorker('heb');
-      const ret = await worker.recognize(dataUrl);
-      await worker.terminate();
+      const ret = await window.Tesseract.recognize(dataUrl, 'heb', {
+        logger: (m) => {
+          if (statusBox && m && m.status === 'recognizing text') {
+            const pct = Math.round((m.progress || 0) * 100);
+            statusBox.textContent = `⏳ קורא עברית מהתמונה... ${pct}%`;
+          }
+        }
+      });
       return (ret && ret.data && ret.data.text ? ret.data.text : '').trim();
     } catch (err) {
       console.error('Tesseract fallback error:', err);
       return '';
     }
   }
+
+  async function setSmartPendingImage(file) {
+    const prevBox = document.getElementById('smart-img-preview-box');
+    const prevImg = document.getElementById('smart-img-preview');
+    const nameLbl = document.getElementById('attached-img-name');
+    const statusBox = document.getElementById('ocr-status-box');
+    const inp = document.getElementById('smart-import-text');
+
+    if (!file) {
+      pendingSmartImageDataUrl = null;
+      activeOcrPromise = null;
+      if (nameLbl) nameLbl.textContent = '';
+      if (prevBox) prevBox.classList.add('hidden');
+      if (statusBox) statusBox.classList.add('hidden');
+      const imgInput = document.getElementById('webtop-image-upload');
+      if (imgInput) imgInput.value = '';
+      return;
+    }
+
+    if (nameLbl) nameLbl.textContent = '⏳ מכין תמונה...';
+    pendingSmartImageDataUrl = await resizeImageFileToDataUrl(file);
+    if (!pendingSmartImageDataUrl) return;
+
+    if (prevImg && prevBox) {
+      prevImg.src = pendingSmartImageDataUrl;
+      prevBox.classList.remove('hidden');
+    }
+    if (nameLbl) nameLbl.textContent = file.name || 'צילום מסך נבחר ✅';
+
+    // Immediately start extracting text into the textarea so the user sees it live!
+    if (statusBox) {
+      statusBox.classList.remove('hidden');
+      statusBox.textContent = '⏳ מפענח אוטומטית את הטקסט מהתמונה...';
+    }
+
+    const currentDataUrl = pendingSmartImageDataUrl;
+    activeOcrPromise = (async () => {
+      const rawText = await extractTextFromImageSmart(currentDataUrl, statusBox);
+      const cleaned = (rawText || '')
+        .split('\n')
+        .map(l => l.trim())
+        .filter(l => l.length > 1)
+        .join('\n');
+
+      if (statusBox) {
+        if (cleaned) {
+          statusBox.textContent = '✅ הטקסט חולץ מהתמונה! לחצו על "פענח ועדכן לעילי" לשמירה.';
+        } else {
+          statusBox.textContent = '💡 התמונה מוכנה. אם הטקסט לא זוהה אוטומטית, ניתן לערוך/להדביק בתיבה למטה.';
+        }
+      }
+      if (cleaned && inp) {
+        inp.value = inp.value.trim() ? `${inp.value.trim()}\n${cleaned}` : cleaned;
+      }
+      return cleaned;
+    })();
+  }
+
+  const imgUpload = document.getElementById('webtop-image-upload');
+  if (imgUpload) {
+    imgUpload.addEventListener('change', (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (file) setSmartPendingImage(file);
+    });
+  }
+
+  const removeImgBtn = document.getElementById('btn-remove-smart-img');
+  if (removeImgBtn) {
+    removeImgBtn.addEventListener('click', () => setSmartPendingImage(null));
+  }
+
+  // Dedicated "📋 הדבק מהלוח" button for iPhone / Android / Desktop (supports both copied images & text)
+  const pasteClipBtn = document.getElementById('btn-paste-clipboard');
+  if (pasteClipBtn) {
+    pasteClipBtn.addEventListener('click', async () => {
+      const inp = document.getElementById('smart-import-text');
+      try {
+        if (navigator.clipboard && navigator.clipboard.read) {
+          const items = await navigator.clipboard.read();
+          for (const item of items) {
+            const imgType = item.types.find(t => t.startsWith('image/'));
+            if (imgType) {
+              const blob = await item.getType(imgType);
+              if (blob) {
+                await setSmartPendingImage(new File([blob], 'clipboard-image.png', { type: imgType }));
+                return;
+              }
+            }
+            if (item.types.includes('text/plain')) {
+              const textBlob = await item.getType('text/plain');
+              const txt = (await textBlob.text()).trim();
+              if (txt && inp) {
+                inp.value = inp.value.trim() ? `${inp.value.trim()}\n${txt}` : txt;
+                arcadeAudio.playClick();
+                return;
+              }
+            }
+          }
+        }
+        if (navigator.clipboard && navigator.clipboard.readText) {
+          const txt = (await navigator.clipboard.readText()).trim();
+          if (txt && inp) {
+            inp.value = inp.value.trim() ? `${inp.value.trim()}\n${txt}` : txt;
+            arcadeAudio.playClick();
+            return;
+          }
+        }
+        if (inp) {
+          inp.focus();
+          alert('לחיצה ארוכה בתיבת הטקסט -> "הדבק" (Paste) תדביק את התמונה או הטקסט מהלוח.');
+        }
+      } catch (err) {
+        if (inp) {
+          inp.focus();
+          alert('באייפון: לחצו לחיצה ארוכה בתוך תיבת הטקסט ובחרו "הדבק" (Paste).');
+        }
+      }
+    });
+  }
+
+  // Support pasting an image directly anywhere in the form or textarea
+  document.addEventListener('paste', (e) => {
+    if (!document.getElementById('view-parents')?.classList.contains('active')) return;
+    const items = (e.clipboardData || e.originalEvent?.clipboardData || {}).items || [];
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].type && items[i].type.indexOf('image') !== -1) {
+        const blob = items[i].getAsFile();
+        if (blob) {
+          e.preventDefault();
+          setSmartPendingImage(blob);
+          break;
+        }
+      }
+    }
+  });
 
   const smartForm = document.getElementById('form-smart-import');
   if (smartForm) {
@@ -1815,45 +1935,40 @@ document.addEventListener('DOMContentLoaded', () => {
       const resBox = document.getElementById('smart-import-result');
       const submitBtn = document.getElementById('btn-smart-submit');
 
+      if (activeOcrPromise && !inp.value.trim()) {
+        if (submitBtn) submitBtn.disabled = true;
+        await activeOcrPromise;
+        if (submitBtn) submitBtn.disabled = false;
+      }
+
       let combinedText = inp.value.trim();
 
-      if (pendingSmartImageDataUrl) {
+      if (!combinedText && pendingSmartImageDataUrl) {
         if (statusBox) {
           statusBox.classList.remove('hidden');
-          statusBox.textContent = '⏳ מפענח את הטקסט מתוך התמונה... אנא המתן...';
+          statusBox.textContent = '⏳ מפענח את הטקסט מתוך התמונה...';
         }
         if (submitBtn) submitBtn.disabled = true;
-
-        const rawExtracted = await extractTextFromImageSmart(pendingSmartImageDataUrl, statusBox);
-        const extracted = rawExtracted
-          .split('\n')
-          .map(l => l.trim())
-          .filter(l => l.length > 2)
-          .join('\n');
-
-        if (statusBox) statusBox.classList.add('hidden');
+        const extracted = await extractTextFromImageSmart(pendingSmartImageDataUrl, statusBox);
         if (submitBtn) submitBtn.disabled = false;
-        setSmartPendingImage(null);
-
-        if (extracted) {
-          combinedText = combinedText ? `${combinedText}\n${extracted}` : extracted;
-          inp.value = combinedText; // Show decoded text in the box so user can see/edit it!
-        } else if (!combinedText) {
-          alert('התמונה עלתה אך לא זוהה בה טקסט ברור בעברית. נסה לחתוך את צילום המסך רק לאזור הטקסט או להדביק את המילים.');
-          return;
+        if (extracted && extracted.trim()) {
+          combinedText = extracted.trim();
+          inp.value = combinedText;
         }
       }
 
       if (!combinedText) {
-        alert('אנא הדבק טקסט או בחר תמונה מ-Webtop / וואטסאפ תחילה!');
+        alert('לא זוהה טקסט. בחרו תמונה ברורה מהגלריה או הדביקו טקסט בתיבה.');
         return;
       }
 
       const res = parseSmartWhatsAppOrWebtopInput(combinedText);
+      setSmartPendingImage(null);
+      inp.value = '';
       arcadeAudio.playGoalSuccess();
       if (resBox) {
         resBox.classList.remove('hidden');
-        resBox.innerHTML = `✅ <strong>פוענח ועודכן בהצלחה לעילי!</strong> נוספו: ${res.addedHw} משימות, ${res.addedDict} מילים להכתבה, ו-${res.addedSched} עדכונים למערכת השעות!`;
+        resBox.innerHTML = `✅ <strong>עודכן בהצלחה לעילי!</strong> נוספו: ${res.addedHw} משימות, ${res.addedDict} מילים להכתבה, ו-${res.addedSched} עדכונים למערכת השעות.`;
       }
     });
   }
@@ -1904,10 +2019,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const rawEmails = document.getElementById('sec-allowed-emails').value.trim();
       appState.allowedEmails = rawEmails ? rawEmails.split(',').map(s => s.trim().toLowerCase()).filter(Boolean) : [];
       appState.googleClientId = document.getElementById('sec-google-client-id').value.trim();
+      const gemEl = document.getElementById('sec-gemini-key');
+      if (gemEl) appState.geminiApiKey = gemEl.value.trim();
       saveState();
       renderParentsView();
       initGoogleSSO();
-      alert('🔐 הגדרות האבטחה וחשבונות ה-Google המורשים נשמרו בענן!');
+      alert('🔐 ההגדרות נשמרו בהצלחה!');
     });
   }
 
