@@ -13,8 +13,44 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Rubik:wght@400;500;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body class="theme-beitar">
+  <!-- ==================== FAMILY SECURITY GATE (GOOGLE SSO + FAMILY PIN) ==================== -->
+  <div class="auth-gate-overlay" id="auth-gate-overlay">
+    <div class="auth-gate-card">
+      <div class="auth-crest-icons">🦁💛🖤 &nbsp; 👑🤍💜</div>
+      <h2>הכניסה הפרטית של משפחת עילי 🔒</h2>
+      <p>האפליקציה מוגנת ופתוחה רק לעילי, אבא ואמא.</p>
+
+      <!-- Google SSO Button Container -->
+      <div class="google-sso-box" id="google-sso-box">
+        <div id="g-signin-btn-container"></div>
+        <button type="button" class="google-custom-btn" id="btn-google-sso">
+          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="G" width="22" height="22">
+          <span>התחברות מאובטחת עם Google</span>
+        </button>
+      </div>
+
+      <div class="auth-divider"><span>או כניסה מהירה לעילי (קוד משפחתי)</span></div>
+
+      <!-- Quick Family PIN / Password -->
+      <form id="form-family-pin" class="pin-login-form">
+        <input
+          type="password"
+          id="family-pin-input"
+          class="pin-input"
+          placeholder="קוד סודי..."
+          inputmode="numeric"
+          autocomplete="off"
+          required
+        />
+        <button type="submit" class="arcade-btn btn-gold">רוץ למגרש! ⚽🔓</button>
+      </form>
+      <div class="auth-error hidden" id="auth-error-msg">הקוד או החשבון אינם מורשים. נסה שוב!</div>
+    </div>
+  </div>
+
   <!-- Confetti Canvas -->
   <canvas id="confetti-canvas"></canvas>
 
@@ -517,16 +553,57 @@
         <button class="arcade-btn btn-secondary" id="btn-reset-progress">איפוס נתונים</button>
       </div>
 
-      <!-- iPhone Connection Banner -->
+      <!-- iPhone Connection & Security Banner -->
       <div class="iphone-connect-banner">
-        <div class="iphone-icon">📱🍏</div>
+        <div class="iphone-icon">🔒📱</div>
         <div class="iphone-info">
-          <h3>חיבור לאייפון של עילי (כאפליקציה על מסך הבית!)</h3>
-          <p>פתחו באייפון ב-<strong>Safari</strong> את הקישור הקבוע שהכנתי לכם, לחצו על כפתור <strong>השיתוף ⬆️</strong> ובחרו <strong>"הוסף למסך הבית" (Add to Home Screen ➕)</strong>.</p>
+          <h3>אבטחה (Google SSO + קוד משפחתי) וחיבור מהנייד</h3>
+          <p>האפליקציה נעולה לזרים! קוד הכניסה המהיר הנוכחי לעילי הוא: <strong id="current-pin-display" style="color:#fde047;">1936</strong> (שנת הייסוד של בית"ר!). ניתן לשנות את הקוד, לחבר חשבונות Google מורשים ולשלוח לנו בקשות פיתוח ישר מכאן!</p>
         </div>
+        <button class="arcade-btn btn-secondary" id="btn-logout-device" style="padding:8px 16px;font-size:0.9rem;">🔒 נעל מכשיר זה</button>
       </div>
 
       <div class="parents-grid">
+        <!-- NEW CARD A: Direct Feature Request / AI Builder Studio from Mobile! -->
+        <div class="parent-card" style="border-top: 6px solid #f59e0b; background: linear-gradient(180deg, #fffbeb 0%, #ffffff 100%);">
+          <h3>🚀 בקשות פיתוח ושדרוגים (ישירות מהנייד שלך אליי!)</h3>
+          <p class="card-helper">רוצה שאוסיף משחק חדש, אשנה עיצוב או אוסיף פיצ'ר? כתוב לי כאן מהנייד בכל רגע! הבקשות נשמרות בענן ואני קורא ובונה אותן עבורך.</p>
+
+          <form id="form-dev-request" class="custom-form">
+            <div class="form-row">
+              <label>מה תרצה שאבנה או אוסיף לעילי?</label>
+              <textarea id="dev-req-input" rows="3" placeholder="למשל: תוסיף משחק של לוח הכפל כפולות 6 ו-7, או תוסיף כפתור שקורא סיפור לפני השינה..." required></textarea>
+            </div>
+            <button type="submit" class="arcade-btn btn-gold">📨 שלח בקשת פיתוח לענן</button>
+          </form>
+
+          <div class="custom-list-wrapper">
+            <h4>📋 תור הבקשות ששלחת מהנייד (<span id="dev-req-count">0</span>):</h4>
+            <div id="dev-requests-list" class="custom-questions-list"></div>
+          </div>
+        </div>
+
+        <!-- NEW CARD B: Google SSO & Family Access Control -->
+        <div class="parent-card" style="border-top: 6px solid #3b82f6;">
+          <h3>🔐 ניהול הרשאות כניסה (Google SSO & קוד סודי)</h3>
+          <p class="card-helper">רק מי שמורשה כאן יכול להיכנס לאפליקציה. המכשיר הנוכחי מחובר בתור: <strong id="logged-in-user-badge">מורשה משפחתי ✅</strong></p>
+
+          <form id="form-security-settings" class="custom-form">
+            <div class="form-row">
+              <label>קוד כניסה מהיר (לעילי באייפון ולמשפחה):</label>
+              <input type="text" id="sec-family-pin" placeholder="למשל: 1936" required>
+            </div>
+            <div class="form-row">
+              <label>כתובות Gmail מורשות (מופרדות בפסיק):</label>
+              <input type="text" id="sec-allowed-emails" placeholder="your.email@gmail.com, spouse@gmail.com">
+            </div>
+            <div class="form-row">
+              <label>Google OAuth Client ID (אופציונלי - לכפתור Google SSO רשמי):</label>
+              <input type="text" id="sec-google-client-id" placeholder="הדבק Client ID מ-Google Cloud או השאר לחיבור מהיר">
+            </div>
+            <button type="submit" class="arcade-btn btn-primary">💾 שמור הגדרות אבטחה בענן</button>
+          </form>
+        </div>
         <!-- 1. Speech Therapy (קלינאית תקשורת) Manager & Audio Log -->
         <div class="parent-card" style="border-top: 6px solid #ec4899;">
           <h3>🎙️ קלינאית תקשורת: ניהול תרגילי ש׳ / ס׳ ויומן הקלטות</h3>

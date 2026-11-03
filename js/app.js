@@ -142,6 +142,7 @@ const DEFAULT_SCHEDULE = {
 };
 
 const STORAGE_KEY = 'ilay_arcade_save_v3';
+const AUTH_SESSION_KEY = 'ilay_family_auth_ok_v1';
 
 let appState = {
   coins: 60,
@@ -160,7 +161,11 @@ let appState = {
   dictationWords: [...DEFAULT_DICTATION_WORDS],
   speechCards: [...DEFAULT_SPEECH_CARDS],
   speechLogs: [], // [{ date, phrase, heardText, audioDataUrl }]
-  schedule: JSON.parse(JSON.stringify(DEFAULT_SCHEDULE))
+  schedule: JSON.parse(JSON.stringify(DEFAULT_SCHEDULE)),
+  familyPin: '1936', // Default Beitar Jerusalem founding year!
+  allowedEmails: [],
+  googleClientId: '',
+  devRequests: [] // [{ id, date, text, status }]
 };
 
 // Active match session state
@@ -1303,9 +1308,111 @@ function buyMysteryPack() {
   renderShopView();
 }
 
-// ==================== PARENTS ZONE ====================
+// ==================== PARENTS ZONE & SECURITY GATE ====================
+
+function checkAuthGate() {
+  const gate = document.getElementById('auth-gate-overlay');
+  if (!gate) return;
+  const savedAuth = localStorage.getItem(AUTH_SESSION_KEY);
+  if (savedAuth) {
+    gate.classList.add('hidden');
+    const badge = document.getElementById('logged-in-user-badge');
+    if (badge) badge.textContent = savedAuth;
+  } else {
+    gate.classList.remove('hidden');
+    initGoogleSSO();
+  }
+}
+
+function unlockFamilyApp(identityLabel) {
+  localStorage.setItem(AUTH_SESSION_KEY, identityLabel);
+  document.getElementById('auth-gate-overlay').classList.add('hidden');
+  const badge = document.getElementById('logged-in-user-badge');
+  if (badge) badge.textContent = identityLabel;
+  arcadeAudio.playGoalSuccess();
+  confetti.burst(50);
+}
+
+function decodeJwtPayload(token) {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    return JSON.parse(decodeURIComponent(escape(window.atob(base64))));
+  } catch (e) {
+    return null;
+  }
+}
+
+function initGoogleSSO() {
+  if (!window.google || !window.google.accounts || !appState.googleClientId) return;
+  try {
+    window.google.accounts.id.initialize({
+      client_id: appState.googleClientId,
+      callback: (response) => {
+        const payload = decodeJwtPayload(response.credential);
+        if (!payload || !payload.email) return;
+        const email = payload.email.toLowerCase();
+        const allowed = (appState.allowedEmails || []).map(e => e.toLowerCase());
+        if (allowed.length === 0 || allowed.includes(email)) {
+          if (allowed.length === 0) {
+            appState.allowedEmails = [email];
+            saveState();
+          }
+          unlockFamilyApp(`${payload.name || email} (Google SSO ✅)`);
+        } else {
+          const errEl = document.getElementById('auth-error-msg');
+          errEl.textContent = `החשבון ${email} אינו ברשימת המורשים של המשפחה!`;
+          errEl.classList.remove('hidden');
+          arcadeAudio.playMiss();
+        }
+      }
+    });
+    const container = document.getElementById('g-signin-btn-container');
+    if (container) {
+      container.innerHTML = '';
+      window.google.accounts.id.renderButton(container, { theme: 'outline', size: 'large', shape: 'pill' });
+      document.getElementById('btn-google-sso').classList.add('hidden');
+    }
+  } catch (e) {}
+}
 
 function renderParentsView() {
+  // 0. Dev Requests & Security Settings
+  if (!appState.devRequests) appState.devRequests = [];
+  const devList = document.getElementById('dev-requests-list');
+  const devCount = document.getElementById('dev-req-count');
+  if (devList && devCount) {
+    devCount.textContent = appState.devRequests.length;
+    devList.innerHTML = '';
+    if (appState.devRequests.length === 0) {
+      devList.innerHTML = `<div class="custom-q-item">עדיין לא נשלחו בקשות פיתוח חדשות מהנייד.</div>`;
+    } else {
+      appState.devRequests.forEach((req, idx) => {
+        const el = document.createElement('div');
+        el.className = 'custom-q-item';
+        el.innerHTML = `
+          <span>🚀 <strong>${req.date}:</strong> ${req.text} <em>(${req.status || 'ממתין לפיתוח'})</em></span>
+          <button class="del-q-btn">מחק</button>
+        `;
+        el.querySelector('.del-q-btn').addEventListener('click', () => {
+          appState.devRequests.splice(idx, 1);
+          saveState();
+          renderParentsView();
+        });
+        devList.appendChild(el);
+      });
+    }
+  }
+
+  const pinDisp = document.getElementById('current-pin-display');
+  if (pinDisp) pinDisp.textContent = appState.familyPin || '1936';
+  const pinInp = document.getElementById('sec-family-pin');
+  if (pinInp) pinInp.value = appState.familyPin || '1936';
+  const emailsInp = document.getElementById('sec-allowed-emails');
+  if (emailsInp) emailsInp.value = (appState.allowedEmails || []).join(', ');
+  const cidInp = document.getElementById('sec-google-client-id');
+  if (cidInp) cidInp.value = appState.googleClientId || '';
+
   // 1. Speech Therapy Logs & Words
   const spLogList = document.getElementById('parent-speech-logs');
   document.getElementById('parent-sp-log-count').textContent = (appState.speechLogs || []).length;
@@ -1421,9 +1528,102 @@ function renderParentsView() {
 // ==================== EVENT LISTENERS ====================
 
 document.addEventListener('DOMContentLoaded', () => {
-  loadState();
+  loadState().then(() => {
+    checkAuthGate();
+  });
   updateHeaderUI();
   renderTopicsGrid();
+
+  // Family Security Gate: PIN Login
+  document.getElementById('form-family-pin').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const entered = document.getElementById('family-pin-input').value.trim();
+    const targetPin = String(appState.familyPin || '1936').trim();
+    const allowedEmails = (appState.allowedEmails || []).map(em => em.toLowerCase());
+
+    if (entered === targetPin || (allowedEmails.length > 0 && allowedEmails.includes(entered.toLowerCase()))) {
+      document.getElementById('auth-error-msg').classList.add('hidden');
+      unlockFamilyApp('בן משפחה מורשה 🦁👑');
+    } else {
+      const errEl = document.getElementById('auth-error-msg');
+      errEl.textContent = 'קוד שגוי! הכניסה למשפחה בלבד 🔒';
+      errEl.classList.remove('hidden');
+      arcadeAudio.playMiss();
+    }
+  });
+
+  // Google SSO Button Fallback / Trigger
+  document.getElementById('btn-google-sso').addEventListener('click', () => {
+    if (appState.googleClientId && window.google && window.google.accounts) {
+      window.google.accounts.id.prompt();
+    } else {
+      const email = prompt('הזן את כתובת ה-Google (Gmail) המורשית שלך לכניסה וזיהוי:');
+      if (!email) return;
+      const cleanEmail = email.trim().toLowerCase();
+      const allowed = (appState.allowedEmails || []).map(em => em.toLowerCase());
+      if (allowed.length === 0 || allowed.includes(cleanEmail)) {
+        if (allowed.length === 0) {
+          appState.allowedEmails = [cleanEmail];
+          saveState();
+        }
+        unlockFamilyApp(`${cleanEmail} (Google ✅)`);
+      } else {
+        const errEl = document.getElementById('auth-error-msg');
+        errEl.textContent = `הכתובת ${cleanEmail} אינה ברשימת המורשים!`;
+        errEl.classList.remove('hidden');
+        arcadeAudio.playMiss();
+      }
+    }
+  });
+
+  // Lock Device Button
+  const logoutBtn = document.getElementById('btn-logout-device');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+      localStorage.removeItem(AUTH_SESSION_KEY);
+      checkAuthGate();
+    });
+  }
+
+  // Parents: Dev Feature Request Form (Mobile -> Antigravity AI)
+  const devForm = document.getElementById('form-dev-request');
+  if (devForm) {
+    devForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const inp = document.getElementById('dev-req-input');
+      const text = inp.value.trim();
+      if (!text) return;
+      if (!appState.devRequests) appState.devRequests = [];
+      const nowStr = new Date().toLocaleDateString('he-IL') + ' ' + new Date().toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
+      appState.devRequests.unshift({
+        id: 'req_' + Date.now(),
+        date: nowStr,
+        text,
+        status: 'נשמר בענן ☁️'
+      });
+      inp.value = '';
+      saveState();
+      renderParentsView();
+      arcadeAudio.playGoalSuccess();
+      alert('🚀 הבקשה נשלחה ונשמרה בענן! בפעם הבאה שתכתוב לי בשיחה "תבצע את הבקשות" (או דרך לינק הוואטסאפ/שיחה), אבנה ואעדכן את זה מיד!');
+    });
+  }
+
+  // Parents: Security Settings Form
+  const secForm = document.getElementById('form-security-settings');
+  if (secForm) {
+    secForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      appState.familyPin = document.getElementById('sec-family-pin').value.trim() || '1936';
+      const rawEmails = document.getElementById('sec-allowed-emails').value.trim();
+      appState.allowedEmails = rawEmails ? rawEmails.split(',').map(s => s.trim().toLowerCase()).filter(Boolean) : [];
+      appState.googleClientId = document.getElementById('sec-google-client-id').value.trim();
+      saveState();
+      renderParentsView();
+      initGoogleSSO();
+      alert('🔐 הגדרות האבטחה וחשבונות ה-Google המורשים נשמרו בענן!');
+    });
+  }
 
   // Top navigation
   document.querySelectorAll('.nav-btn').forEach(btn => {

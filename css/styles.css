@@ -134,6 +134,136 @@ body.theme-real .stadium-banner {
   z-index: 9999;
 }
 
+/* ==================== FAMILY SECURITY GATE (GOOGLE SSO + PIN) ==================== */
+.auth-gate-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  background: radial-gradient(circle at center, rgba(15, 23, 42, 0.96) 0%, #09090b 100%);
+  backdrop-filter: blur(18px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.auth-gate-card {
+  background: #ffffff;
+  max-width: 440px;
+  width: 100%;
+  border-radius: 28px;
+  padding: 34px 28px;
+  text-align: center;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65);
+  border-top: 10px solid #facc15;
+}
+
+.auth-crest-icons {
+  font-size: 2.3rem;
+  margin-bottom: 10px;
+}
+
+.auth-gate-card h2 {
+  font-size: 1.65rem;
+  font-weight: 900;
+  color: #0f172a;
+  margin-bottom: 6px;
+}
+
+.auth-gate-card p {
+  font-size: 0.98rem;
+  color: #475569;
+  margin-bottom: 22px;
+}
+
+.google-sso-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.google-custom-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  padding: 13px 20px;
+  border-radius: 50px;
+  border: 2px solid #cbd5e1;
+  background: #ffffff;
+  color: #1e293b;
+  font-family: inherit;
+  font-weight: 800;
+  font-size: 1.05rem;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  transition: all 0.15s;
+}
+.google-custom-btn:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+  transform: translateY(-2px);
+}
+
+.auth-divider {
+  position: relative;
+  margin: 18px 0;
+  text-align: center;
+}
+.auth-divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #e2e8f0;
+}
+.auth-divider span {
+  position: relative;
+  background: #fff;
+  padding: 0 12px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.pin-login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pin-input {
+  width: 100%;
+  padding: 14px;
+  border-radius: 16px;
+  border: 3px solid #cbd5e1;
+  font-family: inherit;
+  font-size: 1.6rem;
+  font-weight: 900;
+  text-align: center;
+  letter-spacing: 6px;
+  color: #0f172a;
+}
+.pin-input:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+.auth-error {
+  margin-top: 12px;
+  padding: 10px;
+  border-radius: 12px;
+  background: #fee2e2;
+  color: #991b1b;
+  font-weight: 800;
+  font-size: 0.92rem;
+}
+
 /* Floating Background Balls */
 .bg-decorations {
   position: fixed;
