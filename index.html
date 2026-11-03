@@ -409,24 +409,32 @@
       </div>
 
       <div class="parents-grid">
-        <!-- 0. Smart Import from WhatsApp Group & Webtop (Screenshot OCR + Text)! -->
+        <!-- 0. Smart Import from WhatsApp Group & Webtop (Unified Text + Image)! -->
         <div class="parent-card" style="border-right: 5px solid #10b981;">
-          <h3>📲 קליטה מ-Webtop ומוואטסאפ (צילום מסך או טקסט!)</h3>
-          <p style="font-size:0.88rem;color:#64748b;margin-bottom:10px;">נכנסת ל-Webtop עם Face ID? פשוט <strong>צלם מסך (Screenshot)</strong> והעלה לכאן (או הדבק הודעה מוואטסאפ) — המערכת תקרא את התמונה ותעדכן לעילי שיעורי בית, הכתבה ומערכת!</p>
-
-          <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
-            <label for="webtop-image-upload" class="arcade-btn btn-gold" style="flex:1;text-align:center;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;">
-              📸 העלה צילום מסך מ-Webtop / וואטסאפ
-            </label>
-            <input type="file" id="webtop-image-upload" accept="image/*" class="hidden">
-          </div>
-          <div id="ocr-status-box" class="hint-box hidden" style="margin-bottom:10px;">⏳ קורא את צילום המסך מ-Webtop... אנא המתן מספר שניות...</div>
+          <h3>📲 פענוח ועדכון חכם (מוואטסאפ ו-Webtop)</h3>
+          <p style="font-size:0.88rem;color:#64748b;margin-bottom:10px;">הדבק טקסט, הדבק תמונה, או צרף צילום מסך מ-Webtop / וואטסאפ ולחץ על הכפתור — המערכת תפענח גם תמונה וגם טקסט ותעדכן לעילי הכל!</p>
 
           <form id="form-smart-import" class="custom-form">
-            <div class="form-row">
-              <textarea id="smart-import-text" rows="3" placeholder="או הדבק כאן הודעה מוואטסאפ / טקסט מ-Webtop..." required></textarea>
+            <div class="smart-dropzone" id="smart-dropzone">
+              <textarea id="smart-import-text" rows="3" placeholder="כתוב/הדבק כאן הודעה או הדבק תמונה (Ctrl+V)..."></textarea>
+              
+              <div class="smart-attach-row">
+                <label for="webtop-image-upload" class="attach-img-pill">
+                  📷 צרף תמונה / צילום מסך מ-Webtop
+                </label>
+                <input type="file" id="webtop-image-upload" accept="image/*" class="hidden">
+                <span id="attached-img-name" class="attached-img-name"></span>
+              </div>
+
+              <div id="smart-img-preview-box" class="smart-img-preview-box hidden">
+                <img id="smart-img-preview" src="" alt="תצוגה מקדימה">
+                <button type="button" id="btn-remove-smart-img" class="del-q-btn">✕ הסר תמונה</button>
+              </div>
             </div>
-            <button type="submit" class="arcade-btn btn-check">🪄 פענח ועדכן לעילי אוטומטית</button>
+
+            <div id="ocr-status-box" class="hint-box hidden" style="margin-bottom:6px;">⏳ מפענח את הטקסט מתוך התמונה... אנא המתן...</div>
+
+            <button type="submit" class="arcade-btn btn-check" id="btn-smart-submit">🪄 פענח ועדכן לעילי (טקסט / תמונה)</button>
           </form>
           <div id="smart-import-result" class="hint-box hidden" style="margin-top:10px;margin-bottom:0;"></div>
         </div>

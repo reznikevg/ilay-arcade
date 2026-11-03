@@ -1675,73 +1675,115 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Parents: Smart WhatsApp & Webtop Import Form
-  const smartForm = document.getElementById('form-smart-import');
-  if (smartForm) {
-    smartForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const inp = document.getElementById('smart-import-text');
-      const raw = inp.value.trim();
-      if (!raw) return;
-      const res = parseSmartWhatsAppOrWebtopInput(raw);
-      inp.value = '';
-      arcadeAudio.playGoalSuccess();
-      const resBox = document.getElementById('smart-import-result');
-      if (resBox) {
-        resBox.classList.remove('hidden');
-        resBox.innerHTML = `✅ <strong>עודכן בהצלחה לעילי!</strong> נוספו: ${res.addedHw} משימות שיעורי בית, ${res.addedDict} מילים להכתבה, ו-${res.addedSched} עדכונים למערכת השעות!`;
+  // Parents: Unified Smart WhatsApp & Webtop Import (Text + Image Paste / Upload / Drop)
+  let pendingSmartImageFile = null;
+
+  function setSmartPendingImage(file) {
+    pendingSmartImageFile = file;
+    const prevBox = document.getElementById('smart-img-preview-box');
+    const prevImg = document.getElementById('smart-img-preview');
+    const nameLbl = document.getElementById('attached-img-name');
+    if (file) {
+      if (nameLbl) nameLbl.textContent = file.name || 'תמונה מהלוח';
+      if (prevImg && prevBox) {
+        prevImg.src = URL.createObjectURL(file);
+        prevBox.classList.remove('hidden');
+      }
+    } else {
+      if (nameLbl) nameLbl.textContent = '';
+      if (prevBox) prevBox.classList.add('hidden');
+      const imgInput = document.getElementById('webtop-image-upload');
+      if (imgInput) imgInput.value = '';
+    }
+  }
+
+  const imgUpload = document.getElementById('webtop-image-upload');
+  if (imgUpload) {
+    imgUpload.addEventListener('change', (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (file) setSmartPendingImage(file);
+    });
+  }
+
+  const removeImgBtn = document.getElementById('btn-remove-smart-img');
+  if (removeImgBtn) {
+    removeImgBtn.addEventListener('click', () => setSmartPendingImage(null));
+  }
+
+  // Support pasting an image directly into the textarea/dropzone
+  const smartDropzone = document.getElementById('smart-dropzone');
+  if (smartDropzone) {
+    smartDropzone.addEventListener('paste', (e) => {
+      const items = (e.clipboardData || e.originalEvent.clipboardData || {}).items || [];
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].type.indexOf('image') !== -1) {
+          const blob = items[i].getAsFile();
+          if (blob) setSmartPendingImage(blob);
+        }
       }
     });
   }
 
-  // Parents: Webtop / WhatsApp Screenshot Image Upload (OCR in Hebrew)
-  const imgUpload = document.getElementById('webtop-image-upload');
-  if (imgUpload) {
-    imgUpload.addEventListener('change', async (e) => {
-      const file = e.target.files && e.target.files[0];
-      if (!file) return;
+  const smartForm = document.getElementById('form-smart-import');
+  if (smartForm) {
+    smartForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const inp = document.getElementById('smart-import-text');
       const statusBox = document.getElementById('ocr-status-box');
-      const txtArea = document.getElementById('smart-import-text');
-      if (statusBox) {
-        statusBox.classList.remove('hidden');
-        statusBox.textContent = '⏳ קורא את הטקסט מתוך צילום המסך מ-Webtop... אנא המתן...';
-      }
+      const resBox = document.getElementById('smart-import-result');
+      const submitBtn = document.getElementById('btn-smart-submit');
 
-      try {
-        if (!window.Tesseract) {
-          await new Promise((resolve, reject) => {
-            const s = document.createElement('script');
-            s.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
-            s.onload = resolve;
-            s.onerror = reject;
-            document.head.appendChild(s);
-          });
+      let combinedText = inp.value.trim();
+
+      // If an image is attached, decode it with Hebrew + English OCR!
+      if (pendingSmartImageFile) {
+        if (statusBox) {
+          statusBox.classList.remove('hidden');
+          statusBox.textContent = '⏳ מפענח את הטקסט מתוך התמונה... אנא המתן מספר שניות...';
         }
-        const result = await window.Tesseract.recognize(file, 'heb', {});
-        const extracted = (result && result.data && result.data.text ? result.data.text : '')
-          .split('\n')
-          .map(l => l.trim())
-          .filter(l => l.length > 2)
-          .join('\n');
+        if (submitBtn) submitBtn.disabled = true;
 
-        if (statusBox) statusBox.classList.add('hidden');
-        if (extracted) {
-          txtArea.value = extracted;
-          const res = parseSmartWhatsAppOrWebtopInput(extracted);
-          arcadeAudio.playGoalSuccess();
-          const resBox = document.getElementById('smart-import-result');
-          if (resBox) {
-            resBox.classList.remove('hidden');
-            resBox.innerHTML = `📸✅ <strong>צילום המסך מ-Webtop פוענח ועודכן לעילי!</strong> (נוספו ${res.addedHw} משימות, ${res.addedDict} מילים להכתבה). ניתן גם לערוך את הטקסט בתיבה למעלה אם צריך.`;
+        try {
+          if (!window.Tesseract) {
+            await new Promise((resolve, reject) => {
+              const s = document.createElement('script');
+              s.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
+              s.onload = resolve;
+              s.onerror = reject;
+              document.head.appendChild(s);
+            });
           }
-        } else {
-          alert('לא הצלחתי לזהות טקסט ברור בתמונה. נסה לצלם שוב מקרוב או להדביק טקסט.');
+          const result = await window.Tesseract.recognize(pendingSmartImageFile, 'heb+eng', {});
+          const extracted = (result && result.data && result.data.text ? result.data.text : '')
+            .split('\n')
+            .map(l => l.trim())
+            .filter(l => l.length > 2)
+            .join('\n');
+
+          if (extracted) {
+            combinedText = combinedText ? `${combinedText}\n${extracted}` : extracted;
+          }
+        } catch (err) {
+          console.error('OCR Error:', err);
         }
-      } catch (err) {
+
         if (statusBox) statusBox.classList.add('hidden');
-        alert('שגיאה בקריאת התמונה. מומלץ באייפון ללחוץ לחיצה ארוכה על הטקסט בתוך התמונה (Live Text) ולהדביק כאן!');
+        if (submitBtn) submitBtn.disabled = false;
+        setSmartPendingImage(null);
       }
-      imgUpload.value = '';
+
+      if (!combinedText) {
+        alert('אנא הדבק טקסט או בחר/הדבק תמונה של ההודעה מ-Webtop / וואטסאפ כדי לפענח!');
+        return;
+      }
+
+      const res = parseSmartWhatsAppOrWebtopInput(combinedText);
+      inp.value = '';
+      arcadeAudio.playGoalSuccess();
+      if (resBox) {
+        resBox.classList.remove('hidden');
+        resBox.innerHTML = `✅ <strong>פוענח ועודכן בהצלחה לעילי!</strong> נוספו: ${res.addedHw} משימות, ${res.addedDict} מילים להכתבה, ו-${res.addedSched} עדכונים למערכת השעות!`;
+      }
     });
   }
 
