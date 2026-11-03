@@ -1310,6 +1310,96 @@ function buyMysteryPack() {
 
 // ==================== PARENTS ZONE & SECURITY GATE ====================
 
+function parseSmartWhatsAppOrWebtopInput(rawText) {
+  const lines = rawText.split(/\n+/).map(l => l.trim()).filter(Boolean);
+  let addedHw = 0;
+  let addedDict = 0;
+  let addedSched = 0;
+
+  lines.forEach(line => {
+    const clean = line.replace(/^[-*•]\s*/, '');
+
+    // 1. Check if line contains dictation words (e.g. "הכתבה: מילה1, מילה2, מילה3")
+    if (clean.includes('הכתבה') && (clean.includes(':') || clean.includes('-'))) {
+      const afterColon = clean.split(/[:\-]/).slice(1).join(' ').trim();
+      const words = afterColon.split(/[,،\s]+/).map(w => w.trim()).filter(w => w.length >= 2);
+      if (words.length >= 2) {
+        words.forEach(w => {
+          if (!appState.dictationWords.some(dw => dw.word === w)) {
+            appState.dictationWords.push({ word: w, hint: 'מילה מההכתבה השבועית 🎧' });
+            addedDict++;
+          }
+        });
+        return;
+      }
+    }
+
+    // 2. Check if line mentions a specific day or afternoon / school event
+    const dayMap = [
+      { keys: ['יום ראשון', 'ביום א'], idx: 0 },
+      { keys: ['יום שני', 'ביום ב'], idx: 1 },
+      { keys: ['יום שלישי', 'ביום ג'], idx: 2 },
+      { keys: ['יום רביעי', 'ביום ד'], idx: 3 },
+      { keys: ['יום חמישי', 'ביום ה'], idx: 4 },
+      { keys: ['יום שישי', 'ביום ו'], idx: 5 }
+    ];
+    let matchedDay = null;
+    for (const d of dayMap) {
+      if (d.keys.some(k => clean.includes(k))) {
+        matchedDay = d.idx;
+        break;
+      }
+    }
+    if (clean.includes('מחר')) {
+      matchedDay = (new Date().getDay() + 1) % 7;
+    }
+
+    if (matchedDay !== null && (clean.includes('אימון') || clean.includes('חוג') || clean.includes('להביא') || clean.includes('טיול') || clean.includes('טקס') || clean.includes('ספורט'))) {
+      if (!appState.schedule[matchedDay]) appState.schedule[matchedDay] = { school: [], after: [] };
+      const isAfter = clean.includes('אימון') || clean.includes('חוג') || clean.includes('אחה"צ');
+      const icon = clean.includes('כדורגל') ? '⚽' : clean.includes('ספורט') ? '🏃' : '📌';
+      appState.schedule[matchedDay][isAfter ? 'after' : 'school'].push({
+        icon,
+        title: clean.slice(0, 42),
+        time: ''
+      });
+      addedSched++;
+      return;
+    }
+
+    // 3. Otherwise treat as Homework / Task from Webtop or WhatsApp
+    let icon = '📚';
+    let subject = 'וואטסאפ / Webtop';
+    if (clean.includes('חשבון') || clean.includes('הנדסה') || clean.includes('עמ')) {
+      icon = '🔢';
+      subject = 'חשבון (Webtop)';
+    } else if (clean.includes('שפה') || clean.includes('עברית') || clean.includes('קריאה')) {
+      icon = '📖';
+      subject = 'שפה (Webtop)';
+    } else if (clean.includes('אנגלית')) {
+      icon = '🌍';
+      subject = 'אנגלית (Webtop)';
+    } else if (clean.includes('קלינאית') || clean.includes('דיבור')) {
+      icon = '🎙️';
+      subject = 'תרגול קלינאית';
+    }
+
+    appState.homeworkList.unshift({
+      id: 'hw_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+      icon,
+      subject,
+      title: clean,
+      done: false
+    });
+    addedHw++;
+  });
+
+  saveState();
+  updateHeaderUI();
+  renderParentsView();
+  return { addedHw, addedDict, addedSched };
+}
+
 function checkAuthGate() {
   const gate = document.getElementById('auth-gate-overlay');
   if (!gate) return;
@@ -1584,6 +1674,38 @@ document.addEventListener('DOMContentLoaded', () => {
       checkAuthGate();
     });
   }
+
+  // Parents: Smart WhatsApp & Webtop Import Form
+  const smartForm = document.getElementById('form-smart-import');
+  if (smartForm) {
+    smartForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const inp = document.getElementById('smart-import-text');
+      const raw = inp.value.trim();
+      if (!raw) return;
+      const res = parseSmartWhatsAppOrWebtopInput(raw);
+      inp.value = '';
+      arcadeAudio.playGoalSuccess();
+      const resBox = document.getElementById('smart-import-result');
+      if (resBox) {
+        resBox.classList.remove('hidden');
+        resBox.innerHTML = `✅ <strong>עודכן בהצלחה לעילי!</strong> נוספו: ${res.addedHw} משימות שיעורי בית, ${res.addedDict} מילים להכתבה, ו-${res.addedSched} עדכונים למערכת השעות!`;
+      }
+    });
+  }
+
+  // Support URL Share Shortcut (?import=...) from iOS Shortcuts / Webtop Share
+  try {
+    const urlParams = new URLSearchParams(window.location.search);
+    const sharedText = urlParams.get('import');
+    if (sharedText) {
+      setTimeout(() => {
+        parseSmartWhatsAppOrWebtopInput(sharedText);
+        window.history.replaceState({}, document.title, window.location.pathname);
+        alert('📲 ההודעה מוואטסאפ / Webtop נקלטה ועודכנה באפליקציה של עילי!');
+      }, 900);
+    }
+  } catch (e) {}
 
   // Parents: Dev Feature Request Form (Mobile -> Antigravity AI)
   const devForm = document.getElementById('form-dev-request');
