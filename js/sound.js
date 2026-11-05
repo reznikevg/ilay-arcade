@@ -4,6 +4,13 @@ class ArcadeAudio {
   constructor() {
     this.enabled = true;
     this.ctx = null;
+    this.voices = [];
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      this.voices = window.speechSynthesis.getVoices() || [];
+      window.speechSynthesis.onvoiceschanged = () => {
+        this.voices = window.speechSynthesis.getVoices() || [];
+      };
+    }
   }
 
   initContext() {
@@ -69,9 +76,38 @@ class ArcadeAudio {
     this.playTone(1174.66, 'triangle', 0.35, 0.2, 0.25);
   }
 
+  numberToHebrewWords(num) {
+    const n = parseInt(num, 10);
+    if (isNaN(n)) return '';
+    if (n < 0) return 'מִינוּס ' + this.numberToHebrewWords(-n);
+
+    const units = ['אֶפֶס', 'אַחַת', 'שְׁתַּיִם', 'שָׁלוֹשׁ', 'אַרְבַּע', 'חָמֵשׁ', 'שֵׁשׁ', 'שֶׁבַע', 'שְׁמוֹנֶה', 'תֵּשַׁע'];
+    const teens = ['עֶשֶׂר', 'אַחַד עָשָׂר', 'שְׁתֵּים עֶשְׂרֵה', 'שְׁלוֹשׁ עֶשְׂרֵה', 'אַרְבַּע עֶשְׂרֵה', 'חֲמֵשׁ עֶשְׂרֵה', 'שֵׁשׁ עֶשְׂרֵה', 'שְׁבַע עֶשְׂרֵה', 'שְׁמוֹנֶה עֶשְׂרֵה', 'תְּשַׁע עֶשְׂרֵה'];
+    const tens = ['', '', 'עֶשְׂרִים', 'שְׁלוֹשִׁים', 'אַרְבָּעִים', 'חֲמִשִּׁים', 'שִׁשִּׁים', 'שִׁבְעִים', 'שְׁמוֹנִים', 'תִּשְׁעִים'];
+    const hundreds = ['', 'מֵאָה', 'מָאתַיִם', 'שְׁלוֹשׁ מֵאוֹת', 'אַרְבַּע מֵאוֹת', 'חֲמֵשׁ מֵאוֹת', 'שֵׁשׁ מֵאוֹת', 'שְׁבַע מֵאוֹת', 'שְׁמוֹנֶה מֵאוֹת', 'תְּשַׁע מֵאוֹת'];
+
+    if (n < 10) return units[n];
+    if (n < 20) return teens[n - 10];
+    if (n < 100) {
+      const t = Math.floor(n / 10);
+      const u = n % 10;
+      return u === 0 ? tens[t] : tens[t] + ' וְ' + units[u];
+    }
+    if (n < 1000) {
+      const h = Math.floor(n / 100);
+      const rem = n % 100;
+      return rem === 0 ? hundreds[h] : hundreds[h] + ' וְ' + this.numberToHebrewWords(rem);
+    }
+    if (n === 1000) return 'אֶלֶף';
+    return String(n);
+  }
+
   cleanTextForHebrewTTS(text) {
     if (!text) return '';
     let t = String(text);
+
+    // 0. Remove HTML tags
+    t = t.replace(/<[^>]+>/g, ' ');
 
     // 1. Universal Phonetic replacement for Ilay -> עִילַאי (with full vocalization for Apple Siri / Carmit & Android)
     // Strip any existing partial nikud first
@@ -103,47 +139,87 @@ class ArcadeAudio {
     t = t.replace(/\bאחה״צ\b/g, 'אחר הצהריים');
     t = t.replace(/\bעמ'\b/g, 'עמוד');
     t = t.replace(/\bדק'\b/g, 'דקות');
-    t = t.replace(/\bב-(\d+)\b/g, 'ב $1');
-    t = t.replace(/\bה-(\d+)\b/g, 'ה $1');
 
-    // 4. Mathematical and inequality expressions for natural Hebrew reading
-    t = t.replace(/□/g, ' המספר החסר ');
-    t = t.replace(/\s*>\s*/g, ' גדול מ- ');
-    t = t.replace(/\s*<\s*/g, ' קטן מ- ');
-    t = t.replace(/(\d+)\s*\+\s*(\d+)/g, '$1 ועוד $2');
-    t = t.replace(/(\d+)\s*-\s*(\d+)/g, '$1 פחות $2');
-    t = t.replace(/(\d+)\s*=\s*(\d+)/g, '$1 שווה $2');
-    t = t.replace(/(\d+)\s*[*×]\s*(\d+)/g, '$1 כפול $2');
+    // 4. Preposition hyphens before numbers (e.g. ב-25, מ-14, ה-2, ו-3, ל-8) - do this BEFORE math minus!
+    t = t.replace(/([במלכוה])-(\d+)/g, (match, prefix, num) => {
+      const hebWord = this.numberToHebrewWords(num);
+      const prefixVocal = {
+        'ב': 'בְּ',
+        'מ': 'מִ',
+        'ל': 'לְ',
+        'כ': 'כְּ',
+        'ו': 'וְ',
+        'ה': 'הַ'
+      }[prefix] || prefix;
+      return prefixVocal + hebWord;
+    });
 
-    // 5. Clean punctuation and spaces
+    // 5. Mathematical expressions & comparisons
+    t = t.replace(/□|\?/g, ' מָה הַתּוֹצָאָה ');
+    t = t.replace(/\s*>\s*/g, ' גָּדוֹל מִ ');
+    t = t.replace(/\s*<\s*/g, ' קָטָן מִ ');
+    t = t.replace(/\bמִ?-\s*/g, ' מִ ');
+    t = t.replace(/\s*\+\s*/g, ' וְעוֹד ');
+    t = t.replace(/(\d+)\s*[-−]\s*(\d+)/g, '$1 פָּחוֹת $2');
+    t = t.replace(/\s*[-−]\s*(?=\d)/g, ' פָּחוֹת ');
+    t = t.replace(/\s*[-−]\s*/g, ' פָּחוֹת ');
+    t = t.replace(/\s*=\s*/g, ' שָׁוֶה ');
+    t = t.replace(/\s*[*×]\s*/g, ' כָּפוּל ');
+
+    // 6. Convert ANY remaining digits into Hebrew words
+    t = t.replace(/\b\d+\b/g, (num) => this.numberToHebrewWords(num));
+
+    // 7. Clean punctuation and spaces
     t = t.replace(/\s+/g, ' ').trim();
     return t;
   }
 
   getBestVoice(lang = 'he-IL') {
     if (!('speechSynthesis' in window)) return null;
-    const voices = window.speechSynthesis.getVoices() || [];
+    const voices = this.voices.length > 0 ? this.voices : (window.speechSynthesis.getVoices() || []);
     if (voices.length === 0) return null;
 
-    const heVoices = voices.filter(v => v.lang && (v.lang === 'he-IL' || v.lang === 'he_IL' || v.lang.startsWith('he')));
-    if (heVoices.length === 0) return null;
+    if (lang.startsWith('he') || lang.startsWith('iw')) {
+      const heVoices = voices.filter(v => {
+        const vl = (v.lang || '').toLowerCase();
+        const vn = (v.name || '').toLowerCase();
+        return vl.startsWith('he') || vl.startsWith('iw') || vn.includes('hebrew') || vn.includes('carmit') || vn.includes('asaf') || vn.includes('עברית');
+      });
+      if (heVoices.length === 0) return null;
 
-    // Priority 1: Apple Siri or Enhanced/Premium voices on iOS
-    const premium = heVoices.find(v => /siri|enhanced|premium|natural/i.test(v.name));
-    if (premium) return premium;
+      // Priority 1: Apple Siri or Enhanced/Premium voices on iOS
+      const premium = heVoices.find(v => /siri|enhanced|premium|natural/i.test(v.name));
+      if (premium) return premium;
 
-    // Priority 2: Google Hebrew
-    const google = heVoices.find(v => /google/i.test(v.name));
-    if (google) return google;
+      // Priority 2: Google Hebrew
+      const google = heVoices.find(v => /google/i.test(v.name));
+      if (google) return google;
 
-    return heVoices[0];
+      return heVoices[0];
+    }
+
+    if (lang.startsWith('en')) {
+      const enVoices = voices.filter(v => (v.lang || '').toLowerCase().startsWith('en'));
+      if (enVoices.length === 0) return null;
+      const premium = enVoices.find(v => /siri|samantha|enhanced|premium|natural/i.test(v.name));
+      if (premium) return premium;
+      const us = enVoices.find(v => /us/i.test(v.lang) || /google/i.test(v.name));
+      if (us) return us;
+      return enVoices[0];
+    }
+
+    return null;
   }
 
   speak(text, lang = 'he-IL', rate = 0.86) {
     if (!('speechSynthesis' in window) || !text) return;
     try {
       window.speechSynthesis.cancel();
-      const cleanText = this.cleanTextForHebrewTTS(text);
+      const isHebrew = lang.startsWith('he') || lang.startsWith('iw');
+      const cleanText = isHebrew
+        ? this.cleanTextForHebrewTTS(text)
+        : String(text).replace(/<[^>]+>/g, '').replace(/[\u{1F300}-\u{1F9FF}]/gu, '').trim();
+
       if (!cleanText) return;
 
       const utter = new SpeechSynthesisUtterance(cleanText);
@@ -152,7 +228,12 @@ class ArcadeAudio {
       utter.pitch = 1.05; // Slightly warmer child-friendly pitch
 
       const voice = this.getBestVoice(lang);
-      if (voice) utter.voice = voice;
+      if (voice) {
+        utter.voice = voice;
+      } else if (isHebrew) {
+        // Enforce he-IL locale on utterance even if voice object is not explicit
+        utter.lang = 'he-IL';
+      }
 
       window.speechSynthesis.speak(utter);
     } catch (e) {

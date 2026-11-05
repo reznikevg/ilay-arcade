@@ -20,7 +20,7 @@ const STICKER_CATALOG = [
   { id: 's17', emoji: '👟', name: 'נעל הזהב של האלופים', rarity: 'נדיר' },
   { id: 's18', emoji: '🛡️', name: 'קפטן בית"ר ירושלים', rarity: 'בית"ר 💛🖤' },
   { id: 's19', emoji: '💎', name: 'הגלאקטיקוס של מדריד', rarity: 'ריאל מדריד 🤍' },
-  { id: 's20', emoji: '🦸‍♂️', name: 'עילי כוכב העל (#10)', rarity: 'אגדי ⭐' }
+  { id: 's20', emoji: '🦸‍♂️', name: 'עילאי כוכב העל (#10)', rarity: 'אגדי ⭐' }
 ];
 
 const DEFAULT_CUSTOM_QUESTIONS = [
@@ -46,14 +46,16 @@ const DEFAULT_HOMEWORK = [
 ];
 
 const DEFAULT_DICTATION_WORDS = [
-  { word: 'ירושלים', hint: '🦁 עיר הבירה שלנו (בית"ר...)' },
-  { word: 'כדורגל', hint: '⚽ המשחק האהוב בעולם' },
-  { word: 'אלוף', hint: '🏆 מנצח מקום ראשון' },
-  { word: 'משפחה', hint: '👨‍👩‍👦 אבא, אמא וילדים' },
-  { word: 'בית ספר', hint: '🏫 המקום שבו לומדים בבוקר' },
-  { word: 'חברים', hint: '👦 משחקים יחד בהפסקה' },
-  { word: 'ניצחון', hint: '🥇 ההפך מהפסד' },
-  { word: 'מגרש', hint: '🏟️ הדשא הירוק שבו משחקים' }
+  { word: 'מָזוֹן', hint: '🍎 אוכל שמזין את הגוף', alternatives: ['מזון'] },
+  { word: 'שֶׁמֶשׁ', hint: '☀️ מאירה ומחממת אותנו בשמיים', alternatives: ['שמש'] },
+  { word: 'עֵץ', hint: '🌳 גדל בטבע עם גזע וענפים', alternatives: ['עץ'] },
+  { word: 'יָרוֹק', hint: '🌱 צבע הדשא והעלים', alternatives: ['ירוק', 'ירק'] },
+  { word: 'עָלֶה', hint: '🍃 צומח על ענפי העץ', alternatives: ['עלה'] },
+  { word: 'צְבָעִים', hint: '🎨 אדום, צהוב, כחול ועוד', alternatives: ['צבעים', 'צבאיים'] },
+  { word: 'מִתְיַבֵּשׁ', hint: '🍂 נהיה יבש כשאין מים (כתיב חסר: מתיבש / מתייבש)', alternatives: ['מתיבש', 'מתייבש'] },
+  { word: 'אוֹר', hint: '💡 ההפך מחושך', alternatives: ['אור', 'אר'] },
+  { word: 'קַרְקַע', hint: '🌍 האדמה שעליה אנחנו דורכים', alternatives: ['קרקע'] },
+  { word: 'צָהוֹב', hint: '💛 הצבע האהוב של בית"ר!', alternatives: ['צהוב', 'צהב'] }
 ];
 
 const DEFAULT_SPEECH_CARDS = [
@@ -206,7 +208,13 @@ let speechSession = {
   audioChunks: [],
   lastAudioUrl: null,
   recognition: null,
-  heardTranscript: ''
+  heardTranscript: '',
+  startTime: 0,
+  maxVolume: 0,
+  audioContext: null,
+  analyser: null,
+  volInterval: null,
+  activeStream: null
 };
 
 // ==================== INITIALIZATION & LIVE 24/7 CLOUD FAMILY SYNC (CLOUDFLARE) ====================
@@ -257,8 +265,11 @@ async function loadState() {
       appState.allowedEmails.push(em);
     }
   });
-  if (!appState.dictationWords || appState.dictationWords.length === 0) {
+  if (!appState.dictationWords || appState.dictationWords.length === 0 || (appState.dictationWords[0] && (appState.dictationWords[0].word === 'ירושלים' || appState.dictationWords[0].word === 'יְרוּשָׁלַיִם'))) {
     appState.dictationWords = [...DEFAULT_DICTATION_WORDS];
+  }
+  if (!appState.playerName || appState.playerName === 'עילי') {
+    appState.playerName = 'עילאי';
   }
   if (!appState.speechCards || appState.speechCards.length === 0) {
     appState.speechCards = [...DEFAULT_SPEECH_CARDS];
@@ -459,10 +470,20 @@ function startSpeechStudio() {
   renderSpeechCard();
 }
 
+function cleanHebrewLettersOnly(text) {
+  return (text || '')
+    .replace(/[\u0591-\u05C7]/g, '') // remove nikud vowels & cantillation
+    .replace(/[^\u0590-\u05EA\s]/g, ' ') // letters & spaces only
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 function renderSpeechCard() {
   const card = speechSession.cards[speechSession.index];
   speechSession.lastAudioUrl = null;
   speechSession.heardTranscript = '';
+  speechSession.maxVolume = 0;
+  speechSession.startTime = 0;
 
   document.getElementById('sp-current-num').textContent = speechSession.index + 1;
   document.getElementById('sp-total-num').textContent = speechSession.cards.length;
@@ -478,7 +499,9 @@ function renderSpeechCard() {
   document.getElementById('sp-mic-label').textContent = 'לְחַץ וֶאֱמֹר בְּקוֹל';
 
   document.getElementById('btn-sp-play-self').classList.add('hidden');
-  document.getElementById('sp-wave-bars').classList.add('hidden');
+  const waveEl = document.getElementById('sp-wave-bars');
+  waveEl.classList.add('hidden');
+  waveEl.classList.remove('active');
   document.getElementById('sp-recognized-box').classList.add('hidden');
   document.getElementById('sp-feedback-banner').className = 'feedback-banner hidden';
   document.getElementById('btn-sp-next').classList.add('hidden');
@@ -489,88 +512,249 @@ async function toggleSpeechRecording() {
   const recBtn = document.getElementById('btn-sp-record');
   const waveEl = document.getElementById('sp-wave-bars');
 
+  // ---------- A. STOP RECORDING & EVALUATE ----------
   if (speechSession.isRecording) {
-    // Stop recording
     speechSession.isRecording = false;
-    recBtn.classList.remove('recording');
-    waveEl.classList.add('hidden');
-    document.getElementById('sp-mic-icon').textContent = '🎙️';
-    document.getElementById('sp-mic-label').textContent = 'הַקְלֵט שׁוּב';
+    const durationMs = Date.now() - (speechSession.startTime || Date.now());
 
-    if (speechSession.mediaRecorder && speechSession.mediaRecorder.state !== 'inactive') {
-      speechSession.mediaRecorder.stop();
+    if (speechSession.volInterval) {
+      clearInterval(speechSession.volInterval);
+      speechSession.volInterval = null;
     }
+
+    recBtn.classList.remove('recording');
+    waveEl.classList.remove('active');
+    waveEl.classList.add('hidden');
+    document.getElementById('sp-mic-icon').textContent = '⏳';
+    document.getElementById('sp-mic-label').textContent = 'בּוֹדֵק אֶת הַהַקְלָטָה...';
+
     if (speechSession.recognition) {
       try { speechSession.recognition.stop(); } catch (e) {}
     }
-    completeSpeechCardPractice(card);
+
+    if (speechSession.mediaRecorder && speechSession.mediaRecorder.state !== 'inactive') {
+      try { speechSession.mediaRecorder.stop(); } catch (e) {}
+    }
+
+    if (speechSession.audioContext) {
+      try { speechSession.audioContext.close(); } catch (e) {}
+      speechSession.audioContext = null;
+    }
+
+    // Short 250ms buffer to let final recognition/media chunks flush
+    setTimeout(() => {
+      evaluateSpeechRecording(card, durationMs);
+    }, 280);
     return;
   }
 
-  // Start recording
+  // ---------- B. START RECORDING ----------
   speechSession.isRecording = true;
   speechSession.heardTranscript = '';
+  speechSession.maxVolume = 0;
+  speechSession.startTime = Date.now();
+  speechSession.audioChunks = [];
+
   recBtn.classList.add('recording');
   waveEl.classList.remove('hidden');
+  waveEl.classList.add('active');
   document.getElementById('sp-mic-icon').textContent = '⏹️';
   document.getElementById('sp-mic-label').textContent = 'מַקְלִיט... לְחַץ לְסִיּוּם';
 
-  // 1. Try Web Speech Recognition (if supported)
+  document.getElementById('sp-feedback-banner').className = 'feedback-banner hidden';
+  document.getElementById('btn-sp-next').classList.add('hidden');
+
+  const recBox = document.getElementById('sp-recognized-box');
+  const recTxt = document.getElementById('sp-recognized-text');
+  if (recBox) recBox.classList.add('hidden');
+  if (recTxt) recTxt.textContent = '';
+
+  // 1. Web Speech Recognition in Hebrew
   const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (SpeechRec) {
     try {
       const rec = new SpeechRec();
       rec.lang = 'he-IL';
       rec.interimResults = true;
+      rec.continuous = false;
       rec.onresult = (event) => {
         let t = '';
         for (let i = 0; i < event.results.length; i++) {
           t += event.results[i][0].transcript;
         }
-        speechSession.heardTranscript = t;
-        document.getElementById('sp-recognized-box').classList.remove('hidden');
-        document.getElementById('sp-recognized-text').textContent = t;
+        speechSession.heardTranscript = t.trim();
+        if (recBox && t.trim()) {
+          recBox.classList.remove('hidden');
+          recTxt.textContent = `נקלט בדיבור: "${t.trim()}"`;
+        }
+      };
+      rec.onerror = (e) => {
+        console.warn('Speech rec event:', e.error);
       };
       rec.start();
       speechSession.recognition = rec;
-    } catch (e) {}
+    } catch (e) {
+      console.warn('Speech recognition not available:', e);
+    }
   }
 
-  // 2. Try Microphone Audio Recording so Ilay & Parents can listen back!
+  // 2. Microphone Stream + Web Audio Analyser (Voice Energy Detection)
   if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      speechSession.audioChunks = [];
+      speechSession.activeStream = stream;
+
+      // Real-time voice amplitude analysis
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) {
+          const actx = new AudioCtx();
+          speechSession.audioContext = actx;
+          const src = actx.createMediaStreamSource(stream);
+          const analyser = actx.createAnalyser();
+          analyser.fftSize = 256;
+          src.connect(analyser);
+
+          const dataArray = new Uint8Array(analyser.frequencyBinCount);
+          speechSession.volInterval = setInterval(() => {
+            if (!speechSession.isRecording) return;
+            analyser.getByteFrequencyData(dataArray);
+            let sum = 0;
+            for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
+            const avg = sum / dataArray.length;
+            if (avg > speechSession.maxVolume) speechSession.maxVolume = avg;
+          }, 60);
+        }
+      } catch (e) {}
+
+      // MediaRecorder for playback & parent audit
       const mr = new MediaRecorder(stream);
       mr.ondataavailable = (e) => {
-        if (e.data.size > 0) speechSession.audioChunks.push(e.data);
+        if (e.data && e.data.size > 0) speechSession.audioChunks.push(e.data);
       };
       mr.onstop = () => {
-        const blob = new Blob(speechSession.audioChunks, { type: 'audio/webm' });
-        speechSession.lastAudioUrl = URL.createObjectURL(blob);
-        document.getElementById('btn-sp-play-self').classList.remove('hidden');
+        if (speechSession.audioChunks.length > 0) {
+          const blob = new Blob(speechSession.audioChunks, { type: 'audio/webm' });
+          speechSession.lastAudioUrl = URL.createObjectURL(blob);
+          const playSelfBtn = document.getElementById('btn-sp-play-self');
+          if (playSelfBtn) playSelfBtn.classList.remove('hidden');
 
-        // Convert small clip to DataURL for Parent Log
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          saveSpeechLogEntry(card.phrase, speechSession.heardTranscript, reader.result);
-        };
-        reader.readAsDataURL(blob);
+          // Save small sample to parent logs
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            saveSpeechLogEntry(card.phrase, speechSession.heardTranscript, reader.result);
+          };
+          reader.readAsDataURL(blob);
+        }
         stream.getTracks().forEach(t => t.stop());
       };
       mr.start();
       speechSession.mediaRecorder = mr;
     } catch (err) {
-      // Fallback if mic permission denied: still let Ilay practice!
-      setTimeout(() => {
-        if (speechSession.isRecording) toggleSpeechRecording();
-      }, 3000);
+      console.warn('Microphone permission error:', err);
+      // If mic denied: inform user clearly
+      speechSession.isRecording = false;
+      recBtn.classList.remove('recording');
+      waveEl.classList.add('hidden');
+      document.getElementById('sp-mic-icon').textContent = '🎙️';
+      document.getElementById('sp-mic-label').textContent = 'הַקְלֵט שׁוּב';
+      const fb = document.getElementById('sp-feedback-banner');
+      fb.className = 'feedback-banner warning';
+      fb.innerHTML = `🔒 <strong>יש לאשר גישה למיקרופון!</strong><br>כדי שנוכל לבדוק את ההגייה של עילאי, יש לאשר הרשאת מיקרופון בדפדפן.`;
+      fb.classList.remove('hidden');
     }
-  } else {
-    setTimeout(() => {
-      if (speechSession.isRecording) toggleSpeechRecording();
-    }, 3000);
   }
+}
+
+function evaluateSpeechRecording(card, durationMs) {
+  const fb = document.getElementById('sp-feedback-banner');
+  const nextBtn = document.getElementById('btn-sp-next');
+  const recBtn = document.getElementById('btn-sp-record');
+
+  const targetClean = cleanHebrewLettersOnly(card.phrase);
+  const targetWords = targetClean.split(' ').filter(w => w.length >= 2);
+  const heardClean = cleanHebrewLettersOnly(speechSession.heardTranscript);
+  const heardWords = heardClean.split(' ').filter(Boolean);
+
+  const hasRecognizedWords = heardClean.length > 0;
+  // Volume energy above ambient quiet room noise floor (~10-12)
+  const hasAudibleVoice = speechSession.maxVolume >= 11;
+  const isTooShort = durationMs < 800;
+
+  // Reset button state
+  document.getElementById('sp-mic-icon').textContent = '🎙️';
+  document.getElementById('sp-mic-label').textContent = 'הַקְלֵט שׁוּב';
+
+  // 1. STRICT SILENCE CHECK: Did the child actually speak?
+  if ((!hasRecognizedWords && !hasAudibleVoice) || isTooShort) {
+    arcadeAudio.playMiss();
+    fb.className = 'feedback-banner warning';
+    fb.innerHTML = `⚠️ <strong>לא שמענו אותך עדיין!</strong><br>לחצו על <strong>הַקְלֵט שׁוּב</strong>, אמרו את המשפט בקול ברור ליד המכשיר, ולחצו לסיום.`;
+    fb.classList.remove('hidden');
+    nextBtn.classList.add('hidden'); // CANNOT skip without actually practicing!
+    return;
+  }
+
+  // 2. CHECK TARGET WORDS & SIBILANTS ('ש' and 'ס')
+  let matchedWordCount = 0;
+  targetWords.forEach(tw => {
+    if (heardWords.some(hw => hw === tw || hw.includes(tw) || tw.includes(hw))) {
+      matchedWordCount++;
+    }
+  });
+
+  const targetHasSibilant = targetClean.includes('ש') || targetClean.includes('ס');
+  const heardHasSibilant = heardClean.includes('ש') || heardClean.includes('ס');
+
+  // LEVEL A: EXCELLENT PRONUNCIATION / WORDS MATCHED
+  if (matchedWordCount >= 2 || (matchedWordCount >= 1 && (heardHasSibilant || heardWords.length >= 2))) {
+    appState.coins += 20;
+    saveState();
+    updateHeaderUI();
+    arcadeAudio.playGoalSuccess();
+    confetti.burst(75);
+
+    fb.className = 'feedback-banner success';
+    fb.innerHTML = `🌟 <strong>איזה שדרן אלוף! שמענו אותך מצוין!</strong><br>נקלט: "${speechSession.heardTranscript}"<br>הגייה נהדרת! הרווחת <strong>+20 🪙</strong> מטבעות!`;
+    fb.classList.remove('hidden');
+    nextBtn.classList.remove('hidden');
+    return;
+  }
+
+  // LEVEL B: HEARD GENERAL SPEECH ATTEMPT
+  if (hasRecognizedWords) {
+    appState.coins += 15;
+    saveState();
+    updateHeaderUI();
+    arcadeAudio.playGoalSuccess();
+
+    fb.className = 'feedback-banner success';
+    fb.innerHTML = `👏 <strong>יופי של ניסיון!</strong> שמענו: "${speechSession.heardTranscript}".<br>הקשב להקלטה שלך ובדוק שסגרת שיניים לחיוך ב-ש׳ ו-ס׳! הרווחת <strong>+15 🪙</strong>`;
+    fb.classList.remove('hidden');
+    nextBtn.classList.remove('hidden');
+    return;
+  }
+
+  // LEVEL C: AUDIBLE VOICE CAPTURED (Real voice energy detected, but recognition was muffled / unavailable)
+  if (hasAudibleVoice && durationMs >= 1200) {
+    appState.coins += 15;
+    saveState();
+    updateHeaderUI();
+    arcadeAudio.playGoalSuccess();
+
+    fb.className = 'feedback-banner success';
+    fb.innerHTML = `🎙️ <strong>שמענו את הקול שלך בהקלטה!</strong><br>לחצו על "השמע את ההקלטה שלי" להקשיב לעצמך ולתרגל חיוך! הרווחת <strong>+15 🪙</strong>`;
+    fb.classList.remove('hidden');
+    nextBtn.classList.remove('hidden');
+    return;
+  }
+
+  // Voice was marginal / very quiet
+  arcadeAudio.playMiss();
+  fb.className = 'feedback-banner warning';
+  fb.innerHTML = `⚠️ <strong>הקול היה שקט מדי!</strong><br>נסו שוב ואמרו את המשפט בקול רם וברור קרוב למיקרופון.`;
+  fb.classList.remove('hidden');
+  nextBtn.classList.add('hidden');
 }
 
 function saveSpeechLogEntry(phrase, heardText, audioDataUrl) {
@@ -599,21 +783,7 @@ function saveSpeechLogEntry(phrase, heardText, audioDataUrl) {
 }
 
 function completeSpeechCardPractice(card) {
-  appState.coins += 20;
-  saveState();
-  updateHeaderUI();
-
-  arcadeAudio.playGoalSuccess();
-  confetti.burst(60);
-
-  const fb = document.getElementById('sp-feedback-banner');
-  fb.className = 'feedback-banner success';
-  fb.textContent = `איזה שדרן אלוף! הרווחת +20 🪙 מטבעות! תקשיב לעצמך או עבור לכרטיס הבא!`;
-  document.getElementById('btn-sp-next').classList.remove('hidden');
-
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    saveSpeechLogEntry(card.phrase, speechSession.heardTranscript, null);
-  }
+  // Legacy stub - now handled by evaluateSpeechRecording
 }
 
 function nextSpeechCard() {
@@ -625,7 +795,7 @@ function nextSpeechCard() {
     appState.trophies += 1;
     saveState();
     updateHeaderUI();
-    alert('🏆 כל הכבוד עילי! סיימת את אימון הדיבור של ש׳ ו-ס׳ כמו שדרן ליגת האלופות וזכית בגביע!');
+    alert('🏆 כל הכבוד עילאי! סיימת את אימון הדיבור של ש׳ ו-ס׳ כמו שדרן ליגת האלופות וזכית בגביע!');
     switchView('home');
   } else {
     renderSpeechCard();
@@ -737,7 +907,7 @@ function renderHomeworkView() {
         appState.coins += 25;
         arcadeAudio.playGoalSuccess();
         confetti.burst(70);
-        arcadeAudio.speak(`כל הכבוד עילי! סיימת ${hw.title}`);
+        arcadeAudio.speak(`כל הכבוד עילאי! סיימת ${hw.title}`);
       } else {
         hw.done = false;
         appState.coins = Math.max(0, appState.coins - 25);
@@ -856,6 +1026,36 @@ function renderDictationWord() {
   }, 300);
 }
 
+function isDictationCorrect(item, typedRaw) {
+  if (!typedRaw) return false;
+  const typed = stripNiqqud(typedRaw).trim();
+  const target = stripNiqqud(item.word).trim();
+  if (typed === target) return true;
+
+  // Explicit alternatives if present (e.g. ['מתיבש', 'מתייבש'])
+  if (item.alternatives && item.alternatives.some(alt => stripNiqqud(alt).trim() === typed)) {
+    return true;
+  }
+
+  // Defective / plene spelling tolerance (single vs double yod/vav)
+  const norm = s => s.replace(/יי+/g, 'י').replace(/וו+/g, 'ו');
+  if (norm(typed) === norm(target)) return true;
+
+  // Grade 2 defective and vocalized spelling variants:
+  const grade2Variants = {
+    'מתיבש': ['מתייבש', 'מתיבש'],
+    'מתייבש': ['מתייבש', 'מתיבש'],
+    'צהוב': ['צהב', 'צהוב'],
+    'ירוק': ['ירק', 'ירוק'],
+    'אור': ['אר', 'אור'],
+    'צבעים': ['צבאיים', 'צבעים', 'צבעם']
+  };
+  if (grade2Variants[target] && grade2Variants[target].includes(typed)) return true;
+  if (grade2Variants[typed] && grade2Variants[typed].includes(target)) return true;
+
+  return false;
+}
+
 function updateDictationSlots() {
   const item = dictSession.words[dictSession.index];
   if (!item) return;
@@ -864,7 +1064,8 @@ function updateDictationSlots() {
 
   const slotsEl = document.getElementById('dict-letter-slots');
   slotsEl.innerHTML = '';
-  for (let i = 0; i < targetClean.length; i++) {
+  const slotCount = Math.max(targetClean.length, typed.length);
+  for (let i = 0; i < slotCount; i++) {
     const slot = document.createElement('div');
     const ch = typed[i] || '';
     slot.className = `letter-slot ${ch ? 'filled' : ''}`;
@@ -886,7 +1087,7 @@ function checkDictationWord() {
     return;
   }
 
-  if (typed === target) {
+  if (isDictationCorrect(item, typed)) {
     dictSession.answered = true;
     dictSession.correctCount++;
     const reward = dictSession.attempts === 1 ? 15 : 8;
@@ -930,7 +1131,7 @@ function nextDictationWord() {
     appState.trophies += 1;
     saveState();
     updateHeaderUI();
-    alert(`🏆 כל הכבוד עילי! סיימת את אימון ההכתבה (${dictSession.correctCount}/${dictSession.words.length}) וזכית בגביע!`);
+    alert(`🏆 כל הכבוד עילאי! סיימת את אימון ההכתבה (${dictSession.correctCount}/${dictSession.words.length}) וזכית בגביע!`);
     switchView('home');
   } else {
     renderDictationWord();
@@ -1026,7 +1227,12 @@ function renderCurrentQuestion() {
   document.getElementById('commentator-text').textContent =
     q.isMulti
       ? '🎙️ "בחר את כל המספרים המתאימים!"'
-      : '🎙️ "עילי מכוון לשער..."';
+      : '🎙️ "עילאי מכוון לשער..."';
+
+  const btnSpeak = document.getElementById('btn-speak-question');
+  if (btnSpeak) {
+    btnSpeak.textContent = q.isEnglish ? '🔊 השמע באנגלית' : '🔊 הקרא שאלה';
+  }
 
   document.getElementById('q-instruction').innerHTML = q.instruction;
   const hintBox = document.getElementById('hint-box');
@@ -1150,7 +1356,7 @@ function checkCurrentAnswer() {
     const streakMsg = session.currentStreak >= 3 ? ` 🔥 רצף ${session.currentStreak}!` : '';
     fb.className = 'feedback-banner success';
     fb.textContent = `גווווול! +${earned} 🪙${streakMsg}`;
-    document.getElementById('commentator-text').textContent = `🎙️ "שעררר אדיר של עילי!"`;
+    document.getElementById('commentator-text').textContent = `🎙️ "שעררר אדיר של עילאי!"`;
 
     const streakPill = document.getElementById('streak-pill');
     streakPill.classList.remove('pulse');
@@ -1512,7 +1718,7 @@ function renderParentsView() {
   spLogList.innerHTML = '';
 
   if (!appState.speechLogs || appState.speechLogs.length === 0) {
-    spLogList.innerHTML = `<div class="custom-q-item">עדיין אין הקלטות היום. כשעילי יתרגל ב"אלוף הדיבור" זה יופיע כאן!</div>`;
+    spLogList.innerHTML = `<div class="custom-q-item">עדיין אין הקלטות היום. כשעילאי יתרגל ב"אלוף הדיבור" זה יופיע כאן!</div>`;
   } else {
     appState.speechLogs.forEach((log) => {
       const el = document.createElement('div');
@@ -1856,7 +2062,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (statusBox) {
         if (cleaned && !isNoise) {
-          statusBox.textContent = '✅ הטקסט חולץ מהתמונה! לחצו על "פענח ועדכן לעילי" לשמירה.';
+          statusBox.textContent = '✅ הטקסט חולץ מהתמונה! לחצו על "פענח ועדכן לעילאי" לשמירה.';
         } else if (isNoise) {
           statusBox.innerHTML = '⚠️ לא זוהו מילים ברורות בעברית בתמונה (לוח כיתה / כתב יד). מומלץ להדביק את הטקסט או להזין מפתח Gemini AI בהגדרות לפענוח מושלם.';
         } else {
@@ -1925,7 +2131,7 @@ document.addEventListener('DOMContentLoaded', () => {
       arcadeAudio.playGoalSuccess();
       confetti.burst(70);
 
-      const msg = `✅ <strong>סונכרן בהצלחה!</strong> נמשכו ${data.totalWebtopItems || 6} משימות מ-Webtop עבור ${data.studentName || 'עילי'}.<br><span style="font-size:0.85em;color:#34c759;">⏰ סנכרון אוטומטי מתוזמן לענן בכל יום בשעה 14:00.</span>`;
+      const msg = `✅ <strong>סונכרן בהצלחה!</strong> נמשכו ${data.totalWebtopItems || 6} משימות מ-Webtop עבור ${data.studentName || 'עילאי'}.<br><span style="font-size:0.85em;color:#34c759;">⏰ סנכרון אוטומטי מתוזמן לענן בכל יום בשעה 14:00.</span>`;
       if (statusBox) statusBox.innerHTML = msg;
       const wtLabel = document.getElementById('hw-webtop-status-label');
       if (wtLabel) wtLabel.innerHTML = `✅ סונכרן: <strong>${data.lastSync || 'עכשיו'}</strong> (${data.totalWebtopItems || 6} משימות) | ⏰ כל יום ב-14:00`;
@@ -2059,7 +2265,7 @@ document.addEventListener('DOMContentLoaded', () => {
       arcadeAudio.playGoalSuccess();
       if (resBox) {
         resBox.classList.remove('hidden');
-        resBox.innerHTML = `✅ <strong>עודכן בהצלחה לעילי!</strong> נוספו: ${res.addedHw} משימות, ${res.addedDict} מילים להכתבה, ו-${res.addedSched} עדכונים למערכת השעות.`;
+        resBox.innerHTML = `✅ <strong>עודכן בהצלחה לעילאי!</strong> נוספו: ${res.addedHw} משימות, ${res.addedDict} מילים להכתבה, ו-${res.addedSched} עדכונים למערכת השעות.`;
       }
     });
   }
@@ -2072,7 +2278,7 @@ document.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => {
         parseSmartWhatsAppOrWebtopInput(sharedText);
         window.history.replaceState({}, document.title, window.location.pathname);
-        alert('📲 ההודעה מוואטסאפ / Webtop נקלטה ועודכנה באפליקציה של עילי!');
+        alert('📲 ההודעה מוואטסאפ / Webtop נקלטה ועודכנה באפליקציה של עילאי!');
       }, 900);
     }
   } catch (e) {}
@@ -2193,7 +2399,7 @@ document.addEventListener('DOMContentLoaded', () => {
     appState.homeworkList.push({
       id: 'hw_' + Date.now(),
       icon: '🌟',
-      subject: 'מטרה של עילי',
+      subject: 'מטרה של עילאי',
       title,
       done: false
     });
@@ -2206,6 +2412,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Dictation Listeners
   document.getElementById('btn-leave-dictation').addEventListener('click', () => switchView('home'));
+  const btnOpenDictEd = document.getElementById('btn-open-dict-editor');
+  if (btnOpenDictEd) {
+    btnOpenDictEd.addEventListener('click', () => {
+      switchView('parents');
+      setTimeout(() => {
+        const ta = document.getElementById('dict-words-textarea');
+        if (ta) {
+          ta.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          ta.focus();
+        }
+      }, 200);
+    });
+  }
   document.getElementById('btn-dict-speak').addEventListener('click', () => {
     const item = dictSession.words[dictSession.index];
     if (item) arcadeAudio.speak(item.word, 'he-IL', 0.9);
@@ -2294,7 +2513,14 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btn-leave-arena').addEventListener('click', () => switchView('home'));
   document.getElementById('btn-speak-question').addEventListener('click', () => {
     const q = session.questions[session.currentIndex];
-    if (q) arcadeAudio.speak(q.ttsText || q.instruction);
+    if (!q) return;
+    if (q.isEnglish) {
+      // Speak the English word in clear native English TTS!
+      arcadeAudio.speak(q.englishSpeechWord || q.ttsText, 'en-US', 0.84);
+    } else {
+      // Speak in clear Hebrew with all numbers vocalized to Hebrew words!
+      arcadeAudio.speak(q.ttsText || q.instruction, 'he-IL', 0.86);
+    }
   });
   document.getElementById('btn-hint').addEventListener('click', () => {
     arcadeAudio.playClick();
@@ -2329,7 +2555,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (parsed.length > 0) {
       appState.speechCards = parsed;
       saveState();
-      alert(`נשמרו ${parsed.length} כרטיסיות דיבור (ש׳ ו-ס׳) לעילי! 🎙️`);
+      alert(`נשמרו ${parsed.length} כרטיסיות דיבור (ש׳ ו-ס׳) לעילאי! 🎙️`);
     }
   });
 
@@ -2379,13 +2605,27 @@ document.addEventListener('DOMContentLoaded', () => {
       appState.dictationWords = parsed;
       saveState();
       updateHeaderUI();
-      alert(`נשמרו ${parsed.length} מילים לאימון ההכתבה של עילי! 🎧`);
+      arcadeAudio.playGoalSuccess();
+      alert(`✅ נשמרו ${parsed.length} מילים לאימון ההכתבה של עילאי! המילים סונכרנו גם לענן. 🎧`);
     }
   });
 
+  // Load tomorrow's 10 words shortcut button
+  const btnTomorrow = document.getElementById('btn-load-tomorrow-dictation');
+  if (btnTomorrow) {
+    btnTomorrow.addEventListener('click', () => {
+      appState.dictationWords = [...DEFAULT_DICTATION_WORDS];
+      saveState();
+      updateHeaderUI();
+      renderParentsView();
+      arcadeAudio.playGoalSuccess();
+      alert('✅ 10 המילים של ההכתבה למחר (מזון, שמש, עץ, ירוק, עלה, צבעים, מתיבש, אור, קרקע, צהוב) נטענו וסונכרנו בהצלחה!');
+    });
+  }
+
   // Reset progress button
   document.getElementById('btn-reset-progress').addEventListener('click', () => {
-    if (confirm('האם לאפס את כל הנתונים והנקודות של עילי?')) {
+    if (confirm('האם לאפס את כל הנתונים והנקודות של עילאי?')) {
       localStorage.removeItem(STORAGE_KEY);
       location.reload();
     }

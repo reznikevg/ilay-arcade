@@ -86,14 +86,38 @@ const TOPICS = [
     desc: 'קטעי קריאה קצרים וכיפיים על כדורגל וחברים, כתיב נכון והבנת הנקרא.'
   },
 
-  // ===== GENTLE ENGLISH STARTER =====
+  // ===== ENGLISH ACADEMY (2ND GRADE) =====
+  {
+    id: 'english_abc',
+    cat: 'english',
+    tag: 'ABC ואותיות 🔤',
+    icon: '🔤',
+    title: 'אותיות ה-ABC וצלילים ראשונים',
+    desc: 'התאמת אותיות גדולות וקטנות, זיהוי אות פותחת וצלילי פוניקס באנגלית!'
+  },
+  {
+    id: 'english_words',
+    cat: 'english',
+    tag: 'צבעים ומספרים 🎨',
+    icon: '🔟',
+    title: 'מספרים, צבעים וחיות באנגלית',
+    desc: 'ספירה 1-20, צבעי בית"ר וריאל (Yellow, White, Black), שמות חיות ויומיום!'
+  },
+  {
+    id: 'english_soccer',
+    cat: 'english',
+    tag: 'כדורגל וספורט ⚽',
+    icon: '⚽',
+    title: 'אנגלית של אלופי כדורגל',
+    desc: 'Ball, Goal, Team, Champion, Stadium, Run, Kick — לומדים אנגלית כמו מקצוענים!'
+  },
   {
     id: 'english_starter',
     cat: 'english',
-    tag: 'מתחילים לאט 🌍',
+    tag: 'מיקס אנגלית 🌍',
     icon: '👑',
-    title: 'צעדים ראשונים באנגלית (ABC ומילים)',
-    desc: 'היכרות רגועה וכיפית עם אותיות ABC, צבעים, מספרים ומילים מעולם הכדורגל.'
+    title: 'אתגר אנגלית משולב לאלופים',
+    desc: 'שילוב כיפי של אותיות, מספרים, צבעים ומילים מעולם הכדורגל והחיים.'
   },
 
   // ===== PARENTS CUSTOM =====
@@ -103,7 +127,7 @@ const TOPICS = [
     tag: 'מותאם אישית ⭐',
     icon: '👨‍👩‍👦',
     title: 'המשימות של אבא ואמא',
-    desc: 'תרגילים בחשבון ומילים להכתבה בשפה שהוספתם במיוחד לעילי באזור ההורים!'
+    desc: 'תרגילים בחשבון ומילים להכתבה בשפה שהוספתם במיוחד לעילאי באזור ההורים!'
   }
 ];
 
@@ -576,28 +600,256 @@ function genHebrewReading() {
   };
 }
 
-const ENGLISH_BANK = [
-  { q: 'אֵיךְ אוֹמְרִים <strong>"כַּדּוּר"</strong> בְּאַנְגְּלִית? ⚽', ans: 'Ball', wrong: ['Book', 'Bag', 'Box'], tts: 'איך אומרים כדור באנגלית?' },
-  { q: 'אֵיזֶה צֶבַע הוּא הַצֶּבַע שֶׁל בֵּיתָ"ר <strong dir="ltr">YELLOW</strong>? 💛', ans: 'צָהֹב', wrong: ['אָדֹם', 'כָּחֹל', 'יָרֹק'], tts: 'איזה צבע הוא Yellow?' },
-  { q: 'אֵיזֶה צֶבַע הוּא הַצֶּבַע שֶׁל רֵיאָל מַדְרִיד <strong dir="ltr">WHITE</strong>? 🤍', ans: 'לָבָן', wrong: ['שָׁחוֹר', 'סָגֹל', 'כָּתֹם'], tts: 'איזה צבע הוא White?' },
-  { q: 'אֵיךְ אוֹמְרִים <strong>"אַרְיֵה"</strong> (הַסֵּמֶל שֶׁל בֵּיתָ"ר) בְּאַנְגְּלִית? 🦁', ans: 'Lion', wrong: ['Dog', 'Cat', 'Fish'], tts: 'איך אומרים אריה באנגלית?' },
-  { q: 'אֵיךְ אוֹמְרִים <strong>"מֶלֶךְ"</strong> בְּאַנְגְּלִית? 👑', ans: 'King', wrong: ['Boy', 'Sun', 'Car'], tts: 'איך אומרים מלך באנגלית?' },
-  { q: 'מַהִי הָאוֹת הַקְּטַנָּה שֶׁל הָאוֹת <strong dir="ltr">B</strong>?', ans: 'b', wrong: ['d', 'p', 'a'], tts: 'מהי האות הקטנה של האות B?' },
-  { q: 'אֵיזֶה מִסְפָּר הוּא <strong dir="ltr">TEN</strong> (הַמִּסְפָּר עַל גַּב הַחֻלְצָה)? 🔟', ans: '10', wrong: ['7', '8', '5'], tts: 'איזה מספר הוא Ten?' }
+// ==================== COMPREHENSIVE ENGLISH ACADEMY (GRADE 2) ====================
+
+const ENGLISH_ABC_MATCH = [
+  { cap: 'A', low: 'a', wrong: ['e', 'o', 'd'] },
+  { cap: 'B', low: 'b', wrong: ['d', 'p', 'q'] },
+  { cap: 'C', low: 'c', wrong: ['s', 'o', 'e'] },
+  { cap: 'D', low: 'd', wrong: ['b', 'p', 'q'] },
+  { cap: 'E', low: 'e', wrong: ['a', 'c', 'o'] },
+  { cap: 'F', low: 'f', wrong: ['t', 'j', 'l'] },
+  { cap: 'G', low: 'g', wrong: ['q', 'j', 'y'] },
+  { cap: 'H', low: 'h', wrong: ['n', 'b', 'k'] },
+  { cap: 'M', low: 'm', wrong: ['w', 'n', 'u'] },
+  { cap: 'N', low: 'n', wrong: ['m', 'u', 'h'] },
+  { cap: 'R', low: 'r', wrong: ['p', 'n', 'v'] },
+  { cap: 'S', low: 's', wrong: ['z', 'c', 'e'] },
+  { cap: 'T', low: 't', wrong: ['f', 'l', 'i'] },
+  { cap: 'Y', low: 'y', wrong: ['v', 'u', 'g'] }
 ];
 
+const ENGLISH_PHONICS = [
+  { word: 'Ball', hebrew: 'כַּדּוּר ⚽', letter: 'B', wrong: ['D', 'P', 'T'] },
+  { word: 'Goal', hebrew: 'שַׁעַר 🥅', letter: 'G', wrong: ['C', 'J', 'K'] },
+  { word: 'Lion', hebrew: 'אַרְיֵה 🦁', letter: 'L', wrong: ['R', 'M', 'N'] },
+  { word: 'Sun', hebrew: 'שֶׁמֶשׁ ☀️', letter: 'S', wrong: ['C', 'Z', 'X'] },
+  { word: 'Dog', hebrew: 'כֶּלֶב 🐶', letter: 'D', wrong: ['B', 'P', 'T'] },
+  { word: 'Cat', hebrew: 'חָתוּל 🐱', letter: 'C', wrong: ['K', 'S', 'G'] },
+  { word: 'King', hebrew: 'מֶלֶךְ 👑', letter: 'K', wrong: ['C', 'G', 'Q'] },
+  { word: 'Apple', hebrew: 'תַּפּוּחַ 🍎', letter: 'A', wrong: ['E', 'O', 'I'] },
+  { word: 'Fish', hebrew: 'דָּג 🐟', letter: 'F', wrong: ['V', 'P', 'T'] },
+  { word: 'Run', hebrew: 'לָרוּץ 🏃', letter: 'R', wrong: ['P', 'B', 'W'] }
+];
+
+const ENGLISH_NUMBERS = [
+  { num: 1, word: 'One', wrong: ['Two', 'Three', 'Four'] },
+  { num: 2, word: 'Two', wrong: ['One', 'Three', 'Five'] },
+  { num: 3, word: 'Three', wrong: ['Two', 'Four', 'Ten'] },
+  { num: 4, word: 'Four', wrong: ['Five', 'Six', 'One'] },
+  { num: 5, word: 'Five', wrong: ['Four', 'Six', 'Seven'] },
+  { num: 6, word: 'Six', wrong: ['Seven', 'Five', 'Eight'] },
+  { num: 7, word: 'Seven', wrong: ['Six', 'Eight', 'Nine'] },
+  { num: 8, word: 'Eight', wrong: ['Seven', 'Nine', 'Ten'] },
+  { num: 9, word: 'Nine', wrong: ['Eight', 'Ten', 'Six'] },
+  { num: 10, word: 'Ten', wrong: ['Seven', 'Eight', 'Five'] },
+  { num: 20, word: 'Twenty', wrong: ['Ten', 'Twelve', 'Two'] }
+];
+
+const ENGLISH_COLORS = [
+  { color: 'Yellow', heb: 'צָהֹב 💛', note: 'הַצֶּבַע הָאֲהוּב שֶׁל בֵּיתָ"ר יְרוּשָׁלַיִם!', wrong: ['אָדֹם', 'כָּחֹל', 'יָרֹק'] },
+  { color: 'White', heb: 'לָבָן 🤍', note: 'הַצֶּבַע הָאַגָּדִי שֶׁל רֵיאָל מַדְרִיד!', wrong: ['שָׁחוֹר', 'סָגֹל', 'כָּתֹם'] },
+  { color: 'Black', heb: 'שָׁחוֹר 🖤', note: 'הַצֶּבַע שֶׁל בֵּיתָ"ר יַחַד עִם צָהֹב!', wrong: ['כָּחֹל', 'יָרֹק', 'אָדֹם'] },
+  { color: 'Green', heb: 'יָרוֹק 🌱', note: 'הַצֶּבַע שֶׁל דֶּשֶׁא הַמִּגְרָשׁ!', wrong: ['צָהֹב', 'כָּחֹל', 'אָדֹם'] },
+  { color: 'Blue', heb: 'כָּחֹל 💙', note: 'צֶבַע הַשָּׁמַיִם וְהַיָּם!', wrong: ['אָדֹם', 'יָרֹק', 'צָהֹב'] },
+  { color: 'Red', heb: 'אָדֹם ❤️', note: 'הַצֶּבַע שֶׁל כַּרְטִיס אָדֹם!', wrong: ['כָּחֹל', 'צָהֹב', 'יָרֹק'] },
+  { color: 'Orange', heb: 'כָּתֹם 🧡', note: 'הַצֶּבַע שֶׁל תַּפּוּז!', wrong: ['סָגֹל', 'יָרֹק', 'כָּחֹל'] }
+];
+
+const ENGLISH_SOCCER_WORDS = [
+  { eng: 'Ball', heb: 'כַּדּוּר ⚽', wrong: ['Bag', 'Box', 'Book'] },
+  { eng: 'Goal', heb: 'שַׁעַר 🥅', wrong: ['Gold', 'Game', 'Good'] },
+  { eng: 'Champion', heb: 'אַלּוּף 🏆', wrong: ['Coach', 'Captain', 'Club'] },
+  { eng: 'Team', heb: 'קְבוּצָה 👥', wrong: ['Time', 'Ticket', 'Train'] },
+  { eng: 'Stadium', heb: 'אִצְטַדְיוֹן (כְּמוֹ טֶדִי אוֹ הַבֶּרְנַבֵּאוּ!) 🏟️', wrong: ['School', 'Street', 'Station'] },
+  { eng: 'Shoes', heb: 'נַעֲלַיִם (נַעֲלֵי כַּדּוּרֶגֶל) 👟', wrong: ['Shirts', 'Socks', 'Shorts'] },
+  { eng: 'Win', heb: 'לְנַצֵּחַ! 🥇', wrong: ['Walk', 'Wait', 'Water'] },
+  { eng: 'Run', heb: 'לָרוּץ 🏃', wrong: ['Read', 'Rest', 'Ring'] },
+  { eng: 'Kick', heb: 'לִבְעֹט בַּכַּדּוּר ⚽', wrong: ['Kiss', 'Keep', 'Know'] },
+  { eng: 'Player', heb: 'שַׂחְקָן 🌟', wrong: ['Plane', 'Paper', 'Party'] },
+  { eng: 'Fast', heb: 'מָהִיר (כְּמוֹ וִינִיסְיוּס!) ⚡', wrong: ['Fat', 'First', 'Full'] }
+];
+
+const ENGLISH_DAILY_WORDS = [
+  { eng: 'Hello', heb: 'שָׁלוֹם 👋', wrong: ['Help', 'Home', 'Hand'] },
+  { eng: 'Goodbye', heb: 'לְהִתְרָאוֹת! 👋', wrong: ['Good', 'Gold', 'Great'] },
+  { eng: 'Thank you', heb: 'תּוֹדָה רַבָּה 🙏', wrong: ['Think', 'That', 'There'] },
+  { eng: 'School', heb: 'בֵּית סֵפֶר 🏫', wrong: ['Street', 'Store', 'Star'] },
+  { eng: 'Friend', heb: 'חָבֵר 👦', wrong: ['Family', 'Father', 'Food'] },
+  { eng: 'Family', heb: 'מִשְׁפָּחָה 👨‍👩‍👦', wrong: ['Friend', 'Father', 'Future'] },
+  { eng: 'Water', heb: 'מַיִם 💧', wrong: ['Winter', 'Winner', 'Window'] },
+  { eng: 'Pizza', heb: 'פִּיצָה 🍕', wrong: ['Pasta', 'Pear', 'Paper'] },
+  { eng: 'Lion', heb: 'אַרְיֵה (הַסֵּמֶל שֶׁל בֵּיתָ"ר!) 🦁', wrong: ['Line', 'Lemon', 'Light'] },
+  { eng: 'Dog', heb: 'כֶּלֶב 🐶', wrong: ['Door', 'Duck', 'Doll'] },
+  { eng: 'Cat', heb: 'חָתוּל 🐱', wrong: ['Car', 'Cup', 'Cap'] }
+];
+
+function genEnglishABC() {
+  const isMatch = Math.random() > 0.45;
+  if (isMatch) {
+    const item = ENGLISH_ABC_MATCH[randInt(0, ENGLISH_ABC_MATCH.length - 1)];
+    const isCapToLow = Math.random() > 0.5;
+    if (isCapToLow) {
+      return {
+        isEnglish: true,
+        isMulti: false,
+        instruction: '🔤 הַתְאָמַת אוֹתִיּוֹת ABC: בַּחֲרוּ אֶת הָאוֹת הַקְּטַנָּה הַמַּתְאִימָה:',
+        ttsText: `מהי האות הקטנה של האות ${item.cap}?`,
+        englishSpeechWord: item.cap,
+        stimulusHtml: `<div style="font-size:2.4rem;font-weight:800;color:#0a84ff;">${item.cap}</div><div style="font-size:1rem;color:#64748b;margin-top:4px;">איזו אות קטנה מתאימה לאות הזו?</div>`,
+        rtlStimulus: false,
+        options: shuffle([item.low, ...item.wrong]),
+        correctAnswers: [item.low],
+        hint: `האות ${item.cap} נכתבת בקטן כ-${item.low}!`
+      };
+    } else {
+      return {
+        isEnglish: true,
+        isMulti: false,
+        instruction: '🔤 הַתְאָמַת אוֹתִיּוֹת ABC: בַּחֲרוּ אֶת הָאוֹת הַגְּדוֹלָה הַמַּתְאִימָה:',
+        ttsText: `מהי האות הגדולה של האות ${item.low}?`,
+        englishSpeechWord: item.low,
+        stimulusHtml: `<div style="font-size:2.4rem;font-weight:800;color:#0a84ff;">${item.low}</div><div style="font-size:1rem;color:#64748b;margin-top:4px;">איזו אות גדולה מתאימה לאות הזו?</div>`,
+        rtlStimulus: false,
+        options: shuffle([item.cap, ...item.wrong.map(w => w.toUpperCase())]),
+        correctAnswers: [item.cap],
+        hint: `האות הקטנה ${item.low} שייכת לאות הגדולה ${item.cap}!`
+      };
+    }
+  } else {
+    // Phonics beginning letter
+    const p = ENGLISH_PHONICS[randInt(0, ENGLISH_PHONICS.length - 1)];
+    return {
+      isEnglish: true,
+      isMulti: false,
+      instruction: '🎵 צְלִיל פּוֹתֵחַ (Phonics): בְּאֵיזוֹ אוֹת מַתְחִילָה הַמִּלָּה?',
+      ttsText: `באיזו אות מתחילה המילה ${p.word}?`,
+      englishSpeechWord: p.word,
+      stimulusHtml: `<div style="font-size:1.8rem;font-weight:800;color:#059669;">${p.word}</div><div style="font-size:1.05rem;color:#334155;margin-top:6px;">פירוש: <strong>${p.hebrew}</strong></div>`,
+      rtlStimulus: false,
+      options: shuffle([p.letter, ...p.wrong]),
+      correctAnswers: [p.letter],
+      hint: `המילה ${p.word} מתחילה באות ${p.letter}!`
+    };
+  }
+}
+
+function genEnglishWords() {
+  const mode = randInt(1, 3);
+  if (mode === 1) {
+    // Numbers
+    const numObj = ENGLISH_NUMBERS[randInt(0, ENGLISH_NUMBERS.length - 1)];
+    const toEng = Math.random() > 0.5;
+    if (toEng) {
+      return {
+        isEnglish: true,
+        isMulti: false,
+        instruction: '🔟 מִסְפָּרִים בְּאַנְגְּלִית: אֵיךְ אוֹמְרִים אֶת הַמִּסְפָּר בְּאַנְגְּלִית?',
+        ttsText: `איך אומרים את המספר ${numObj.num} באנגלית?`,
+        englishSpeechWord: numObj.word,
+        stimulusHtml: `<div style="font-size:3rem;font-weight:800;color:#0a84ff;">${numObj.num}</div>`,
+        rtlStimulus: false,
+        options: shuffle([numObj.word, ...numObj.wrong]),
+        correctAnswers: [numObj.word],
+        hint: `ספרו באנגלית עד שמגיעים למספר ${numObj.num} (${numObj.word})!`
+      };
+    } else {
+      return {
+        isEnglish: true,
+        isMulti: false,
+        instruction: '🔟 מִסְפָּרִים בְּאַנְגְּלִית: אֵיזֶה מִסְפָּר זֶה?',
+        ttsText: `איזה מספר הוא ${numObj.word}?`,
+        englishSpeechWord: numObj.word,
+        stimulusHtml: `<div style="font-size:2.2rem;font-weight:800;color:#0a84ff;">${numObj.word.toUpperCase()}</div>`,
+        rtlStimulus: false,
+        options: shuffle([String(numObj.num), ...numObj.wrong.map(w => {
+          const found = ENGLISH_NUMBERS.find(n => n.word === w);
+          return found ? String(found.num) : '0';
+        })]),
+        correctAnswers: [String(numObj.num)],
+        hint: `${numObj.word} הוא המספר ${numObj.num}!`
+      };
+    }
+  } else if (mode === 2) {
+    // Colors
+    const col = ENGLISH_COLORS[randInt(0, ENGLISH_COLORS.length - 1)];
+    return {
+      isEnglish: true,
+      isMulti: false,
+      instruction: '🎨 צְבָעִים בְּאַנְגְּלִית: מַהוּ הַצֶּבַע?',
+      ttsText: `איזה צבע הוא ${col.color}?`,
+      englishSpeechWord: col.color,
+      stimulusHtml: `<div style="font-size:2.2rem;font-weight:800;color:#d97706;">${col.color.toUpperCase()}</div><div style="font-size:0.95rem;color:#64748b;margin-top:6px;">${col.note}</div>`,
+      rtlStimulus: false,
+      options: shuffle([col.heb, ...col.wrong]),
+      correctAnswers: [col.heb],
+      hint: `${col.color} פירושו ${col.heb}!`
+    };
+  } else {
+    // Animals / daily
+    const d = ENGLISH_DAILY_WORDS[randInt(0, ENGLISH_DAILY_WORDS.length - 1)];
+    return {
+      isEnglish: true,
+      isMulti: false,
+      instruction: '🌍 מִילִים שֶׁל יוֹמְיוֹם וְחַיּוֹת בְּאַנְגְּלִית:',
+      ttsText: `איך אומרים בעברית ${d.eng}?`,
+      englishSpeechWord: d.eng,
+      stimulusHtml: `<div style="font-size:2.2rem;font-weight:800;color:#7c3aed;">${d.eng}</div><div style="font-size:1rem;color:#475569;margin-top:6px;">מה הפירוש בעברית?</div>`,
+      rtlStimulus: false,
+      options: shuffle([d.heb, ...d.wrong.map(w => {
+        const found = ENGLISH_DAILY_WORDS.find(x => x.eng === w);
+        return found ? found.heb : 'מילה אחרת';
+      })]),
+      correctAnswers: [d.heb],
+      hint: `${d.eng} פירושו ${d.heb}!`
+    };
+  }
+}
+
+function genEnglishSoccer() {
+  const item = ENGLISH_SOCCER_WORDS[randInt(0, ENGLISH_SOCCER_WORDS.length - 1)];
+  const toHeb = Math.random() > 0.4;
+  if (toHeb) {
+    return {
+      isEnglish: true,
+      isMulti: false,
+      instruction: '⚽ אַנְגְּלִית שֶׁל אַלּוּפֵי כַּדּוּרֶגֶל:',
+      ttsText: `מה הפירוש של ${item.eng}?`,
+      englishSpeechWord: item.eng,
+      stimulusHtml: `<div style="font-size:2.4rem;font-weight:800;color:#0a84ff;">${item.eng.toUpperCase()}</div><div style="font-size:1rem;color:#475569;margin-top:6px;">מה הפירוש בעולם הכדורגל?</div>`,
+      rtlStimulus: false,
+      options: shuffle([item.heb, ...item.wrong.map(w => {
+        const found = ENGLISH_SOCCER_WORDS.find(x => x.eng === w);
+        return found ? found.heb : 'מילה אחרת';
+      })]),
+      correctAnswers: [item.heb],
+      hint: `${item.eng} פירושו ${item.heb}!`
+    };
+  } else {
+    return {
+      isEnglish: true,
+      isMulti: false,
+      instruction: '⚽ אַנְגְּלִית שֶׁל אַלּוּפֵי כַּדּוּרֶגֶל: אֵיךְ אוֹמְרִים בְּאַנְגְּלִית?',
+      ttsText: `איך אומרים ${item.heb} באנגלית?`,
+      englishSpeechWord: item.eng,
+      stimulusHtml: `<div style="font-size:2rem;font-weight:800;color:#059669;">${item.heb}</div>`,
+      rtlStimulus: true,
+      options: shuffle([item.eng, ...item.wrong]),
+      correctAnswers: [item.eng],
+      hint: `${item.heb} באנגלית זה ${item.eng}!`
+    };
+  }
+}
+
+function genEnglishStarter() {
+  const pick = randInt(1, 3);
+  if (pick === 1) return genEnglishABC();
+  if (pick === 2) return genEnglishWords();
+  return genEnglishSoccer();
+}
+
 function genEnglish() {
-  const item = ENGLISH_BANK[randInt(0, ENGLISH_BANK.length - 1)];
-  return {
-    isMulti: false,
-    instruction: 'טְעִימוֹת אַנְגְּלִית לְאַלּוּפִים (בְּקֶצֶב שֶׁלְּךָ!):',
-    ttsText: item.tts,
-    stimulusHtml: `<span>${item.q}</span>`,
-    rtlStimulus: true,
-    options: shuffle([item.ans, ...item.wrong]),
-    correctAnswers: [item.ans],
-    hint: 'קראו בקול את האפשרויות ובחרו את המילה המתאימה!'
-  };
+  return genEnglishStarter();
 }
 
 function genLogicSeries(diff) {
@@ -688,7 +940,10 @@ function generateQuestionForTopic(topicId, diff = 'medium', customQuestions = []
     case 'hebrew_opposites':  q = genHebrewOpposites(); break;
     case 'hebrew_grammar':    q = genHebrewGrammar(); break;
     case 'hebrew_reading':    q = genHebrewReading(); break;
-    case 'english_starter':   q = genEnglish(); break;
+    case 'english_abc':       q = genEnglishABC(); break;
+    case 'english_words':     q = genEnglishWords(); break;
+    case 'english_soccer':    q = genEnglishSoccer(); break;
+    case 'english_starter':   q = genEnglishStarter(); break;
     case 'logic_series':      q = genLogicSeries(diff); break;
     default:                  q = genAddSub(diff); break;
   }
