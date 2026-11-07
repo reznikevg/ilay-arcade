@@ -23,6 +23,29 @@ const STICKER_CATALOG = [
   { id: 's20', emoji: '🦸‍♂️', name: 'עילאי כוכב העל (#10)', rarity: 'אגדי ⭐' }
 ];
 
+const LIA_STICKER_CATALOG = [
+  { id: 'l1', emoji: '🦄', name: 'חד-קרן קשת בענן', rarity: 'חד-קרן קסום 🦄' },
+  { id: 'l2', emoji: '💙', name: 'סטיץ׳ החבר הכי טוב', rarity: 'אוהנה 💙🌺' },
+  { id: 'l3', emoji: '🩷', name: 'אנג׳ל הוורודה של סטיץ׳', rarity: 'אוהנה 💙🌺' },
+  { id: 'l4', emoji: '💄', name: 'מזוודת האיפור הנוצצת של ליה', rarity: 'גלאם ויופי 💄' },
+  { id: 'l5', emoji: '👩‍🏫', name: 'הגננת ליה האלופה', rarity: 'אגדי ⭐' },
+  { id: 'l6', emoji: '👑', name: 'כתר היהלומים של הנסיכה ליה', rarity: 'מלכותי 👑' },
+  { id: 'l7', emoji: '💅', name: 'סט לקים מנצנצים בצבעי קשת', rarity: 'גלאם ויופי 💄' },
+  { id: 'l8', emoji: '🪞', name: 'מראת הקסמים של המאפרת', rarity: 'גלאם ויופי 💄' },
+  { id: 'l9', emoji: '🌺', name: 'פרח ההוואי של לילו וסטיץ׳', rarity: 'אוהנה 💙🌺' },
+  { id: 'l10', emoji: '🌈', name: 'גשר הקשת בענן של חדי-הקרן', rarity: 'חד-קרן קסום 🦄' },
+  { id: 'l11', emoji: '👗', name: 'שמלת הנשף הוורודה', rarity: 'מלכותי 👑' },
+  { id: 'l12', emoji: '🧚‍♀️', name: 'פיית הנצנצים של גן חובה', rarity: 'חד-קרן קסום 🦄' },
+  { id: 'l13', emoji: '🧸', name: 'הדובי של מפגש הבוקר בגן', rarity: 'הגן של ליה 👩‍🏫' },
+  { id: 'l14', emoji: '🦋', name: 'פרפר הקסם הסגול', rarity: 'חד-קרן קסום 🦄' },
+  { id: 'l15', emoji: '🍦', name: 'גלידת חד-קרן מתוקה', rarity: 'נדיר ✨' },
+  { id: 'l16', emoji: '🎀', name: 'קשת סרט ורודה לשיער', rarity: 'גלאם ויופי 💄' },
+  { id: 'l17', emoji: '🏄‍♂️', name: 'סטיץ׳ גולש על הגלים', rarity: 'אוהנה 💙🌺' },
+  { id: 'l18', emoji: '⭐', name: 'מדבקת כוכב הזהב של הגננת', rarity: 'הגן של ליה 👩‍🏫' },
+  { id: 'l19', emoji: '👛', name: 'תיק האיפור המלכותי', rarity: 'גלאם ויופי 💄' },
+  { id: 'l20', emoji: '👧', name: 'ליה כוכבת העל של גן חובה!', rarity: 'אגדי ⭐' }
+];
+
 const DEFAULT_CUSTOM_QUESTIONS = [
   {
     instruction: 'הֲכָנָה לַמִּבְחָן בְּחֶשְׁבּוֹן:',
@@ -167,8 +190,80 @@ let appState = {
   familyPin: '1936', // Default Beitar Jerusalem founding year!
   allowedEmails: ['reznikevg@gmail.com', 'natalieazu@gmail.com'],
   googleClientId: '',
-  devRequests: [] // [{ id, date, text, status }]
+  devRequests: [], // [{ id, date, text, status }]
+  activeChild: 'ilay', // 'ilay' | 'lia'
+  liaProfile: {
+    coins: 60,
+    trophies: 1,
+    bestStreak: 0,
+    avatar: '🦄',
+    theme: 'unicorn', // 'unicorn' | 'stitch'
+    unlockedStickers: ['l1', 'l2'],
+    topicStats: {},
+    kinderStars: 5
+  }
 };
+
+function ensureLiaProfile() {
+  if (!appState.liaProfile) {
+    appState.liaProfile = {
+      coins: 60,
+      trophies: 1,
+      bestStreak: 0,
+      avatar: '🦄',
+      theme: 'unicorn',
+      unlockedStickers: ['l1', 'l2'],
+      topicStats: {},
+      kinderStars: 5
+    };
+  }
+  if (!appState.activeChild) appState.activeChild = 'ilay';
+}
+
+function isLiaActive() {
+  ensureLiaProfile();
+  return appState.activeChild === 'lia';
+}
+
+function getActiveCoins() {
+  return isLiaActive() ? appState.liaProfile.coins : appState.coins;
+}
+
+function addActiveCoins(amount) {
+  ensureLiaProfile();
+  if (isLiaActive()) {
+    appState.liaProfile.coins = Math.max(0, (appState.liaProfile.coins || 0) + amount);
+  } else {
+    appState.coins = Math.max(0, (appState.coins || 0) + amount);
+  }
+}
+
+function getActiveTrophies() {
+  return isLiaActive() ? appState.liaProfile.trophies : appState.trophies;
+}
+
+function addActiveTrophies(amount) {
+  ensureLiaProfile();
+  if (isLiaActive()) {
+    appState.liaProfile.trophies = (appState.liaProfile.trophies || 0) + amount;
+  } else {
+    appState.trophies = (appState.trophies || 0) + amount;
+  }
+}
+
+function getActiveStickers() {
+  ensureLiaProfile();
+  return isLiaActive() ? appState.liaProfile.unlockedStickers : appState.unlockedStickers;
+}
+
+function getActiveCatalog() {
+  return isLiaActive() ? LIA_STICKER_CATALOG : STICKER_CATALOG;
+}
+
+function getActiveTopicStats() {
+  ensureLiaProfile();
+  return isLiaActive() ? appState.liaProfile.topicStats : appState.topicStats;
+}
 
 // Active match session state
 let session = {
@@ -318,6 +413,11 @@ setInterval(async () => {
 }, 5000);
 
 function getRankTitle(trophies, solved) {
+  if (isLiaActive()) {
+    if (trophies >= 12 || solved >= 80) return 'מלכת החד-קרן והגננת הראשית 👑🦄';
+    if (trophies >= 5 || solved >= 30) return 'הגננת האלופה של סטיץ׳ 👩‍🏫💙';
+    return 'גן חובה • נסיכת הקסם 🦄💄';
+  }
   if (trophies >= 15 || solved >= 120) return 'אגדת טדי והברנבאו 👑🦁';
   if (trophies >= 8 || solved >= 60) return 'קפטן בית"ר וריאל 🌟';
   if (trophies >= 4 || solved >= 25) return 'כוכב ההרכב הפותח ⚡';
@@ -325,29 +425,135 @@ function getRankTitle(trophies, solved) {
 }
 
 function applyTeamTheme(team) {
-  appState.teamTheme = team;
-  document.body.classList.remove('theme-beitar', 'theme-real');
-  document.body.classList.add(`theme-${team}`);
+  ensureLiaProfile();
+  if (isLiaActive()) {
+    const liaTheme = (team === 'unicorn' || team === 'stitch') ? team : (appState.liaProfile.theme || 'unicorn');
+    appState.liaProfile.theme = liaTheme;
+    document.body.classList.remove('theme-beitar', 'theme-real', 'theme-unicorn', 'theme-stitch');
+    document.body.classList.add(`theme-${liaTheme}`);
+    document.querySelectorAll('#team-switcher .team-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.team === liaTheme);
+    });
+  } else {
+    const ilayTeam = (team === 'beitar' || team === 'real') ? team : (appState.teamTheme || 'beitar');
+    appState.teamTheme = ilayTeam;
+    document.body.classList.remove('theme-beitar', 'theme-real', 'theme-unicorn', 'theme-stitch');
+    document.body.classList.add(`theme-${ilayTeam}`);
+    document.querySelectorAll('#team-switcher .team-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.team === ilayTeam);
+    });
+  }
+}
 
-  document.querySelectorAll('#team-switcher .team-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.team === team);
-  });
+function switchActiveChild(kid) {
+  ensureLiaProfile();
+  appState.activeChild = kid === 'lia' ? 'lia' : 'ilay';
+  appState.selectedCategory = 'all';
+  document.querySelectorAll('.cat-tab').forEach(t => t.classList.toggle('active', t.dataset.cat === 'all'));
+  saveState();
+  updateHeaderUI();
+  renderTopicsGrid();
+  switchView('home');
+  if (kid === 'lia') {
+    arcadeAudio.speak('שלום ליה מתוקה! ברוכה הבאה לעולם הקסם של סטיץ׳, חד קרן, איפור והגן של ליה!', 'he-IL', 0.88);
+  } else {
+    arcadeAudio.speak('שלום עילאי האלוף! מוכן להבקיע שערים?', 'he-IL', 0.9);
+  }
 }
 
 function updateHeaderUI() {
-  document.getElementById('stat-coins').textContent = appState.coins;
-  document.getElementById('stat-trophies').textContent = appState.trophies;
+  ensureLiaProfile();
+  const lia = isLiaActive();
+
+  // Kid switcher buttons
+  document.querySelectorAll('.kid-switch-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.kid === appState.activeChild);
+  });
+
+  // Toggle theme buttons in header (Beitar/Real vs Unicorn/Stitch)
+  const btnBeitar = document.getElementById('btn-team-beitar');
+  const btnReal = document.getElementById('btn-team-real');
+  const btnUnicorn = document.getElementById('btn-team-unicorn');
+  const btnStitch = document.getElementById('btn-team-stitch');
+  if (btnBeitar && btnReal && btnUnicorn && btnStitch) {
+    btnBeitar.classList.toggle('hidden', lia);
+    btnReal.classList.toggle('hidden', lia);
+    btnUnicorn.classList.toggle('hidden', !lia);
+    btnStitch.classList.toggle('hidden', !lia);
+  }
+
+  // Toggle Home Bento grids & Hero card text
+  const ilayBento = document.getElementById('ilay-bento-grid');
+  const liaBento = document.getElementById('lia-bento-grid');
+  if (ilayBento && liaBento) {
+    ilayBento.classList.toggle('hidden', lia);
+    liaBento.classList.toggle('hidden', !lia);
+  }
+
+  const heroTag = document.getElementById('hero-tag-text');
+  const heroTitle = document.getElementById('hero-title-text');
+  const heroDesc = document.getElementById('hero-desc-text');
+  const practiceHeading = document.getElementById('practice-section-heading');
+  if (heroTag && heroTitle && heroDesc) {
+    if (lia) {
+      heroTag.textContent = 'מסיבת הקסמים של ליה • בונוס כפול ✨';
+      heroTitle.textContent = 'הרפתקת סטיץ׳ וחד-קרן 🦄💙';
+      heroDesc.textContent = '8 חידות שמחות באנגלית, אותיות וחשבון לגן חובה!';
+      if (practiceHeading) practiceHeading.textContent = 'משחקי הכנה לגן חובה ואנגלית לליה 🦄';
+    } else {
+      heroTag.textContent = 'אתגר יומי • בונוס כפול';
+      heroTitle.textContent = 'משחק האלופים המהיר';
+      heroDesc.textContent = '8 שאלות בחשבון ושפה על גביע יומי';
+      if (practiceHeading) practiceHeading.textContent = 'תרגול לימודי (כיתה ב׳)';
+    }
+  }
+
+  // Update Bottom Nav buttons for Lia vs Ilay
+  const nav2Icon = document.getElementById('nav-2-icon');
+  const nav2Text = document.getElementById('nav-2-text');
+  const nav2Btn = document.getElementById('nav-speech');
+  const nav3Icon = document.getElementById('nav-3-icon');
+  const nav3Text = document.getElementById('nav-3-text');
+  const nav3Btn = document.getElementById('nav-homework');
+  if (nav2Btn && nav3Btn) {
+    if (lia) {
+      nav2Btn.dataset.view = 'makeup';
+      if (nav2Icon) nav2Icon.textContent = '💄';
+      if (nav2Text) nav2Text.textContent = 'איפור';
+      nav3Btn.dataset.view = 'kinder';
+      if (nav3Icon) nav3Icon.textContent = '👩‍🏫';
+      if (nav3Text) nav3Text.textContent = 'הגן שלי';
+    } else {
+      nav2Btn.dataset.view = 'speech';
+      if (nav2Icon) nav2Icon.textContent = '🎙️';
+      if (nav2Text) nav2Text.textContent = 'הגייה';
+      nav3Btn.dataset.view = 'homework';
+      if (nav3Icon) nav3Icon.textContent = '✅';
+      if (nav3Text) nav3Text.textContent = 'משימות';
+    }
+  }
+
+  const activeCoins = getActiveCoins();
+  const activeTrophies = getActiveTrophies();
+  const activeAvatar = lia ? (appState.liaProfile.avatar || '🦄') : (appState.avatar || '🦁');
+  const activeName = lia ? 'לִיָּה' : 'עִילַאי';
+
+  document.getElementById('stat-coins').textContent = activeCoins;
+  document.getElementById('stat-trophies').textContent = activeTrophies;
   document.getElementById('stat-streak').textContent = session.currentStreak;
-  document.getElementById('current-avatar').textContent = appState.avatar;
-  applyTeamTheme(appState.teamTheme || 'beitar');
+  document.getElementById('current-avatar').textContent = activeAvatar;
+  const nameEl = document.getElementById('player-name-display');
+  if (nameEl) nameEl.textContent = activeName;
+
+  applyTeamTheme(lia ? (appState.liaProfile.theme || 'unicorn') : (appState.teamTheme || 'beitar'));
 
   let totalSolved = 0;
-  Object.values(appState.topicStats).forEach(s => { totalSolved += (s.solved || 0); });
-  document.getElementById('player-rank-display').textContent = getRankTitle(appState.trophies, totalSolved);
+  Object.values(getActiveTopicStats()).forEach(s => { totalSolved += (s.solved || 0); });
+  document.getElementById('player-rank-display').textContent = getRankTitle(activeTrophies, totalSolved);
 
   // Shop badge
   const shopNotif = document.getElementById('shop-notif');
-  if (appState.coins >= 50 && appState.unlockedStickers.length < STICKER_CATALOG.length) {
+  if (activeCoins >= 50 && getActiveStickers().length < getActiveCatalog().length) {
     shopNotif.classList.remove('hidden');
   } else {
     shopNotif.classList.add('hidden');
@@ -356,25 +562,29 @@ function updateHeaderUI() {
   // Homework badge & quick tile summary
   const pendingHw = (appState.homeworkList || []).filter(h => !h.done).length;
   const hwNotif = document.getElementById('hw-notif');
-  if (pendingHw > 0) {
+  if (!lia && pendingHw > 0) {
     hwNotif.textContent = pendingHw;
     hwNotif.classList.remove('hidden');
     document.getElementById('quick-hw-summary').textContent = `${pendingHw} משימות להיום`;
   } else {
     hwNotif.classList.add('hidden');
-    document.getElementById('quick-hw-summary').textContent = `הכל בוצע! 🏆`;
+    if (document.getElementById('quick-hw-summary')) {
+      document.getElementById('quick-hw-summary').textContent = `הכל בוצע! 🏆`;
+    }
   }
 
   // Speech studio daily status
   const todayStr = new Date().toLocaleDateString('he-IL');
   const todayLogs = (appState.speechLogs || []).filter(l => l.date.startsWith(todayStr));
   const speechNotif = document.getElementById('speech-notif');
-  if (todayLogs.length < 3) {
+  if (!lia && todayLogs.length < 3) {
     speechNotif.classList.remove('hidden');
     document.getElementById('quick-speech-summary').textContent = `תורגלו ${todayLogs.length}/5 היום`;
   } else {
     speechNotif.classList.add('hidden');
-    document.getElementById('quick-speech-summary').textContent = `אלוף השדרנים! 🏆`;
+    if (document.getElementById('quick-speech-summary')) {
+      document.getElementById('quick-speech-summary').textContent = `אלוף השדרנים! 🏆`;
+    }
   }
 
   // Today schedule quick summary
@@ -410,6 +620,8 @@ function switchView(viewName) {
   if (viewName === 'dictation') startDictationTrainer();
   if (viewName === 'shop') renderShopView();
   if (viewName === 'parents') renderParentsView();
+  if (viewName === 'makeup') initMakeupStudio();
+  if (viewName === 'kinder') initKinderStudio();
   updateHeaderUI();
 }
 
@@ -419,14 +631,19 @@ function renderTopicsGrid() {
   const grid = document.getElementById('topics-grid');
   grid.innerHTML = '';
 
-  const filtered = TOPICS.filter(t => {
+  const lia = isLiaActive();
+  const sourceTopics = lia && typeof LIA_TOPICS !== 'undefined' ? LIA_TOPICS : TOPICS;
+  const statsObj = getActiveTopicStats();
+
+  const filtered = sourceTopics.filter(t => {
     if (appState.selectedCategory === 'all') return true;
     return t.cat === appState.selectedCategory;
   });
 
   filtered.forEach(topic => {
-    const st = appState.topicStats[topic.id] || { solved: 0, correct: 0, stars: 0 };
+    const st = statsObj[topic.id] || { solved: 0, correct: 0, stars: 0 };
     const starsDisplay = '⭐'.repeat(Math.min(3, st.stars)) + '☆'.repeat(Math.max(0, 3 - Math.min(3, st.stars)));
+    const playLabel = lia ? 'שחקי 🦄' : 'שחק ⚽';
 
     const card = document.createElement('div');
     card.className = `topic-card cat-${topic.cat}`;
@@ -440,7 +657,7 @@ function renderTopicsGrid() {
       </div>
       <div class="topic-footer">
         <span class="topic-stars">${starsDisplay}</span>
-        <span class="play-mini-btn">שחק ⚽</span>
+        <span class="play-mini-btn">${playLabel}</span>
       </div>
     `;
     card.addEventListener('click', () => {
@@ -1193,13 +1410,15 @@ function startMatch(topicId, topicTitle, isDailyBonus = false) {
 
 function renderPenaltyTrack() {
   const track = document.getElementById('penalty-balls-track');
+  if (!track) return;
+  const lia = isLiaActive();
   track.innerHTML = '';
   for (let i = 0; i < session.totalQuestions; i++) {
     const dot = document.createElement('div');
-    dot.className = 'p-dot';
+    dot.className = 'penalty-dot';
     if (session.penaltyHistory[i] === 'scored') {
       dot.classList.add('scored');
-      dot.textContent = '⚽';
+      dot.textContent = lia ? '🦄' : '⚽';
     } else if (session.penaltyHistory[i] === 'missed') {
       dot.classList.add('missed');
       dot.textContent = '✖';
@@ -1210,8 +1429,39 @@ function renderPenaltyTrack() {
   }
 }
 
+function speakOptionValue(optVal) {
+  if (!optVal) return;
+  const raw = String(optVal);
+  // Check if option has English in parentheses like "🩷 וָרוֹד (Pink)"
+  const parenMatch = raw.match(/\(([A-Za-z\s/]+)\)/);
+  if (parenMatch) {
+    const engPart = parenMatch[1].split('/')[0].trim();
+    const hebPart = raw.replace(/\([^)]+\)/g, '').trim();
+    arcadeAudio.speakBilingual(hebPart, engPart);
+    return;
+  }
+  // If option is purely English letters
+  if (/^[A-Za-z\s!?.,'-]+$/.test(raw.trim())) {
+    arcadeAudio.speak(raw.trim(), 'en-US', 0.82);
+  } else {
+    arcadeAudio.speak(raw, 'he-IL', 0.86);
+  }
+}
+
+function speakQuestionPrompt(q) {
+  if (!q) return;
+  if (q.isEnglish && q.englishSpeechWord) {
+    arcadeAudio.speakBilingual(q.ttsText || q.instruction, q.englishSpeechWord, 0.86);
+  } else if (q.isEnglish) {
+    arcadeAudio.speak(q.ttsText || q.instruction, 'en-US', 0.84);
+  } else {
+    arcadeAudio.speak(q.ttsText || q.instruction, 'he-IL', 0.86);
+  }
+}
+
 function renderCurrentQuestion() {
   const q = session.questions[session.currentIndex];
+  const lia = isLiaActive();
   session.attemptsOnCurrent = 1;
   session.selectedOptions.clear();
   session.answeredCurrent = false;
@@ -1222,16 +1472,26 @@ function renderCurrentQuestion() {
   document.getElementById('q-progress-fill').style.width = `${pct}%`;
 
   const ball = document.getElementById('soccer-ball-shot');
-  ball.className = 'soccer-ball-shot';
-  document.getElementById('goalkeeper').style.transform = 'translateX(0)';
+  const gk = document.getElementById('goalkeeper');
+  if (ball) {
+    ball.className = 'arena-ball';
+    ball.textContent = lia ? '🦄' : '⚽';
+  }
+  if (gk) {
+    gk.className = 'arena-keeper';
+    gk.textContent = lia ? '🌈' : '🧤';
+    gk.style.transform = 'translateX(0)';
+  }
   document.getElementById('commentator-text').textContent =
-    q.isMulti
-      ? '🎙️ "בחר את כל המספרים המתאימים!"'
-      : '🎙️ "עילאי מכוון לשער..."';
+    lia
+      ? '✨ "ליה וסטיץ׳ מוכנים לחידה הבאה!"'
+      : q.isMulti
+        ? '🎙️ "בחר את כל המספרים המתאימים!"'
+        : '🎙️ "עילאי מכוון לשער..."';
 
   const btnSpeak = document.getElementById('btn-speak-question');
   if (btnSpeak) {
-    btnSpeak.textContent = q.isEnglish ? '🔊 השמע באנגלית' : '🔊 הקרא שאלה';
+    btnSpeak.textContent = q.isEnglish ? '🔊 הקרא + אנגלית' : '🔊 הקרא שאלה';
   }
 
   document.getElementById('q-instruction').innerHTML = q.instruction;
@@ -1253,9 +1513,20 @@ function renderCurrentQuestion() {
     row.dataset.val = optVal;
     row.innerHTML = `
       <span class="opt-text" dir="auto">${optVal}</span>
+      <button type="button" class="opt-speak-mini" title="השמע תשובה">🔊</button>
       <span class="opt-indicator">${q.isMulti ? '☐' : '•'}</span>
     `;
-    row.addEventListener('click', () => handleOptionSelect(optVal, row, q.isMulti));
+    const miniSpeak = row.querySelector('.opt-speak-mini');
+    if (miniSpeak) {
+      miniSpeak.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        speakOptionValue(optVal);
+      });
+    }
+    row.addEventListener('click', () => {
+      handleOptionSelect(optVal, row, q.isMulti);
+      if (lia) speakOptionValue(optVal);
+    });
     optsContainer.appendChild(row);
   });
 
@@ -1264,11 +1535,16 @@ function renderCurrentQuestion() {
   fb.className = 'feedback-banner hidden';
   document.getElementById('btn-check-answer').classList.remove('hidden');
   document.getElementById('btn-next-question').classList.add('hidden');
+
+  if (q.autoSpeak || lia) {
+    setTimeout(() => speakQuestionPrompt(q), 240);
+  }
 }
 
 function handleOptionSelect(val, rowEl, isMulti) {
   if (session.answeredCurrent) return;
   arcadeAudio.playClick();
+  const lia = isLiaActive();
 
   if (isMulti) {
     if (session.selectedOptions.has(val)) {
@@ -1288,18 +1564,19 @@ function handleOptionSelect(val, rowEl, isMulti) {
     });
     session.selectedOptions.add(val);
     rowEl.classList.add('selected');
-    rowEl.querySelector('.opt-indicator').textContent = '⚽';
+    rowEl.querySelector('.opt-indicator').textContent = lia ? '🦄' : '⚽';
   }
 }
 
 function checkCurrentAnswer() {
   if (session.answeredCurrent) return;
   const q = session.questions[session.currentIndex];
+  const lia = isLiaActive();
 
   if (session.selectedOptions.size === 0) {
     const fb = document.getElementById('feedback-banner');
     fb.className = 'feedback-banner error';
-    fb.textContent = 'בחר תשובה קודם! ⚽';
+    fb.textContent = lia ? 'בחרי תשובה קודם מתוקה! 🦄' : 'בחר תשובה קודם! ⚽';
     return;
   }
 
@@ -1321,7 +1598,7 @@ function checkCurrentAnswer() {
     if (session.currentStreak > session.maxSessionStreak) {
       session.maxSessionStreak = session.currentStreak;
     }
-    if (session.currentStreak > appState.bestStreak) {
+    if (!lia && session.currentStreak > appState.bestStreak) {
       appState.bestStreak = session.currentStreak;
     }
 
@@ -1331,14 +1608,15 @@ function checkCurrentAnswer() {
     const earned = (baseReward + streakBonus) * mult;
 
     session.coinsEarned += earned;
-    appState.coins += earned;
+    addActiveCoins(earned);
     session.penaltyHistory[session.currentIndex] = 'scored';
 
-    const tStat = appState.topicStats[q.topicId] || { solved: 0, correct: 0, stars: 0 };
+    const statsObj = getActiveTopicStats();
+    const tStat = statsObj[q.topicId] || { solved: 0, correct: 0, stars: 0 };
     tStat.solved++;
     tStat.correct++;
     tStat.stars = Math.min(3, Math.floor(tStat.correct / 5));
-    appState.topicStats[q.topicId] = tStat;
+    statsObj[q.topicId] = tStat;
     saveState();
 
     document.querySelectorAll('#q-options-container .option-row').forEach(el => {
@@ -1350,18 +1628,17 @@ function checkCurrentAnswer() {
 
     arcadeAudio.playGoalSuccess();
     confetti.burst(65);
-    ball.className = 'soccer-ball-shot goal-anim';
-    gk.style.transform = 'translateX(35px) rotate(20deg)';
+    if (ball) ball.classList.add('shoot-anim');
+    if (gk) gk.classList.add('dive-right');
 
     const streakMsg = session.currentStreak >= 3 ? ` 🔥 רצף ${session.currentStreak}!` : '';
     fb.className = 'feedback-banner success';
-    fb.textContent = `גווווול! +${earned} 🪙${streakMsg}`;
-    document.getElementById('commentator-text').textContent = `🎙️ "שעררר אדיר של עילאי!"`;
-
-    const streakPill = document.getElementById('streak-pill');
-    streakPill.classList.remove('pulse');
-    void streakPill.offsetWidth;
-    streakPill.classList.add('pulse');
+    fb.textContent = lia
+      ? `כל הכבוד ליה! קסם של תשובה! +${earned} 🪙${streakMsg}`
+      : `גווווול! +${earned} 🪙${streakMsg}`;
+    document.getElementById('commentator-text').textContent = lia
+      ? `🦄 "סטיץ׳ וחד-קרן מוחאים כפיים לליה!"`
+      : `🎙️ "שעררר אדיר של עילאי!"`;
 
     updateHeaderUI();
     renderPenaltyTrack();
@@ -1377,15 +1654,16 @@ function checkCurrentAnswer() {
       session.attemptsOnCurrent = 2;
       document.getElementById('attempt-counter').textContent = `ניסיון 2`;
       fb.className = 'feedback-banner error';
-      fb.textContent = 'בקורה! 🥅 היעזר ברמז ונסה שוב!';
+      fb.textContent = lia ? 'כמעט מתוקה! 💡 היעזרי ברמז ונסי שוב!' : 'בקורה! 🥅 היעזר ברמז ונסה שוב!';
       document.getElementById('hint-box').classList.remove('hidden');
     } else {
       session.answeredCurrent = true;
       session.penaltyHistory[session.currentIndex] = 'missed';
 
-      const tStat = appState.topicStats[q.topicId] || { solved: 0, correct: 0, stars: 0 };
+      const statsObj = getActiveTopicStats();
+      const tStat = statsObj[q.topicId] || { solved: 0, correct: 0, stars: 0 };
       tStat.solved++;
-      appState.topicStats[q.topicId] = tStat;
+      statsObj[q.topicId] = tStat;
       saveState();
 
       document.querySelectorAll('#q-options-container .option-row').forEach(el => {
@@ -1397,7 +1675,6 @@ function checkCurrentAnswer() {
         }
       });
 
-      ball.className = 'soccer-ball-shot miss-anim';
       fb.className = 'feedback-banner error';
       fb.textContent = `התשובה הנכונה: ${q.correctAnswers.join(' , ')}`;
       renderPenaltyTrack();
@@ -1422,14 +1699,19 @@ function finishMatch() {
   clearInterval(session.timerInterval);
   arcadeAudio.playWhistleVictory();
   confetti.burst(130);
+  const lia = isLiaActive();
 
   const ratio = session.correctCount / session.totalQuestions;
   if (ratio >= 0.7) {
-    appState.trophies += session.isDailyBonus ? 2 : 1;
+    addActiveTrophies(session.isDailyBonus ? 2 : 1);
   }
   saveState();
   updateHeaderUI();
 
+  const sumTitle = document.getElementById('summary-title');
+  if (sumTitle) {
+    sumTitle.textContent = lia ? 'כל הכבוד לִיָּה האלופה! 🦄👑' : 'כל הכבוד עִילַאי! 🏆⚽';
+  }
   document.getElementById('sum-correct').textContent = `${session.correctCount}/${session.totalQuestions}`;
   document.getElementById('sum-coins').textContent = `+${session.coinsEarned}`;
   document.getElementById('sum-streak').textContent = session.maxSessionStreak;
@@ -1440,16 +1722,21 @@ function finishMatch() {
 // ==================== STICKER ALBUM & SHOP ====================
 
 function renderShopView() {
-  document.getElementById('shop-coins-balance').textContent = appState.coins;
-  document.getElementById('album-count').textContent = `${appState.unlockedStickers.length}/${STICKER_CATALOG.length}`;
-  const pct = Math.round((appState.unlockedStickers.length / STICKER_CATALOG.length) * 100);
+  const catalog = getActiveCatalog();
+  const stickers = getActiveStickers();
+  const coins = getActiveCoins();
+  const lia = isLiaActive();
+
+  document.getElementById('shop-coins-balance').textContent = coins;
+  document.getElementById('album-count').textContent = `${stickers.length}/${catalog.length}`;
+  const pct = Math.round((stickers.length / catalog.length) * 100);
   document.getElementById('album-progress-fill').style.width = `${pct}%`;
 
   const grid = document.getElementById('stickers-grid');
   grid.innerHTML = '';
 
-  STICKER_CATALOG.forEach(st => {
-    const unlocked = appState.unlockedStickers.includes(st.id);
+  catalog.forEach(st => {
+    const unlocked = stickers.includes(st.id);
     const card = document.createElement('div');
     card.className = `sticker-card ${unlocked ? 'unlocked' : 'locked'}`;
     card.innerHTML = `
@@ -1459,7 +1746,11 @@ function renderShopView() {
     `;
     if (unlocked) {
       card.addEventListener('click', () => {
-        appState.avatar = st.emoji;
+        if (lia) {
+          appState.liaProfile.avatar = st.emoji;
+        } else {
+          appState.avatar = st.emoji;
+        }
         saveState();
         updateHeaderUI();
         arcadeAudio.playClick();
@@ -1471,24 +1762,33 @@ function renderShopView() {
 
 function buyMysteryPack() {
   const PACK_COST = 50;
-  if (appState.coins < PACK_COST) {
+  const coins = getActiveCoins();
+  const catalog = getActiveCatalog();
+  const stickers = getActiveStickers();
+  const lia = isLiaActive();
+
+  if (coins < PACK_COST) {
     arcadeAudio.playMiss();
-    alert(`חסרים לך עוד ${PACK_COST - appState.coins} מטבעות! ⚽`);
+    alert(`חסרים לך עוד ${PACK_COST - coins} מטבעות! 🪙`);
     return;
   }
 
-  appState.coins -= PACK_COST;
-  const locked = STICKER_CATALOG.filter(s => !appState.unlockedStickers.includes(s.id));
+  addActiveCoins(-PACK_COST);
+  const locked = catalog.filter(s => !stickers.includes(s.id));
 
   if (locked.length > 0) {
     const chosen = locked[Math.floor(Math.random() * locked.length)];
-    appState.unlockedStickers.push(chosen.id);
-    appState.avatar = chosen.emoji;
+    stickers.push(chosen.id);
+    if (lia) {
+      appState.liaProfile.avatar = chosen.emoji;
+    } else {
+      appState.avatar = chosen.emoji;
+    }
     arcadeAudio.playUnlock();
     confetti.burst(95);
     alert(`🎉 קלף חדש: ${chosen.emoji} "${chosen.name}"!`);
   } else {
-    appState.trophies += 1;
+    addActiveTrophies(1);
     arcadeAudio.playUnlock();
     confetti.burst(95);
     alert(`👑 השלמת את כל האלבום! קיבלת גביע זהב!`);
@@ -2333,7 +2633,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 4 Big Home Visual Tiles
+  // 4 Big Home Visual Tiles (Ilay)
   document.getElementById('quick-open-speech').addEventListener('click', () => {
     arcadeAudio.playClick();
     switchView('speech');
@@ -2349,6 +2649,44 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('quick-open-dict').addEventListener('click', () => {
     arcadeAudio.playClick();
     switchView('dictation');
+  });
+
+  // 4 Big Home Visual Tiles (Lia)
+  const btnOpenMakeup = document.getElementById('quick-open-makeup');
+  if (btnOpenMakeup) {
+    btnOpenMakeup.addEventListener('click', () => {
+      arcadeAudio.playClick();
+      switchView('makeup');
+    });
+  }
+  const btnOpenKinder = document.getElementById('quick-open-kinder');
+  if (btnOpenKinder) {
+    btnOpenKinder.addEventListener('click', () => {
+      arcadeAudio.playClick();
+      switchView('kinder');
+    });
+  }
+  const btnOpenLiaEng = document.getElementById('quick-open-lia-eng');
+  if (btnOpenLiaEng) {
+    btnOpenLiaEng.addEventListener('click', () => {
+      arcadeAudio.playClick();
+      startMatch('lia_english_colors_glam', '💄 אנגלית עם סטיץ׳ וחד-קרן', false);
+    });
+  }
+  const btnOpenLiaPrep = document.getElementById('quick-open-lia-prep');
+  if (btnOpenLiaPrep) {
+    btnOpenLiaPrep.addEventListener('click', () => {
+      arcadeAudio.playClick();
+      startMatch('lia_heb_letters', '🔤 מוכנות לגן חובה עם ליה', false);
+    });
+  }
+
+  // Kid Switcher Bar (Ilay vs Lia)
+  document.querySelectorAll('.kid-switch-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      arcadeAudio.playClick();
+      switchActiveChild(btn.dataset.kid);
+    });
   });
 
   // Speech Studio Listeners
@@ -2458,14 +2796,19 @@ document.addEventListener('DOMContentLoaded', () => {
     switchView('shop');
   });
 
-  // Team Switcher
+  // Team / Theme Switcher
   document.querySelectorAll('#team-switcher .team-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       arcadeAudio.playGoalSuccess();
       const team = btn.dataset.team;
       applyTeamTheme(team);
-      if (team === 'beitar' && appState.avatar === '👑') appState.avatar = '🦁';
-      if (team === 'real' && appState.avatar === '🦁') appState.avatar = '👑';
+      if (!isLiaActive()) {
+        if (team === 'beitar' && appState.avatar === '👑') appState.avatar = '🦁';
+        if (team === 'real' && appState.avatar === '🦁') appState.avatar = '👑';
+      } else {
+        if (team === 'unicorn') appState.liaProfile.avatar = '🦄';
+        if (team === 'stitch') appState.liaProfile.avatar = '💙';
+      }
       saveState();
       updateHeaderUI();
     });
@@ -2474,7 +2817,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // Daily challenge button
   document.getElementById('btn-daily-match').addEventListener('click', () => {
     arcadeAudio.playClick();
-    startMatch('daily_mix', 'גמר גביע האלופים 🏆', true);
+    if (isLiaActive()) {
+      startMatch('lia_daily_mix', '🦄 מסיבת הקסמים של ליה וסטיץ׳ ✨', true);
+    } else {
+      startMatch('daily_mix', 'גמר גביע האלופים 🏆', true);
+    }
   });
 
   // Category Tabs
@@ -2514,13 +2861,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btn-speak-question').addEventListener('click', () => {
     const q = session.questions[session.currentIndex];
     if (!q) return;
-    if (q.isEnglish) {
-      // Speak the English word in clear native English TTS!
-      arcadeAudio.speak(q.englishSpeechWord || q.ttsText, 'en-US', 0.84);
-    } else {
-      // Speak in clear Hebrew with all numbers vocalized to Hebrew words!
-      arcadeAudio.speak(q.ttsText || q.instruction, 'he-IL', 0.86);
-    }
+    speakQuestionPrompt(q);
   });
   document.getElementById('btn-hint').addEventListener('click', () => {
     arcadeAudio.playClick();
@@ -2625,9 +2966,310 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Reset progress button
   document.getElementById('btn-reset-progress').addEventListener('click', () => {
-    if (confirm('האם לאפס את כל הנתונים והנקודות של עילאי?')) {
+    if (confirm('האם לאפס את כל הנתונים והנקודות?')) {
       localStorage.removeItem(STORAGE_KEY);
       location.reload();
     }
   });
+
+  // Setup Lia's Studios
+  setupMakeupStudioListeners();
+  setupKinderStudioListeners();
 });
+
+// ==================== VIEW 10: LIA'S GLAM & MAKEUP STUDIO CONTROLLER ====================
+
+const GLAM_MISSIONS = [
+  { lip: 'Pink Lipstick', crown: 'Gold Crown', heb: 'ליה מתוקה, הלקוחה מבקשת שפתון ורוד וכתר זהב!', eng: 'Pink Lipstick and Gold Crown', display: 'בחרי שפתון ורוד (Pink Lipstick) + כתר זהב (Gold Crown) 💄👑' },
+  { lip: 'Red Lipstick', crown: 'Unicorn Horn', heb: 'ליה, חד-הקרן מבקש שפתון אדום וקרן של חד-קרן!', eng: 'Red Lipstick and Unicorn Horn', display: 'בחרי שפתון אדום (Red Lipstick) + קרן חד-קרן (Unicorn) ❤️🦄' },
+  { lip: 'Purple Lipstick', crown: 'Stitch Flower', heb: 'סטיץ׳ מבקש איפור עם שפתון סגול ופרח של הוואי!', eng: 'Purple Lipstick and Stitch Flower', display: 'בחרי שפתון סגול (Purple Lipstick) + פרח של סטיץ׳ (Flower) 💜🌺' },
+  { lip: 'Pink Lipstick', crown: 'Pink Bow', heb: 'הנסיכה מבקשת שפתון ורוד וסרט ורוד לשיער!', eng: 'Pink Lipstick and Pink Bow', display: 'בחרי שפתון ורוד (Pink Lipstick) + סרט ורוד (Pink Bow) 🩷🎀' }
+];
+
+let glamState = {
+  model: '👸',
+  lip: 'Pink Lipstick',
+  lipHeb: 'שפתון ורוד',
+  lipColor: '#ec4899',
+  eye: 'Purple Sparkle',
+  eyeHeb: 'צללית סגולה',
+  eyeColor: '#c084fc',
+  crown: 'Gold Crown',
+  crownIcon: '👑',
+  nail: 'Pink Nails',
+  nailHeb: 'לק ורוד נוצץ',
+  missionIndex: 0
+};
+
+function initMakeupStudio() {
+  renderGlamMission();
+  updateGlamMirrorUI();
+}
+
+function renderGlamMission() {
+  const m = GLAM_MISSIONS[glamState.missionIndex % GLAM_MISSIONS.length];
+  const txtEl = document.getElementById('glam-mission-text');
+  if (txtEl) txtEl.textContent = m.display;
+  const fb = document.getElementById('glam-feedback-banner');
+  if (fb) fb.className = 'feedback-banner hidden';
+}
+
+function updateGlamMirrorUI() {
+  const avatarEl = document.getElementById('glam-main-avatar');
+  const crownEl = document.getElementById('glam-crown-slot');
+  const faceCircle = document.getElementById('glam-face-circle');
+  const blushL = document.getElementById('glam-blush-left');
+  const blushR = document.getElementById('glam-blush-right');
+
+  if (avatarEl) avatarEl.textContent = glamState.model;
+  if (crownEl) crownEl.textContent = glamState.crownIcon;
+  if (faceCircle) {
+    faceCircle.style.borderColor = glamState.lipColor;
+    faceCircle.style.boxShadow = `0 0 24px ${glamState.eyeColor}`;
+  }
+  if (blushL && blushR) {
+    blushL.style.background = glamState.lipColor;
+    blushR.style.background = glamState.lipColor;
+  }
+
+  const lipPill = document.getElementById('glam-lip-pill');
+  const eyePill = document.getElementById('glam-eye-pill');
+  const nailPill = document.getElementById('glam-nail-pill');
+  if (lipPill) lipPill.textContent = `💄 ${glamState.lipHeb} (${glamState.lip.split(' ')[0]})`;
+  if (eyePill) eyePill.textContent = `✨ ${glamState.eyeHeb} (${glamState.eye.split(' ')[0]})`;
+  if (nailPill) nailPill.textContent = `💅 ${glamState.nailHeb} (${glamState.nail.split(' ')[0]})`;
+}
+
+function setupMakeupStudioListeners() {
+  document.querySelectorAll('.glam-model-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      arcadeAudio.playClick();
+      document.querySelectorAll('.glam-model-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      glamState.model = btn.dataset.model;
+      updateGlamMirrorUI();
+      arcadeAudio.speak(`עכשיו מאפרים את ${btn.dataset.name}!`, 'he-IL', 0.88);
+    });
+  });
+
+  document.querySelectorAll('#glam-lip-swatches .glam-swatch').forEach(btn => {
+    btn.addEventListener('click', () => {
+      arcadeAudio.playClick();
+      document.querySelectorAll('#glam-lip-swatches .glam-swatch').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      glamState.lip = btn.dataset.eng;
+      glamState.lipHeb = btn.dataset.heb;
+      glamState.lipColor = btn.dataset.color;
+      updateGlamMirrorUI();
+      arcadeAudio.speakBilingual(btn.dataset.heb, btn.dataset.eng);
+    });
+  });
+
+  document.querySelectorAll('#glam-eye-swatches .glam-swatch').forEach(btn => {
+    btn.addEventListener('click', () => {
+      arcadeAudio.playClick();
+      document.querySelectorAll('#glam-eye-swatches .glam-swatch').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      glamState.eye = btn.dataset.eng;
+      glamState.eyeHeb = btn.dataset.heb;
+      glamState.eyeColor = btn.dataset.color;
+      updateGlamMirrorUI();
+      arcadeAudio.speakBilingual(btn.dataset.heb, btn.dataset.eng);
+    });
+  });
+
+  document.querySelectorAll('#glam-crown-swatches .glam-item-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      arcadeAudio.playClick();
+      document.querySelectorAll('#glam-crown-swatches .glam-item-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      glamState.crown = btn.dataset.eng;
+      glamState.crownIcon = btn.dataset.icon;
+      updateGlamMirrorUI();
+      arcadeAudio.speakBilingual(btn.dataset.heb, btn.dataset.eng);
+    });
+  });
+
+  document.querySelectorAll('#glam-nail-swatches .glam-item-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      arcadeAudio.playClick();
+      document.querySelectorAll('#glam-nail-swatches .glam-item-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      glamState.nail = btn.dataset.eng;
+      glamState.nailHeb = btn.dataset.heb;
+      updateGlamMirrorUI();
+      arcadeAudio.speakBilingual(btn.dataset.heb, btn.dataset.eng);
+    });
+  });
+
+  const btnSpeakMission = document.getElementById('btn-glam-speak-mission');
+  if (btnSpeakMission) {
+    btnSpeakMission.addEventListener('click', () => {
+      const m = GLAM_MISSIONS[glamState.missionIndex % GLAM_MISSIONS.length];
+      arcadeAudio.speakBilingual(m.heb, m.eng);
+    });
+  }
+
+  const btnNewMission = document.getElementById('btn-glam-new-mission');
+  if (btnNewMission) {
+    btnNewMission.addEventListener('click', () => {
+      arcadeAudio.playClick();
+      glamState.missionIndex = (glamState.missionIndex + 1) % GLAM_MISSIONS.length;
+      renderGlamMission();
+      const m = GLAM_MISSIONS[glamState.missionIndex];
+      arcadeAudio.speakBilingual(m.heb, m.eng);
+    });
+  }
+
+  const btnFinish = document.getElementById('btn-glam-finish');
+  if (btnFinish) {
+    btnFinish.addEventListener('click', () => {
+      const m = GLAM_MISSIONS[glamState.missionIndex % GLAM_MISSIONS.length];
+      const fb = document.getElementById('glam-feedback-banner');
+      if (glamState.lip === m.lip && glamState.crown === m.crown) {
+        addActiveCoins(25);
+        saveState();
+        updateHeaderUI();
+        arcadeAudio.playGoalSuccess();
+        confetti.burst(90);
+        if (fb) {
+          fb.className = 'feedback-banner success';
+          fb.textContent = '🌟 וואו ליה! איפרת בדיוק לפי הבקשה באנגלית! הרווחת +25 מטבעות! 💄👑';
+        }
+        arcadeAudio.speak('וואו ליה! איזו מאפרת אלופה! הרווחת עשרים וחמישה מטבעות!', 'he-IL', 0.88);
+        setTimeout(() => {
+          glamState.missionIndex = (glamState.missionIndex + 1) % GLAM_MISSIONS.length;
+          renderGlamMission();
+        }, 2600);
+      } else {
+        addActiveCoins(10);
+        saveState();
+        updateHeaderUI();
+        arcadeAudio.playGoalSuccess();
+        confetti.burst(45);
+        if (fb) {
+          fb.className = 'feedback-banner success';
+          fb.textContent = `✨ איפור מהמם ליה! (+10 🪙). לבונוס הגדול נסי גם את משימת הלקוחה למעלה!`;
+        }
+        arcadeAudio.speak('איפור מהמם ליה! הרווחת עשרה מטבעות!', 'he-IL', 0.88);
+      }
+    });
+  }
+}
+
+// ==================== VIEW 11: TEACHER LIA'S KINDERGARTEN CONTROLLER ====================
+
+const KINDER_STUDENTS = [
+  { id: 'stitch', emoji: '💙🌺', name: 'סטיץ׳ החמוד', greetingHeb: 'בוקר טוב הגננת ליה! הבאתי לך פרח מהוואי!', greetingEng: 'Good Morning Teacher Lia!', star: false },
+  { id: 'unicorn', emoji: '🦄🌈', name: 'חד-קרן קשת', greetingHeb: 'שלום הגננת ליה! איזה כיף במפגש הבוקר בגן!', greetingEng: 'Hello Teacher Lia! I love you!', star: false },
+  { id: 'teddy', emoji: '🧸💛', name: 'הדובי טדי', greetingHeb: 'בוקר טוב הגננת ליה! אני מוכן לשיר ולספור!', greetingEng: 'One, Two, Three, Happy Bear!', star: false },
+  { id: 'fairy', emoji: '🧚‍♀️✨', name: 'הפיה לילי', greetingHeb: 'שלום הגננת ליה! הבאתי נצנצים ורודים לגן!', greetingEng: 'Pink Sparkle and Gold Star!', star: false },
+  { id: 'kitty', emoji: '🐱🎀', name: 'החתלתולה מיצי', greetingHeb: 'מיאו הגננת ליה! תודה רבה על החיבוק!', greetingEng: 'Thank You Teacher Lia!', star: false }
+];
+
+const KINDER_QUESTIONS = [
+  { speaker: '💙 סטיץ׳ שואל:', text: 'הגננת ליה! ספרתי 4 פרחים: 🌸🌸🌸🌸 — ספרתי נכון?', isRight: true, explain: 'נכון מאוד! יש כאן בדיוק 4 פרחים ורודים!' },
+  { speaker: '🦄 חד-קרן שואל:', text: 'הגננת ליה! המילה לִיָּה מתחילה באות ל׳ — זה נכון?', isRight: true, explain: 'כל הכבוד! לִיָּה מתחילה באות ל׳!' },
+  { speaker: '🧸 הדובי טדי שואל:', text: 'הגננת ליה! תפוח אדום 🍎 באנגלית זה Blue (כחול) — זה נכון?', isRight: false, explain: 'איזו גננת חכמה את ליה! תפוח אדום הוא Red, ו-Blue זה כחול!' },
+  { speaker: '🧚‍♀️ הפיה לילי שואלת:', text: 'הגננת ליה! שפתון ורוד 💄 באנגלית זה Pink Lipstick — זה נכון?', isRight: true, explain: 'מדויק! Pink Lipstick זה שפתון ורוד!' },
+  { speaker: '🐱 החתלתולה מיצי שואלת:', text: 'הגננת ליה! ספרתי 5 כוכבים: ⭐⭐ — זה נכון?', isRight: false, explain: 'תפסת אותה הגננת ליה! יש כאן רק 2 כוכבים ולא 5!' },
+  { speaker: '💙 סטיץ׳ שואל:', text: 'הגננת ליה! המילה גְּלִידָה 🍦 מתחרזת עם חִידָה 🧩 — זה נכון?', isRight: true, explain: 'חרוז מושלם! גלידה — חידה!' }
+];
+
+let kinderQuizIndex = 0;
+
+function initKinderStudio() {
+  ensureLiaProfile();
+  renderKinderStudents();
+  renderKinderQuiz();
+}
+
+function renderKinderStudents() {
+  const grid = document.getElementById('kinder-students-grid');
+  const starsCountEl = document.getElementById('kinder-stars-count');
+  if (starsCountEl) starsCountEl.textContent = appState.liaProfile.kinderStars || 0;
+  if (!grid) return;
+  grid.innerHTML = '';
+
+  KINDER_STUDENTS.forEach(st => {
+    const card = document.createElement('div');
+    card.className = `kinder-student-card ${st.star ? 'has-star' : ''}`;
+    card.innerHTML = `
+      <div class="kinder-student-emoji">${st.emoji}</div>
+      <div class="kinder-student-name">${st.name}</div>
+      <div class="kinder-student-status">${st.star ? '⭐ קיבל מדבקת כוכב!' : 'לחצי לבדיקת נוכחות ✋'}</div>
+    `;
+    card.addEventListener('click', () => {
+      arcadeAudio.playGoalSuccess();
+      if (!st.star) {
+        st.star = true;
+        appState.liaProfile.kinderStars = (appState.liaProfile.kinderStars || 0) + 1;
+        addActiveCoins(5);
+        saveState();
+        updateHeaderUI();
+        confetti.burst(35);
+      }
+      renderKinderStudents();
+      arcadeAudio.speakBilingual(st.greetingHeb, st.greetingEng);
+    });
+    grid.appendChild(card);
+  });
+}
+
+function renderKinderQuiz() {
+  const q = KINDER_QUESTIONS[kinderQuizIndex % KINDER_QUESTIONS.length];
+  const av = document.getElementById('kinder-quiz-avatar');
+  const txt = document.getElementById('kinder-quiz-text');
+  const fb = document.getElementById('kinder-feedback-banner');
+  if (av) av.textContent = q.speaker;
+  if (txt) txt.textContent = q.text;
+  if (fb) fb.className = 'feedback-banner hidden';
+}
+
+function handleKinderTeacherCheck(teacherSaysYes) {
+  const q = KINDER_QUESTIONS[kinderQuizIndex % KINDER_QUESTIONS.length];
+  const fb = document.getElementById('kinder-feedback-banner');
+  if (teacherSaysYes === q.isRight) {
+    addActiveCoins(20);
+    appState.liaProfile.kinderStars = (appState.liaProfile.kinderStars || 0) + 1;
+    saveState();
+    updateHeaderUI();
+    renderKinderStudents();
+    arcadeAudio.playGoalSuccess();
+    confetti.burst(75);
+    if (fb) {
+      fb.className = 'feedback-banner success';
+      fb.textContent = `👩‍🏫 כל הכבוד להגננת ליה! ${q.explain} (+20 🪙)`;
+    }
+    arcadeAudio.speak(`כל הכבוד להגננת ליה! ${q.explain}`, 'he-IL', 0.88);
+    setTimeout(() => {
+      kinderQuizIndex = (kinderQuizIndex + 1) % KINDER_QUESTIONS.length;
+      renderKinderQuiz();
+    }, 2800);
+  } else {
+    arcadeAudio.playMiss();
+    if (fb) {
+      fb.className = 'feedback-banner error';
+      fb.textContent = `💡 בואי נבדוק שוב הגננת ליה: ${q.explain}`;
+    }
+    arcadeAudio.speak(`בואי נבדוק שוב הגננת ליה: ${q.explain}`, 'he-IL', 0.88);
+  }
+}
+
+function setupKinderStudioListeners() {
+  const btnSpeak = document.getElementById('btn-kinder-speak');
+  if (btnSpeak) {
+    btnSpeak.addEventListener('click', () => {
+      const q = KINDER_QUESTIONS[kinderQuizIndex % KINDER_QUESTIONS.length];
+      arcadeAudio.speak(q.text, 'he-IL', 0.86);
+    });
+  }
+  const btnYes = document.getElementById('btn-kinder-yes');
+  if (btnYes) {
+    btnYes.addEventListener('click', () => handleKinderTeacherCheck(true));
+  }
+  const btnNo = document.getElementById('btn-kinder-no');
+  if (btnNo) {
+    btnNo.addEventListener('click', () => handleKinderTeacherCheck(false));
+  }
+}

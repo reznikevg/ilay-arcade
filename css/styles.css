@@ -1442,3 +1442,500 @@ html, body {
   align-items: center;
   justify-content: center;
 }
+
+/* ==================== LIA THEMES (UNICORN & STITCH) & KID SWITCHER ==================== */
+body.theme-unicorn {
+  --accent: #ec4899;
+  --accent-dark: #db2777;
+  --accent-soft: #fdf2f8;
+  --bg: #fdf4ff;
+}
+
+body.theme-stitch {
+  --accent: #0284c7;
+  --accent-dark: #0369a1;
+  --accent-soft: #f0f9ff;
+  --bg: #f0f9ff;
+}
+
+body.theme-unicorn .hero-card {
+  background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+  color: #fff;
+}
+body.theme-unicorn .hero-card p,
+body.theme-stitch .hero-card p {
+  color: rgba(255, 255, 255, 0.92);
+}
+body.theme-stitch .hero-card {
+  background: linear-gradient(135deg, #0284c7 0%, #2563eb 60%, #db2777 100%);
+  color: #fff;
+}
+
+.kid-switcher-bar {
+  display: flex;
+  gap: 8px;
+  padding: 8px 14px;
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+}
+
+.kid-switch-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border-radius: 14px;
+  border: 2px solid #e2e8f0;
+  background: #f8fafc;
+  color: #475569;
+  font-family: inherit;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.kid-switch-btn small {
+  font-weight: 500;
+  font-size: 0.78rem;
+  opacity: 0.85;
+}
+
+.kid-switch-emoji {
+  font-size: 1.3rem;
+}
+
+.kid-switch-btn[data-kid="ilay"].active {
+  background: linear-gradient(135deg, #fef9c3, #fde047);
+  border-color: #eab308;
+  color: #0f172a;
+  box-shadow: 0 3px 10px rgba(234, 179, 8, 0.25);
+}
+
+.kid-switch-btn[data-kid="lia"].active {
+  background: linear-gradient(135deg, #fce7f3, #f3e8ff);
+  border-color: #ec4899;
+  color: #831843;
+  box-shadow: 0 3px 10px rgba(236, 72, 153, 0.25);
+}
+
+/* Lia's Bento Cards */
+.bento-makeup {
+  background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
+  border-color: #f9a8d4;
+}
+.bento-kinder {
+  background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+  border-color: #c4b5fd;
+}
+.bento-lia-eng {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border-color: #7dd3fc;
+}
+.bento-lia-prep {
+  background: linear-gradient(135deg, #fefce8 0%, #fef9c3 100%);
+  border-color: #fde047;
+}
+
+/* ==================== DIFFICULTY & GAME MODE PILLS ==================== */
+.game-options-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.pill-group {
+  display: flex;
+  background: #f1f5f9;
+  padding: 3px;
+  border-radius: 12px;
+  gap: 3px;
+}
+
+.pill-opt {
+  border: none;
+  background: transparent;
+  padding: 6px 10px;
+  border-radius: 9px;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.pill-opt.active {
+  background: #ffffff;
+  color: #0f172a;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.1);
+}
+
+.timer-pill {
+  background: #fee2e2;
+  color: #dc2626;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: 800;
+  font-size: 0.85rem;
+}
+
+/* ==================== ARENA VISUAL STAGE ==================== */
+.arena-visual-banner {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  text-align: center;
+}
+body.theme-unicorn .arena-visual-banner {
+  background: linear-gradient(135deg, #fdf2f8 0%, #f5f3ff 100%);
+  border-color: #f9a8d4;
+}
+body.theme-stitch .arena-visual-banner {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border-color: #7dd3fc;
+}
+
+.arena-stage-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.arena-keeper, .arena-ball {
+  font-size: 1.65rem;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.arena-ball.shoot-anim {
+  transform: translateY(-8px) scale(1.35) rotate(25deg);
+}
+.arena-keeper.dive-left {
+  transform: translateX(-10px) rotate(-15deg);
+}
+.arena-keeper.dive-right {
+  transform: translateX(10px) rotate(15deg);
+}
+
+.penalty-dots-row {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.penalty-dot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+}
+.penalty-dot.scored {
+  background: #dcfce7;
+  border: 1px solid #22c55e;
+}
+.penalty-dot.missed {
+  background: #fee2e2;
+  border: 1px solid #ef4444;
+}
+
+.arena-commentary {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #334155;
+}
+
+/* Option speaker helper button for Lia & English */
+.opt-speak-mini {
+  margin-inline-start: auto;
+  background: rgba(15, 23, 42, 0.06);
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.opt-speak-mini:hover {
+  background: rgba(15, 23, 42, 0.14);
+}
+
+/* ==================== VIEW 10: LIA'S GLAM & MAKEUP STUDIO ==================== */
+.glam-mission-card {
+  background: linear-gradient(135deg, #fdf2f8 0%, #f5f3ff 100%);
+  border: 2px solid #f472b6;
+  margin-bottom: 12px;
+}
+
+.glam-mission-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.glam-badge {
+  background: #db2777;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.glam-mission-text {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #831843;
+}
+
+.glam-model-selector {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+  overflow-x: auto;
+}
+
+.glam-model-btn {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 12px;
+  border: 2px solid #e2e8f0;
+  background: #f8fafc;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.glam-model-btn.active {
+  background: #fdf2f8;
+  border-color: #ec4899;
+  color: #be185d;
+}
+
+.glam-vanity-mirror {
+  background: radial-gradient(circle, #ffffff 0%, #fdf2f8 70%, #f3e8ff 100%);
+  border: 4px solid #f9a8d4;
+  border-radius: 24px;
+  padding: 16px;
+  text-align: center;
+  position: relative;
+  box-shadow: inset 0 0 20px rgba(236, 72, 153, 0.15);
+  margin-bottom: 14px;
+}
+
+.glam-crown-slot {
+  font-size: 2.6rem;
+  line-height: 1;
+  margin-bottom: -8px;
+  position: relative;
+  z-index: 2;
+  transition: transform 0.25s ease;
+}
+
+.glam-face-circle {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 10px;
+  border-radius: 50%;
+  background: #fff;
+  border: 4px solid #ec4899;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: 0 8px 22px rgba(236, 72, 153, 0.25);
+  transition: all 0.3s ease;
+}
+
+.glam-main-avatar {
+  font-size: 4.4rem;
+  line-height: 1;
+}
+
+.glam-blush-left, .glam-blush-right {
+  position: absolute;
+  bottom: 28px;
+  width: 22px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(236, 72, 153, 0.45);
+  filter: blur(2px);
+  pointer-events: none;
+}
+.glam-blush-left { left: 14px; }
+.glam-blush-right { right: 14px; }
+
+.glam-equipped-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+}
+
+.glam-equip-pill {
+  background: #fff;
+  border: 1px solid #f9a8d4;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #9d174d;
+}
+
+.glam-palettes {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.glam-palette-title {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #334155;
+  margin-bottom: 6px;
+}
+
+.glam-swatches {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.glam-swatch, .glam-item-btn {
+  padding: 10px 6px;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  font-family: inherit;
+  font-weight: 800;
+  font-size: 0.8rem;
+  color: #fff;
+  cursor: pointer;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.glam-item-btn {
+  background: #f8fafc;
+  color: #1e293b;
+  border-color: #e2e8f0;
+  text-shadow: none;
+}
+
+.glam-swatch.active, .glam-item-btn.active {
+  transform: scale(1.05);
+  border-color: #0f172a;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.18);
+}
+
+/* ==================== VIEW 11: TEACHER LIA'S KINDERGARTEN ==================== */
+.kinder-circle-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 10px;
+}
+
+.kinder-student-card {
+  background: #fdf4ff;
+  border: 2px solid #e9d5ff;
+  border-radius: 16px;
+  padding: 12px 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.kinder-student-card:hover {
+  transform: translateY(-2px);
+  border-color: #c084fc;
+}
+.kinder-student-card.has-star {
+  background: linear-gradient(135deg, #fefce8 0%, #fef3c7 100%);
+  border-color: #facc15;
+}
+
+.kinder-student-emoji {
+  font-size: 2.6rem;
+  margin-bottom: 4px;
+}
+.kinder-student-name {
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: #1e293b;
+}
+.kinder-student-status {
+  font-size: 0.78rem;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+.kinder-board-box {
+  background: #f0fdf4;
+  border: 3px solid #86efac;
+  border-radius: 18px;
+  padding: 14px;
+  margin: 10px 0 12px;
+  text-align: center;
+}
+
+.kinder-student-speaker {
+  font-weight: 800;
+  color: #15803d;
+  font-size: 1rem;
+  margin-bottom: 6px;
+}
+
+.kinder-question-bubble {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.45;
+}
+
+.kinder-teacher-btns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.btn-kinder-approve, .btn-kinder-correct {
+  padding: 12px 10px;
+  border-radius: 14px;
+  border: 2px solid transparent;
+  font-family: inherit;
+  font-weight: 800;
+  font-size: 0.92rem;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.btn-kinder-approve {
+  background: #dcfce7;
+  color: #166534;
+  border-color: #4ade80;
+}
+.btn-kinder-correct {
+  background: #fef3c7;
+  color: #92400e;
+  border-color: #fbbf24;
+}
+.btn-kinder-approve:active, .btn-kinder-correct:active {
+  transform: scale(0.97);
+}
+

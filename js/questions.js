@@ -125,9 +125,90 @@ const TOPICS = [
     id: 'custom_parents',
     cat: 'custom',
     tag: 'מותאם אישית ⭐',
-    icon: '👨‍👩‍👦',
+    icon: '👨‍👩‍👧‍👦',
     title: 'המשימות של אבא ואמא',
-    desc: 'תרגילים בחשבון ומילים להכתבה בשפה שהוספתם במיוחד לעילאי באזור ההורים!'
+    desc: 'תרגילים בחשבון ומילים להכתבה בשפה שהוספתם במיוחד באזור ההורים!'
+  }
+];
+
+// ==================== LIA'S KINDERGARTEN & ENGLISH CURRICULUM (AGE 5 - גן חובה) ====================
+const LIA_TOPICS = [
+  // ===== LIA ENGLISH (4 TOPICS) =====
+  {
+    id: 'lia_english_colors_glam',
+    kid: 'lia',
+    cat: 'english',
+    tag: 'איפור ונסיכות 💄',
+    icon: '💄',
+    title: 'צבעים, איפור וכתרים באנגלית',
+    desc: 'Pink, Purple, Blue, Gold, Crown, Lipstick, Dress, Mirror — לומדים אנגלית עם נצנצים ואיפור!'
+  },
+  {
+    id: 'lia_english_stitch_animals',
+    kid: 'lia',
+    cat: 'english',
+    tag: 'סטיץ׳ וחיות 💙',
+    icon: '🦄',
+    title: 'סטיץ׳, חד-קרן וחיות מתוקות באנגלית',
+    desc: 'Unicorn, Stitch, Dog, Cat, Butterfly, Bunny, Ohana (משפחה) ורגשות באנגלית!'
+  },
+  {
+    id: 'lia_english_numbers_food',
+    kid: 'lia',
+    cat: 'english',
+    tag: 'מספרים וגלידות 🍦',
+    icon: '🍦',
+    title: 'מספרים (1-10) ופינוקים באנגלית',
+    desc: 'סופרים באנגלית 1 עד 10 ומכירים מילים טעימות: Ice Cream, Cake, Apple, Banana!'
+  },
+  {
+    id: 'lia_english_magic_words',
+    kid: 'lia',
+    cat: 'english',
+    tag: 'מילות קסם 👋',
+    icon: '🌈',
+    title: 'מילות קסם וברכות באנגלית',
+    desc: 'Hello, Good Morning, Thank You, Please, I Love You — מדברים אנגלית בגן ובבית!'
+  },
+
+  // ===== LIA HEBREW & KINDERGARTEN READINESS (2 TOPICS) =====
+  {
+    id: 'lia_heb_letters',
+    kid: 'lia',
+    cat: 'hebrew',
+    tag: 'מוכנות לגן חובה 🔤',
+    icon: '🔤',
+    title: 'אותיות וצליל פותח עם ליה וסטיץ׳',
+    desc: 'באיזו אות מתחילה המילה ליה, סטיץ׳, חד-קרן, איפור וגננת? זיהוי אותיות וצלילים!'
+  },
+  {
+    id: 'lia_heb_rhymes',
+    kid: 'lia',
+    cat: 'hebrew',
+    tag: 'חרוזים והפכים 🎵',
+    icon: '🎵',
+    title: 'חרוזים מתוקים והפכים בתמונות',
+    desc: 'מה מתחרז עם כתר? מה ההפך מגדול או שמח? משחקי שפה מהנים לגן חובה!'
+  },
+
+  // ===== LIA MATH & LOGIC (2 TOPICS) =====
+  {
+    id: 'lia_math_counting',
+    kid: 'lia',
+    cat: 'math',
+    tag: 'חשבון לגן חובה 🦄',
+    icon: '👑',
+    title: 'ספירה, כמויות וחיבור בתמונות (1-10)',
+    desc: 'סופרים חדי-קרן, שפתונים, פרחים וכתרים עד 10 ופותרים חידות כמות מצוירות!'
+  },
+  {
+    id: 'lia_logic_patterns',
+    kid: 'lia',
+    cat: 'math',
+    tag: 'חשיבה וצורות ✨',
+    icon: '✨',
+    title: 'סדרות קסם, צורות ויוצא דופן',
+    desc: 'מי בא הבא בתור בסדרה של סטיץ׳ וחד-קרן? זיהוי צורות וצבעים לגן חובה!'
   }
 ];
 
@@ -893,6 +974,200 @@ function genLogicSeries(diff) {
   }
 }
 
+// ==================== LIA'S KINDERGARTEN & ENGLISH GENERATORS ====================
+
+const LIA_GLAM_WORDS = [
+  { eng: 'Pink', heb: '🩷 וָרוֹד (Pink)', emoji: '🩷💄', wrong: ['💙 כָּחוֹל (Blue)', '💛 צָהוֹב (Yellow)', '💚 יָרוֹק (Green)'], hint: 'Pink זה הצבע הוורוד של שפתון ונסיכות!' },
+  { eng: 'Purple', heb: '💜 סָגוֹל (Purple)', emoji: '💜🦄', wrong: ['❤️ אָדוֹם (Red)', '🩷 וָרוֹד (Pink)', '🧡 כָּתוֹם (Orange)'], hint: 'Purple זה צבע סגול קסום של חד-קרן!' },
+  { eng: 'Blue', heb: '💙 כָּחוֹל (Blue)', emoji: '💙🌺', wrong: ['🩷 וָרוֹד (Pink)', '💛 צָהוֹב (Yellow)', '💜 סָגוֹל (Purple)'], hint: 'Blue זה הצבע הכחול של סטיץ׳ החמוד!' },
+  { eng: 'Red', heb: '❤️ אָדוֹם (Red)', emoji: '❤️🍓', wrong: ['💙 כָּחוֹל (Blue)', '💚 יָרוֹק (Green)', '🤍 לָבָן (White)'], hint: 'Red זה צבע אדום כמו לב ותות!' },
+  { eng: 'Yellow', heb: '💛 צָהוֹב (Yellow)', emoji: '💛☀️', wrong: ['💜 סָגוֹל (Purple)', '💙 כָּחוֹל (Blue)', '🩷 וָרוֹד (Pink)'], hint: 'Yellow זה צהוב זורח כמו השמש!' },
+  { eng: 'Gold', heb: '👑 זָהָב (Gold)', emoji: '👑✨', wrong: ['💙 כָּחוֹל (Blue)', '💚 יָרוֹק (Green)', '❤️ אָדוֹם (Red)'], hint: 'Gold זה צבע זהב נוצץ כמו כתר של מלכה!' },
+  { eng: 'Crown', heb: '👑 כֶּתֶר (Crown)', emoji: '👑👸', wrong: ['👗 שִׂמְלָה (Dress)', '👠 נַעֲלַיִם (Shoes)', '👜 תִּיק (Bag)'], hint: 'Crown הוא כתר של נסיכה על הראש!' },
+  { eng: 'Lipstick', heb: '💄 שְׂפָתוֹן / אֹדֶם (Lipstick)', emoji: '💄💋', wrong: ['👑 כֶּתֶר (Crown)', '🪞 מַרְאָה (Mirror)', '🎀 סֶרֶט (Bow)'], hint: 'Lipstick הוא שפתון ששמים על השפתיים כשמתאפרים!' },
+  { eng: 'Dress', heb: '👗 שִׂמְלָה (Dress)', emoji: '👗✨', wrong: ['👑 כֶּתֶר (Crown)', '💄 שְׂפָתוֹן (Lipstick)', '💅 לָק (Nail Polish)'], hint: 'Dress היא שמלה חגיגית ומהממת!' },
+  { eng: 'Mirror', heb: '🪞 מַרְאָה (Mirror)', emoji: '🪞✨', wrong: ['👑 כֶּתֶר (Crown)', '👗 שִׂמְלָה (Dress)', '🌈 קֶשֶׁת (Rainbow)'], hint: 'Mirror היא מראה שמסתכלים בה כשמתאפרים!' },
+  { eng: 'Rainbow', heb: '🌈 קֶשֶׁת בֶּעָנָן (Rainbow)', emoji: '🌈🦄', wrong: ['☀️ שֶׁמֶשׁ (Sun)', '👑 כֶּתֶר (Crown)', '💄 שְׂפָתוֹן (Lipstick)'], hint: 'Rainbow היא קשת צבעונית בשמיים!' },
+  { eng: 'Princess', heb: '👸 נְסִיכָה (Princess)', emoji: '👸👑', wrong: ['🐶 כֶּלֶב (Dog)', '🍎 תַּפּוּחַ (Apple)', '🚗 מְכוֹנִית (Car)'], hint: 'Princess באנגלית זו נסיכה!' }
+];
+
+const LIA_STITCH_ANIMALS = [
+  { eng: 'Unicorn', heb: '🦄 חַד-קֶרֶן (Unicorn)', emoji: '🦄🌈', wrong: ['🐶 כֶּלֶב (Dog)', '🐱 חָתוּל (Cat)', '🐟 דָּג (Fish)'], hint: 'Unicorn הוא חד-קרן קסום עם קרן נוצצת!' },
+  { eng: 'Dog', heb: '🐶 כֶּלֶב (Dog)', emoji: '🐶🦴', wrong: ['🐱 חָתוּל (Cat)', '🦋 פַּרְפַּר (Butterfly)', '🐰 אַרְנָב (Bunny)'], hint: 'Dog הוא כלב חמוד שעושה הב-הב!' },
+  { eng: 'Cat', heb: '🐱 חָתוּל (Cat)', emoji: '🐱🐾', wrong: ['🐶 כֶּלֶב (Dog)', '🦄 חַד-קֶרֶן (Unicorn)', '🦁 אַרְיֵה (Lion)'], hint: 'Cat הוא חתול מתוק שעושה מיאו!' },
+  { eng: 'Butterfly', heb: '🦋 פַּרְפַּר (Butterfly)', emoji: '🦋🌸', wrong: ['🐟 דָּג (Fish)', '🐶 כֶּלֶב (Dog)', '🐻 דֻּבִּי (Bear)'], hint: 'Butterfly הוא פרפר צבעוני שעף בין פרחים!' },
+  { eng: 'Bunny', heb: '🐰 אַרְנָב (Bunny)', emoji: '🐰🥕', wrong: ['🐱 חָתוּל (Cat)', '🐟 דָּג (Fish)', '🦁 אַרְיֵה (Lion)'], hint: 'Bunny הוא ארנבון מתוק שאוהב גזר!' },
+  { eng: 'Family', heb: '👨‍👩‍👧‍👦 מִשְׁפָּחָה (Family / Ohana)', emoji: '💙🌺👨‍👩‍👧‍👦', wrong: ['🍎 תַּפּוּחַ (Apple)', '👑 כֶּתֶר (Crown)', '🌈 קֶשֶׁת (Rainbow)'], hint: 'כמו שסטיץ׳ אומר: Ohana means Family — משפחה!' },
+  { eng: 'Happy', heb: '😊 שְׂמֵחָה (Happy)', emoji: '😊🎉', wrong: ['😢 עֲצוּבָה (Sad)', '😴 עֲיֵפָה (Tired)', '😠 כּוֹעֶסֶת (Angry)'], hint: 'Happy זה שמחה ומחייכת!' },
+  { eng: 'Star', heb: '⭐ כּוֹכָב (Star)', emoji: '⭐✨', wrong: ['🌸 פֶּרַח (Flower)', '🍎 תַּפּוּחַ (Apple)', '🐶 כֶּלֶב (Dog)'], hint: 'Star הוא כוכב מנצנץ בשמיים (ומדבקת כוכב של הגננת ליה)!' },
+  { eng: 'Flower', heb: '🌸 פֶּרַח (Flower)', emoji: '🌸🌺', wrong: ['⭐ כּוֹכָב (Star)', '🐱 חָתוּל (Cat)', '👑 כֶּתֶר (Crown)'], hint: 'Flower הוא פרח ריחני וצבעוני!' },
+  { eng: 'Heart', heb: '💖 לֵב (Heart)', emoji: '💖✨', wrong: ['⭐ כּוֹכָב (Star)', '🌈 קֶשֶׁת (Rainbow)', '☀️ שֶׁמֶשׁ (Sun)'], hint: 'Heart הוא לב של אהבה!' }
+];
+
+const LIA_NUMBERS_FOOD = [
+  { eng: 'One', heb: '1️⃣ אַחַת (One)', emoji: '🦄 (1)', wrong: ['2️⃣ שְׁתַּיִם (Two)', '3️⃣ שָׁלוֹשׁ (Three)', '5️⃣ חָמֵשׁ (Five)'], hint: 'One זה המספר 1!' },
+  { eng: 'Two', heb: '2️⃣ שְׁתַּיִם (Two)', emoji: '💄💄 (2)', wrong: ['1️⃣ אַחַת (One)', '4️⃣ אַרְבַּע (Four)', '6️⃣ שֵׁשׁ (Six)'], hint: 'Two זה המספר 2 (One, Two)!' },
+  { eng: 'Three', heb: '3️⃣ שָׁלוֹשׁ (Three)', emoji: '👑👑👑 (3)', wrong: ['1️⃣ אַחַת (One)', '2️⃣ שְׁתַּיִם (Two)', '5️⃣ חָמֵשׁ (Five)'], hint: 'Three זה המספר 3 (One, Two, Three)!' },
+  { eng: 'Four', heb: '4️⃣ אַרְבַּע (Four)', emoji: '🦋🦋🦋🦋 (4)', wrong: ['2️⃣ שְׁתַּיִם (Two)', '3️⃣ שָׁלוֹשׁ (Three)', '7️⃣ שֶׁבַע (Seven)'], hint: 'Four זה המספר 4!' },
+  { eng: 'Five', heb: '5️⃣ חָמֵשׁ (Five)', emoji: '⭐⭐⭐⭐⭐ (5)', wrong: ['2️⃣ שְׁתַּיִם (Two)', '3️⃣ שָׁלוֹשׁ (Three)', '8️⃣ שְׁמוֹנֶה (Eight)'], hint: 'Five זה 5 אצבעות ביד (High Five ✋)!' },
+  { eng: 'Ten', heb: '🔟 עֶשֶׂר (Ten)', emoji: '🙌 (10)', wrong: ['2️⃣ שְׁתַּיִם (Two)', '4️⃣ אַרְבַּע (Four)', '6️⃣ שֵׁשׁ (Six)'], hint: 'Ten זה 10 אצבעות בשתי הידיים!' },
+  { eng: 'Ice Cream', heb: '🍦 גְּלִידָה (Ice Cream)', emoji: '🍦🍨', wrong: ['🍎 תַּפּוּחַ (Apple)', '🍕 פִּיצָה (Pizza)', '🥛 חָלָב (Milk)'], hint: 'Ice Cream היא גלידה מתוקה וצוננת!' },
+  { eng: 'Cake', heb: '🎂 עוּגָה (Cake)', emoji: '🎂🍓', wrong: ['🍌 בָּנָנָה (Banana)', '💧 מַיִם (Water)', '🍎 תַּפּוּחַ (Apple)'], hint: 'Cake היא עוגת יום הולדת טעימה!' },
+  { eng: 'Apple', heb: '🍎 תַּפּוּחַ (Apple)', emoji: '🍎✨', wrong: ['🍌 בָּנָנָה (Banana)', '🍦 גְּלִידָה (Ice Cream)', '🎂 עוּגָה (Cake)'], hint: 'Apple הוא תפוח עץ מתוק!' },
+  { eng: 'Banana', heb: '🍌 בָּנָנָה (Banana)', emoji: '🍌💛', wrong: ['🍎 תַּפּוּחַ (Apple)', '🎂 עוּגָה (Cake)', '🍦 גְּלִידָה (Ice Cream)'], hint: 'Banana היא בננה צהובה!' }
+];
+
+const LIA_MAGIC_WORDS = [
+  { eng: 'Hello', heb: '👋 שָׁלוֹם! (Hello)', emoji: '👋😊', wrong: ['🌙 לַיְלָה טוֹב (Good Night)', '🙏 תּוֹדָה (Thank You)', '❌ לֹא (No)'], hint: 'כשנפגשים בגן אומרים Hello — שלום!' },
+  { eng: 'Good Morning', heb: '☀️ בּוֹקֶר טוֹב! (Good Morning)', emoji: '☀️🌈', wrong: ['🌙 לַיְלָה טוֹב (Good Night)', '👋 לְהִתְרָאוֹת (Goodbye)', '😢 עָצוּב (Sad)'], hint: 'בבוקר כשהשמש זורחת בגן אומרים Good Morning — בוקר טוב!' },
+  { eng: 'Good Night', heb: '🌙 לַיְלָה טוֹב! (Good Night)', emoji: '🌙⭐', wrong: ['☀️ בּוֹקֶר טוֹב (Good Morning)', '🍦 גְּלִידָה (Ice Cream)', '🎂 עוּגָה (Cake)'], hint: 'לפני שהולכים לישון אומרים Good Night — לילה טוב!' },
+  { eng: 'Thank You', heb: '🙏 תּוֹדָה רַבָּה! (Thank You)', emoji: '🙏💖', wrong: ['👋 שָׁלוֹם (Hello)', '🌙 לַיְלָה טוֹב (Good Night)', '❌ לֹא (No)'], hint: 'כשמקבלים מתנה או מחמאה אומרים Thank You — תודה!' },
+  { eng: 'Please', heb: '🥰 בְּבַקָּשָׁה (Please)', emoji: '🥰✨', wrong: ['👋 לְהִתְרָאוֹת (Goodbye)', '🌙 לַיְלָה טוֹב (Good Night)', '🍎 תַּפּוּחַ (Apple)'], hint: 'מילת הקסם כשמבקשים משהו יפה היא Please — בבקשה!' },
+  { eng: 'I Love You', heb: '💖 אֲנִי אוֹהֶבֶת אוֹתְךָ! (I Love You)', emoji: '💖🫂', wrong: ['☀️ בּוֹקֶר טוֹב (Good Morning)', '👋 לְהִתְרָאוֹת (Goodbye)', '🍦 גְּלִידָה (Ice Cream)'], hint: 'I Love You זה אני אוהבת אותך!' },
+  { eng: 'Teacher', heb: '👩‍🏫 גַּנֶּנֶת / מוֹרָה (Teacher)', emoji: '👩‍🏫⭐', wrong: ['🐶 כֶּלֶב (Dog)', '🍦 גְּלִידָה (Ice Cream)', '🚗 מְכוֹנִית (Car)'], hint: 'Teacher היא גננת או מורה — בדיוק כמו הגננת ליה!' }
+];
+
+function buildLiaEnglishQuestion(bank, categoryTitle) {
+  const item = bank[randInt(0, bank.length - 1)];
+  return {
+    isEnglish: true,
+    isLia: true,
+    autoSpeak: true,
+    isMulti: false,
+    instruction: `${categoryTitle}: הַקְשִׁיבִי לַמִּילָה בְּאַנְגְּלִית וּבַחֲרִי אֶת הַתְּמוּנָה הַמַּתְאִימָה!`,
+    ttsText: `ליה מתוקה, מה הפירוש של המילה:`,
+    englishSpeechWord: item.eng,
+    stimulusHtml: `<div style="font-size:3.2rem;line-height:1.2;margin-bottom:6px;">${item.emoji}</div><div style="font-size:2.1rem;font-weight:900;color:#db2777;letter-spacing:1px;">${item.eng.toUpperCase()}</div>`,
+    rtlStimulus: false,
+    options: shuffle([item.heb, ...item.wrong]),
+    correctAnswers: [item.heb],
+    hint: item.hint
+  };
+}
+
+function genLiaHebLetters() {
+  const items = [
+    { word: 'לִיָּה', emoji: '👧👑', letter: 'ל (לָמֶ"ד)', wrong: ['ס (סָמֶ"ךְ)', 'ח (חֵי"ת)', 'ג (גִּימֶ"ל)'], hint: 'השם המתוק לִיָּה מתחיל באות ל׳!' },
+    { word: 'סְטִיץ׳', emoji: '💙🌺', letter: 'ס (סָמֶ"ךְ)', wrong: ['ל (לָמֶ"ד)', 'א (אָלֶ"ף)', 'מ (מֵ"ם)'], hint: 'סְטִיץ׳ מתחיל בצליל סְ — האות ס׳!' },
+    { word: 'חַד-קֶרֶן', emoji: '🦄🌈', letter: 'ח (חֵי"ת)', wrong: ['כ (כַּ"ף)', 'פ (פֵּ"א)', 'ש (שִׁי"ן)'], hint: 'חַד-קֶרֶן מתחיל בצליל חַ — האות ח׳!' },
+    { word: 'אִיפּוּר', emoji: '💄🪞', letter: 'א (אָלֶ"ף)', wrong: ['ב (בֵּי"ת)', 'ג (גִּימֶ"ל)', 'ד (דָּלֶ"ת)'], hint: 'אִיפּוּר מתחיל באות הראשונה של האלף-בית: א׳!' },
+    { word: 'גַּנֶּנֶת', emoji: '👩‍🏫🧸', letter: 'ג (גִּימֶ"ל)', wrong: ['ד (דָּלֶ"ת)', 'ל (לָמֶ"ד)', 'ש (שִׁי"ן)'], hint: 'גַּנֶּנֶת (וְגַם גַּן!) מתחילה באות ג׳!' },
+    { word: 'כֶּתֶר', emoji: '👑✨', letter: 'כ (כַּ"ף)', wrong: ['ח (חֵי"ת)', 'ר (רֵי"שׁ)', 'ת (תָּ"ו)'], hint: 'כֶּתֶר של נסיכה מתחיל באות כ׳!' },
+    { word: 'שְׂפָתוֹן', emoji: '💄💋', letter: 'ש (שִׁי"ן)', wrong: ['ס (סָמֶ"ךְ)', 'פ (פֵּ"א)', 'מ (מֵ"ם)'], hint: 'שְׂפָתוֹן מתחיל באות ש׳!' },
+    { word: 'פַּרְפַּר', emoji: '🦋🌸', letter: 'פ (פֵּ"א)', wrong: ['ב (בֵּי"ת)', 'ח (חֵי"ת)', 'ל (לָמֶ"ד)'], hint: 'פַּרְפַּר מתחיל בצליל פַּ — האות פ׳!' },
+    { word: 'דֻּבִּי', emoji: '🧸💛', letter: 'ד (דָּלֶ"ת)', wrong: ['ג (גִּימֶ"ל)', 'ב (בֵּי"ת)', 'ת (תָּ"ו)'], hint: 'דֻּבִּי מתחיל בצליל דּוּ — האות ד׳!' },
+    { word: 'מַרְאָה', emoji: '🪞✨', letter: 'מ (מֵ"ם)', wrong: ['נ (נוּ"ן)', 'א (אָלֶ"ף)', 'ל (לָמֶ"ד)'], hint: 'מַרְאָה מתחילה בצליל מַ — האות מ׳!' }
+  ];
+  const item = items[randInt(0, items.length - 1)];
+  return {
+    isLia: true,
+    autoSpeak: true,
+    isMulti: false,
+    instruction: '🔤 מוּכָנוּת לְגַן חוֹבָה: בְּאֵיזוֹ אוֹת מַתְחִילָה הַמִּילָה?',
+    ttsText: `ליה אלופה, באיזו אות מתחילה המילה ${item.word}?`,
+    stimulusHtml: `<div style="font-size:3.2rem;margin-bottom:6px;">${item.emoji}</div><div style="font-size:2.2rem;font-weight:900;color:#9333ea;">${item.word}</div>`,
+    rtlStimulus: true,
+    options: shuffle([item.letter, ...item.wrong]),
+    correctAnswers: [item.letter],
+    hint: item.hint
+  };
+}
+
+function genLiaHebRhymes() {
+  const items = [
+    { type: 'rhyme', q: 'מָה מִתְחָרֵז עִם הַמִּילָה <strong>גְּלִידָה 🍦</strong>?', tts: 'מה מתחרז עם המילה גלידה?', emoji: '🍦', ans: '🧩 חִידָה', wrong: ['👑 כֶּתֶר', '🐶 כֶּלֶב', '☀️ שֶׁמֶשׁ'], hint: 'גְּלִידָה — חִידָה! שתי המילים מסתיימות בצליל דָה!' },
+    { type: 'rhyme', q: 'מָה מִתְחָרֵז עִם הַמִּילָה <strong>כּוֹכָב ⭐</strong>?', tts: 'מה מתחרז עם המילה כוכב?', emoji: '⭐', ans: '👑 זָהָב', wrong: ['🍎 תַּפּוּחַ', '👗 שִׂמְלָה', '🐱 חָתוּל'], hint: 'כּוֹכָב — זָהָב! צליל סיום דומה!' },
+    { type: 'rhyme', q: 'מָה מִתְחָרֵז עִם הַמִּילָה <strong>שֶׁמֶשׁ ☀️</strong>?', tts: 'מה מתחרז עם המילה שמש?', emoji: '☀️', ans: '😊 נֶמֶשׁ', wrong: ['🌙 יָרֵחַ', '🦄 חַד-קֶרֶן', '💄 שְׂפָתוֹן'], hint: 'שֶׁמֶשׁ — נֶמֶשׁ! חרוז מושלם!' },
+    { type: 'rhyme', q: 'מָה מִתְחָרֵז עִם הַמִּילָה <strong>דֹּב 🧸</strong>?', tts: 'מה מתחרז עם המילה דוב?', emoji: '🧸', ans: '💛 טוֹב', wrong: ['🌺 פֶּרַח', '🦋 פַּרְפַּר', '👠 נַעַל'], hint: 'דֹּב — טוֹב! כמו בוקר טוב דוב!' },
+    { type: 'opp', q: 'מָה הַהֵפֶךְ מִן הַמִּילָה <strong>גָּדוֹל 🐘</strong>?', tts: 'מה ההפך מן המילה גדול?', emoji: '🐘 ↔️ 🐭', ans: '🐭 קָטָן', wrong: ['☀️ חַם', '😊 שָׂמֵחַ', '🏃 מָהִיר'], hint: 'הפיל הוא גדול, והעכבר הוא קטן!' },
+    { type: 'opp', q: 'מָה הַהֵפֶךְ מִן הַמִּילָה <strong>יוֹם ☀️</strong>?', tts: 'מה ההפך מן המילה יום?', emoji: '☀️ ↔️ 🌙', ans: '🌙 לַיְלָה', wrong: ['🌈 קֶשֶׁת', '🍦 גְּלִידָה', '👑 כֶּתֶר'], hint: 'ביום זורחת השמש, וההפך מיום הוא לילה!' },
+    { type: 'opp', q: 'מָה הַהֵפֶךְ מִן הַמִּילָה <strong>חַם 🔥</strong> (כְּמוֹ מָרָק)?', tts: 'מה ההפך מן המילה חם?', emoji: '🔥 ↔️ 🍦', ans: '🍦 קַר', wrong: ['🎈 גָּבוֹהַּ', '🐢 אִטִּי', '🩷 וָרוֹד'], hint: 'ההפך מחם הוא קר (כמו גלידה קרה)!' }
+  ];
+  const item = items[randInt(0, items.length - 1)];
+  return {
+    isLia: true,
+    autoSpeak: true,
+    isMulti: false,
+    instruction: '🎵 חֲרוּזִים וַהֲפָכִים לְגַן חוֹבָה:',
+    ttsText: `ליה מתוקה, ${item.tts}`,
+    stimulusHtml: `<div style="font-size:2.8rem;margin-bottom:6px;">${item.emoji}</div><div style="font-size:1.5rem;font-weight:800;color:#1e293b;">${item.q}</div>`,
+    rtlStimulus: true,
+    options: shuffle([item.ans, ...item.wrong]),
+    correctAnswers: [item.ans],
+    hint: item.hint
+  };
+}
+
+function genLiaMathCounting() {
+  const mode = randInt(1, 2);
+  const icons = [
+    { icon: '🦄', name: 'חַדֵּי-קֶרֶן' },
+    { icon: '💄', name: 'שְׂפָתוֹנִים' },
+    { icon: '👑', name: 'כְּתָרִים' },
+    { icon: '🌺', name: 'פְּרָחִים שֶׁל סְטִיץ׳' },
+    { icon: '⭐', name: 'כּוֹכָבִים' },
+    { icon: '🦋', name: 'פַּרְפָּרִים' }
+  ];
+  const picked = icons[randInt(0, icons.length - 1)];
+
+  if (mode === 1) {
+    const count = randInt(2, 9);
+    const visual = Array(count).fill(picked.icon).join(' ');
+    return {
+      isLia: true,
+      autoSpeak: true,
+      isMulti: false,
+      instruction: `🦄 סְפִירָה לְגַן חוֹבָה: כַּמָּה ${picked.name} יֵשׁ בַּתְּמוּנָה?`,
+      ttsText: `ליה, ספרי כמה ${picked.name} יש בתמונה?`,
+      stimulusHtml: `<div style="font-size:2.6rem;letter-spacing:6px;line-height:1.4;">${visual}</div>`,
+      rtlStimulus: false,
+      options: makeNumericOptions(count, 4, 1),
+      correctAnswers: [String(count)],
+      hint: `בואי נספור יחד באצבע: יש כאן ${count} ${picked.name}!`
+    };
+  } else {
+    const a = randInt(1, 4);
+    const b = randInt(1, 4);
+    const sum = a + b;
+    const visA = Array(a).fill(picked.icon).join('');
+    const visB = Array(b).fill(picked.icon).join('');
+    return {
+      isLia: true,
+      autoSpeak: true,
+      isMulti: false,
+      instruction: `✨ חִיבּוּר בִּתְמוּנוֹת: כַּמָּה ${picked.name} יֵשׁ בְּיַחַד?`,
+      ttsText: `לליה יש ${a} ${picked.name}, ועוד ${b} ${picked.name}. כמה יש ביחד?`,
+      stimulusHtml: `<div style="font-size:2.3rem;font-weight:800;">${visA} <span style="color:#db2777;">+</span> ${visB} <span style="color:#db2777;">= ?</span></div>`,
+      rtlStimulus: false,
+      options: makeNumericOptions(sum, 4, 1),
+      correctAnswers: [String(sum)],
+      hint: `ספרי את כולם יחד: ${a} ועוד ${b} שווה ${sum}!`
+    };
+  }
+}
+
+function genLiaLogicPatterns() {
+  const patterns = [
+    { seq: '🦄 , 💙 , 🦄 , 💙 , 🦄 , ', ans: '💙 סְטִיץ׳ כָּחוֹל', wrong: ['🦄 חַד-קֶרֶן', '🍎 תַּפּוּחַ', '🚗 מְכוֹנִית'], tts: 'חד קרן, לב כחול, חד קרן, לב כחול, חד קרן. מי בא עכשיו בתור?', hint: 'הסדרה מתחלפת: חד-קרן ואז לב כחול של סטיץ׳!' },
+    { seq: '💄 , 👑 , 💄 , 👑 , 💄 , ', ans: '👑 כֶּתֶר', wrong: ['💄 שְׂפָתוֹן', '🐶 כֶּלֶב', '🍌 בָּנָנָה'], tts: 'שפתון, כתר, שפתון, כתר, שפתון. מה בא עכשיו בתור?', hint: 'אחרי כל שפתון מגיע כתר נוצץ!' },
+    { seq: '🌸 , 🌸 , 🦋 , 🌸 , 🌸 , ', ans: '🦋 פַּרְפַּר', wrong: ['🌸 פֶּרַח', '🍦 גְּלִידָה', '🐱 חָתוּל'], tts: 'שני פרחים ופרפר, שני פרחים ו... מה בא עכשיו?', hint: 'אחרי שני פרחים ורודים מגיע פרפר!' },
+    { seq: '⭐ , 🌙 , ⭐ , 🌙 , ⭐ , ', ans: '🌙 יָרֵחַ', wrong: ['⭐ כּוֹכָב', '☀️ שֶׁמֶשׁ', '👗 שִׂמְלָה'], tts: 'כוכב, ירח, כוכב, ירח, כוכב. מי הבא בתור?', hint: 'אחרי הכוכב מגיע הירח!' }
+  ];
+  const item = patterns[randInt(0, patterns.length - 1)];
+  return {
+    isLia: true,
+    autoSpeak: true,
+    isMulti: false,
+    instruction: '🌈 סִדְרוֹת קֶסֶם לְגַן חוֹבָה: מִי בָּא הַבָּא בַּתּוֹר?',
+    ttsText: `ליה חכמה, השלימי את הסדרה: ${item.tts}`,
+    stimulusHtml: `<div style="font-size:2.3rem;direction:ltr;">${item.seq}<span class="mystery-box">?</span></div>`,
+    rtlStimulus: false,
+    options: shuffle([item.ans, ...item.wrong]),
+    correctAnswers: [item.ans],
+    hint: item.hint
+  };
+}
+
 function generateQuestionForTopic(topicId, diff = 'medium', customQuestions = []) {
   if (topicId === 'daily_mix') {
     // Focused primarily on Math & Hebrew as requested!
@@ -901,6 +1176,14 @@ function generateQuestionForTopic(topicId, diff = 'medium', customQuestions = []
       'math_mult_intro', 'math_word_problems', 'hebrew_opposites', 'hebrew_grammar', 'hebrew_reading'
     ];
     topicId = pool[randInt(0, pool.length - 1)];
+  }
+
+  if (topicId === 'lia_daily_mix') {
+    const liaPool = [
+      'lia_english_colors_glam', 'lia_english_stitch_animals', 'lia_english_numbers_food',
+      'lia_english_magic_words', 'lia_heb_letters', 'lia_heb_rhymes', 'lia_math_counting', 'lia_logic_patterns'
+    ];
+    topicId = liaPool[randInt(0, liaPool.length - 1)];
   }
 
   if (topicId === 'custom_parents') {
@@ -945,6 +1228,15 @@ function generateQuestionForTopic(topicId, diff = 'medium', customQuestions = []
     case 'english_soccer':    q = genEnglishSoccer(); break;
     case 'english_starter':   q = genEnglishStarter(); break;
     case 'logic_series':      q = genLogicSeries(diff); break;
+    // Lia's Kindergarten & English Topics:
+    case 'lia_english_colors_glam':    q = buildLiaEnglishQuestion(LIA_GLAM_WORDS, '💄 צְבָעִים וְאִיפּוּר בְּאַנְגְּלִית'); break;
+    case 'lia_english_stitch_animals': q = buildLiaEnglishQuestion(LIA_STITCH_ANIMALS, '💙 סְטִיץ׳, חַד-קֶרֶן וְחַיּוֹת בְּאַנְגְּלִית'); break;
+    case 'lia_english_numbers_food':   q = buildLiaEnglishQuestion(LIA_NUMBERS_FOOD, '🍦 מִסְפָּרִים וּפִינוּקִים בְּאַנְגְּלִית'); break;
+    case 'lia_english_magic_words':    q = buildLiaEnglishQuestion(LIA_MAGIC_WORDS, '🌈 מִילּוֹת קֶסֶם בְּאַנְגְּלִית'); break;
+    case 'lia_heb_letters':            q = genLiaHebLetters(); break;
+    case 'lia_heb_rhymes':             q = genLiaHebRhymes(); break;
+    case 'lia_math_counting':          q = genLiaMathCounting(); break;
+    case 'lia_logic_patterns':         q = genLiaLogicPatterns(); break;
     default:                  q = genAddSub(diff); break;
   }
   q.topicId = topicId;

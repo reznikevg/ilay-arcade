@@ -8,11 +8,11 @@
   <meta name="apple-mobile-web-app-title" content="עילאי">
   <meta name="theme-color" content="#ffffff">
   <link rel="manifest" href="manifest.json">
-  <title>עילאי - למידה ומשימות</title>
+  <title>עילאי וליה - למידה ומשחקים</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Rubik:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=2.7">
+  <link rel="stylesheet" href="css/styles.css?v=2.8">
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body class="theme-beitar">
@@ -20,9 +20,9 @@
   <!-- ==================== LOCK SCREEN (FAMILY PIN / GOOGLE SSO) ==================== -->
   <div class="auth-gate-overlay" id="auth-gate-overlay">
     <div class="auth-gate-card">
-      <div class="auth-logo-circle">🦁</div>
-      <h2>האפליקציה של עִילַאי</h2>
-      <p>הזן קוד משפחתי כדי להיכנס</p>
+      <div class="auth-logo-circle">🦁🦄</div>
+      <h2>האפליקציה של עִילַאי וְלִיָּה</h2>
+      <p>הזינו קוד משפחתי כדי להיכנס</p>
 
       <form id="form-family-pin" class="pin-login-form">
         <input
@@ -71,6 +71,8 @@
         <div class="team-pill-toggle" id="team-switcher">
           <button type="button" class="team-btn active" data-team="beitar" id="btn-team-beitar">בית"ר</button>
           <button type="button" class="team-btn" data-team="real" id="btn-team-real">ריאל</button>
+          <button type="button" class="team-btn hidden" data-team="unicorn" id="btn-team-unicorn">🦄 חד-קרן</button>
+          <button type="button" class="team-btn hidden" data-team="stitch" id="btn-team-stitch">💙 סטיץ׳</button>
         </div>
 
         <div class="score-chip">
@@ -88,6 +90,18 @@
       </div>
     </header>
 
+    <!-- Kid Profile Switcher Bar (Ilay & Lia) -->
+    <div class="kid-switcher-bar" id="kid-switcher-bar">
+      <button type="button" class="kid-switch-btn active" data-kid="ilay" id="btn-kid-ilay">
+        <span class="kid-switch-emoji">👦⚽</span>
+        <span class="kid-switch-text"><strong>עִילַאי</strong> <small>(כיתה ב׳)</small></span>
+      </button>
+      <button type="button" class="kid-switch-btn" data-kid="lia" id="btn-kid-lia">
+        <span class="kid-switch-emoji">👧🦄</span>
+        <span class="kid-switch-text"><strong>לִיָּה</strong> <small>(גן חובה • בת 5)</small></span>
+      </button>
+    </div>
+
     <!-- Scrollable Viewport -->
     <main class="main-container">
 
@@ -96,15 +110,15 @@
         <!-- Daily Overview Card -->
         <div class="hero-card" id="btn-daily-match">
           <div class="hero-card-info">
-            <span class="hero-tag">אתגר יומי • בונוס כפול</span>
-            <h3>משחק האלופים המהיר</h3>
-            <p>8 שאלות בחשבון ושפה על גביע יומי</p>
+            <span class="hero-tag" id="hero-tag-text">אתגר יומי • בונוס כפול</span>
+            <h3 id="hero-title-text">משחק האלופים המהיר</h3>
+            <p id="hero-desc-text">8 שאלות בחשבון ושפה על גביע יומי</p>
           </div>
           <div class="hero-play-circle">▶</div>
         </div>
 
-        <!-- 4 Core Daily Modules (2x2 Native iOS Grid) -->
-        <div class="bento-grid">
+        <!-- ILAY'S 4 Core Daily Modules (2x2 Grid) -->
+        <div class="bento-grid" id="ilay-bento-grid">
           <button type="button" class="bento-card bento-speech" id="quick-open-speech">
             <div class="bento-icon-wrap">🎙️</div>
             <div class="bento-title">תרגול ש׳ ו-ס׳</div>
@@ -130,25 +144,57 @@
           </button>
         </div>
 
+        <!-- LIA'S 4 Core Daily Modules (2x2 Grid: Makeup, Kindergarten Teacher, English, Prep) -->
+        <div class="bento-grid hidden" id="lia-bento-grid">
+          <button type="button" class="bento-card bento-makeup" id="quick-open-makeup">
+            <div class="bento-icon-wrap">💄</div>
+            <div class="bento-title">סטודיו האיפור של ליה</div>
+            <div class="bento-sub">לאפר ולהתאפר + צבעים באנגלית!</div>
+          </button>
+
+          <button type="button" class="bento-card bento-kinder" id="quick-open-kinder">
+            <div class="bento-icon-wrap">👩‍🏫</div>
+            <div class="bento-title">הגן של הגננת ליה</div>
+            <div class="bento-sub">מפגש בוקר עם סטיץ׳ וחד-קרן!</div>
+          </button>
+
+          <button type="button" class="bento-card bento-lia-eng" id="quick-open-lia-eng">
+            <div class="bento-icon-wrap">🦄</div>
+            <div class="bento-title">אנגלית עם סטיץ׳</div>
+            <div class="bento-sub">מילים, צבעים וחיות בשמיעה!</div>
+          </button>
+
+          <button type="button" class="bento-card bento-lia-prep" id="quick-open-lia-prep">
+            <div class="bento-icon-wrap">🔤</div>
+            <div class="bento-title">מוכנות לגן חובה</div>
+            <div class="bento-sub">אותיות, חרוזים וספירה עד 10</div>
+          </button>
+        </div>
+
         <!-- Practice Games Section -->
         <div class="section-bar">
-          <h2 class="section-heading">תרגול לימודי</h2>
+          <h2 class="section-heading" id="practice-section-heading">תרגול לימודי</h2>
           <div class="segmented-tabs">
             <button type="button" class="cat-tab active" data-cat="all">הכל</button>
             <button type="button" class="cat-tab" data-cat="math">חשבון</button>
             <button type="button" class="cat-tab" data-cat="hebrew">שפה</button>
-            <button type="button" class="cat-tab" data-cat="english">אנגלית</button>
+            <button type="button" class="cat-tab" data-cat="english">אנגלית 🇬🇧</button>
             <button type="button" class="cat-tab" data-cat="custom" id="tab-custom">מיוחד</button>
           </div>
         </div>
 
-        <div class="hidden" id="difficulty-selector">
-          <button class="pill-opt" data-diff="easy"></button>
-          <button class="pill-opt active" data-diff="medium"></button>
-          <button class="pill-opt" data-diff="hard"></button>
-        </div>
-        <div class="hidden" id="gamemode-selector">
-          <button class="pill-opt active" data-mode="practice"></button>
+        <!-- Difficulty & Game Mode Controls -->
+        <div class="game-options-row">
+          <div class="pill-group" id="difficulty-selector">
+            <button type="button" class="pill-opt" data-diff="easy">🌟 קל</button>
+            <button type="button" class="pill-opt active" data-diff="medium">⚡ רגיל</button>
+            <button type="button" class="pill-opt" data-diff="hard">🔥 אלופים</button>
+          </div>
+          <div class="pill-group" id="gamemode-selector">
+            <button type="button" class="pill-opt active" data-mode="practice">🎯 אימון</button>
+            <button type="button" class="pill-opt" data-mode="penalty">⚽ פנדלים</button>
+            <button type="button" class="pill-opt" data-mode="arcade">⏱️ 60 שניות</button>
+          </div>
         </div>
 
         <div class="topics-list" id="topics-grid"></div>
@@ -329,15 +375,17 @@
           <button type="button" class="btn-back" id="btn-leave-arena">‹ חזרה</button>
           <span class="screen-title" id="arena-topic-title">תרגול</span>
           <span class="badge-counter"><span id="q-current-num">1</span>/<span id="q-total-num">10</span></span>
-          <div class="hidden" id="arena-timer"><span id="timer-seconds">60</span></div>
+          <div class="timer-pill hidden" id="arena-timer">⏱️ <span id="timer-seconds">60</span></div>
           <div class="hidden" id="q-progress-fill"></div>
         </div>
 
-        <div class="hidden">
-          <div id="goalkeeper"></div>
-          <div id="soccer-ball-shot"></div>
-          <div id="penalty-balls-track"></div>
-          <div id="commentator-text"></div>
+        <div class="arena-visual-banner" id="arena-visual-banner">
+          <div class="arena-stage-row">
+            <div class="arena-keeper" id="goalkeeper">🧤</div>
+            <div class="penalty-dots-row" id="penalty-balls-track"></div>
+            <div class="arena-ball" id="soccer-ball-shot">⚽</div>
+          </div>
+          <div class="arena-commentary" id="commentator-text">מוכנים? בואו נתחיל!</div>
         </div>
 
         <div class="surface-card" id="question-card">
@@ -592,6 +640,133 @@
         </div>
       </section>
 
+      <!-- ==================== VIEW 10: LIA'S GLAM & MAKEUP STUDIO (סטודיו האיפור של ליה) ==================== -->
+      <section id="view-makeup" class="view-section">
+        <div class="screen-nav-bar">
+          <button type="button" class="btn-back" onclick="switchView('home')">‹ חזרה</button>
+          <span class="screen-title">💄 סטודיו האיפור והיופי של ליה</span>
+          <span class="badge-counter">בונוס אנגלית ✨</span>
+        </div>
+
+        <!-- Client Request Mission Card (English + Glam) -->
+        <div class="surface-card glam-mission-card" id="glam-mission-box">
+          <div class="glam-mission-header">
+            <span class="glam-badge">🎯 משימת איפור באנגלית (+25 🪙)</span>
+            <button type="button" class="btn-chip" id="btn-glam-speak-mission">🔊 הקרא משימה</button>
+          </div>
+          <div class="glam-mission-text" id="glam-mission-text">בחרי שפתון ורוד (Pink Lipstick) וכתר זהב (Gold Crown)!</div>
+          <button type="button" class="btn-secondary-pill" id="btn-glam-new-mission" style="margin-top:8px;font-size:0.82rem;">🔄 משימה חדשה</button>
+        </div>
+
+        <!-- Character Stage / Mirror -->
+        <div class="surface-card glam-mirror-stage" id="glam-mirror-stage">
+          <div class="glam-model-selector">
+            <button type="button" class="glam-model-btn active" data-model="👸" data-name="הנסיכה ליה">👸 נסיכה</button>
+            <button type="button" class="glam-model-btn" data-model="🦄" data-name="חד-קרן קסום">🦄 חד-קרן</button>
+            <button type="button" class="glam-model-btn" data-model="💙" data-name="סטיץ׳ גלאם">💙 סטיץ׳</button>
+            <button type="button" class="glam-model-btn" data-model="👩‍🏫" data-name="הגננת ליה">👩‍🏫 הגננת ליה</button>
+          </div>
+
+          <div class="glam-vanity-mirror" id="glam-vanity-mirror">
+            <div class="glam-crown-slot" id="glam-crown-slot">👑</div>
+            <div class="glam-face-circle" id="glam-face-circle">
+              <span class="glam-main-avatar" id="glam-main-avatar">👸</span>
+              <div class="glam-blush-left" id="glam-blush-left"></div>
+              <div class="glam-blush-right" id="glam-blush-right"></div>
+            </div>
+            <div class="glam-equipped-row">
+              <span class="glam-equip-pill" id="glam-lip-pill">💄 שפתון: ורוד (Pink)</span>
+              <span class="glam-equip-pill" id="glam-eye-pill">✨ צללית: סגול (Purple)</span>
+              <span class="glam-equip-pill" id="glam-nail-pill">💅 לק: נצנצים (Sparkle)</span>
+            </div>
+          </div>
+
+          <div class="glam-palettes">
+            <div class="glam-palette-group">
+              <div class="glam-palette-title">💄 בחרי צבע שפתון ואודם (Lipstick Color):</div>
+              <div class="glam-swatches" id="glam-lip-swatches">
+                <button type="button" class="glam-swatch active" data-type="lip" data-eng="Pink Lipstick" data-heb="שפתון ורוד" data-color="#ec4899" style="background:#ec4899;">🩷 Pink</button>
+                <button type="button" class="glam-swatch" data-type="lip" data-eng="Red Lipstick" data-heb="שפתון אדום" data-color="#ef4444" style="background:#ef4444;">❤️ Red</button>
+                <button type="button" class="glam-swatch" data-type="lip" data-eng="Purple Lipstick" data-heb="שפתון סגול" data-color="#a855f7" style="background:#a855f7;">💜 Purple</button>
+                <button type="button" class="glam-swatch" data-type="lip" data-eng="Peach Glow" data-heb="שפתון אפרסק" data-color="#fb7185" style="background:#fb7185;">🍑 Peach</button>
+              </div>
+            </div>
+
+            <div class="glam-palette-group">
+              <div class="glam-palette-title">✨ בחרי צלליות וסומק נוצץ (Eyeshadow & Blush):</div>
+              <div class="glam-swatches" id="glam-eye-swatches">
+                <button type="button" class="glam-swatch active" data-type="eye" data-eng="Purple Sparkle" data-heb="צללית סגולה" data-color="#c084fc" style="background:#c084fc;">💜 Purple</button>
+                <button type="button" class="glam-swatch" data-type="eye" data-eng="Stitch Blue" data-heb="צללית כחול סטיץ׳" data-color="#38bdf8" style="background:#38bdf8;">💙 Blue</button>
+                <button type="button" class="glam-swatch" data-type="eye" data-eng="Gold Shimmer" data-heb="צללית זהב" data-color="#fbbf24" style="background:#fbbf24;color:#1e293b;">🌟 Gold</button>
+                <button type="button" class="glam-swatch" data-type="eye" data-eng="Rainbow Magic" data-heb="צללית קשת בענן" data-color="#f472b6" style="background:linear-gradient(90deg,#ec4899,#8b5cf6,#38bdf8);">🌈 Rainbow</button>
+              </div>
+            </div>
+
+            <div class="glam-palette-group">
+              <div class="glam-palette-title">👑 בחרי כתר או קישוט לשיער (Crown & Hair):</div>
+              <div class="glam-swatches" id="glam-crown-swatches">
+                <button type="button" class="glam-item-btn active" data-type="crown" data-eng="Gold Crown" data-heb="כתר זהב" data-icon="👑">👑 Gold Crown</button>
+                <button type="button" class="glam-item-btn" data-type="crown" data-eng="Unicorn Horn" data-heb="קרן של חד-קרן" data-icon="🦄">🦄 Unicorn</button>
+                <button type="button" class="glam-item-btn" data-type="crown" data-eng="Pink Bow" data-heb="סרט ורוד" data-icon="🎀">🎀 Pink Bow</button>
+                <button type="button" class="glam-item-btn" data-type="crown" data-eng="Stitch Flower" data-heb="פרח הוואי של סטיץ׳" data-icon="🌺">🌺 Flower</button>
+              </div>
+            </div>
+
+            <div class="glam-palette-group">
+              <div class="glam-palette-title">💅 בחרי לק לציפורניים (Nail Polish):</div>
+              <div class="glam-swatches" id="glam-nail-swatches">
+                <button type="button" class="glam-item-btn active" data-type="nail" data-eng="Pink Nails" data-heb="לק ורוד נוצץ" data-icon="💅🩷">💅 Pink</button>
+                <button type="button" class="glam-item-btn" data-type="nail" data-eng="Blue Nails" data-heb="לק כחול סטיץ׳" data-icon="💅💙">💅 Blue</button>
+                <button type="button" class="glam-item-btn" data-type="nail" data-eng="Purple Nails" data-heb="לק סגול חד-קרן" data-icon="💅💜">💅 Purple</button>
+                <button type="button" class="glam-item-btn" data-type="nail" data-eng="Gold Star Nails" data-heb="לק כוכבי זהב" data-icon="💅⭐">💅 Gold</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="glam-footer-actions">
+            <button type="button" class="btn-primary-large" id="btn-glam-finish">📸 סיימתי לאפר! בדיקת מראה וצילום (+מטבעות)</button>
+          </div>
+          <div class="feedback-banner hidden" id="glam-feedback-banner" style="margin-top:10px;"></div>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 11: TEACHER LIA'S KINDERGARTEN (הגן של הגננת ליה) ==================== -->
+      <section id="view-kinder" class="view-section">
+        <div class="screen-nav-bar">
+          <button type="button" class="btn-back" onclick="switchView('home')">‹ חזרה</button>
+          <span class="screen-title">👩‍🏫 הגן של הגננת ליה</span>
+          <span class="badge-counter">⭐ <span id="kinder-stars-count">0</span> כוכבים</span>
+        </div>
+
+        <!-- Morning Circle Attendance & Stickers -->
+        <div class="surface-card">
+          <div class="panel-title">☀️ מפגש בוקר בגן של הגננת ליה!</div>
+          <p class="muted-note" style="margin-bottom:12px;">לחצי על הילדים בגן כדי לבדוק מי הגיע היום, לשמוע אותם מברכים באנגלית ולחלק להם מדבקת כוכב ⭐!</p>
+
+          <div class="kinder-circle-grid" id="kinder-students-grid"></div>
+        </div>
+
+        <!-- Teacher Lia Checks Her Students' Answers! -->
+        <div class="surface-card" id="kinder-quiz-card">
+          <div class="glam-mission-header">
+            <span class="glam-badge">👩‍🏫 הגננת ליה בודקת את ילדי הגן! (+20 🪙)</span>
+            <button type="button" class="btn-chip" id="btn-kinder-speak">🔊 הקרא</button>
+          </div>
+
+          <div class="kinder-board-box" id="kinder-board-box">
+            <div class="kinder-student-speaker" id="kinder-quiz-avatar">💙 סטיץ׳ שואל:</div>
+            <div class="kinder-question-bubble" id="kinder-quiz-text">הגננת ליה! ספרתי 4 פרחים: 🌸🌸🌸🌸 — צדקתי?</div>
+          </div>
+
+          <div class="kinder-teacher-btns">
+            <button type="button" class="btn-kinder-approve" id="btn-kinder-yes">✅ נכון מאוד חמוד! קבל כוכב ⭐</button>
+            <button type="button" class="btn-kinder-correct" id="btn-kinder-no">💡 לא מדויק, הגננת ליה תסביר לך!</button>
+          </div>
+
+          <div class="feedback-banner hidden" id="kinder-feedback-banner" style="margin-top:10px;"></div>
+        </div>
+      </section>
+
     </main>
 
     <!-- Fixed iOS Bottom Tab Bar -->
@@ -601,18 +776,18 @@
         <span class="btn-text">בית</span>
       </button>
       <button type="button" class="nav-btn" data-view="speech" id="nav-speech">
-        <span class="btn-icon">🎙️</span>
-        <span class="btn-text">הגייה</span>
+        <span class="btn-icon" id="nav-2-icon">🎙️</span>
+        <span class="btn-text" id="nav-2-text">הגייה</span>
         <span class="shop-badge hidden" id="speech-notif">!</span>
       </button>
       <button type="button" class="nav-btn" data-view="homework" id="nav-homework">
-        <span class="btn-icon">✅</span>
-        <span class="btn-text">משימות</span>
+        <span class="btn-icon" id="nav-3-icon">✅</span>
+        <span class="btn-text" id="nav-3-text">משימות</span>
         <span class="shop-badge hidden" id="hw-notif">0</span>
       </button>
       <button type="button" class="nav-btn" data-view="dictation" id="nav-dictation">
-        <span class="btn-icon">🎧</span>
-        <span class="btn-text">הכתבה</span>
+        <span class="btn-icon" id="nav-4-icon">🎧</span>
+        <span class="btn-text" id="nav-4-text">הכתבה</span>
       </button>
       <button type="button" class="nav-btn" data-view="schedule" id="nav-schedule">
         <span class="btn-icon">📅</span>
@@ -627,8 +802,8 @@
 
   </div>
 
-  <script src="js/sound.js?v=2.7"></script>
-  <script src="js/questions.js?v=2.7"></script>
-  <script src="js/app.js?v=2.7"></script>
+  <script src="js/sound.js?v=2.8"></script>
+  <script src="js/questions.js?v=2.8"></script>
+  <script src="js/app.js?v=2.8"></script>
 </body>
 </html>

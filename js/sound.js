@@ -128,6 +128,22 @@ class ArcadeAudio {
       return before + vocalized + after;
     });
 
+    // 1b. Phonetic replacement for Lia -> לִיָּה
+    t = t.replace(/לִ?יָּ?ה/g, 'ליה');
+    const liaPrefixMap = {
+      '': 'לִיָּה',
+      'ו': 'וְלִיָּה',
+      'ל': 'לְלִיָּה',
+      'ש': 'שֶׁלִּיָּה',
+      'מ': 'מִלִּיָּה',
+      'ב': 'בְּלִיָּה',
+      'ול': 'וּלְלִיָּה'
+    };
+    t = t.replace(/(^|[^\u0590-\u05FF])(ול|[ולשמב])?ליה([^\u0590-\u05FF]|$)/g, (match, before, p, after) => {
+      const vocalized = liaPrefixMap[p || ''] || (p + 'לִיָּה');
+      return before + vocalized + after;
+    });
+
     // 2. Remove emojis and UI decorative icons
     t = t.replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, ' ');
     t = t.replace(/[⚽🏆🔥🪙⭐🥅🧤🎙️💡🎯⏱️🦁👑💛🖤🤍💜🎉👟🛡️💎🎩🏃📜🔬🎨🎵🕯️📌✔✖☐•]/g, ' ');
@@ -238,6 +254,39 @@ class ArcadeAudio {
       window.speechSynthesis.speak(utter);
     } catch (e) {
       console.warn('TTS error:', e);
+    }
+  }
+
+  speakBilingual(hebrewText, englishWord, rate = 0.85) {
+    if (!('speechSynthesis' in window)) return;
+    try {
+      window.speechSynthesis.cancel();
+      if (hebrewText) {
+        const cleanHeb = this.cleanTextForHebrewTTS(hebrewText);
+        if (cleanHeb) {
+          const uHeb = new SpeechSynthesisUtterance(cleanHeb);
+          uHeb.lang = 'he-IL';
+          uHeb.rate = rate;
+          uHeb.pitch = 1.06;
+          const vHeb = this.getBestVoice('he-IL');
+          if (vHeb) uHeb.voice = vHeb;
+          window.speechSynthesis.speak(uHeb);
+        }
+      }
+      if (englishWord) {
+        const cleanEng = String(englishWord).replace(/<[^>]+>/g, '').replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '').trim();
+        if (cleanEng) {
+          const uEng = new SpeechSynthesisUtterance(cleanEng);
+          uEng.lang = 'en-US';
+          uEng.rate = 0.80;
+          uEng.pitch = 1.05;
+          const vEng = this.getBestVoice('en-US');
+          if (vEng) uEng.voice = vEng;
+          window.speechSynthesis.speak(uEng);
+        }
+      }
+    } catch (e) {
+      console.warn('Bilingual TTS error:', e);
     }
   }
 }
