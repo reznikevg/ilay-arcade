@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Rubik:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=3.3">
+  <link rel="stylesheet" href="css/styles.css?v=4.0">
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body class="theme-beitar">
@@ -144,16 +144,24 @@
           </button>
         </div>
 
-        <!-- EA SPORTS FC 27 English Academy Banner (Ilay) -->
-        <div class="fc27-home-banner" id="fc27-home-banner">
-          <div class="fc27-banner-left">
-            <div class="fc27-logo-pill">EA SPORTS<br>FC™ 27</div>
-            <div class="fc27-banner-text">
-              <h4>🎮 אקדמיית פיפא FC 27: מסכים, שדרן וסרטונים!</h4>
-              <p>איך מתחילים משחק צעד-אחר-צעד, מה אומר כל מסך ומה השדרן צועק באנגלית!</p>
+        <!-- EA SPORTS FC 27 English Academy Banner (Ilay) - Direct 4-Mode Hub -->
+        <div class="fc27-home-banner" id="fc27-home-banner" style="flex-direction:column;align-items:stretch;gap:10px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+            <div class="fc27-banner-left">
+              <div class="fc27-logo-pill">EA SPORTS<br>FC™ 27</div>
+              <div class="fc27-banner-text">
+                <h4>🎮 אקדמיית פיפא FC 27 של עילי: מסכים, איך להתחיל משחק, שדרן וסרטונים!</h4>
+                <p>בחר מה בא לך לראות ולשמוע עכשיו — כל מסך, כל כפתור בשלט וכל משפט של השדרן עם דוגמאות!</p>
+              </div>
             </div>
+            <span class="fc27-banner-play">פתח הכל ⚽</span>
           </div>
-          <span class="fc27-banner-play">פתח אקדמיה ⚽</span>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;" id="fc27-home-quick-modes">
+            <button type="button" class="btn-chip" data-fc27jump="howto" style="background:#00ff87;color:#090d16;font-weight:900;border:none;padding:8px 6px;font-size:0.8rem;">▶️ איך מתחילים משחק (צעד-אחר-צעד)</button>
+            <button type="button" class="btn-chip" data-fc27jump="screens" style="background:#38bdf8;color:#090d16;font-weight:900;border:none;padding:8px 6px;font-size:0.8rem;">🖥️ מה אומר כל מסך בפיפא (6 מסכים)</button>
+            <button type="button" class="btn-chip" data-fc27jump="commentator" style="background:#fbbf24;color:#090d16;font-weight:900;border:none;padding:8px 6px;font-size:0.8rem;">🎙️ מה השדרן אומר + דוגמאות</button>
+            <button type="button" class="btn-chip" data-fc27jump="videos" style="background:#f43f5e;color:#ffffff;font-weight:900;border:none;padding:8px 6px;font-size:0.8rem;">🎬 5 סרטוני הדרכה ושלט</button>
+          </div>
         </div>
 
         <!-- LIA'S 4 Core Daily Modules (2x2 Grid: Makeup, Kindergarten Teacher, English, Prep) -->
@@ -188,11 +196,23 @@
           <div class="fc27-banner-left">
             <div class="fc27-logo-pill" style="background:#38bdf8;color:#0f172a;box-shadow:0 0 12px rgba(56,189,248,0.6);">SCIENCE<br>LAB 🔬</div>
             <div class="fc27-banner-text">
-              <h4 style="color:#bae6fd;" id="science-banner-title">🔬 מעבדת המדע: איך דברים עובדים בעולם?</h4>
-              <p style="color:#e0f2fe;" id="science-banner-sub">ניסויים חיים, הסברים עם קול: חלל, כדורגל, טבע, גוף האדם, חשמל והר געש!</p>
+              <h4 style="color:#bae6fd;" id="science-banner-title">🔬 מעבדת המדע (20 גילויים + 3 ניסויים חיים): איך דברים עובדים?</h4>
+              <p style="color:#e0f2fe;" id="science-banner-sub">ניסויים חיים, הסברים עם קול: מכוניות, צוללות, חלל, דינוזאורים, גוף האדם, וויי-פיי והר געש!</p>
             </div>
           </div>
           <span class="fc27-banner-play" style="background:rgba(56,189,248,0.22);border-color:#7dd3fc;color:#fff;">למעבדה 🧪</span>
+        </div>
+
+        <!-- TALKING ILLUSTRATED ENGLISH & SCIENCE DICTIONARY BANNER (New in v4.0!) -->
+        <div class="fc27-home-banner" id="dictionary-home-banner" style="background:linear-gradient(135deg,#059669 0%,#064e3b 100%);border-color:#34d399;box-shadow:0 6px 18px rgba(16,185,129,0.22);">
+          <div class="fc27-banner-left">
+            <div class="fc27-logo-pill" style="background:#34d399;color:#064e3b;box-shadow:0 0 12px rgba(52,211,153,0.6);">TALKING<br>DICT 📖</div>
+            <div class="fc27-banner-text">
+              <h4 style="color:#a7f3d0;">📖 המילון המדבר המאויר: אנגלית, פיפא, מדע ויופי עם משפטים לדוגמא!</h4>
+              <p style="color:#d1fae5;">מילים ומשפטים שלמים באנגלית ובעברית עם הקראה רגילה 🔊 והקראה איטית וברורה 🐢!</p>
+            </div>
+          </div>
+          <span class="fc27-banner-play" style="background:rgba(52,211,153,0.22);border-color:#6ee7b7;color:#fff;">למילון 🔊</span>
         </div>
 
         <!-- Practice Games Section -->
@@ -412,6 +432,10 @@
           </div>
           <div class="arena-commentary" id="commentator-text">מוכנים? בואו נתחיל!</div>
         </div>
+
+        <button type="button" id="btn-arena-open-fc27-guide" class="btn-primary-large hidden" style="margin-bottom:10px;background:linear-gradient(135deg,#00ff87,#10b981);color:#090d16;font-weight:900;border:none;">
+          🎮 פתח את אקדמיית פיפא FC 27 (מסכים, איך מתחילים משחק, שדרן וסרטונים!)
+        </button>
 
         <div class="surface-card" id="question-card">
           <div class="q-top-row">
@@ -853,6 +877,9 @@
                 📌 דוגמא: הדלקת את הפלייסטיישן ובא לך לשחק מיד משחק של בית"ר נגד ריאל? לוחצים על KICK OFF!
               </div>
             </div>
+
+            <!-- Full Cheat-Sheet List of ALL Buttons on This Screen -->
+            <div id="fc27-screen-full-table" style="margin-top:12px;"></div>
           </div>
 
           <!-- ==================== PANEL 2: HOW TO START A MATCH STEP-BY-STEP SIMULATOR ==================== -->
@@ -882,6 +909,10 @@
                 <button type="button" class="btn-primary-action" id="btn-fc27-howto-next" style="flex:1.4;background:#00ff87;color:#090d16;font-weight:900;">שלב הבא ⬅️</button>
               </div>
             </div>
+
+            <!-- Complete 6-Step Overview Roadmap + 8-Button Controller Master Guide -->
+            <div id="fc27-howto-all-steps-list" style="margin-top:10px;"></div>
+            <div id="fc27-controller-guide-list" style="margin-top:12px;"></div>
           </div>
 
           <!-- ==================== PANEL 3: WHAT THE COMMENTATOR SAYS (16 LIVE CALLS + EXAMPLES) ==================== -->
@@ -981,12 +1012,12 @@
 
           <!-- Category Filter Tabs -->
           <div class="segmented-tabs" id="science-cat-tabs" style="margin-bottom:12px;background:#1e293b;width:100%;display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;">
-            <button type="button" class="cat-tab active" data-scicat="all" style="color:#fff;font-size:0.78rem;">🌟 הכל (12)</button>
-            <button type="button" class="cat-tab" data-scicat="physics" style="color:#fff;font-size:0.78rem;">⚽ פיזיקה ותעופה</button>
+            <button type="button" class="cat-tab active" data-scicat="all" style="color:#fff;font-size:0.78rem;">🌟 הכל (20)</button>
+            <button type="button" class="cat-tab" data-scicat="physics" style="color:#fff;font-size:0.78rem;">⚽ פיזיקה ומכונות</button>
             <button type="button" class="cat-tab" data-scicat="space" style="color:#fff;font-size:0.78rem;">🚀 חלל ומזג אוויר</button>
-            <button type="button" class="cat-tab" data-scicat="nature" style="color:#fff;font-size:0.78rem;">🌱 טבע וצמחים</button>
+            <button type="button" class="cat-tab" data-scicat="nature" style="color:#fff;font-size:0.78rem;">🌱 טבע ודינוזאורים</button>
             <button type="button" class="cat-tab" data-scicat="body" style="color:#fff;font-size:0.78rem;">🧠 גוף האדם</button>
-            <button type="button" class="cat-tab" data-scicat="tech" style="color:#fff;font-size:0.78rem;">💡 חשמל וטכנולוגיה</button>
+            <button type="button" class="cat-tab" data-scicat="tech" style="color:#fff;font-size:0.78rem;">💡 חשמל ואינטרנט</button>
           </div>
 
           <!-- Active Science Topic Stage -->
@@ -1067,6 +1098,33 @@
         </div>
       </section>
 
+      <!-- ==================== VIEW 14: TALKING ILLUSTRATED ENGLISH & SCIENCE DICTIONARY (מילון מדבר מאויר) ==================== -->
+      <section id="view-dictionary" class="view-section">
+        <div class="screen-nav-bar">
+          <button type="button" class="btn-back" onclick="switchView('home')">‹ חזרה</button>
+          <span class="screen-title">📖 המילון המדבר של עילי וליה</span>
+          <span class="badge-counter">מילים + משפטים 🔊</span>
+        </div>
+
+        <div class="surface-card" style="background:linear-gradient(145deg,#064e3b 0%,#0f172a 100%);color:#f8fafc;border:2px solid #34d399;">
+          <div style="margin-bottom:10px;">
+            <h3 style="margin:0;color:#6ee7b7;font-size:1.12rem;">🗣️ מילון אנגלית, פיפא, מדע ויופי עם משפטים שלמים לדוגמא!</h3>
+            <p style="margin:3px 0 0;font-size:0.83rem;color:#d1fae5;">לחצו על כל כרטיס כדי לשמוע את המילה ואת המשפט השלם באנגלית (רגיל 🔊 או לאט 🐢)!</p>
+          </div>
+
+          <input
+            type="search"
+            id="dict-search-input"
+            placeholder="🔍 חפש מילה בעברית או באנגלית (למשל: Kick Off, שער, כבידה, כתר...)"
+            style="width:100%;padding:10px 12px;border-radius:12px;border:2px solid #34d399;background:#0f172a;color:#fff;font-size:0.92rem;margin-bottom:10px;"
+          />
+
+          <div class="segmented-tabs" id="dict-cat-tabs" style="margin-bottom:12px;background:#1e293b;width:100%;display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;"></div>
+
+          <div id="dict-cards-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;"></div>
+        </div>
+      </section>
+
     </main>
 
     <!-- Fixed iOS Bottom Tab Bar -->
@@ -1102,8 +1160,8 @@
 
   </div>
 
-  <script src="js/sound.js?v=3.3"></script>
-  <script src="js/questions.js?v=3.3"></script>
-  <script src="js/app.js?v=3.3"></script>
+  <script src="js/sound.js?v=4.0"></script>
+  <script src="js/questions.js?v=4.0"></script>
+  <script src="js/app.js?v=4.0"></script>
 </body>
 </html>

@@ -628,6 +628,7 @@ function switchView(viewName) {
   if (viewName === 'kinder') initKinderStudio();
   if (viewName === 'fc27') initFC27Studio();
   if (viewName === 'science') initScienceStudio();
+  if (viewName === 'dictionary') initTalkingDictionary();
   updateHeaderUI();
 }
 
@@ -1432,6 +1433,11 @@ function startMatch(topicId, topicTitle, isDailyBonus = false) {
   }
 
   document.getElementById('arena-topic-title').textContent = isDailyBonus ? '⚡ משחק העונה (בונוס X2)' : topicTitle;
+
+  const fc27GuideBtn = document.getElementById('btn-arena-open-fc27-guide');
+  if (fc27GuideBtn) {
+    fc27GuideBtn.classList.toggle('hidden', topicId !== 'english_fc27' && topicId !== 'english_fc27_commentator');
+  }
 
   const timerEl = document.getElementById('arena-timer');
   if (appState.gameMode === 'arcade') {
@@ -3131,11 +3137,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Setup Lia's Studios, Ilay's FC 27 Studio & Science Lab
+  // Setup Lia's Studios, Ilay's FC 27 Studio, Science Lab & Talking Dictionary
   setupMakeupStudioListeners();
   setupKinderStudioListeners();
   setupFC27StudioListeners();
   setupScienceStudioListeners();
+  setupTalkingDictionaryListeners();
 });
 
 // ==================== VIEW 10: LIA'S GLAM & MAKEUP STUDIO CONTROLLER ====================
@@ -3540,6 +3547,38 @@ function renderFC27ExplorerScreen() {
   if (hebEl) hebEl.textContent = activeItem.heb;
   if (hintEl) hintEl.textContent = activeItem.hint;
   if (exEl) exEl.textContent = activeItem.example || `📌 דוגמא: לחץ על ${activeItem.eng} במסך כשאתה רוצה ${activeItem.heb}!`;
+
+  // Render full cheat-sheet table of ALL buttons on this screen so Ilay sees everything at a glance
+  const fullTableEl = document.getElementById('fc27-screen-full-table');
+  if (fullTableEl) {
+    fullTableEl.innerHTML = `
+      <div style="font-size:0.86rem;font-weight:900;color:#fde047;margin-bottom:6px;">📋 כל הכפתורים במסך הזה (${screenWords.length} כפתורים עם דוגמאות וקול):</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(235px,1fr));gap:8px;">
+        ${screenWords.map(w => {
+          const isCur = w.key === activeItem.key;
+          return `
+            <div data-fc27-row="${w.key}" style="background:${isCur ? 'linear-gradient(135deg,#064e3b,#0f172a)' : '#1e293b'};border:2px solid ${isCur ? '#00ff87' : '#334155'};border-radius:12px;padding:9px 11px;cursor:pointer;">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;">
+                <span style="font-size:1rem;font-weight:900;color:#00ff87;direction:ltr;">${w.eng}</span>
+                <button type="button" class="btn-chip" data-fc27-row-speak="${w.key}" style="background:#00ff87;color:#090d16;font-weight:900;border:none;padding:3px 9px;font-size:0.75rem;">🔊 שמע</button>
+              </div>
+              <div style="font-size:0.9rem;font-weight:800;color:#fff;margin-top:3px;">${w.heb}</div>
+              <div style="font-size:0.78rem;color:#cbd5e1;margin-top:3px;">${w.hint}</div>
+              <div style="font-size:0.76rem;color:#a7f3d0;margin-top:4px;background:rgba(0,255,135,0.1);padding:5px 7px;border-radius:6px;border-right:3px solid #00ff87;">${w.example || ''}</div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+    fullTableEl.querySelectorAll('[data-fc27-row]').forEach(row => {
+      row.addEventListener('click', () => {
+        arcadeAudio.playClick();
+        fc27ExplorerState.selectedKey = row.dataset.fc27Row;
+        renderFC27ExplorerScreen();
+        speakCurrentFC27ExplorerWord();
+      });
+    });
+  }
 }
 
 function speakCurrentFC27ExplorerWord() {
@@ -3621,6 +3660,71 @@ function renderFC27HowToStep() {
       });
     });
   }
+
+  // Render complete 1-to-6 roadmap of How to Start a Match
+  const allStepsEl = document.getElementById('fc27-howto-all-steps-list');
+  if (allStepsEl) {
+    allStepsEl.innerHTML = `
+      <div class="surface-card" style="background:#0f172a;border:1px solid #334155;color:#fff;margin-bottom:0;">
+        <div style="font-size:0.9rem;font-weight:900;color:#38bdf8;margin-bottom:8px;">🗺️ מפת כל 6 השלבים להתחלת משחק בפיפא (לחץ על כל שלב כדי לקפוץ אליו):</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:7px;">
+          ${FC27_START_MATCH_STEPS.map((st, sIdx) => {
+            const isCur = sIdx === idx;
+            return `
+              <div data-howto-jump="${sIdx}" style="background:${isCur ? 'linear-gradient(135deg,#0284c7,#0f172a)' : '#1e293b'};border:2px solid ${isCur ? '#00ff87' : '#334155'};border-radius:10px;padding:8px 10px;cursor:pointer;">
+                <div style="font-size:0.84rem;font-weight:900;color:${isCur ? '#00ff87' : '#38bdf8'};">${st.title}</div>
+                <div style="font-size:0.76rem;color:#fde047;margin-top:2px;">${st.controllerTip}</div>
+                <div style="font-size:0.75rem;color:#e2e8f0;margin-top:3px;">${st.hebExplain}</div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+    allStepsEl.querySelectorAll('[data-howto-jump]').forEach(card => {
+      card.addEventListener('click', () => {
+        stopFC27Timers();
+        arcadeAudio.playClick();
+        fc27ExplorerState.howToIndex = Number(card.dataset.howtoJump);
+        renderFC27HowToStep();
+        speakCurrentFC27HowToStep();
+      });
+    });
+  }
+
+  // Render 8-button PlayStation/Xbox Controller Map (Attack vs Defense)
+  const ctrlMapEl = document.getElementById('fc27-controller-guide-list');
+  if (ctrlMapEl && typeof FC27_CONTROLLER_MAP !== 'undefined') {
+    ctrlMapEl.innerHTML = `
+      <div class="surface-card" style="background:linear-gradient(145deg,#0f172a,#1e1b4b);border:2px solid #facc15;color:#fff;margin-bottom:0;">
+        <div style="font-size:0.95rem;font-weight:900;color:#fde047;margin-bottom:4px;">🎮 מדריך השלט המלא של עילי (PlayStation / Xbox): מה עושה כל כפתור בהתקפה ובהגנה?</div>
+        <div style="font-size:0.78rem;color:#cbd5e1;margin-bottom:8px;">לחץ על כל כפתור בשלט כדי לשמוע באנגלית ובעברית מה הוא עושה במשחק!</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px;">
+          ${FC27_CONTROLLER_MAP.map((b, bIdx) => `
+            <div data-ctrl-idx="${bIdx}" style="background:#1e293b;border:2px solid ${b.color};border-radius:12px;padding:9px 10px;cursor:pointer;">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;">
+                <span style="background:${b.color};color:#090d16;font-weight:900;padding:2px 8px;border-radius:8px;font-size:0.82rem;direction:ltr;">${b.btn}</span>
+                <span style="font-size:0.84rem;font-weight:900;color:#00ff87;direction:ltr;">${b.eng}</span>
+                <span style="font-size:0.75rem;background:#334155;padding:2px 7px;border-radius:6px;">🔊</span>
+              </div>
+              <div style="font-size:0.8rem;color:#a7f3d0;margin-top:5px;">⚡ <strong>התקפה:</strong> ${b.attackHeb}</div>
+              <div style="font-size:0.8rem;color:#bae6fd;margin-top:2px;">🛡️ <strong>הגנה:</strong> ${b.defenseHeb}</div>
+              <div style="font-size:0.75rem;color:#fef08a;margin-top:4px;background:rgba(250,204,21,0.12);padding:4px 6px;border-radius:6px;">${b.example}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+    ctrlMapEl.querySelectorAll('[data-ctrl-idx]').forEach(card => {
+      card.addEventListener('click', () => {
+        const b = FC27_CONTROLLER_MAP[Number(card.dataset.ctrlIdx)];
+        if (!b) return;
+        arcadeAudio.playClick();
+        const cleanEng = b.eng.replace(/\//g, ' or ');
+        arcadeAudio.speakBilingual(`כפתור ${b.btn}. בהתקפה: ${b.attackHeb}. בהגנה: ${b.defenseHeb}`, cleanEng, 0.88);
+      });
+    });
+  }
 }
 
 function speakCurrentFC27HowToStep() {
@@ -3681,28 +3785,43 @@ function renderFC27CommentatorStudio() {
   if (grid) {
     grid.innerHTML = '';
     FC27_COMMENTATOR_BANK.forEach((item, idx) => {
-      const card = document.createElement('button');
-      card.type = 'button';
+      const card = document.createElement('div');
       const isSel = idx === fc27ExplorerState.commIndex;
       card.style.cssText = `
         text-align:right;
         background:${isSel ? 'linear-gradient(135deg,#064e3b,#047857)' : '#1e293b'};
         border:2px solid ${isSel ? '#00ff87' : '#334155'};
         border-radius:12px;
-        padding:8px 10px;
+        padding:10px 11px;
         color:#fff;
         cursor:pointer;
         font-family:inherit;
       `;
       card.innerHTML = `
-        <div style="font-size:0.9rem;font-weight:900;color:#00ff87;direction:ltr;text-align:left;">🎙️ "${item.eng}"</div>
-        <div style="font-size:0.82rem;font-weight:700;color:#f8fafc;margin-top:3px;">${item.heb}</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;">
+          <div style="font-size:0.95rem;font-weight:900;color:#00ff87;direction:ltr;text-align:left;">🎙️ "${item.eng}"</div>
+          <div style="display:flex;gap:4px;">
+            <button type="button" class="btn-chip" data-comm-fast="${idx}" style="background:#00ff87;color:#090d16;font-weight:900;border:none;padding:3px 7px;font-size:0.72rem;">🔊 רגיל</button>
+            <button type="button" class="btn-chip" data-comm-slow="${idx}" style="background:#38bdf8;color:#090d16;font-weight:900;border:none;padding:3px 7px;font-size:0.72rem;">🐢 לאט</button>
+          </div>
+        </div>
+        <div style="font-size:0.86rem;font-weight:800;color:#f8fafc;margin-top:4px;">${item.heb}</div>
+        <div style="font-size:0.76rem;color:#cbd5e1;margin-top:3px;">🏟️ ${item.situation}</div>
+        <div style="font-size:0.75rem;color:#a7f3d0;margin-top:4px;background:rgba(0,255,135,0.1);padding:5px 7px;border-radius:6px;border-right:3px solid #00ff87;">${item.example}</div>
       `;
-      card.addEventListener('click', () => {
+      card.addEventListener('click', (ev) => {
+        const fastBtn = ev.target.closest('[data-comm-fast]');
+        const slowBtn = ev.target.closest('[data-comm-slow]');
         arcadeAudio.playClick();
         fc27ExplorerState.commIndex = idx;
         renderFC27CommentatorStudio();
-        speakCurrentFC27Commentator('both');
+        if (fastBtn) {
+          speakCurrentFC27Commentator('eng');
+        } else if (slowBtn) {
+          speakCurrentFC27Commentator('slow');
+        } else {
+          speakCurrentFC27Commentator('both');
+        }
       });
       grid.appendChild(card);
     });
@@ -3821,10 +3940,23 @@ function startFC27VideoPlayback() {
 function setupFC27StudioListeners() {
   const banner = document.getElementById('fc27-home-banner');
   if (banner) {
-    banner.addEventListener('click', () => {
+    banner.addEventListener('click', (ev) => {
+      const jumpBtn = ev.target.closest('[data-fc27jump]');
       arcadeAudio.playClick();
       switchView('fc27');
-      setTimeout(() => speakCurrentFC27ExplorerWord(), 250);
+      if (jumpBtn && jumpBtn.dataset.fc27jump) {
+        switchFC27SubMode(jumpBtn.dataset.fc27jump);
+      } else {
+        setTimeout(() => speakCurrentFC27ExplorerWord(), 250);
+      }
+    });
+  }
+
+  const arenaGuideBtn = document.getElementById('btn-arena-open-fc27-guide');
+  if (arenaGuideBtn) {
+    arenaGuideBtn.addEventListener('click', () => {
+      arcadeAudio.playClick();
+      switchView('fc27');
     });
   }
 
@@ -4144,4 +4276,128 @@ function setupScienceStudioListeners() {
 
   const btnBotQuiz = document.getElementById('btn-science-start-quiz');
   if (btnBotQuiz) btnBotQuiz.addEventListener('click', launchSciQuiz);
+}
+
+// ==================== VIEW 14: TALKING ILLUSTRATED ENGLISH & SCIENCE DICTIONARY CONTROLLER ====================
+
+let talkingDictState = {
+  catId: 'all',
+  searchQuery: ''
+};
+
+function initTalkingDictionary() {
+  if (typeof TALKING_DICTIONARY_CATEGORIES === 'undefined') return;
+  if (isLiaActive() && talkingDictState.catId === 'all') {
+    talkingDictState.catId = 'dict_glam_stitch';
+  }
+  renderTalkingDictionary();
+}
+
+function renderTalkingDictionary() {
+  if (typeof TALKING_DICTIONARY_CATEGORIES === 'undefined') return;
+
+  const tabsEl = document.getElementById('dict-cat-tabs');
+  if (tabsEl) {
+    const allTabs = [
+      { id: 'all', title: '🌟 הכל' },
+      ...TALKING_DICTIONARY_CATEGORIES.map(c => ({ id: c.id, title: c.title }))
+    ];
+    tabsEl.innerHTML = allTabs.map(t => `
+      <button type="button" class="cat-tab ${talkingDictState.catId === t.id ? 'active' : ''}" data-dictcat="${t.id}" style="color:#fff;font-size:0.76rem;">
+        ${t.title}
+      </button>
+    `).join('');
+
+    tabsEl.querySelectorAll('[data-dictcat]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        arcadeAudio.playClick();
+        talkingDictState.catId = btn.dataset.dictcat;
+        renderTalkingDictionary();
+      });
+    });
+  }
+
+  const listEl = document.getElementById('dict-cards-list');
+  if (!listEl) return;
+
+  const q = (talkingDictState.searchQuery || '').trim().toLowerCase();
+  let items = [];
+  TALKING_DICTIONARY_CATEGORIES.forEach(cat => {
+    if (talkingDictState.catId !== 'all' && talkingDictState.catId !== cat.id) return;
+    cat.words.forEach(w => {
+      if (!q || w.eng.toLowerCase().includes(q) || w.heb.includes(q) || w.sentEng.toLowerCase().includes(q) || w.sentHeb.includes(q)) {
+        items.push({ ...w, catTitle: cat.title });
+      }
+    });
+  });
+
+  if (items.length === 0) {
+    listEl.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:20px;color:#cbd5e1;">לא נמצאו מילים התואמות לחיפוש "${talkingDictState.searchQuery}". נסו מילה אחרת!</div>`;
+    return;
+  }
+
+  listEl.innerHTML = items.map((item, idx) => `
+    <div class="surface-card" data-dict-idx="${idx}" style="margin:0;background:rgba(15,23,42,0.9);border:2px solid #34d399;color:#fff;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:1.85rem;">${item.icon}</span>
+          <div>
+            <div style="font-size:1.15rem;font-weight:900;color:#34d399;direction:ltr;text-align:left;">${item.eng}</div>
+            <div style="font-size:0.95rem;font-weight:800;color:#ffffff;">${item.heb}</div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px;">
+          <button type="button" class="btn-chip" data-dict-speak-word="${idx}" style="background:#34d399;color:#064e3b;font-weight:900;border:none;padding:4px 9px;font-size:0.75rem;">🔊 מילה</button>
+          <button type="button" class="btn-chip" data-dict-speak-slow="${idx}" style="background:#38bdf8;color:#0f172a;font-weight:900;border:none;padding:4px 9px;font-size:0.75rem;">🐢 לאט</button>
+        </div>
+      </div>
+      <div style="background:rgba(52,211,153,0.12);border-right:4px solid #34d399;padding:7px 9px;border-radius:8px;margin-top:6px;">
+        <div style="font-size:0.84rem;font-weight:800;color:#a7f3d0;direction:ltr;text-align:left;">💬 "${item.sentEng}"</div>
+        <div style="font-size:0.8rem;color:#e2e8f0;margin-top:2px;">🇮🇱 ${item.sentHeb}</div>
+        <button type="button" class="btn-chip" data-dict-speak-sent="${idx}" style="margin-top:6px;background:#fbbf24;color:#090d16;font-weight:900;border:none;padding:4px 10px;font-size:0.75rem;width:100%;">🗣️ השמע משפט שלם באנגלית + עברית</button>
+      </div>
+    </div>
+  `).join('');
+
+  listEl.querySelectorAll('[data-dict-speak-word]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const it = items[Number(btn.dataset.dictSpeakWord)];
+      if (it) arcadeAudio.speakBilingual(it.heb, it.eng, 0.9);
+    });
+  });
+
+  listEl.querySelectorAll('[data-dict-speak-slow]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const it = items[Number(btn.dataset.dictSpeakSlow)];
+      if (it) arcadeAudio.speak(`${it.eng}. ${it.sentEng}`, 'en-US', 0.6);
+    });
+  });
+
+  listEl.querySelectorAll('[data-dict-speak-sent]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const it = items[Number(btn.dataset.dictSpeakSent)];
+      if (it) arcadeAudio.speakBilingual(it.sentHeb, it.sentEng, 0.86);
+    });
+  });
+}
+
+function setupTalkingDictionaryListeners() {
+  const banner = document.getElementById('dictionary-home-banner');
+  if (banner) {
+    banner.addEventListener('click', () => {
+      arcadeAudio.playClick();
+      switchView('dictionary');
+    });
+  }
+
+  const searchInp = document.getElementById('dict-search-input');
+  if (searchInp) {
+    searchInp.addEventListener('input', () => {
+      talkingDictState.searchQuery = searchInp.value;
+      renderTalkingDictionary();
+    });
+  }
 }
