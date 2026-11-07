@@ -1362,6 +1362,9 @@ function nextDictationWord() {
 
 // ==================== VIEW 6: GAME ARENA & MATCH LOGIC ====================
 
+// Rolling memory of recently asked question keys so consecutive games stay fresh and never feel repetitive
+let recentQuestionKeys = [];
+
 function startMatch(topicId, topicTitle, isDailyBonus = false) {
   clearInterval(session.timerInterval);
 
@@ -1383,11 +1386,48 @@ function startMatch(topicId, topicTitle, isDailyBonus = false) {
     answeredCurrent: false,
     timerInterval: null,
     secondsLeft: 60,
-    penaltyHistory: []
+    penaltyHistory: [],
+    chestOpened: false
   };
 
+  const sessionSeenKeys = new Set();
+
   for (let i = 0; i < count; i++) {
-    session.questions.push(generateQuestionForTopic(topicId, appState.difficulty, appState.customQuestions));
+    // Gradual difficulty curve inside every match:
+    // Questions 1-3: Easy warm-up to build confidence & positive feedback 🌱
+    // Questions 4-7: Medium progression ⚡
+    // Questions 8+: Champion level 🔥 (or Medium if user selected Easy)
+    const progressiveDiff =
+      i < 3
+        ? 'easy'
+        : i < 7
+          ? 'medium'
+          : (appState.difficulty === 'easy' ? 'medium' : 'hard');
+
+    let q = null;
+    let key = '';
+    for (let attempt = 0; attempt < 35; attempt++) {
+      const candidate = generateQuestionForTopic(topicId, progressiveDiff, appState.customQuestions);
+      const candKey = String(candidate.uniqueKey || candidate.englishSpeechWord || candidate.stimulusHtml || Math.random());
+      const notInSession = !sessionSeenKeys.has(candKey);
+      const notInRecent = attempt > 18 || !recentQuestionKeys.includes(candKey);
+      if (notInSession && notInRecent) {
+        q = candidate;
+        key = candKey;
+        break;
+      }
+      q = candidate;
+      key = candKey;
+    }
+
+    sessionSeenKeys.add(key);
+    recentQuestionKeys.push(key);
+    if (recentQuestionKeys.length > 40) {
+      recentQuestionKeys.shift();
+    }
+
+    q.progressiveStage = i < 3 ? 1 : i < 7 ? 2 : 3;
+    session.questions.push(q);
   }
 
   document.getElementById('arena-topic-title').textContent = isDailyBonus ? '⚡ משחק העונה (בונוס X2)' : topicTitle;
@@ -1445,9 +1485,10 @@ function speakOptionValue(optVal) {
     arcadeAudio.speakBilingual(hebPart, engPart);
     return;
   }
-  // If option is purely English letters
-  if (/^[A-Za-z\s!?.,'-]+$/.test(raw.trim())) {
-    arcadeAudio.speak(raw.trim(), 'en-US', 0.82);
+  // Strip emojis/pictographs to check if the text is English (e.g., "🦄 Unicorn" or "Pink Dress")
+  const cleanNoEmoji = raw.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE00}-\u{FE0F}\u{200D}]/gu, '').trim();
+  if (cleanNoEmoji.length > 0 && /^[A-Za-z0-9\s!?.,'-]+$/.test(cleanNoEmoji) && /[A-Za-z]/.test(cleanNoEmoji)) {
+    arcadeAudio.speak(cleanNoEmoji, 'en-US', 0.82);
   } else {
     arcadeAudio.speak(raw, 'he-IL', 0.86);
   }
@@ -1487,12 +1528,21 @@ function renderCurrentQuestion() {
     gk.textContent = lia ? '🌈' : '🧤';
     gk.style.transform = 'translateX(0)';
   }
-    document.getElementById('commentator-text').textContent =
-    lia
+  const stage = q.progressiveStage || (session.currentIndex < 3 ? 1 : session.currentIndex < 7 ? 2 : 3);
+  const stageBadge =
+    stage === 1
+      ? '🌱 שלב 1 (חימום קל) • '
+      : stage === 2
+        ? '⚡ שלב 2 (מתקדמים!) • '
+        : '🔥 שלב 3 (אלופי העל!) • ';
+
+  document.getElementById('commentator-text').textContent =
+    stageBadge +
+    (lia
       ? '✨ "ליה וסטיץ׳ מוכנים לחידה הבאה!"'
       : q.isMulti
         ? '🎙️ "בחר את כל המספרים המתאימים!"'
-        : '🎙️ "עילי מכוון לשער..."';
+        : '🎙️ "עילי מכוון לשער..."');
 
   const btnSpeak = document.getElementById('btn-speak-question');
   if (btnSpeak) {
@@ -1617,10 +1667,12 @@ function checkCurrentAnswer() {
       appState.bestStreak = session.currentStreak;
     }
 
+    const stage = q.progressiveStage || (session.currentIndex < 3 ? 1 : session.currentIndex < 7 ? 2 : 3);
+    const stageBonus = stage === 3 ? 5 : stage === 2 ? 2 : 0;
     const baseReward = session.attemptsOnCurrent === 1 ? 10 : 5;
     const streakBonus = session.currentStreak >= 3 ? 5 : 0;
     const mult = session.isDailyBonus ? 2 : 1;
-    const earned = (baseReward + streakBonus) * mult;
+    const earned = (baseReward + streakBonus + stageBonus) * mult;
 
     session.coinsEarned += earned;
     addActiveCoins(earned);
@@ -1642,18 +1694,38 @@ function checkCurrentAnswer() {
     });
 
     arcadeAudio.playGoalSuccess();
-    confetti.burst(65);
+    confetti.burst(stage === 3 ? 95 : 65);
     if (ball) ball.classList.add('shoot-anim');
     if (gk) gk.classList.add('dive-right');
 
     const streakMsg = session.currentStreak >= 3 ? ` 🔥 רצף ${session.currentStreak}!` : '';
+    const stageMsg = stage === 3 ? ' 👑 בונוס שלב האלופים!' : '';
     fb.className = 'feedback-banner success';
     fb.textContent = lia
-      ? `כל הכבוד ליה! קסם של תשובה! +${earned} 🪙${streakMsg}`
-      : `גווווול! +${earned} 🪙${streakMsg}`;
+      ? `כל הכבוד ליה! קסם של תשובה! +${earned} 🪙${streakMsg}${stageMsg}`
+      : `גווווול! +${earned} 🪙${streakMsg}${stageMsg}`;
     document.getElementById('commentator-text').textContent = lia
       ? `🦄 "סטיץ׳ וחד-קרן מוחאים כפיים לליה!"`
       : `🎙️ "שעררר אדיר של עילי!"`;
+
+    // Spoken milestone encouragement so they feel proud as difficulty rises
+    if (session.currentStreak === 3) {
+      setTimeout(() => {
+        arcadeAudio.speak(
+          lia ? 'וואו ליה! שלוש תשובות נכונות ברצף! איזו אלופה!' : 'איזה תותח עילי! שלושה שערים ברצף!',
+          'he-IL',
+          0.9
+        );
+      }, 350);
+    } else if (session.currentStreak === 5 || session.currentStreak === 8) {
+      setTimeout(() => {
+        arcadeAudio.speak(
+          lia ? 'מדהים ליה! את כוכבת העל של האנגלית והגן!' : 'בלתי ניתן לעצירה! עילי כובש את האצטדיון!',
+          'he-IL',
+          0.9
+        );
+      }, 350);
+    }
 
     updateHeaderUI();
     renderPenaltyTrack();
@@ -1669,8 +1741,13 @@ function checkCurrentAnswer() {
       session.attemptsOnCurrent = 2;
       document.getElementById('attempt-counter').textContent = `ניסיון 2`;
       fb.className = 'feedback-banner error';
-      fb.textContent = lia ? 'כמעט מתוקה! 💡 היעזרי ברמז ונסי שוב!' : 'בקורה! 🥅 היעזר ברמז ונסה שוב!';
+      fb.textContent = lia
+        ? 'לא נורא מתוקה! 💡 בואי נקשיב לרמז וננסה שוב יחד!'
+        : 'כמעט בשער! 🥅 קרא את הרמז ונסה לבעוט שוב!';
       document.getElementById('hint-box').classList.remove('hidden');
+      if (lia && q.hint) {
+        setTimeout(() => arcadeAudio.speak(`רמז לליה: ${q.hint}`, 'he-IL', 0.86), 250);
+      }
     } else {
       session.answeredCurrent = true;
       session.penaltyHistory[session.currentIndex] = 'missed';
@@ -1731,7 +1808,69 @@ function finishMatch() {
   document.getElementById('sum-coins').textContent = `+${session.coinsEarned}`;
   document.getElementById('sum-streak').textContent = session.maxSessionStreak;
 
+  // Reset Mystery Reward Chest so every completed game has an exciting reward to open
+  session.chestOpened = false;
+  const btnChest = document.getElementById('btn-open-mystery-chest');
+  const chestRes = document.getElementById('mystery-chest-result');
+  if (btnChest) {
+    btnChest.classList.remove('hidden');
+    btnChest.disabled = false;
+    btnChest.textContent = lia
+      ? '🎁 פתחי את תיבת הקסמים של ליה וסטיץ׳! ✨'
+      : '🎁 פתח את תיבת ההפתעה של האלופים! ✨';
+  }
+  if (chestRes) {
+    chestRes.classList.add('hidden');
+    chestRes.textContent = '';
+  }
+
   switchView('summary');
+}
+
+function openSummaryMysteryChest() {
+  if (session.chestOpened) return;
+  session.chestOpened = true;
+  const lia = isLiaActive();
+  const btnChest = document.getElementById('btn-open-mystery-chest');
+  const chestRes = document.getElementById('mystery-chest-result');
+  if (btnChest) btnChest.classList.add('hidden');
+
+  const catalog = getActiveCatalog();
+  const unlocked = getActiveStickers();
+  const locked = catalog.filter(s => !unlocked.includes(s.id));
+
+  let msg = '';
+  if (locked.length > 0 && Math.random() < 0.45) {
+    const wonSticker = locked[Math.floor(Math.random() * locked.length)];
+    unlocked.push(wonSticker.id);
+    addActiveCoins(15);
+    session.coinsEarned += 15;
+    msg = `🎉 הפתעה נדירה! קיבלת מדבקה חדשה לאלבום: ${wonSticker.emoji} ${wonSticker.name} + 15 🪙 מטבעות בונוס!`;
+  } else {
+    const bonusCoins = lia ? 30 : 25;
+    addActiveCoins(bonusCoins);
+    session.coinsEarned += bonusCoins;
+    const prizeTitle = lia
+      ? ['🦄 כתר יהלומים קסום', '💙 גלידת הוואי של סטיץ׳', '💄 ערכת נצנצים מוזהבת', '🌈 קשת בענן נוצצת'][Math.floor(Math.random() * 4)]
+      : ['⚽ כדור זהב של ליגת האלופים', '🧤 כפפות שוער אגדיות', '🎮 קלף TOTY נדיר מ-FC 27', '🏆 גביע האצטדיון המוזהב'][Math.floor(Math.random() * 4)];
+    msg = `🎉 מצאת בתיבה: ${prizeTitle}! קיבלת +${bonusCoins} 🪙 מטבעות בונוס!`;
+  }
+
+  saveState();
+  updateHeaderUI();
+  document.getElementById('sum-coins').textContent = `+${session.coinsEarned}`;
+  arcadeAudio.playGoalSuccess();
+  confetti.burst(110);
+
+  if (chestRes) {
+    chestRes.textContent = msg;
+    chestRes.classList.remove('hidden');
+  }
+  arcadeAudio.speak(
+    lia ? 'איזה כיף ליה! פתחת את תיבת ההפתעה וקיבלת פרס מיוחד!' : 'איזה אלוף עילי! פתחת את תיבת ההפתעה וקיבלת בונוס ענק!',
+    'he-IL',
+    0.9
+  );
 }
 
 // ==================== STICKER ALBUM & SHOP ====================
@@ -2685,7 +2824,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnOpenLiaEng) {
     btnOpenLiaEng.addEventListener('click', () => {
       arcadeAudio.playClick();
-      startMatch('lia_english_colors_glam', '💄 אנגלית עם סטיץ׳ וחד-קרן', false);
+      startMatch('lia_english_mix', '🦄 מיקס אנגלית ענק עם סטיץ׳ וחד-קרן', false);
     });
   }
   const btnOpenLiaPrep = document.getElementById('quick-open-lia-prep');
@@ -2886,6 +3025,10 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btn-next-question').addEventListener('click', nextQuestion);
 
   // Summary buttons
+  const btnMysteryChest = document.getElementById('btn-open-mystery-chest');
+  if (btnMysteryChest) {
+    btnMysteryChest.addEventListener('click', openSummaryMysteryChest);
+  }
   document.getElementById('btn-play-again').addEventListener('click', () => {
     startMatch(session.topicId, session.topicTitle, session.isDailyBonus);
   });
@@ -2999,7 +3142,11 @@ const GLAM_MISSIONS = [
   { lip: 'Pink Lipstick', crown: 'Gold Crown', heb: 'ליה מתוקה, הלקוחה מבקשת שפתון ורוד וכתר זהב!', eng: 'Pink Lipstick and Gold Crown', display: 'בחרי שפתון ורוד (Pink Lipstick) + כתר זהב (Gold Crown) 💄👑' },
   { lip: 'Red Lipstick', crown: 'Unicorn Horn', heb: 'ליה, חד-הקרן מבקש שפתון אדום וקרן של חד-קרן!', eng: 'Red Lipstick and Unicorn Horn', display: 'בחרי שפתון אדום (Red Lipstick) + קרן חד-קרן (Unicorn) ❤️🦄' },
   { lip: 'Purple Lipstick', crown: 'Stitch Flower', heb: 'סטיץ׳ מבקש איפור עם שפתון סגול ופרח של הוואי!', eng: 'Purple Lipstick and Stitch Flower', display: 'בחרי שפתון סגול (Purple Lipstick) + פרח של סטיץ׳ (Flower) 💜🌺' },
-  { lip: 'Pink Lipstick', crown: 'Pink Bow', heb: 'הנסיכה מבקשת שפתון ורוד וסרט ורוד לשיער!', eng: 'Pink Lipstick and Pink Bow', display: 'בחרי שפתון ורוד (Pink Lipstick) + סרט ורוד (Pink Bow) 🩷🎀' }
+  { lip: 'Pink Lipstick', crown: 'Pink Bow', heb: 'הנסיכה מבקשת שפתון ורוד וסרט ורוד לשיער!', eng: 'Pink Lipstick and Pink Bow', display: 'בחרי שפתון ורוד (Pink Lipstick) + סרט ורוד (Pink Bow) 🩷🎀' },
+  { lip: 'Coral Gloss', crown: 'Gold Crown', heb: 'הפיה מבקשת גלוס אפרסק וכתר זהב מלכותי!', eng: 'Coral Gloss and Gold Crown', display: 'בחרי גלוס אפרסק (Coral Gloss) + כתר זהב (Gold Crown) 🧡👑' },
+  { lip: 'Red Lipstick', crown: 'Pink Bow', heb: 'הרקדנית מבקשת שפתון אדום וסרט ורוד חמוד!', eng: 'Red Lipstick and Pink Bow', display: 'בחרי שפתון אדום (Red Lipstick) + סרט ורוד (Pink Bow) ❤️🎀' },
+  { lip: 'Purple Lipstick', crown: 'Unicorn Horn', heb: 'חד-הקרן הקסום מבקש שפתון סגול וקרן חד-קרן!', eng: 'Purple Lipstick and Unicorn Horn', display: 'בחרי שפתון סגול (Purple Lipstick) + קרן חד-קרן (Unicorn) 💜🦄' },
+  { lip: 'Coral Gloss', crown: 'Stitch Flower', heb: 'סטיץ׳ מבקש גלוס אפרסק ופרח הוואי למסיבה!', eng: 'Coral Gloss and Stitch Flower', display: 'בחרי גלוס אפרסק (Coral Gloss) + פרח של סטיץ׳ (Flower) 🧡🌺' }
 ];
 
 let glamState = {
@@ -3189,7 +3336,13 @@ const KINDER_QUESTIONS = [
   { speaker: '🧸 הדובי טדי שואל:', text: 'הגננת ליה! תפוח אדום 🍎 באנגלית זה Blue (כחול) — זה נכון?', isRight: false, explain: 'איזו גננת חכמה את ליה! תפוח אדום הוא Red, ו-Blue זה כחול!' },
   { speaker: '🧚‍♀️ הפיה לילי שואלת:', text: 'הגננת ליה! שפתון ורוד 💄 באנגלית זה Pink Lipstick — זה נכון?', isRight: true, explain: 'מדויק! Pink Lipstick זה שפתון ורוד!' },
   { speaker: '🐱 החתלתולה מיצי שואלת:', text: 'הגננת ליה! ספרתי 5 כוכבים: ⭐⭐ — זה נכון?', isRight: false, explain: 'תפסת אותה הגננת ליה! יש כאן רק 2 כוכבים ולא 5!' },
-  { speaker: '💙 סטיץ׳ שואל:', text: 'הגננת ליה! המילה גְּלִידָה 🍦 מתחרזת עם חִידָה 🧩 — זה נכון?', isRight: true, explain: 'חרוז מושלם! גלידה — חידה!' }
+  { speaker: '💙 סטיץ׳ שואל:', text: 'הגננת ליה! המילה גְּלִידָה 🍦 מתחרזת עם חִידָה 🧩 — זה נכון?', isRight: true, explain: 'חרוז מושלם! גלידה — חידה!' },
+  { speaker: '🦄 חד-קרן שואל:', text: 'הגננת ליה! באנגלית אומרים "Good Morning" בבוקר ☀️ — זה נכון?', isRight: true, explain: 'נכון מאוד! Good Morning זה בוקר טוב!' },
+  { speaker: '🧸 הדובי טדי שואל:', text: 'הגננת ליה! כלב 🐶 באנגלית זה Cat — זה נכון?', isRight: false, explain: 'איזו אלופה! כלב באנגלית זה Dog, ו-Cat זה חתול!' },
+  { speaker: '🧚‍♀️ הפיה לילי שואלת:', text: 'הגננת ליה! אם יש לי 3 סוכריות 🍬🍬🍬 וקיבלתי עוד 1 🍬, יש לי עכשיו 4 — זה נכון?', isRight: true, explain: 'חשבון מושלם! 3 ועוד 1 שווה 4!' },
+  { speaker: '🐱 החתלתולה מיצי שואלת:', text: 'הגננת ליה! ההפך מ-גָּדוֹל 🐘 זה קָטָן 🐭 — זה נכון?', isRight: true, explain: 'נכון מאוד! גדול וקטן הם הפכים!' },
+  { speaker: '💙 סטיץ׳ שואל:', text: 'הגננת ליה! המילה שֶׁמֶשׁ ☀️ מתחילה באות ב׳ — זה נכון?', isRight: false, explain: 'כל הכבוד לגננת ליה! שֶׁמֶשׁ מתחילה באות שׁ׳!' },
+  { speaker: '🦄 חד-קרן שואל:', text: 'הגננת ליה! פרפר 🦋 באנגלית זה Butterfly — זה נכון?', isRight: true, explain: 'אלופה באנגלית! Butterfly זה פרפר!' }
 ];
 
 let kinderQuizIndex = 0;

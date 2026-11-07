@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Rubik:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=3.0">
+  <link rel="stylesheet" href="css/styles.css?v=3.1">
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body class="theme-beitar">
@@ -444,6 +444,14 @@
             </div>
           </div>
 
+          <!-- Mystery Reward Chest -->
+          <div class="mystery-chest-box" id="summary-chest-box" style="margin: 12px 0; padding: 12px; border-radius: 16px; background: linear-gradient(135deg, #fef9c3, #fde047); border: 2px solid #eab308;">
+            <button type="button" class="btn-primary-large" id="btn-open-mystery-chest" style="background: linear-gradient(135deg, #d97706, #b45309); font-size: 1.05rem;">
+              🎁 פתח תיבת הפתעה של אלופים!
+            </button>
+            <div id="mystery-chest-result" class="hidden" style="font-size: 1.08rem; font-weight: 800; color: #78350f; margin-top: 6px;"></div>
+          </div>
+
           <div class="summary-btn-row">
             <button type="button" class="btn-primary-action" id="btn-play-again">שחק שוב</button>
             <button type="button" class="btn-secondary-pill" id="btn-summary-shop">לאלבום הקלפים</button>
@@ -861,8 +869,8 @@
 
   </div>
 
-  <script src="js/sound.js?v=3.0"></script>
-  <script src="js/questions.js?v=3.0"></script>
-  <script src="js/app.js?v=3.0"></script>
+  <script src="js/sound.js?v=3.1"></script>
+  <script src="js/questions.js?v=3.1"></script>
+  <script src="js/app.js?v=3.1"></script>
 </body>
 </html>
