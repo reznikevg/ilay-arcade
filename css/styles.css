@@ -1939,3 +1939,290 @@ body.theme-stitch .arena-visual-banner {
   transform: scale(0.97);
 }
 
+/* ==================== EA SPORTS FC 27 CONSOLE SCREENSHOTS UI ==================== */
+.fc27-home-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: linear-gradient(135deg, #090d16 0%, #111827 60%, #064e3b 100%);
+  border: 2px solid #00ff87;
+  border-radius: 18px;
+  padding: 12px 16px;
+  margin-bottom: 14px;
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0, 255, 135, 0.2);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.fc27-home-banner:active {
+  transform: scale(0.98);
+}
+.fc27-banner-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.fc27-logo-pill {
+  background: #00ff87;
+  color: #090d16;
+  font-weight: 900;
+  font-size: 0.85rem;
+  padding: 6px 10px;
+  border-radius: 10px;
+  letter-spacing: 0.5px;
+  line-height: 1.1;
+  text-align: center;
+  box-shadow: 0 0 12px rgba(0, 255, 135, 0.5);
+}
+.fc27-banner-text h4 {
+  margin: 0 0 2px;
+  font-size: 1.02rem;
+  font-weight: 800;
+  color: #00ff87;
+}
+.fc27-banner-text p {
+  margin: 0;
+  font-size: 0.78rem;
+  color: #cbd5e1;
+}
+.fc27-banner-play {
+  background: rgba(0, 255, 135, 0.18);
+  border: 1px solid #00ff87;
+  color: #00ff87;
+  font-weight: 800;
+  font-size: 0.8rem;
+  padding: 6px 12px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+/* In-Question Realistic FC 27 TV Screenshot Container */
+.fc27-screen-wrap {
+  background: radial-gradient(circle at top right, #1e293b 0%, #090d16 80%);
+  border: 3px solid #334155;
+  border-radius: 16px;
+  overflow: hidden;
+  color: #f8fafc;
+  font-family: 'Rubik', 'Assistant', sans-serif;
+  text-align: left;
+  direction: ltr;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35), inset 0 0 30px rgba(0, 255, 135, 0.07);
+  margin: 4px auto;
+  max-width: 100%;
+}
+
+.fc27-topbar {
+  background: rgba(9, 13, 22, 0.92);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.fc27-brand {
+  color: #00ff87;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.fc27-usertag {
+  color: #fbbf24;
+  background: rgba(251, 191, 36, 0.14);
+  padding: 2px 8px;
+  border-radius: 20px;
+  border: 1px solid rgba(251, 191, 36, 0.35);
+}
+
+.fc27-screen-body {
+  padding: 12px;
+  position: relative;
+}
+
+/* Highlighted element inside the screenshot */
+.fc27-hl {
+  border: 2px solid #00ff87 !important;
+  background: linear-gradient(90deg, rgba(0, 255, 135, 0.28), rgba(0, 255, 135, 0.12)) !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 16px rgba(0, 255, 135, 0.55) !important;
+  transform: scale(1.03);
+  position: relative;
+  z-index: 2;
+}
+
+.fc27-pointer-tag {
+  display: inline-block;
+  background: #00ff87;
+  color: #090d16;
+  font-size: 0.68rem;
+  font-weight: 900;
+  padding: 1px 6px;
+  border-radius: 6px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+/* Menu / Pause Screen Layout */
+.fc27-split-screen {
+  display: grid;
+  grid-template-columns: 1.25fr 0.95fr;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.fc27-menu-col {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.fc27-menu-tile {
+  background: rgba(30, 41, 59, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  letter-spacing: 0.4px;
+}
+
+.fc27-preview-col {
+  background: linear-gradient(160deg, #064e3b 0%, #022c22 100%);
+  border: 1px solid rgba(0, 255, 135, 0.3);
+  border-radius: 10px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: center;
+}
+
+.fc27-scoreboard-mini {
+  background: rgba(9, 13, 22, 0.9);
+  border-radius: 6px;
+  padding: 4px 6px;
+  font-size: 0.72rem;
+  font-weight: 900;
+  color: #fff;
+  border-left: 3px solid #00ff87;
+}
+
+.fc27-pitch-graphic {
+  margin: 6px 0;
+  padding: 8px 4px;
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  border-radius: 6px;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(16, 185, 129, 0.18) 0px,
+    rgba(16, 185, 129, 0.18) 14px,
+    rgba(5, 150, 105, 0.26) 14px,
+    rgba(5, 150, 105, 0.26) 28px
+  );
+  font-size: 1.25rem;
+}
+
+/* FUT 27 Golden Player Card Screen */
+.fc27-fut-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  gap: 10px;
+  align-items: center;
+}
+
+.fc27-gold-card {
+  background: linear-gradient(145deg, #fef08a 0%, #eab308 45%, #a16207 100%);
+  border: 2px solid #fef9c3;
+  border-radius: 14px 14px 18px 18px;
+  padding: 8px;
+  color: #1e293b;
+  box-shadow: 0 6px 16px rgba(234, 179, 8, 0.35);
+}
+
+.fc27-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(30, 41, 59, 0.2);
+  padding-bottom: 4px;
+  margin-bottom: 5px;
+}
+
+.fc27-ovr-box {
+  line-height: 1;
+  font-weight: 900;
+}
+.fc27-ovr-num {
+  font-size: 1.3rem;
+  display: block;
+}
+.fc27-ovr-pos {
+  font-size: 0.72rem;
+}
+.fc27-card-face {
+  font-size: 2rem;
+}
+.fc27-card-name {
+  text-align: center;
+  font-weight: 900;
+  font-size: 0.82rem;
+  letter-spacing: 0.5px;
+  margin-bottom: 5px;
+  background: rgba(255, 255, 255, 0.45);
+  border-radius: 4px;
+  padding: 1px 4px;
+}
+
+.fc27-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3px;
+}
+
+.fc27-stat-pill {
+  background: rgba(15, 23, 42, 0.82);
+  color: #f8fafc;
+  border-radius: 5px;
+  padding: 3px 5px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Bottom Controller Prompt Bar */
+.fc27-controller-bar {
+  background: #06090f;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 5px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.68rem;
+  color: #94a3b8;
+  font-weight: 700;
+}
+.fc27-btn-icon {
+  display: inline-block;
+  background: #1e293b;
+  color: #38bdf8;
+  border: 1px solid #475569;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  line-height: 14px;
+  text-align: center;
+  font-size: 0.62rem;
+  margin-right: 3px;
+}
+
+

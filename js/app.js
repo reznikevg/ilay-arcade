@@ -485,9 +485,13 @@ function updateHeaderUI() {
   // Toggle Home Bento grids & Hero card text
   const ilayBento = document.getElementById('ilay-bento-grid');
   const liaBento = document.getElementById('lia-bento-grid');
+  const fc27Banner = document.getElementById('fc27-home-banner');
   if (ilayBento && liaBento) {
     ilayBento.classList.toggle('hidden', lia);
     liaBento.classList.toggle('hidden', !lia);
+  }
+  if (fc27Banner) {
+    fc27Banner.classList.toggle('hidden', lia);
   }
 
   const heroTag = document.getElementById('hero-tag-text');
@@ -622,6 +626,7 @@ function switchView(viewName) {
   if (viewName === 'parents') renderParentsView();
   if (viewName === 'makeup') initMakeupStudio();
   if (viewName === 'kinder') initKinderStudio();
+  if (viewName === 'fc27') initFC27Studio();
   updateHeaderUI();
 }
 
@@ -1502,6 +1507,16 @@ function renderCurrentQuestion() {
   const stim = document.getElementById('q-stimulus');
   stim.className = 'q-stimulus-box' + (q.rtlStimulus ? ' rtl-stimulus' : '');
   stim.innerHTML = q.stimulusHtml;
+  stim.querySelectorAll('[data-fc27-key]').forEach(el => {
+    el.addEventListener('click', () => {
+      const k = el.dataset.fc27Key;
+      const found = (typeof FC27_VOCAB_BANK !== 'undefined') && FC27_VOCAB_BANK.find(x => x.key === k);
+      if (found) {
+        const cleanEng = found.eng.replace(/\([^)]*\)/g, '').trim();
+        arcadeAudio.speak(cleanEng, 'en-US', 0.82);
+      }
+    });
+  });
 
   const optsContainer = document.getElementById('q-options-container');
   optsContainer.className = q.isMulti ? 'options-container' : 'options-container grid-options';
@@ -2972,9 +2987,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Setup Lia's Studios
+  // Setup Lia's Studios & Ilay's FC 27 Studio
   setupMakeupStudioListeners();
   setupKinderStudioListeners();
+  setupFC27StudioListeners();
 });
 
 // ==================== VIEW 10: LIA'S GLAM & MAKEUP STUDIO CONTROLLER ====================
@@ -3271,5 +3287,100 @@ function setupKinderStudioListeners() {
   const btnNo = document.getElementById('btn-kinder-no');
   if (btnNo) {
     btnNo.addEventListener('click', () => handleKinderTeacherCheck(false));
+  }
+}
+
+// ==================== VIEW 12: EA SPORTS FC 27 INTERACTIVE SCREEN EXPLORER ====================
+
+let fc27ExplorerState = {
+  screen: 'main_menu',
+  selectedKey: 'KICK OFF'
+};
+
+function initFC27Studio() {
+  renderFC27ExplorerScreen();
+}
+
+function renderFC27ExplorerScreen() {
+  if (typeof FC27_VOCAB_BANK === 'undefined' || typeof renderFC27Screenshot === 'undefined') return;
+
+  const screenWords = FC27_VOCAB_BANK.filter(w => w.screen === fc27ExplorerState.screen);
+  let activeItem = screenWords.find(w => w.key === fc27ExplorerState.selectedKey) || screenWords[0];
+  if (!activeItem) activeItem = FC27_VOCAB_BANK[0];
+  fc27ExplorerState.selectedKey = activeItem.key;
+
+  const stage = document.getElementById('fc27-interactive-stage');
+  if (stage) {
+    stage.innerHTML = renderFC27Screenshot(activeItem);
+    stage.querySelectorAll('[data-fc27-key]').forEach(el => {
+      el.addEventListener('click', () => {
+        arcadeAudio.playClick();
+        fc27ExplorerState.selectedKey = el.dataset.fc27Key;
+        renderFC27ExplorerScreen();
+        speakCurrentFC27ExplorerWord();
+      });
+    });
+  }
+
+  const engEl = document.getElementById('fc27-exp-eng');
+  const hebEl = document.getElementById('fc27-exp-heb');
+  const hintEl = document.getElementById('fc27-exp-hint');
+  if (engEl) engEl.textContent = activeItem.eng.toUpperCase();
+  if (hebEl) hebEl.textContent = activeItem.heb;
+  if (hintEl) hintEl.textContent = activeItem.hint;
+}
+
+function speakCurrentFC27ExplorerWord() {
+  if (typeof FC27_VOCAB_BANK === 'undefined') return;
+  const activeItem = FC27_VOCAB_BANK.find(w => w.key === fc27ExplorerState.selectedKey) || FC27_VOCAB_BANK[0];
+  if (!activeItem) return;
+  const cleanEng = activeItem.eng.replace(/\([^)]*\)/g, '').trim();
+  arcadeAudio.speakBilingual(activeItem.heb, cleanEng, 0.88);
+}
+
+function setupFC27StudioListeners() {
+  const banner = document.getElementById('fc27-home-banner');
+  if (banner) {
+    banner.addEventListener('click', () => {
+      arcadeAudio.playClick();
+      switchView('fc27');
+      setTimeout(() => speakCurrentFC27ExplorerWord(), 250);
+    });
+  }
+
+  document.querySelectorAll('#fc27-screen-tabs .cat-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      arcadeAudio.playClick();
+      document.querySelectorAll('#fc27-screen-tabs .cat-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      fc27ExplorerState.screen = tab.dataset.screen;
+      const firstInScreen = (typeof FC27_VOCAB_BANK !== 'undefined') && FC27_VOCAB_BANK.find(w => w.screen === fc27ExplorerState.screen);
+      if (firstInScreen) fc27ExplorerState.selectedKey = firstInScreen.key;
+      renderFC27ExplorerScreen();
+      speakCurrentFC27ExplorerWord();
+    });
+  });
+
+  const btnSpeak = document.getElementById('btn-fc27-speak-current');
+  if (btnSpeak) {
+    btnSpeak.addEventListener('click', () => {
+      speakCurrentFC27ExplorerWord();
+    });
+  }
+
+  const btnQuiz1 = document.getElementById('btn-fc27-start-quiz');
+  if (btnQuiz1) {
+    btnQuiz1.addEventListener('click', () => {
+      arcadeAudio.playClick();
+      startMatch('english_fc27', '🎮 אנגלית של FC 27 (מסכים)', false);
+    });
+  }
+
+  const btnQuiz2 = document.getElementById('btn-fc27-launch-match');
+  if (btnQuiz2) {
+    btnQuiz2.addEventListener('click', () => {
+      arcadeAudio.playClick();
+      startMatch('english_fc27', '🎮 אנגלית של FC 27 (מסכים)', false);
+    });
   }
 }

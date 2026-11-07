@@ -88,6 +88,14 @@ const TOPICS = [
 
   // ===== ENGLISH ACADEMY (2ND GRADE) =====
   {
+    id: 'english_fc27',
+    cat: 'english',
+    tag: 'EA SPORTS FC 27 🎮',
+    icon: '🎮',
+    title: 'אנגלית של FC 27 (עם צילומי מסך!)',
+    desc: 'לומדים לקרוא את התפריטים, קלפי Ultimate Team, הכפתורים והמהלכים מתוך מסכי המשחק FC 27!'
+  },
+  {
     id: 'english_abc',
     cat: 'english',
     tag: 'ABC ואותיות 🔤',
@@ -923,10 +931,371 @@ function genEnglishSoccer() {
 }
 
 function genEnglishStarter() {
-  const pick = randInt(1, 3);
-  if (pick === 1) return genEnglishABC();
-  if (pick === 2) return genEnglishWords();
+  const pick = randInt(1, 4);
+  if (pick === 1) return genEnglishFC27();
+  if (pick === 2) return genEnglishABC();
+  if (pick === 3) return genEnglishWords();
   return genEnglishSoccer();
+}
+
+// ==================== EA SPORTS FC 27 VISUAL SCREENSHOTS & VOCABULARY ENGINE ====================
+
+const FC27_VOCAB_BANK = [
+  // --- SCREEN 1: MAIN MENU & KICK OFF ---
+  {
+    screen: 'main_menu',
+    key: 'KICK OFF',
+    eng: 'Kick Off',
+    heb: '⚽ מִשְׂחַק יְדִידוּת מָהִיר (בְּעִיטַת פְּתִיחָה)',
+    wrong: ['⚙️ הַגְדָּרוֹת הַמִּשְׂחָק', '🏳️ פְּרִישָׁה מֵהַמִּשְׂחָק', '🎥 הִלּוּךְ חוֹזֵר'],
+    hint: 'בתפריט הראשי של FC 27 לוחצים על KICK OFF כדי להתחיל מיד משחק כדורגל!'
+  },
+  {
+    screen: 'main_menu',
+    key: 'ULTIMATE TEAM',
+    eng: 'Ultimate Team',
+    heb: '🏆 קְבוּצַת הַחֲלוֹמוֹת (אִסּוּף קְלָפִים וְשַׂחְקָנִים)',
+    wrong: ['🚩 נִבְדָּל בַּמִּגְרָשׁ', '🔄 חִלּוּף שַׂחְקָנִים', '🦵 תִּיקוּל גְּלִישָׁה (גְּלִיץ׳)'],
+    hint: 'Ultimate Team (או FUT) הוא המצב שבו פותחים חבילות ובונים קבוצה מקלפי כוכבים!'
+  },
+  {
+    screen: 'main_menu',
+    key: 'CAREER MODE',
+    eng: 'Career Mode',
+    heb: '👔 מַצַּב קַרְיֵירָה (לִהְיוֹת מְאַמֵּן אוֹ שַׂחְקָן עוֹנָה שְׁלֵמָה)',
+    wrong: ['🥅 דּוּ-קְרַב פֶּנְדָּלִים', '💨 רִיצָה מְהִירָה (סְפְּרִינְט)', '🛒 חֲנוּת הַקְּלָפִים'],
+    hint: 'ב-Career Mode מנהלים קריירה שלמה של שחקן או מאמן לאורך עונות!'
+  },
+  {
+    screen: 'main_menu',
+    key: 'PLAY MATCH',
+    eng: 'Play Match',
+    heb: '▶️ הַתְחֵל אֶת הַמִּשְׂחָק עַכְשָׁיו!',
+    wrong: ['⏸️ עֲצֹר אֶת הַמִּשְׂחָק', '💰 שׁוּק הַהַעֲבָרוֹת', '🧪 כִּימְיָה בֵּין שַׂחְקָנִים'],
+    hint: 'Play = שחק, Match = משחק. לוחצים על PLAY MATCH כדי לעלות לדשא!'
+  },
+  {
+    screen: 'main_menu',
+    key: 'SELECT SIDE',
+    eng: 'Select Side',
+    heb: '🎮 בְּחַר צַד (הֲזָזַת הַשַּׁלָּט לַקְּבוּצָה שֶׁלְּךָ)',
+    wrong: ['🎁 פְּתַח חֲבִילַת קְלָפִים', '⏱️ תּוֹסֶפֶת זְמַן / הַאֲרָכָה', '🛡️ הֲגָנָה וַחֲטִיפָה'],
+    hint: 'לפני המשחק מזיזים את השלט ב-SELECT SIDE כדי לבחור באיזו קבוצה משחקים (בית או חוץ)!'
+  },
+  {
+    screen: 'main_menu',
+    key: 'SETTINGS',
+    eng: 'Settings',
+    heb: '⚙️ הַגְדָּרוֹת (שַׁלָּט, רָמַת קֹשִׁי וּצְלִילִים)',
+    wrong: ['⚽ בְּעִיטַת פְּתִיחָה', '🎯 עוצְמַת בְּעִיטָה לַשַּׁעַר', '🏃‍♂️ רִיצָה מְהִירָה'],
+    hint: 'Settings הן הגדרות המשחק (עם סמל גלגל השיניים ⚙️)!'
+  },
+
+  // --- SCREEN 2: PAUSE MENU & MATCH MANAGEMENT ---
+  {
+    screen: 'pause_menu',
+    key: 'RESUME MATCH',
+    eng: 'Resume Match',
+    heb: '▶️ הַמְשֵׁךְ בַּמִּשְׂחָק (חֲזָרָה לַמִּגְרָשׁ)',
+    wrong: ['🏳️ פְּרֹשׁ מֵהַמִּשְׂחָק (הֶפְסֵד)', '🎥 הִלּוּךְ חוֹזֵר שֶׁל הַשַּׁעַר', '🎁 פְּתַח חֲבִילַת קְלָפִים'],
+    hint: 'כשעוצרים את המשחק (Pause), הכפתור הראשון RESUME MATCH מחזיר אותך להמשיך לשחק!'
+  },
+  {
+    screen: 'pause_menu',
+    key: 'TEAM MANAGEMENT',
+    eng: 'Team Management',
+    heb: '📋 נִיהוּל קְבוּצָה (הֶרְכֵּב, מַעֲרָךְ וְחִלּוּפִים)',
+    wrong: ['🛒 חֲנוּת הַחֲבִילוֹת', '🚩 שְׁרִיקָה לְנִבְדָּל', '⚡ מְהִירוּת רִיצָה שֶׁל שַׂחְקָן'],
+    hint: 'נכנסים ל-Team Management כדי לעשות חילופים ולסדר את ההרכב של בית"ר או ריאל!'
+  },
+  {
+    screen: 'pause_menu',
+    key: 'SUBSTITUTION',
+    eng: 'Substitution',
+    heb: '🔄 חִלּוּף שַׂחְקָנִים (הַכְנָסַת שַׂחְקָן רַעֲנָן מֵהַסַּפְסָל)',
+    wrong: ['🥅 בְּעִיטַת פֶּנְדֶּל', '👑 מַצַּב קַרְיֵירָה', '💰 קְנִיַּת שַׂחְקָן בַּשּׁוּק'],
+    hint: 'כששחקן מתעייף, עושים Substitution — חילוף שחקנים!'
+  },
+  {
+    screen: 'pause_menu',
+    key: 'INSTANT REPLAY',
+    eng: 'Instant Replay',
+    heb: '🎥 הִלּוּךְ חוֹזֵר (לִרְאוֹת שׁוּב אֶת הַגּוֹל בְּהִלּוּךְ אִטִּי)',
+    wrong: ['▶️ הַמְשֵׁךְ בַּמִּשְׂחָק', '📐 מַעֲרָךְ הַקְּבוּצָה (4-3-3)', '🛡️ צִיּוּן הֲגָנָה בַּקְּלָף'],
+    hint: 'הבקעת שער מדהים ב-FC 27? לוחצים על Instant Replay כדי לראות הילוך חוזר!'
+  },
+  {
+    screen: 'pause_menu',
+    key: 'FORMATION',
+    eng: 'Formation',
+    heb: '📐 מַעֲרָךְ הַשַּׂחְקָנִים עַל הַמִּגְרָשׁ (לְמָשָׁל 4-3-3)',
+    wrong: ['🏳️ פְּרִישָׁה מֵהַמִּשְׂחָק', '🎁 פְּתִיחַת חֲבִילַת זָהָב', '🚩 עֲבֵירַת נִבְדָּל'],
+    hint: 'Formation הוא המבנה והמערך שבו השחקנים עומדים על הדשא (כמו 4-3-3 או 4-4-2)!'
+  },
+  {
+    screen: 'pause_menu',
+    key: 'FORFEIT MATCH',
+    eng: 'Forfeit Match',
+    heb: '🏳️ פְּרִישָׁה מֵהַמִּשְׂחָק (זְהִירוּת: זֶה הֶפְסֵד טֶכְנִי 3-0!)',
+    wrong: ['▶️ הַמְשֵׁךְ בַּמִּשְׂחָק', '🔄 בַּצַּע חִלּוּף שַׂחְקָנִים', '🎥 צְפֵה בְּהִלּוּךְ חוֹזֵר'],
+    hint: 'זהירות! ב-FC 27 הכפתור התחתון FORFEIT MATCH אומר לפרוש ולוותר על המשחק!'
+  },
+
+  // --- SCREEN 3: ULTIMATE TEAM PLAYER CARD & PACKS ---
+  {
+    screen: 'fut_card',
+    key: 'PAC',
+    eng: 'Pace (PAC)',
+    heb: '⚡ מְהִירוּת רִיצָה (כַּמָּה מַהֵר הַשַּׂחְקָן דּוֹהֵר עַל הַדֶּשֶׁא)',
+    wrong: ['🛡️ הֲגָנָה וַחֲטִיפַת כַּדּוּר', '🎯 דִּיּוּק בִּבְעִיטוֹת לַשַּׁעַר', '💪 כֹּחַ פִּיזִי'],
+    hint: 'על הקלף של אמבפה כתוב 98 PAC — זה קיצור של Pace, כלומר מהירות אדירה!'
+  },
+  {
+    screen: 'fut_card',
+    key: 'SHO',
+    eng: 'Shooting (SHO)',
+    heb: '🎯 בְּעִיטָה לַשַּׁעַר (עוצְמָה וְדִיּוּק בְּהַבְקָעַת גּוֹלִים)',
+    wrong: ['⚡ מְהִירוּת רִיצָה', '👟 מְסִירוֹת לַחֲבֵרִים', '🛡️ הֲגָנָה בָּרְחָבָה'],
+    hint: 'SHO בקלף של FC 27 הוא קיצור של Shooting — יכולת הבעיטה לשער!'
+  },
+  {
+    screen: 'fut_card',
+    key: 'PAS',
+    eng: 'Passing (PAS)',
+    heb: '👟 מְסִירוֹת (דִּיּוּק בִּמְסִירוֹת וּבִישּׁוּלִים כְּמוֹ יַרְדֵּן שׁוּעָה)',
+    wrong: ['💪 כֹּחַ פִּיזִי', '🎯 בְּעִיטָה לַשַּׁעַר', '🧤 שׁוֹעֵר בַּשַּׁעַר'],
+    hint: 'PAS הוא קיצור של Passing — ציון המסירות של השחקן בקלף!'
+  },
+  {
+    screen: 'fut_card',
+    key: 'DRI',
+    eng: 'Dribbling (DRI)',
+    heb: '🕺 כִּדְרוּר וּשְׁלִיטָה בַּכַּדּוּר (לַעֲבֹר שַׂחְקָנִים בִּתְנוּעָה)',
+    wrong: ['🛡️ הֲגָנָה וּבְלִימָה', '⏱️ הַאֲרָכָה בַּמִּשְׂחָק', '🏳️ פְּרִישָׁה מֵהַמִּשְׂחָק'],
+    hint: 'DRI הוא קיצור של Dribbling — דריבל ושליטה בכדור כמו ויניסיוס!'
+  },
+  {
+    screen: 'fut_card',
+    key: 'DEF',
+    eng: 'Defending (DEF)',
+    heb: '🛡️ הֲגָנָה (חֲטִיפַת כַּדּוּר וַעֲצִירַת הַתְקָפוֹת הַיָּרִיב)',
+    wrong: ['⚡ מְהִירוּת רִיצָה', '🎯 בְּעִיטָה לַשַּׁעַר', '🎁 פְּתִיחַת חֲבִילָה'],
+    hint: 'DEF הוא קיצור של Defending — ציון ההגנה של בלמים ומגנים!'
+  },
+  {
+    screen: 'fut_card',
+    key: 'PHY',
+    eng: 'Physical (PHY)',
+    heb: '💪 פִּיזִיּוּת וְכֹשֶׁר גּוּפָנִי (כֹּחַ בְּמַאֲבָק עַל הַכַּדּוּר)',
+    wrong: ['👟 מְסִירוֹת קְצָרוֹת', '🎥 הִלּוּךְ חוֹזֵר', '🎮 בְּחִירַת שַׁלָּט'],
+    hint: 'PHY הוא קיצור של Physical — כמה השחקן חזק פיזית ולא מתעייף!'
+  },
+  {
+    screen: 'fut_card',
+    key: 'OPEN PACK',
+    eng: 'Open Pack',
+    heb: '🎁 פְּתַח חֲבִילַת קְלָפִים חֲדָשָׁה!',
+    wrong: ['💰 מְכֹר שַׂחְקָן', '▶️ הַמְשֵׁךְ בַּמִּשְׂחָק', '🚩 נִבְדָּל'],
+    hint: 'בחנות של Ultimate Team לוחצים על OPEN PACK כדי לפתוח חבילת קלפים עם זיקוקים!'
+  },
+  {
+    screen: 'fut_card',
+    key: 'TRANSFER MARKET',
+    eng: 'Transfer Market',
+    heb: '💰 שׁוּק הַהַעֲבָרוֹת (קְנִיָּה וּמְכִירָה שֶׁל קְלָפֵי שַׂחְקָנִים בְּמַטְבְּעוֹת)',
+    wrong: ['⚽ מִשְׂחַק יְדִידוּת', '🔄 חִלּוּף שַׂחְקָן', '⚙️ הַגְדָּרוֹת שַׁלָּט'],
+    hint: 'ב-Transfer Market מחפשים וקונים קלפים חדשים לקבוצה שלך!'
+  },
+  {
+    screen: 'fut_card',
+    key: 'CHEMISTRY',
+    eng: 'Chemistry',
+    heb: '🧪 כִּימְיָה וְחִיבּוּר בֵּין שַׂחְקָנֵי הַהֶרְכֵּב (עַד 33/33)',
+    wrong: ['🥅 בְּעִיטוֹת פֶּנְדָּלִים', '🎥 הִלּוּךְ חוֹזֵר', '🏳️ הֶפְסֵד טֶכְנִי'],
+    hint: 'כששמים שחקנים מאותה ליגה או מדינה ב-FC 27, ה-Chemistry (כימיה) עולה והם משחקים טוב יותר!'
+  },
+
+  // --- SCREEN 4: ON THE PITCH & CONTROLLER HUD ---
+  {
+    screen: 'pitch_hud',
+    key: 'SPRINT',
+    eng: 'Sprint (R2)',
+    heb: '🏃‍♂️💨 רִיצָה מְהִירָה (סְפְּרִינְט עִם כַּפְתּוֹר R2)',
+    wrong: ['🦵 גְּלִיץ׳ / תִּיקוּל', '⏸️ עֲצִירַת הַמִּשְׂחָק', '🧤 הַצָּלַת שׁוֹעֵר'],
+    hint: 'כשמחזיקים את כפתור Sprint (R2 בשלט), השחקן פורץ בריצה הכי מהירה שלו!'
+  },
+  {
+    screen: 'pitch_hud',
+    key: 'THROUGH BALL',
+    eng: 'Through Ball (△)',
+    heb: '📐⚽ מְסִירַת עֹמֶק חֲכָמָה לַשֶּׁטַח הַפָּנוּי (כַּפְתּוֹר מְשֻׁלָּשׁ △)',
+    wrong: ['🚩 עֲבֵירַת נִבְדָּל', '🔄 חִלּוּף שַׂחְקָנִים', '🛒 חֲנוּת הַקְּלָפִים'],
+    hint: 'לחיצה על משולש (△) ב-FC 27 שולחת Through Ball — מסירת עומק לשחקן שרץ קדימה!'
+  },
+  {
+    screen: 'pitch_hud',
+    key: 'SLIDE TACKLE',
+    eng: 'Slide Tackle (▢)',
+    heb: '🦵 גְּלִיץ׳ (תִּיקוּל גְּלִישָׁה עַל הַדֶּשֶׁא לַחֲטִיפַת הַכַּדּוּר)',
+    wrong: ['🎯 בְּעִיטָה לַחִיבּוּרִים', '🎁 פְּתִיחַת חֲבִילָה', '👔 מַצַּב קַרְיֵירָה'],
+    hint: 'Slide Tackle הוא גליץ׳ על הדשא כדי לחטוף את הכדור מהיריב!'
+  },
+  {
+    screen: 'pitch_hud',
+    key: 'OFFSIDE',
+    eng: 'Offside',
+    heb: '🚩 נִבְדָּל! (הַשַּׂחְקָן עָמַד מֵאֲחוֹרֵי קַו הַהֲגָנָה בִּזְמַן הַמְּסִירָה)',
+    wrong: ['⚽ שַׁעַר נִצָּחוֹן!', '⏱️ תּוֹסֶפֶת זְמַן', '🏆 זְכִיָּה בַּגָּבִיעַ'],
+    hint: 'כשהקוון מרים דגל ב-FC 27 וכתוב OFFSIDE — השריקה היא לנבדל!'
+  },
+  {
+    screen: 'pitch_hud',
+    key: 'EXTRA TIME',
+    eng: 'Extra Time',
+    heb: '⏱️ הַאֲרָכָה / תּוֹסֶפֶת זְמַן (כְּשֶׁיֵּשׁ תֵּיקוֹ בְּסִיּוּם 90 דַּקּוֹת)',
+    wrong: ['🏳️ פְּרִישָׁה מֵהַמִּשְׂחָק', '📋 נִיהוּל הֶרְכֵּב', '💰 שׁוּק הַהַעֲבָרוֹת'],
+    hint: 'אם המשחק נגמר בתיקו בגביע, עוברים ל-Extra Time — הארכה!'
+  },
+  {
+    screen: 'pitch_hud',
+    key: 'PENALTY SHOOTOUT',
+    eng: 'Penalty Shootout',
+    heb: '🥅 דּוּ-קְרַב בְּעִיטוֹת פֶּנְדָּלִים מַכְרִיעַ!',
+    wrong: ['🏃‍♂️ רִיצָה מְהִירָה', '🧪 כִּימְיָה בַּהֶרְכֵּב', '⚙️ הַגְדָּרוֹת שֵׁמַע'],
+    hint: 'Penalty Shootout הוא דו-קרב פנדלים מותח על הניצחון!'
+  }
+];
+
+function renderFC27Screenshot(item) {
+  const hl = (k) => (item.key === k ? 'fc27-hl' : '');
+  const ptr = (k) => (item.key === k ? '<span class="fc27-pointer-tag">👈 מה זה?</span>' : '');
+
+  let bodyHtml = '';
+
+  if (item.screen === 'main_menu') {
+    bodyHtml = `
+      <div class="fc27-split-screen">
+        <div class="fc27-menu-col">
+          <div class="fc27-menu-tile ${hl('KICK OFF')}" data-fc27-key="KICK OFF" style="cursor:pointer;"><span>⚽ KICK OFF</span>${ptr('KICK OFF')}</div>
+          <div class="fc27-menu-tile ${hl('ULTIMATE TEAM')}" data-fc27-key="ULTIMATE TEAM" style="cursor:pointer;"><span>🏆 ULTIMATE TEAM</span>${ptr('ULTIMATE TEAM')}</div>
+          <div class="fc27-menu-tile ${hl('CAREER MODE')}" data-fc27-key="CAREER MODE" style="cursor:pointer;"><span>👔 CAREER MODE</span>${ptr('CAREER MODE')}</div>
+          <div class="fc27-menu-tile ${hl('SETTINGS')}" data-fc27-key="SETTINGS" style="cursor:pointer;"><span>⚙️ SETTINGS</span>${ptr('SETTINGS')}</div>
+        </div>
+        <div class="fc27-preview-col">
+          <div class="fc27-menu-tile ${hl('SELECT SIDE')}" data-fc27-key="SELECT SIDE" style="justify-content:center;margin-bottom:4px;cursor:pointer;">
+            <span>🎮 SELECT SIDE</span>${ptr('SELECT SIDE')}
+          </div>
+          <div class="fc27-pitch-graphic">🦁 <strong>BTR</strong> ⚡ <strong>RMA</strong> 👑</div>
+          <div class="fc27-menu-tile ${hl('PLAY MATCH')}" data-fc27-key="PLAY MATCH" style="justify-content:center;background:#059669;color:#fff;cursor:pointer;">
+            <span>▶️ PLAY MATCH</span>${ptr('PLAY MATCH')}
+          </div>
+        </div>
+      </div>
+    `;
+  } else if (item.screen === 'pause_menu') {
+    bodyHtml = `
+      <div class="fc27-split-screen">
+        <div class="fc27-menu-col">
+          <div style="font-size:0.68rem;color:#00ff87;font-weight:900;margin-bottom:2px;">⏸️ PAUSE MENU — FC 27</div>
+          <div class="fc27-menu-tile ${hl('RESUME MATCH')}" data-fc27-key="RESUME MATCH" style="cursor:pointer;"><span>▶️ RESUME MATCH</span>${ptr('RESUME MATCH')}</div>
+          <div class="fc27-menu-tile ${hl('TEAM MANAGEMENT')}" data-fc27-key="TEAM MANAGEMENT" style="cursor:pointer;"><span>📋 TEAM MANAGEMENT</span>${ptr('TEAM MANAGEMENT')}</div>
+          <div class="fc27-menu-tile ${hl('SUBSTITUTION')}" data-fc27-key="SUBSTITUTION" style="cursor:pointer;"><span>🔄 SUBSTITUTION</span>${ptr('SUBSTITUTION')}</div>
+          <div class="fc27-menu-tile ${hl('FORMATION')}" data-fc27-key="FORMATION" style="cursor:pointer;"><span>📐 FORMATION: 4-3-3</span>${ptr('FORMATION')}</div>
+          <div class="fc27-menu-tile ${hl('INSTANT REPLAY')}" data-fc27-key="INSTANT REPLAY" style="cursor:pointer;"><span>🎥 INSTANT REPLAY</span>${ptr('INSTANT REPLAY')}</div>
+          <div class="fc27-menu-tile ${hl('FORFEIT MATCH')}" data-fc27-key="FORFEIT MATCH" style="color:#fca5a5;cursor:pointer;"><span>🏳️ FORFEIT MATCH</span>${ptr('FORFEIT MATCH')}</div>
+        </div>
+        <div class="fc27-preview-col">
+          <div class="fc27-scoreboard-mini">BTR 💛 3 - 2 🤍 RMA | 82:15</div>
+          <div class="fc27-pitch-graphic">⚽🥅<br><span style="font-size:0.7rem;color:#a7f3d0;">TEDDY STADIUM</span></div>
+          <div style="font-size:0.68rem;color:#fde047;font-weight:800;">⭐ ILAY #10 • 2 GOALS</div>
+        </div>
+      </div>
+    `;
+  } else if (item.screen === 'fut_card') {
+    bodyHtml = `
+      <div class="fc27-fut-layout">
+        <div class="fc27-gold-card">
+          <div class="fc27-card-header">
+            <div class="fc27-ovr-box">
+              <span class="fc27-ovr-num">99</span>
+              <span class="fc27-ovr-pos">ST 👑🦁</span>
+            </div>
+            <div class="fc27-card-face">⚡⚽</div>
+          </div>
+          <div class="fc27-card-name">ILAY & MBAPPÉ</div>
+          <div class="fc27-stats-grid">
+            <div class="fc27-stat-pill ${hl('PAC')}" data-fc27-key="PAC" style="cursor:pointer;"><span>99 PAC</span><span>${item.key === 'PAC' ? '👈' : ''}</span></div>
+            <div class="fc27-stat-pill ${hl('DRI')}" data-fc27-key="DRI" style="cursor:pointer;"><span>98 DRI</span><span>${item.key === 'DRI' ? '👈' : ''}</span></div>
+            <div class="fc27-stat-pill ${hl('SHO')}" data-fc27-key="SHO" style="cursor:pointer;"><span>97 SHO</span><span>${item.key === 'SHO' ? '👈' : ''}</span></div>
+            <div class="fc27-stat-pill ${hl('DEF')}" data-fc27-key="DEF" style="cursor:pointer;"><span>86 DEF</span><span>${item.key === 'DEF' ? '👈' : ''}</span></div>
+            <div class="fc27-stat-pill ${hl('PAS')}" data-fc27-key="PAS" style="cursor:pointer;"><span>96 PAS</span><span>${item.key === 'PAS' ? '👈' : ''}</span></div>
+            <div class="fc27-stat-pill ${hl('PHY')}" data-fc27-key="PHY" style="cursor:pointer;"><span>94 PHY</span><span>${item.key === 'PHY' ? '👈' : ''}</span></div>
+          </div>
+        </div>
+        <div class="fc27-menu-col">
+          <div style="font-size:0.68rem;color:#fbbf24;font-weight:900;margin-bottom:2px;">🏆 ULTIMATE TEAM 27</div>
+          <div class="fc27-menu-tile ${hl('CHEMISTRY')}" data-fc27-key="CHEMISTRY" style="cursor:pointer;"><span>🧪 CHEMISTRY: 33/33</span>${ptr('CHEMISTRY')}</div>
+          <div class="fc27-menu-tile ${hl('TRANSFER MARKET')}" data-fc27-key="TRANSFER MARKET" style="cursor:pointer;"><span>💰 TRANSFER MARKET</span>${ptr('TRANSFER MARKET')}</div>
+          <div class="fc27-menu-tile ${hl('OPEN PACK')}" data-fc27-key="OPEN PACK" style="cursor:pointer;"><span>🎁 OPEN PACK</span>${ptr('OPEN PACK')}</div>
+        </div>
+      </div>
+    `;
+  } else {
+    // pitch_hud
+    bodyHtml = `
+      <div class="fc27-split-screen">
+        <div class="fc27-preview-col" style="padding:10px;">
+          <div class="fc27-scoreboard-mini">UCL FINAL • 90:00</div>
+          <div class="fc27-pitch-graphic" style="padding:10px 4px;">
+            🏃‍♂️💨 ⚽ 🥅🧤
+          </div>
+          <div class="fc27-menu-tile ${hl('OFFSIDE')}" data-fc27-key="OFFSIDE" style="margin-bottom:3px;cursor:pointer;"><span>🚩 OFFSIDE</span>${ptr('OFFSIDE')}</div>
+          <div class="fc27-menu-tile ${hl('EXTRA TIME')}" data-fc27-key="EXTRA TIME" style="margin-bottom:3px;cursor:pointer;"><span>⏱️ EXTRA TIME</span>${ptr('EXTRA TIME')}</div>
+          <div class="fc27-menu-tile ${hl('PENALTY SHOOTOUT')}" data-fc27-key="PENALTY SHOOTOUT" style="cursor:pointer;"><span>🥅 PENALTY SHOOTOUT</span>${ptr('PENALTY SHOOTOUT')}</div>
+        </div>
+        <div class="fc27-menu-col">
+          <div style="font-size:0.68rem;color:#38bdf8;font-weight:900;margin-bottom:2px;">🎮 CONTROLLER ACTIONS</div>
+          <div class="fc27-menu-tile ${hl('SPRINT')}" data-fc27-key="SPRINT" style="cursor:pointer;"><span><strong>R2</strong> SPRINT 🏃‍♂️</span>${ptr('SPRINT')}</div>
+          <div class="fc27-menu-tile ${hl('THROUGH BALL')}" data-fc27-key="THROUGH BALL" style="cursor:pointer;"><span><strong>△</strong> THROUGH BALL 📐</span>${ptr('THROUGH BALL')}</div>
+          <div class="fc27-menu-tile ${hl('SLIDE TACKLE')}" data-fc27-key="SLIDE TACKLE" style="cursor:pointer;"><span><strong>▢</strong> SLIDE TACKLE 🦵</span>${ptr('SLIDE TACKLE')}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="fc27-screen-wrap">
+      <div class="fc27-topbar">
+        <span class="fc27-brand">🟢 EA SPORTS FC™ 27</span>
+        <span class="fc27-usertag">🎮 ILAY_10 • 🪙 99,500</span>
+      </div>
+      <div class="fc27-screen-body">
+        ${bodyHtml}
+      </div>
+      <div class="fc27-controller-bar">
+        <span><b class="fc27-btn-icon">✕</b> SELECT</span>
+        <span><b class="fc27-btn-icon">○</b> BACK</span>
+        <span>🔊 לחץ על "הקרא + אנגלית" לשמיעת המילה!</span>
+      </div>
+    </div>
+  `;
+}
+
+function genEnglishFC27() {
+  const item = FC27_VOCAB_BANK[randInt(0, FC27_VOCAB_BANK.length - 1)];
+  const speechClean = item.eng.replace(/\([^)]*\)/g, '').trim();
+  return {
+    isEnglish: true,
+    isMulti: false,
+    instruction: `🎮 צִילוּם מָסָךְ מִתּוֹךְ <strong>FC 27</strong>: מָה אוֹמֵר הַכַּפְתּוֹר הַמְּסֻמָּן בְּיָרוֹק (<strong>${item.eng.toUpperCase()}</strong>)?`,
+    ttsText: `עילי, הסתכל בצילום המסך של אף סי עשרים ושבע: מה הפירוש של`,
+    englishSpeechWord: speechClean,
+    stimulusHtml: renderFC27Screenshot(item),
+    rtlStimulus: false,
+    options: shuffle([item.heb, ...item.wrong]),
+    correctAnswers: [item.heb],
+    hint: item.hint
+  };
 }
 
 function genEnglish() {
@@ -1223,6 +1592,7 @@ function generateQuestionForTopic(topicId, diff = 'medium', customQuestions = []
     case 'hebrew_opposites':  q = genHebrewOpposites(); break;
     case 'hebrew_grammar':    q = genHebrewGrammar(); break;
     case 'hebrew_reading':    q = genHebrewReading(); break;
+    case 'english_fc27':      q = genEnglishFC27(); break;
     case 'english_abc':       q = genEnglishABC(); break;
     case 'english_words':     q = genEnglishWords(); break;
     case 'english_soccer':    q = genEnglishSoccer(); break;
