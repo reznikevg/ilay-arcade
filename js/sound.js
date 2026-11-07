@@ -1,10 +1,13 @@
-// ==================== SOUND, TTS & CONFETTI ENGINE ====================
+// ==================== SOUND, CLOUD + NATIVE HEBREW TTS & CONFETTI ENGINE (v5.0) ====================
 
 class ArcadeAudio {
   constructor() {
     this.enabled = true;
     this.ctx = null;
     this.voices = [];
+    this.activeAudio = null;
+    this.ttsQueueId = 0;
+
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       this.voices = window.speechSynthesis.getVoices() || [];
       window.speechSynthesis.onvoiceschanged = () => {
@@ -50,7 +53,6 @@ class ArcadeAudio {
   }
 
   playGoalSuccess() {
-    // Upbeat stadium fanfare chord
     this.playTone(523.25, 'triangle', 0.12, 0, 0.2);    // C5
     this.playTone(659.25, 'triangle', 0.12, 0.09, 0.2); // E5
     this.playTone(783.99, 'triangle', 0.15, 0.18, 0.22);// G5
@@ -58,7 +60,6 @@ class ArcadeAudio {
   }
 
   playWhistleVictory() {
-    // Referee whistle + fanfare
     this.playTone(2800, 'sine', 0.12, 0, 0.12);
     this.playTone(2850, 'sine', 0.12, 0.16, 0.12);
     this.playTone(2900, 'sine', 0.35, 0.32, 0.15);
@@ -109,8 +110,7 @@ class ArcadeAudio {
     // 0. Remove HTML tags
     t = t.replace(/<[^>]+>/g, ' ');
 
-    // 1. Universal Phonetic replacement for Ilay -> עִילַאי (with full vocalization for Apple Siri / Carmit & Android)
-    // Strip any existing partial nikud first
+    // 1. Universal Phonetic replacement for Ilay -> עִילַאי
     t = t.replace(/עִ?ילַ?י|עִ?ילַ?א?י/g, 'עילי');
     const prefixMap = {
       '': 'עִילַאי',
@@ -146,9 +146,9 @@ class ArcadeAudio {
 
     // 2. Remove emojis and UI decorative icons
     t = t.replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, ' ');
-    t = t.replace(/[⚽🏆🔥🪙⭐🥅🧤🎙️💡🎯⏱️🦁👑💛🖤🤍💜🎉👟🛡️💎🎩🏃📜🔬🎨🎵🕯️📌✔✖☐•]/g, ' ');
+    t = t.replace(/[⚽🏆🔥🪙⭐🥅🧤🎙️💡🎯⏱️🦁👑💛🖤🤍💜🎉👟🛡️💎🎩🏃📜🔬🎨🎵🕯️📌✔✖☐•⬅➡⬆⬇]/g, ' ');
 
-    // 3. Common Hebrew abbreviations that TTS stumbles on
+    // 3. Common Hebrew abbreviations
     t = t.replace(/\bבית"ר\b/g, 'ביתר ירושלים');
     t = t.replace(/\bבי"ס\b/g, 'בית ספר');
     t = t.replace(/\bאחה"צ\b/g, 'אחר הצהריים');
@@ -156,7 +156,7 @@ class ArcadeAudio {
     t = t.replace(/\bעמ'\b/g, 'עמוד');
     t = t.replace(/\bדק'\b/g, 'דקות');
 
-    // 4. Preposition hyphens before numbers (e.g. ב-25, מ-14, ה-2, ו-3, ל-8) - do this BEFORE math minus!
+    // 4. Preposition hyphens before numbers (e.g. ב-25, מ-14, ה-15)
     t = t.replace(/([במלכוה])-(\d+)/g, (match, prefix, num) => {
       const hebWord = this.numberToHebrewWords(num);
       const prefixVocal = {
@@ -191,7 +191,7 @@ class ArcadeAudio {
   }
 
   getBestVoice(lang = 'he-IL') {
-    if (!('speechSynthesis' in window)) return null;
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return null;
     const voices = this.voices.length > 0 ? this.voices : (window.speechSynthesis.getVoices() || []);
     if (voices.length === 0) return null;
 
@@ -203,11 +203,9 @@ class ArcadeAudio {
       });
       if (heVoices.length === 0) return null;
 
-      // Priority 1: Apple Siri or Enhanced/Premium voices on iOS
       const premium = heVoices.find(v => /siri|enhanced|premium|natural/i.test(v.name));
       if (premium) return premium;
 
-      // Priority 2: Google Hebrew
       const google = heVoices.find(v => /google/i.test(v.name));
       if (google) return google;
 
@@ -227,67 +225,173 @@ class ArcadeAudio {
     return null;
   }
 
-  speak(text, lang = 'he-IL', rate = 0.86) {
-    if (!('speechSynthesis' in window) || !text) return;
-    try {
-      window.speechSynthesis.cancel();
-      const isHebrew = lang.startsWith('he') || lang.startsWith('iw');
-      const cleanText = isHebrew
-        ? this.cleanTextForHebrewTTS(text)
-        : String(text).replace(/<[^>]+>/g, '').replace(/[\u{1F300}-\u{1F9FF}]/gu, '').trim();
-
-      if (!cleanText) return;
-
-      const utter = new SpeechSynthesisUtterance(cleanText);
-      utter.lang = lang;
-      utter.rate = rate; // Calm, clear pace for 2nd grade
-      utter.pitch = 1.05; // Slightly warmer child-friendly pitch
-
-      const voice = this.getBestVoice(lang);
-      if (voice) {
-        utter.voice = voice;
-      } else if (isHebrew) {
-        // Enforce he-IL locale on utterance even if voice object is not explicit
-        utter.lang = 'he-IL';
-      }
-
-      window.speechSynthesis.speak(utter);
-    } catch (e) {
-      console.warn('TTS error:', e);
+  stopAllSpeech() {
+    this.ttsQueueId++;
+    if (this.activeAudio) {
+      try {
+        this.activeAudio.pause();
+        this.activeAudio.src = '';
+      } catch (e) {}
+      this.activeAudio = null;
+    }
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      try {
+        window.speechSynthesis.cancel();
+      } catch (e) {}
     }
   }
 
-  speakBilingual(hebrewText, englishWord, rate = 0.85) {
-    if (!('speechSynthesis' in window)) return;
-    try {
-      window.speechSynthesis.cancel();
-      if (hebrewText) {
-        const cleanHeb = this.cleanTextForHebrewTTS(hebrewText);
-        if (cleanHeb) {
-          const uHeb = new SpeechSynthesisUtterance(cleanHeb);
-          uHeb.lang = 'he-IL';
-          uHeb.rate = rate;
-          uHeb.pitch = 1.06;
-          const vHeb = this.getBestVoice('he-IL');
-          if (vHeb) uHeb.voice = vHeb;
-          window.speechSynthesis.speak(uHeb);
+  // Split text into safe <=165 char chunks at sentence/clause boundaries for Cloud TTS
+  splitTextIntoChunks(text, maxLen = 165) {
+    const clean = String(text || '').trim();
+    if (!clean) return [];
+    if (clean.length <= maxLen) return [clean];
+
+    const sentences = clean.split(/(?<=[.!?।:;\n])\s+/);
+    const chunks = [];
+    let current = '';
+
+    for (const s of sentences) {
+      if ((current + ' ' + s).trim().length <= maxLen) {
+        current = (current + ' ' + s).trim();
+      } else {
+        if (current) chunks.push(current);
+        if (s.length <= maxLen) {
+          current = s;
+        } else {
+          // Split long sentence by words
+          const words = s.split(/\s+/);
+          current = '';
+          for (const w of words) {
+            if ((current + ' ' + w).trim().length <= maxLen) {
+              current = (current + ' ' + w).trim();
+            } else {
+              if (current) chunks.push(current);
+              current = w;
+            }
+          }
         }
       }
-      if (englishWord) {
-        const cleanEng = String(englishWord).replace(/<[^>]+>/g, '').replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '').trim();
-        if (cleanEng) {
-          const uEng = new SpeechSynthesisUtterance(cleanEng);
-          uEng.lang = 'en-US';
-          uEng.rate = 0.80;
-          uEng.pitch = 1.05;
-          const vEng = this.getBestVoice('en-US');
-          if (vEng) uEng.voice = vEng;
-          window.speechSynthesis.speak(uEng);
-        }
-      }
-    } catch (e) {
-      console.warn('Bilingual TTS error:', e);
     }
+    if (current) chunks.push(current);
+    return chunks;
+  }
+
+  // Play a sequence of [{ text, tl, rate }] segments using Cloud TTS (with automatic native fallback)
+  playSegments(segments) {
+    if (!this.enabled || !segments || segments.length === 0) return;
+    this.stopAllSpeech();
+    const myQueueId = this.ttsQueueId;
+
+    // Expand any long segment into <=165 char chunks
+    const expanded = [];
+    segments.forEach(seg => {
+      const isHeb = seg.lang.startsWith('he') || seg.lang.startsWith('iw');
+      const cleaned = isHeb
+        ? this.cleanTextForHebrewTTS(seg.text)
+        : String(seg.text || '')
+            .replace(/<[^>]+>/g, ' ')
+            .replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, ' ')
+            .replace(/\s+/g, ' ')
+            .trim();
+      if (!cleaned) return;
+      const chunks = this.splitTextIntoChunks(cleaned, 160);
+      chunks.forEach(ch => {
+        expanded.push({
+          text: ch,
+          lang: seg.lang,
+          tl: isHeb ? 'iw' : 'en',
+          rate: seg.rate || (isHeb ? 0.92 : 0.85)
+        });
+      });
+    });
+
+    if (expanded.length === 0) return;
+
+    const playIndex = (idx) => {
+      if (myQueueId !== this.ttsQueueId || idx >= expanded.length) return;
+      const item = expanded[idx];
+      const nativeVoice = this.getBestVoice(item.lang);
+
+      // Prefer native voice ONLY if it actually exists for that language AND is Apple Siri/Carmit or English;
+      // On Windows where getBestVoice('he-IL') is null, ALWAYS use Cloud Hebrew MP3 so Hebrew is 100% heard!
+      const useCloud = (item.tl === 'iw' && !nativeVoice) || (typeof Audio !== 'undefined' && item.tl === 'iw');
+
+      if (useCloud && typeof Audio !== 'undefined') {
+        try {
+          const url = `https://translate.googleapis.com/translate_tts?client=gtx&ie=UTF-8&tl=${item.tl}&q=${encodeURIComponent(item.text)}`;
+          const audio = new Audio();
+          audio.referrerPolicy = 'no-referrer';
+          audio.src = url;
+          audio.playbackRate = Math.max(0.65, Math.min(1.25, item.rate ? item.rate * 1.06 : 1.0));
+          this.activeAudio = audio;
+
+          audio.onended = () => {
+            if (myQueueId !== this.ttsQueueId) return;
+            playIndex(idx + 1);
+          };
+          audio.onerror = () => {
+            if (myQueueId !== this.ttsQueueId) return;
+            this.speakNativeSingle(item, () => playIndex(idx + 1), myQueueId);
+          };
+
+          const playPromise = audio.play();
+          if (playPromise && typeof playPromise.catch === 'function') {
+            playPromise.catch(() => {
+              if (myQueueId !== this.ttsQueueId) return;
+              this.speakNativeSingle(item, () => playIndex(idx + 1), myQueueId);
+            });
+          }
+          return;
+        } catch (e) {
+          // Fall through to native speechSynthesis
+        }
+      }
+
+      this.speakNativeSingle(item, () => playIndex(idx + 1), myQueueId);
+    };
+
+    playIndex(0);
+  }
+
+  speakNativeSingle(item, onDone, queueId) {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+      if (onDone) onDone();
+      return;
+    }
+    try {
+      const utter = new SpeechSynthesisUtterance(item.text);
+      utter.lang = item.lang;
+      utter.rate = item.rate || 0.86;
+      utter.pitch = 1.05;
+      const v = this.getBestVoice(item.lang);
+      if (v) utter.voice = v;
+      utter.onend = () => {
+        if (queueId === this.ttsQueueId && onDone) onDone();
+      };
+      utter.onerror = () => {
+        if (queueId === this.ttsQueueId && onDone) onDone();
+      };
+      window.speechSynthesis.speak(utter);
+    } catch (e) {
+      if (onDone) onDone();
+    }
+  }
+
+  speak(text, lang = 'he-IL', rate = 0.88) {
+    if (!text) return;
+    this.playSegments([{ text, lang, rate }]);
+  }
+
+  speakBilingual(hebrewText, englishWord, rate = 0.88) {
+    const segs = [];
+    if (hebrewText) {
+      segs.push({ text: hebrewText, lang: 'he-IL', rate });
+    }
+    if (englishWord) {
+      segs.push({ text: englishWord, lang: 'en-US', rate: 0.82 });
+    }
+    this.playSegments(segs);
   }
 }
 
@@ -299,9 +403,9 @@ class ConfettiManager {
     this.canvas = document.getElementById(canvasId);
     this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
     this.particles = [];
-    this.animId = null;
-    window.addEventListener('resize', () => this.resize());
+    this.animating = false;
     this.resize();
+    window.addEventListener('resize', () => this.resize());
   }
 
   resize() {
@@ -312,52 +416,58 @@ class ConfettiManager {
 
   burst(count = 75) {
     if (!this.ctx) return;
-    const colors = ['#fbbf24', '#10b981', '#3b82f6', '#ec4899', '#a855f7', '#ef4444'];
+    const colors = ['#FFD700', '#111111', '#FFFFFF', '#00529F', '#00E676', '#FF3D00'];
     for (let i = 0; i < count; i++) {
       this.particles.push({
-        x: window.innerWidth / 2 + (Math.random() - 0.5) * 200,
-        y: window.innerHeight * 0.45,
+        x: window.innerWidth / 2,
+        y: window.innerHeight * 0.35,
         vx: (Math.random() - 0.5) * 18,
-        vy: -Math.random() * 16 - 5,
+        vy: (Math.random() - 0.85) * 17,
         size: Math.random() * 9 + 5,
         color: colors[Math.floor(Math.random() * colors.length)],
-        rotation: Math.random() * 360,
-        vRot: (Math.random() - 0.5) * 12,
-        life: 110 + Math.random() * 40
+        rot: Math.random() * 360,
+        vRot: (Math.random() - 0.5) * 14,
+        life: 1
       });
     }
-    if (!this.animId) this.loop();
+    if (!this.animating) {
+      this.animating = true;
+      this.loop();
+    }
   }
 
   loop() {
+    if (!this.ctx) return;
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    for (let i = this.particles.length - 1; i >= 0; i--) {
-      const p = this.particles[i];
+
+    this.particles.forEach((p) => {
       p.x += p.vx;
       p.y += p.vy;
       p.vy += 0.42; // gravity
-      p.rotation += p.vRot;
-      p.life--;
+      p.rot += p.vRot;
+      p.life -= 0.013;
 
       this.ctx.save();
       this.ctx.translate(p.x, p.y);
-      this.ctx.rotate((p.rotation * Math.PI) / 180);
+      this.ctx.rotate((p.rot * Math.PI) / 180);
+      this.ctx.globalAlpha = Math.max(0, p.life);
       this.ctx.fillStyle = p.color;
       this.ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.65);
       this.ctx.restore();
+    });
 
-      if (p.life <= 0 || p.y > this.canvas.height + 30) {
-        this.particles.splice(i, 1);
-      }
-    }
+    this.particles = this.particles.filter((p) => p.life > 0 && p.y < this.canvas.height + 40);
 
     if (this.particles.length > 0) {
-      this.animId = requestAnimationFrame(() => this.loop());
+      requestAnimationFrame(() => this.loop());
     } else {
+      this.animating = false;
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-      this.animId = null;
     }
   }
 }
 
-const confetti = new ConfettiManager('confetti-canvas');
+let confetti;
+document.addEventListener('DOMContentLoaded', () => {
+  confetti = new ConfettiManager('confetti-canvas');
+});

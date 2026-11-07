@@ -76,7 +76,7 @@ html, body {
 
 @media (min-width: 768px) {
   .app-shell {
-    max-width: 680px;
+    max-width: 920px;
   }
 }
 
@@ -208,14 +208,23 @@ html, body {
 }
 
 .avatar-circle {
-  width: 38px;
-  height: 38px;
+  width: 44px;
+  height: 44px;
   border-radius: 12px;
-  background: var(--brand-soft);
+  background: #090d16;
+  border: 2px solid #facc15;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.3rem;
+  overflow: hidden;
+  padding: 2px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+}
+.avatar-circle svg {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 .user-meta {
@@ -796,25 +805,60 @@ html, body {
 .sp-emoji-huge { font-size: 3.2rem; margin-bottom: 8px; }
 .sp-target-phrase {
   font-family: 'Assistant', 'Rubik', -apple-system, BlinkMacSystemFont, sans-serif;
-  font-size: 2.1rem;
-  font-weight: 600;
-  line-height: 1.95;
-  letter-spacing: 0.8px;
+  font-size: 2.2rem;
+  font-weight: 700;
+  line-height: 1.75;
+  letter-spacing: 0px;
   color: #0f172a;
-  margin: 6px 0;
-  word-spacing: 4px;
+  margin: 8px 0;
+  word-spacing: 8px;
   direction: rtl;
 }
+/* Inline sibilant coloring that NEVER splits Hebrew words or nikud apart! */
 .sp-target-phrase .s-highlight {
-  color: #be185d;
-  background: #fce7f3;
-  padding: 2px 7px;
-  border-radius: 8px;
-  box-shadow: 0 0 0 1px rgba(219, 39, 119, 0.35);
-  text-decoration: none !important;
-  font-weight: 700;
-  display: inline-block;
-  margin: 0 1px;
+  color: #e11d48;
+  font-weight: 800;
+  display: inline;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  box-shadow: none;
+  text-decoration: underline solid #f43f5e 3px;
+  text-underline-offset: 6px;
+}
+
+.sp-word-chips-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+  direction: rtl;
+}
+.sp-word-chip {
+  background: #ffffff;
+  border: 2px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 6px 12px;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #1e293b;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+.sp-word-chip.matched {
+  background: #dcfce7;
+  border-color: #16a34a;
+  color: #14532d;
+  transform: scale(1.04);
+}
+.sp-word-chip.missed {
+  background: #fee2e2;
+  border-color: #ef4444;
+  color: #991b1b;
 }
 
 .sp-recognized-box {
@@ -1153,30 +1197,252 @@ html, body {
   font-size: 0.85rem;
 }
 
-/* ==================== ALBUM & SUMMARY ==================== */
+/* ==================== SUPERGOL & WORLD-CLASS FUT SHIELD ALBUM ==================== */
 .stickers-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+  gap: 14px;
 }
 .sticker-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 12px 6px;
+  background: transparent;
+  border: none;
+  padding: 0;
   text-align: center;
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 .sticker-card.unlocked {
-  border: 1.5px solid #f59e0b;
-  background: #fffbeb;
   cursor: pointer;
 }
-.sticker-card.locked .sticker-emoji {
-  filter: grayscale(1) opacity(0.25);
+.sticker-card.unlocked:hover {
+  transform: translateY(-6px) scale(1.03);
 }
-.sticker-emoji { font-size: 2rem; margin-bottom: 4px; }
-.sticker-name { font-size: 0.78rem; font-weight: 700; line-height: 1.2; }
-.sticker-rarity { font-size: 0.65rem; color: var(--text-secondary); margin-top: 2px; }
+
+.fut-shield-card {
+  position: relative;
+  border-radius: 18px 18px 28px 28px;
+  padding: 10px 10px 12px;
+  color: #ffffff;
+  overflow: hidden;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.28);
+  border: 2.5px solid #facc15;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 258px;
+}
+
+/* Tier 1: Beitar Supergol Gold & Obsidian Black */
+.fut-tier-beitar {
+  background: radial-gradient(circle at 50% 25%, #422006 0%, #090d16 70%, #000000 100%);
+  border-color: #facc15;
+  box-shadow: 0 8px 22px rgba(250, 204, 21, 0.28);
+}
+/* Tier 2: Real Madrid Royal Pearl & Gold */
+.fut-tier-real {
+  background: linear-gradient(155deg, #1e3a8a 0%, #0f172a 55%, #422006 100%);
+  border-color: #fde047;
+  box-shadow: 0 8px 22px rgba(59, 130, 246, 0.3);
+}
+/* Tier 3: UEFA Champions League Chrome & Midnight Starball */
+.fut-tier-ucl {
+  background: radial-gradient(circle at 50% 20%, #0284c7 0%, #1e1b4b 55%, #090d16 100%);
+  border-color: #38bdf8;
+  box-shadow: 0 8px 25px rgba(56, 189, 248, 0.38);
+}
+/* Tier 4: Team of the Year (TOTY) Royal Blue & Liquid Gold */
+.fut-tier-toty {
+  background: linear-gradient(145deg, #b45309 0%, #1e3a8a 48%, #090d16 100%);
+  border-color: #fef08a;
+  box-shadow: 0 10px 26px rgba(234, 179, 8, 0.42);
+}
+/* Tier 5: Lia Holographic Collector Card */
+.fut-tier-lia-holo {
+  background: linear-gradient(145deg, #ec4899 0%, #8b5cf6 55%, #0284c7 100%);
+  border-color: #fef08a;
+  box-shadow: 0 8px 22px rgba(236, 72, 153, 0.32);
+}
+
+.fut-shield-card.fut-locked {
+  background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+  border-color: #475569;
+  box-shadow: none;
+  opacity: 0.85;
+}
+
+.fut-shield-card.fut-equipped {
+  box-shadow: 0 0 0 3px #00ff87, 0 10px 28px rgba(0, 255, 135, 0.45);
+}
+
+.fut-equipped-tag {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #00ff87;
+  color: #090d16;
+  font-size: 0.65rem;
+  font-weight: 900;
+  padding: 2px 8px;
+  border-radius: 99px;
+  z-index: 4;
+  white-space: nowrap;
+}
+
+.fut-holo-sheen {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(125deg, transparent 30%, rgba(255, 255, 255, 0.14) 48%, transparent 66%);
+  pointer-events: none;
+}
+
+.fut-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 4px;
+  position: relative;
+  z-index: 2;
+}
+
+.fut-ovr-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(9, 13, 22, 0.72);
+  border: 1.5px solid rgba(250, 204, 21, 0.65);
+  border-radius: 10px;
+  padding: 3px 7px;
+  line-height: 1;
+}
+
+.fut-ovr {
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: #facc15;
+}
+
+.fut-pos {
+  font-size: 0.62rem;
+  font-weight: 900;
+  color: #ffffff;
+  margin-top: 2px;
+  letter-spacing: 0.5px;
+}
+
+.fut-club-pill {
+  font-size: 0.64rem;
+  font-weight: 800;
+  background: rgba(15, 23, 42, 0.8);
+  color: #fde047;
+  padding: 3px 7px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  max-width: 118px;
+  text-align: right;
+  line-height: 1.2;
+}
+
+.fut-art-wrap {
+  width: 106px;
+  height: 106px;
+  margin: 4px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+}
+
+.fut-art-svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.45));
+}
+
+.fut-art-mystery {
+  border-radius: 50%;
+  background: radial-gradient(circle, #334155 0%, #0f172a 75%);
+  border: 2px dashed #64748b;
+}
+
+.fut-mystery-q {
+  font-size: 3rem;
+  font-weight: 900;
+  color: #94a3b8;
+}
+
+.fut-eng-sub {
+  font-size: 0.62rem;
+  font-weight: 900;
+  color: #fde047;
+  letter-spacing: 0.6px;
+  direction: ltr;
+}
+
+.fut-name-banner {
+  background: linear-gradient(90deg, rgba(250, 204, 21, 0.22), rgba(250, 204, 21, 0.42), rgba(250, 204, 21, 0.22));
+  border-top: 1px solid rgba(250, 204, 21, 0.6);
+  border-bottom: 1px solid rgba(250, 204, 21, 0.6);
+  padding: 4px 4px;
+  margin: 3px 0 5px;
+  font-size: 0.82rem;
+  font-weight: 900;
+  color: #ffffff;
+  line-height: 1.2;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+.fut-stats-bar {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3px;
+  background: rgba(9, 13, 22, 0.78);
+  padding: 5px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.fut-stat-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  font-size: 0.66rem;
+}
+
+.fut-stat-val {
+  font-weight: 900;
+  color: #00ff87;
+}
+
+.fut-stat-lbl {
+  font-weight: 700;
+  color: #cbd5e1;
+}
+
+.fut-card-Inspect-hint {
+  font-size: 0.62rem;
+  color: #bae6fd;
+  margin-top: 4px;
+  font-weight: 700;
+}
+
+.fut-locked-sub {
+  font-size: 0.7rem;
+  color: #94a3b8;
+  margin-top: 4px;
+}
+
+/* Coloring Studio Zones */
+.coloring-svg-stage [data-zone] {
+  stroke: #1e293b;
+  stroke-width: 3px;
+  cursor: pointer;
+  transition: fill 0.25s ease, transform 0.12s ease;
+}
+.coloring-svg-stage [data-zone]:hover {
+  stroke-width: 4.5px;
+}
 
 .summary-view-card { text-align: center; padding: 28px 18px; }
 .summary-medal { font-size: 3.2rem; margin-bottom: 8px; }

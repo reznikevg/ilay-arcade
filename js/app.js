@@ -1,26 +1,30 @@
 // ==================== MAIN APPLICATION CONTROLLER ====================
 
 const STICKER_CATALOG = [
-  { id: 's1', emoji: '🦁', name: 'האריה של בית"ר ירושלים', rarity: 'בית"ר 💛🖤' },
-  { id: 's2', emoji: '👑', name: 'הכתר של ריאל מדריד', rarity: 'ריאל מדריד 🤍' },
-  { id: 's3', emoji: '🏟️', name: 'אצטדיון טדי הגועש', rarity: 'בית"ר 💛🖤' },
-  { id: 's4', emoji: '✨', name: 'אצטדיון סנטיאגו ברנבאו', rarity: 'ריאל מדריד 🤍' },
-  { id: 's5', emoji: '⚡', name: 'קיליאן אמבפה בדהירה', rarity: 'אגדי ⭐' },
-  { id: 's6', emoji: '💛', name: 'ירדן שועה מלך הבישולים', rarity: 'בית"ר 💛🖤' },
-  { id: 's7', emoji: '🕺', name: 'ויניסיוס ג׳וניור כובש', rarity: 'אגדי ⭐' },
-  { id: 's8', emoji: '🙌', name: 'ג׳וד בלינגהאם (Hey Jude)', rarity: 'אגדי ⭐' },
-  { id: 's9', emoji: '🏆', name: 'גביע המדינה של בית"ר', rarity: 'נדיר 💛🖤' },
-  { id: 's10', emoji: '🏅', name: 'גביע ליגת האלופות ה-15', rarity: 'אגדי ⭐' },
-  { id: 's11', emoji: '🧤', name: 'קורטואה חומה בשער', rarity: 'ריאל מדריד 🤍' },
-  { id: 's12', emoji: '🧣', name: 'צעיף צהוב-שחור ביציע', rarity: 'בית"ר 💛🖤' },
-  { id: 's13', emoji: '🚀', name: 'בעיטת תותח של ואלוורדה', rarity: 'ריאל מדריד 🤍' },
-  { id: 's14', emoji: '🔥', name: 'מנורה מוזהבת בירושלים', rarity: 'בית"ר 💛🖤' },
-  { id: 's15', emoji: '🎩', name: 'לוקה מודריץ׳ הקוסם', rarity: 'אגדי ⭐' },
-  { id: 's16', emoji: '⚽', name: 'כדור הזהב של הגמר', rarity: 'נדיר' },
-  { id: 's17', emoji: '👟', name: 'נעל הזהב של האלופים', rarity: 'נדיר' },
-  { id: 's18', emoji: '🛡️', name: 'קפטן בית"ר ירושלים', rarity: 'בית"ר 💛🖤' },
-  { id: 's19', emoji: '💎', name: 'הגלאקטיקוס של מדריד', rarity: 'ריאל מדריד 🤍' },
-  { id: 's20', emoji: '🦸‍♂️', name: 'עילי כוכב העל (#10)', rarity: 'אגדי ⭐' }
+  { id: 's1', emoji: '🦁', name: 'האריה השואג של בית"ר ירושלים', rarity: 'סופרגול בית"ר 💛🖤', series: 'beitar' },
+  { id: 's2', emoji: '👑', name: 'הכתר המלכותי של ריאל מדריד', rarity: 'ליגת האלופות 👑', series: 'real' },
+  { id: 's3', emoji: '🏟️', name: 'אצטדיון טדי הגועש (31,000)', rarity: 'סופרגול בית"ר 💛🖤', series: 'beitar' },
+  { id: 's4', emoji: '✨', name: 'אצטדיון סנטיאגו ברנבאו 360°', rarity: 'ליגת האלופות 👑', series: 'real' },
+  { id: 's5', emoji: '⚡', name: 'קיליאן אמבפה #9 בספרינט סילון', rarity: 'ריאל מדריד TOTY ⭐', series: 'real' },
+  { id: 's6', emoji: '💛', name: 'ירדן שועה #7 קפטן בית"ר', rarity: 'סופרגול זהב 💛🖤', series: 'beitar' },
+  { id: 's7', emoji: '🕺', name: 'ויניסיוס ג׳וניור #7 מלך הדריבל', rarity: 'ריאל מדריד TOTY ⭐', series: 'real' },
+  { id: 's8', emoji: '🙌', name: 'ג׳וד בלינגהאם #5 (Hey Jude)', rarity: 'ריאל מדריד TOTY ⭐', series: 'real' },
+  { id: 's9', emoji: '🏆', name: 'גביע המדינה של בית"ר ירושלים', rarity: 'סופרגול נדיר 💛🖤', series: 'beitar' },
+  { id: 's10', emoji: '🏆', name: 'גביע ליגת האלופות ה-15 (La Decimoquinta)', rarity: 'ליגת האלופות אגדי 🏆', series: 'real' },
+  { id: 's11', emoji: '🧤', name: 'טיבו קורטואה #1 החומה בשער', rarity: 'ליגת האלופות 👑', series: 'real' },
+  { id: 's12', emoji: '💛', name: 'צעיף אולטראס צהוב-שחור ביציע', rarity: 'סופרגול בית"ר 💛🖤', series: 'beitar' },
+  { id: 's13', emoji: '🚀', name: 'בעיטת הטיל של ואלוורדה #8', rarity: 'ליגת האלופות 👑', series: 'real' },
+  { id: 's14', emoji: '🕎', name: 'מנורת הזהב של בית"ר (1936)', rarity: 'סופרגול אגדי 💛🖤', series: 'beitar' },
+  { id: 's15', emoji: '🎩', name: 'לוקה מודריץ׳ #10 המאסטרו', rarity: 'ליגת האלופות 👑', series: 'real' },
+  { id: 's16', emoji: '⚽', name: 'כדור הזהב העולמי (Ballon d\'Or)', rarity: 'אגדה עולמית 🌍', series: 'world' },
+  { id: 's17', emoji: '👟', name: 'נעל הזהב האירופית למלך השערים', rarity: 'אגדה עולמית 🌍', series: 'world' },
+  { id: 's18', emoji: '🌟', name: 'עדי יונה #21 כוכב בית"ר ירושלים', rarity: 'סופרגול בית"ר 💛🖤', series: 'beitar' },
+  { id: 's19', emoji: '🐐', name: 'ליאו מסי #10 אלוף העולם', rarity: 'אגדה עולמית 🌍', series: 'world' },
+  { id: 's20', emoji: '👑', name: 'עילי כוכב העל #10 (דירוג 99 TOTY)', rarity: 'קלף על מוזהב ⭐', series: 'world' },
+  { id: 's21', emoji: '🔥', name: 'כריסטיאנו רונאלדו #7 (CR7 SIUUU)', rarity: 'אגדה עולמית 🌍', series: 'world' },
+  { id: 's22', emoji: '💎', name: 'לאמין ימאל #19 ילד הפלא', rarity: 'אגדה עולמית 🌍', series: 'world' },
+  { id: 's23', emoji: '🤖', name: 'ארלינג האלנד #9 מכונת השערים', rarity: 'אגדה עולמית 🌍', series: 'world' },
+  { id: 's24', emoji: '🧤', name: 'מיגל סילבה #55 שוער בית"ר', rarity: 'סופרגול בית"ר 💛🖤', series: 'beitar' }
 ];
 
 const LIA_STICKER_CATALOG = [
@@ -82,12 +86,16 @@ const DEFAULT_DICTATION_WORDS = [
 ];
 
 const DEFAULT_SPEECH_CARDS = [
-  { phrase: 'שַׁעַר שֶׁל יַרְדֵּן שׁוּעָה בִּירוּשָׁלַיִם!', emoji: '🦁⚽' },
-  { phrase: 'סוּפֶּר וִינִיסְיוּס מוֹסֵר מְסִירָה בִּסְפָרַד!', emoji: '👑⚡' },
-  { phrase: 'הַשּׁוֹעֵר שָׁמַר עַל הַשַּׁעַר בְּשֶׁקֶט', emoji: '🧤🥅' },
-  { phrase: 'סוּס לָבָן אוֹכֵל סָלָט בַּסָּלוֹן', emoji: '🐴🥗' },
-  { phrase: 'שֶׁמֶשׁ צְהֻבָּה זָרְחָה בַּשָּׁמַיִם בְּשַׁבָּת', emoji: '☀️💛' },
-  { phrase: 'שַׂחְקָנֵי בֵּיתָ"ר שְׂמֵחִים עַל הַדֶּשֶׁא', emoji: '🏆🔥' }
+  { phrase: 'שַׁעַר שֶׁל יַרְדֵּן שׁוּעָה בִּירוּשָׁלַיִם!', emoji: '🦁⚽', level: 1 },
+  { phrase: 'הַשּׁוֹעֵר שָׁמַר עַל הַשַּׁעַר בְּשֶׁקֶט', emoji: '🧤🥅', level: 1 },
+  { phrase: 'סוּס לָבָן אוֹכֵל סָלָט בַּסָּלוֹן', emoji: '🐴🥗', level: 1 },
+  { phrase: 'שֶׁמֶשׁ צְהֻבָּה זָרְחָה בַּשָּׁמַיִם בְּשַׁבָּת', emoji: '☀️💛', level: 2 },
+  { phrase: 'סוּפֶּר וִינִיסְיוּס מוֹסֵר מְסִירָה בִּסְפָרַד!', emoji: '👑⚡', level: 2 },
+  { phrase: 'שַׂחְקָנֵי בֵּיתָ"ר שְׂמֵחִים עַל הַדֶּשֶׁא', emoji: '🏆🔥', level: 2 },
+  { phrase: 'הַשּׁוֹפֵט שָׁרַק בַּמַּשְׁרוֹקִית לְסִיּוּם הַמִּשְׂחָק', emoji: '🏁⚽', level: 3 },
+  { phrase: 'שִׁבְעָה כּוֹכָבִים נוֹצְצִים בַּשָּׁמַיִם שֶׁל יְרוּשָׁלַיִם', emoji: '🌟🌙', level: 3 },
+  { phrase: 'סַבָּא וְסָבְתָא סִפְּרוּ סִפּוּר מְסַקְרֵן בַּסֻּכָּה', emoji: '📖💛', level: 3 },
+  { phrase: 'שׁוּעָה בָּעַט כַּדּוּר מְסוֹבָב יָשָׁר לָרֶשֶׁת!', emoji: '🥅💥', level: 3 }
 ];
 
 const DEFAULT_SCHEDULE = {
@@ -191,18 +199,44 @@ let appState = {
   allowedEmails: ['reznikevg@gmail.com', 'natalieazu@gmail.com'],
   googleClientId: '',
   devRequests: [], // [{ id, date, text, status }]
-  activeChild: 'ilay', // 'ilay' | 'lia'
+  activeChild: 'ilay', // 'ilay' | 'lia' (100% device-local so Ilay & Lia can play simultaneously on separate devices!)
+  seenQuestionKeys: [],
   liaProfile: {
     coins: 60,
     trophies: 1,
     bestStreak: 0,
-    avatar: '🦄',
+    avatar: 'l1',
     theme: 'unicorn', // 'unicorn' | 'stitch'
     unlockedStickers: ['l1', 'l2'],
     topicStats: {},
-    kinderStars: 5
+    kinderStars: 5,
+    seenQuestionKeys: [],
+    coloringSaved: {},
+    dressUpOutfit: { character: 'lia', hat: 'crown_gold', top: 'dress_unicorn', shoes: 'shoes_pink', acc: 'wand_star' }
   }
 };
+
+const DEVICE_KID_STORAGE_KEY = 'ilay_lia_device_kid_v1';
+
+function getInitialDeviceChild() {
+  try {
+    if (window.FORCE_KID_PROFILE === 'lia' || window.FORCE_KID_PROFILE === 'ilay') {
+      localStorage.setItem(DEVICE_KID_STORAGE_KEY, window.FORCE_KID_PROFILE);
+      return window.FORCE_KID_PROFILE;
+    }
+    const params = new URLSearchParams(window.location.search);
+    const urlKid = (params.get('kid') || '').toLowerCase();
+    if (urlKid === 'lia' || urlKid === 'ilay') {
+      localStorage.setItem(DEVICE_KID_STORAGE_KEY, urlKid);
+      return urlKid;
+    }
+    const savedDeviceKid = localStorage.getItem(DEVICE_KID_STORAGE_KEY);
+    if (savedDeviceKid === 'lia' || savedDeviceKid === 'ilay') {
+      return savedDeviceKid;
+    }
+  } catch (e) {}
+  return 'ilay';
+}
 
 function ensureLiaProfile() {
   if (!appState.liaProfile) {
@@ -210,14 +244,107 @@ function ensureLiaProfile() {
       coins: 60,
       trophies: 1,
       bestStreak: 0,
-      avatar: '🦄',
+      avatar: 'l1',
       theme: 'unicorn',
       unlockedStickers: ['l1', 'l2'],
       topicStats: {},
-      kinderStars: 5
+      kinderStars: 5,
+      seenQuestionKeys: [],
+      coloringSaved: {},
+      dressUpOutfit: { character: 'lia', hat: 'crown_gold', top: 'dress_unicorn', shoes: 'shoes_pink', acc: 'wand_star' }
     };
   }
-  if (!appState.activeChild) appState.activeChild = 'ilay';
+  if (!Array.isArray(appState.seenQuestionKeys)) appState.seenQuestionKeys = [];
+  if (!Array.isArray(appState.liaProfile.seenQuestionKeys)) appState.liaProfile.seenQuestionKeys = [];
+  if (!appState.liaProfile.coloringSaved) appState.liaProfile.coloringSaved = {};
+  if (!appState.liaProfile.dressUpOutfit) {
+    appState.liaProfile.dressUpOutfit = { character: 'lia', hat: 'crown_gold', top: 'dress_unicorn', shoes: 'shoes_pink', acc: 'wand_star' };
+  }
+  if (!appState.activeChild) appState.activeChild = getInitialDeviceChild();
+}
+
+function mergeTopicStatsMap(a = {}, b = {}) {
+  const merged = { ...a };
+  Object.keys(b || {}).forEach(k => {
+    const sa = merged[k] || { solved: 0, correct: 0, stars: 0 };
+    const sb = b[k] || { solved: 0, correct: 0, stars: 0 };
+    const correct = Math.max(sa.correct || 0, sb.correct || 0);
+    const solved = Math.max(sa.solved || 0, sb.solved || 0, correct);
+    merged[k] = {
+      solved,
+      correct,
+      stars: Math.min(3, Math.floor(correct / 5))
+    };
+  });
+  return merged;
+}
+
+function mergeUniqueArray(a = [], b = [], maxLen = 200) {
+  const set = new Set([...(Array.isArray(a) ? a : []), ...(Array.isArray(b) ? b : [])]);
+  const arr = Array.from(set);
+  return arr.length > maxLen ? arr.slice(arr.length - maxLen) : arr;
+}
+
+/**
+ * Safely merges cloud state with local state so Ilay playing on one device
+ * and Lia playing on another device NEVER overwrite each other's active screen,
+ * coins, trophies, stickers, or topic progress!
+ */
+function mergeCloudStateSafely(local, remote) {
+  if (!remote || typeof remote !== 'object') return local;
+  const lockedLocalChild = getInitialDeviceChild();
+  const localLia = local.liaProfile || {};
+  const remoteLia = remote.liaProfile || {};
+
+  const mergedIlayStickers = mergeUniqueArray(local.unlockedStickers || ['s1', 's2'], remote.unlockedStickers || ['s1', 's2']);
+  const mergedLiaStickers = mergeUniqueArray(localLia.unlockedStickers || ['l1', 'l2'], remoteLia.unlockedStickers || ['l1', 'l2']);
+
+  const mergedLiaProfile = {
+    ...remoteLia,
+    ...localLia,
+    coins: Math.max(localLia.coins || 0, remoteLia.coins || 0),
+    trophies: Math.max(localLia.trophies || 0, remoteLia.trophies || 0),
+    bestStreak: Math.max(localLia.bestStreak || 0, remoteLia.bestStreak || 0),
+    kinderStars: Math.max(localLia.kinderStars || 0, remoteLia.kinderStars || 0),
+    unlockedStickers: mergedLiaStickers,
+    topicStats: mergeTopicStatsMap(localLia.topicStats, remoteLia.topicStats),
+    seenQuestionKeys: mergeUniqueArray(localLia.seenQuestionKeys, remoteLia.seenQuestionKeys, 180),
+    coloringSaved: { ...(remoteLia.coloringSaved || {}), ...(localLia.coloringSaved || {}) },
+    dressUpOutfit: localLia.dressUpOutfit || remoteLia.dressUpOutfit || { character: 'lia', hat: 'crown_gold', top: 'dress_unicorn', shoes: 'shoes_pink', acc: 'wand_star' },
+    avatar: lockedLocalChild === 'lia' ? (localLia.avatar || remoteLia.avatar || 'l1') : (remoteLia.avatar || localLia.avatar || 'l1'),
+    theme: lockedLocalChild === 'lia' ? (localLia.theme || remoteLia.theme || 'unicorn') : (remoteLia.theme || localLia.theme || 'unicorn')
+  };
+
+  const localLogs = local.speechLogs || [];
+  let mergedSpeechLogs = remote.speechLogs || localLogs;
+  if (remote.speechLogs && localLogs.length > 0) {
+    mergedSpeechLogs = remote.speechLogs.map(rl => {
+      const match = localLogs.find(ll => ll.date === rl.date && ll.phrase === rl.phrase);
+      return match ? match : rl;
+    });
+  }
+
+  return {
+    ...local,
+    ...remote,
+    // Keep activeChild, selectedDay, selectedCategory, difficulty, gameMode 100% local to this device!
+    activeChild: lockedLocalChild,
+    selectedDay: local.selectedDay,
+    selectedCategory: local.selectedCategory,
+    difficulty: local.difficulty || 'medium',
+    gameMode: local.gameMode || 'standard',
+    // Merge Ilay's progress safely
+    coins: Math.max(local.coins || 0, remote.coins || 0),
+    trophies: Math.max(local.trophies || 0, remote.trophies || 0),
+    bestStreak: Math.max(local.bestStreak || 0, remote.bestStreak || 0),
+    unlockedStickers: mergedIlayStickers,
+    topicStats: mergeTopicStatsMap(local.topicStats, remote.topicStats),
+    seenQuestionKeys: mergeUniqueArray(local.seenQuestionKeys, remote.seenQuestionKeys, 180),
+    avatar: lockedLocalChild === 'ilay' ? (local.avatar || remote.avatar || 's1') : (remote.avatar || local.avatar || 's1'),
+    teamTheme: lockedLocalChild === 'ilay' ? (local.teamTheme || remote.teamTheme || 'beitar') : (remote.teamTheme || local.teamTheme || 'beitar'),
+    speechLogs: mergedSpeechLogs,
+    liaProfile: mergedLiaProfile
+  };
 }
 
 function isLiaActive() {
@@ -317,6 +444,7 @@ let speechSession = {
 const CLOUD_BACKEND_URL = 'https://ilay-backend.reznikevg.workers.dev';
 
 async function loadState() {
+  const localKid = getInitialDeviceChild();
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
@@ -326,21 +454,17 @@ async function loadState() {
   } catch (e) {
     console.warn('Could not load saved state:', e);
   }
+  appState.activeChild = localKid;
+  ensureLiaProfile();
 
-  // Pull from Cloudflare KV
+  // Pull from Cloudflare KV & merge safely without EVER overwriting this device's activeChild or losing either child's coins/stickers!
   try {
     const res = await fetch(`${CLOUD_BACKEND_URL}/api/state`, { cache: 'no-store' });
     if (res.ok) {
       const remote = await res.json();
-      if (remote && remote.updatedAt && (!appState.updatedAt || remote.updatedAt >= appState.updatedAt)) {
-        const localLogs = appState.speechLogs || [];
-        appState = { ...appState, ...remote };
-        if (remote.speechLogs && localLogs.length > 0) {
-          appState.speechLogs = remote.speechLogs.map(rl => {
-            const match = localLogs.find(ll => ll.date === rl.date && ll.phrase === rl.phrase);
-            return match ? match : rl;
-          });
-        }
+      if (remote && typeof remote === 'object') {
+        appState = mergeCloudStateSafely(appState, remote);
+        appState.activeChild = localKid;
         localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
       }
     }
@@ -379,17 +503,22 @@ async function loadState() {
 function saveState() {
   try {
     appState.updatedAt = Date.now();
+    if (appState.activeChild === 'lia' || appState.activeChild === 'ilay') {
+      localStorage.setItem(DEVICE_KID_STORAGE_KEY, appState.activeChild);
+    }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
   } catch (e) {
     console.warn('Could not save state:', e);
   }
 
-  // Push to Cloudflare KV 24/7 Sync
+  // Push to Cloudflare KV 24/7 Sync (strip activeChild from affecting other devices!)
   try {
+    const cloudPayload = { ...appState };
+    delete cloudPayload.activeChild;
     fetch(`${CLOUD_BACKEND_URL}/api/state`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(appState)
+      body: JSON.stringify(cloudPayload)
     }).catch(() => {});
   } catch (e) {}
 }
@@ -400,9 +529,9 @@ setInterval(async () => {
     if (!res.ok) return;
     const remote = await res.json();
     if (remote && remote.updatedAt && (!appState.updatedAt || remote.updatedAt > appState.updatedAt)) {
-      const currentDay = appState.selectedDay;
-      const currentCat = appState.selectedCategory;
-      appState = { ...appState, ...remote, selectedDay: currentDay, selectedCategory: currentCat };
+      const lockedChild = appState.activeChild;
+      appState = mergeCloudStateSafely(appState, remote);
+      appState.activeChild = lockedChild;
       localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
       updateHeaderUI();
       if (document.getElementById('view-schedule')?.classList.contains('active')) renderScheduleView();
@@ -410,7 +539,7 @@ setInterval(async () => {
       if (document.getElementById('view-parents')?.classList.contains('active')) renderParentsView();
     }
   } catch (e) {}
-}, 5000);
+}, 8000);
 
 function getRankTitle(trophies, solved) {
   if (isLiaActive()) {
@@ -447,15 +576,21 @@ function applyTeamTheme(team) {
 
 function switchActiveChild(kid) {
   ensureLiaProfile();
-  appState.activeChild = kid === 'lia' ? 'lia' : 'ilay';
+  const targetKid = kid === 'lia' ? 'lia' : 'ilay';
+  appState.activeChild = targetKid;
+  try {
+    localStorage.setItem(DEVICE_KID_STORAGE_KEY, targetKid);
+  } catch (e) {}
   appState.selectedCategory = 'all';
   document.querySelectorAll('.cat-tab').forEach(t => t.classList.toggle('active', t.dataset.cat === 'all'));
-  saveState();
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+  } catch (e) {}
   updateHeaderUI();
   renderTopicsGrid();
   switchView('home');
-  if (kid === 'lia') {
-    arcadeAudio.speak('שלום ליה מתוקה! ברוכה הבאה לעולם הקסם של סטיץ׳, חד קרן, איפור והגן של ליה!', 'he-IL', 0.88);
+  if (targetKid === 'lia') {
+    arcadeAudio.speak('שלום ליה מתוקה! ברוכה הבאה למשחקים של ליה, צביעה, הלבשות, סטיץ׳ וחד קרן!', 'he-IL', 0.88);
   } else {
     arcadeAudio.speak('שלום עילי האלוף! מוכן להבקיע שערים?', 'he-IL', 0.9);
   }
@@ -539,13 +674,20 @@ function updateHeaderUI() {
 
   const activeCoins = getActiveCoins();
   const activeTrophies = getActiveTrophies();
-  const activeAvatar = lia ? (appState.liaProfile.avatar || '🦄') : (appState.avatar || '🦁');
+  const activeAvatar = lia ? (appState.liaProfile.avatar || 'l1') : (appState.avatar || 's1');
   const activeName = lia ? 'ליה' : 'עילי';
 
   document.getElementById('stat-coins').textContent = activeCoins;
   document.getElementById('stat-trophies').textContent = activeTrophies;
   document.getElementById('stat-streak').textContent = session.currentStreak;
-  document.getElementById('current-avatar').textContent = activeAvatar;
+  const avEl = document.getElementById('current-avatar');
+  if (avEl) {
+    if (typeof getHeaderAvatarHTML === 'function') {
+      avEl.innerHTML = getHeaderAvatarHTML(activeAvatar, lia);
+    } else {
+      avEl.textContent = lia ? '🦄' : '🦁';
+    }
+  }
   const nameEl = document.getElementById('player-name-display');
   if (nameEl) nameEl.textContent = activeName;
 
@@ -629,10 +771,21 @@ function switchView(viewName) {
   if (viewName === 'fc27') initFC27Studio();
   if (viewName === 'science') initScienceStudio();
   if (viewName === 'dictionary') initTalkingDictionary();
+  if (viewName === 'coloring') initColoringStudio();
+  if (viewName === 'dressup') initDressUpStudio();
   updateHeaderUI();
 }
 
-// ==================== HOME: VISUAL TOPICS GRID ====================
+// ==================== HOME: VISUAL TOPICS GRID (WITH MASTERY LEVEL 1-5) ====================
+
+function getTopicMasteryLevelInfo(correctCount = 0) {
+  // Smooth, motivating 5-level mastery progression
+  if (correctCount >= 32) return { level: 5, label: 'רמה 5: מאסטר על 👑', pct: 100, color: '#eab308' };
+  if (correctCount >= 22) return { level: 4, label: 'רמה 4: אלוף אירופה 🏆', pct: Math.round(((correctCount - 22) / 10) * 100), color: '#8b5cf6' };
+  if (correctCount >= 13) return { level: 3, label: 'רמה 3: כוכב ליגה 🌟', pct: Math.round(((correctCount - 13) / 9) * 100), color: '#0284c7' };
+  if (correctCount >= 6) return { level: 2, label: 'רמה 2: מתקדמים ⚡', pct: Math.round(((correctCount - 6) / 7) * 100), color: '#10b981' };
+  return { level: 1, label: 'רמה 1: מתחילים 🌱', pct: Math.round((correctCount / 6) * 100), color: '#64748b' };
+}
 
 function renderTopicsGrid() {
   const grid = document.getElementById('topics-grid');
@@ -650,17 +803,24 @@ function renderTopicsGrid() {
   filtered.forEach(topic => {
     const st = statsObj[topic.id] || { solved: 0, correct: 0, stars: 0 };
     const starsDisplay = '⭐'.repeat(Math.min(3, st.stars)) + '☆'.repeat(Math.max(0, 3 - Math.min(3, st.stars)));
+    const mastery = getTopicMasteryLevelInfo(st.correct || 0);
     const playLabel = lia ? 'שחקי 🦄' : 'שחק ⚽';
 
     const card = document.createElement('div');
     card.className = `topic-card cat-${topic.cat}`;
     card.innerHTML = `
-      <div>
+      <div style="flex:1;">
         <div class="topic-card-top">
           <div class="topic-icon">${topic.icon}</div>
           <span class="topic-tag">${topic.tag}</span>
         </div>
-        <div class="topic-title">${topic.title}</div>
+        <div style="flex:1;">
+          <div class="topic-title">${topic.title}</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
+            <span style="font-size:0.72rem;font-weight:800;color:${mastery.color};background:#f8fafc;border:1px solid #e2e8f0;padding:1px 7px;border-radius:99px;">${mastery.label}</span>
+            <span style="font-size:0.7rem;color:#64748b;">(${st.correct || 0} הצלחות)</span>
+          </div>
+        </div>
       </div>
       <div class="topic-footer">
         <span class="topic-stars">${starsDisplay}</span>
@@ -702,12 +862,50 @@ function cleanHebrewLettersOnly(text) {
     .trim();
 }
 
+function isHebrewWordMatched(targetWord, heardWordsArray) {
+  const t = cleanHebrewLettersOnly(targetWord);
+  if (!t) return true;
+  // Normalize common homophones / ASR spelling variants in Hebrew
+  const norm = (s) => s.replace(/יי/g, 'י').replace(/וו/g, 'ו').replace(/[אה]$/, '');
+  const tn = norm(t);
+
+  return heardWordsArray.some(hw => {
+    const hn = norm(hw);
+    if (!hn) return false;
+    if (hw === t || hn === tn) return true;
+    // Allow prefix match only if the heard word is at least as long as target or within 1 char (never allow 2-letter truncation like "שו" for "שועה"!)
+    if (t.length >= 4 && hw.length >= t.length - 1 && (hw.includes(t.slice(0, -1)) || hn.includes(tn))) {
+      return true;
+    }
+    // Special case: "בירושלים" matched if ASR heard "ירושלים"
+    if (t.startsWith('ב') && t.length >= 5 && hw === t.slice(1)) return true;
+    return false;
+  });
+}
+
+function updateLiveSpeechWordChips(transcriptText) {
+  const chipsContainer = document.getElementById('sp-word-chips-row');
+  if (!chipsContainer) return;
+  const heardClean = cleanHebrewLettersOnly(transcriptText || '');
+  const heardWords = heardClean.split(' ').filter(Boolean);
+
+  chipsContainer.querySelectorAll('.sp-word-chip').forEach(chip => {
+    const rawWord = chip.dataset.word || '';
+    const matched = isHebrewWordMatched(rawWord, heardWords);
+    chip.classList.toggle('matched', matched);
+    if (matched) chip.classList.remove('missed');
+    const statusIcon = chip.querySelector('.sp-chip-status');
+    if (statusIcon) statusIcon.textContent = matched ? '✅' : '🔊';
+  });
+}
+
 function renderSpeechCard() {
   const card = speechSession.cards[speechSession.index];
   speechSession.lastAudioUrl = null;
   speechSession.heardTranscript = '';
   speechSession.maxVolume = 0;
   speechSession.startTime = 0;
+  speechSession.attemptsOnCard = 0;
 
   document.getElementById('sp-current-num').textContent = speechSession.index + 1;
   document.getElementById('sp-total-num').textContent = speechSession.cards.length;
@@ -717,10 +915,28 @@ function renderSpeechCard() {
   document.getElementById('sp-emoji').textContent = card.emoji || '🎙️⚽';
   document.getElementById('sp-phrase').innerHTML = highlightSibilants(card.phrase);
 
+  // Render interactive word-by-word chips so Ilay can tap any word to hear it & see live green checkmarks!
+  const chipsRow = document.getElementById('sp-word-chips-row');
+  if (chipsRow) {
+    chipsRow.innerHTML = '';
+    const words = card.phrase.split(/\s+/).filter(Boolean);
+    words.forEach(w => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'sp-word-chip';
+      btn.dataset.word = cleanHebrewLettersOnly(w);
+      btn.innerHTML = `<span class="sp-chip-status">🔊</span> <span>${highlightSibilants(w)}</span>`;
+      btn.addEventListener('click', () => {
+        arcadeAudio.speak(w, 'he-IL', 0.8);
+      });
+      chipsRow.appendChild(btn);
+    });
+  }
+
   const recBtn = document.getElementById('btn-sp-record');
   recBtn.classList.remove('recording');
   document.getElementById('sp-mic-icon').textContent = '🎙️';
-  document.getElementById('sp-mic-label').textContent = 'לְחַץ וֶאֱמֹר בְּקוֹל';
+  document.getElementById('sp-mic-label').textContent = 'לְחַץ וֶאֱמֹר אֶת כָּל הַמִּשְׁפָּט בְּקוֹל';
 
   document.getElementById('btn-sp-play-self').classList.add('hidden');
   const waveEl = document.getElementById('sp-wave-bars');
@@ -729,6 +945,11 @@ function renderSpeechCard() {
   document.getElementById('sp-recognized-box').classList.add('hidden');
   document.getElementById('sp-feedback-banner').className = 'feedback-banner hidden';
   document.getElementById('btn-sp-next').classList.add('hidden');
+
+  // Automatically read the target sentence clearly in Hebrew so Ilay hears the model pronunciation!
+  setTimeout(() => {
+    arcadeAudio.speak(card.phrase, 'he-IL', 0.84);
+  }, 280);
 }
 
 async function toggleSpeechRecording() {
@@ -793,23 +1014,24 @@ async function toggleSpeechRecording() {
   if (recBox) recBox.classList.add('hidden');
   if (recTxt) recTxt.textContent = '';
 
-  // 1. Web Speech Recognition in Hebrew
+  // 1. Web Speech Recognition in Hebrew (Continuous so breathing pauses NEVER cut Ilay off mid-sentence!)
   const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (SpeechRec) {
     try {
       const rec = new SpeechRec();
       rec.lang = 'he-IL';
       rec.interimResults = true;
-      rec.continuous = false;
+      rec.continuous = true;
       rec.onresult = (event) => {
         let t = '';
         for (let i = 0; i < event.results.length; i++) {
-          t += event.results[i][0].transcript;
+          t += ' ' + event.results[i][0].transcript;
         }
-        speechSession.heardTranscript = t.trim();
-        if (recBox && t.trim()) {
+        speechSession.heardTranscript = t.replace(/\s+/g, ' ').trim();
+        if (recBox && speechSession.heardTranscript) {
           recBox.classList.remove('hidden');
-          recTxt.textContent = `נקלט בדיבור: "${t.trim()}"`;
+          recTxt.textContent = `נקלט בדיבור: "${speechSession.heardTranscript}"`;
+          updateLiveSpeechWordChips(speechSession.heardTranscript);
         }
       };
       rec.onerror = (e) => {
@@ -893,7 +1115,6 @@ async function toggleSpeechRecording() {
 function evaluateSpeechRecording(card, durationMs) {
   const fb = document.getElementById('sp-feedback-banner');
   const nextBtn = document.getElementById('btn-sp-next');
-  const recBtn = document.getElementById('btn-sp-record');
 
   const targetClean = cleanHebrewLettersOnly(card.phrase);
   const targetWords = targetClean.split(' ').filter(w => w.length >= 2);
@@ -901,84 +1122,139 @@ function evaluateSpeechRecording(card, durationMs) {
   const heardWords = heardClean.split(' ').filter(Boolean);
 
   const hasRecognizedWords = heardClean.length > 0;
-  // Volume energy above ambient quiet room noise floor (~10-12)
   const hasAudibleVoice = speechSession.maxVolume >= 11;
-  const isTooShort = durationMs < 800;
+  const isTooShort = durationMs < 900;
 
-  // Reset button state
   document.getElementById('sp-mic-icon').textContent = '🎙️';
   document.getElementById('sp-mic-label').textContent = 'הַקְלֵט שׁוּב';
 
-  // 1. STRICT SILENCE CHECK: Did the child actually speak?
+  // 1. STRICT SILENCE CHECK
   if ((!hasRecognizedWords && !hasAudibleVoice) || isTooShort) {
     arcadeAudio.playMiss();
     fb.className = 'feedback-banner warning';
-    fb.innerHTML = `⚠️ <strong>לא שמענו אותך עדיין!</strong><br>לחצו על <strong>הַקְלֵט שׁוּב</strong>, אמרו את המשפט בקול ברור ליד המכשיר, ולחצו לסיום.`;
+    fb.innerHTML = `⚠️ <strong>לא שמענו אותך עדיין!</strong><br>לחץ על <strong>הַקְלֵט שׁוּב</strong>, אמור את כל המשפט בקול ברור ליד המיקרופון, ואז לחץ לסיום.`;
     fb.classList.remove('hidden');
-    nextBtn.classList.add('hidden'); // CANNOT skip without actually practicing!
+    nextBtn.classList.add('hidden');
+    arcadeAudio.speak('עילי, לא שמענו את המשפט. לחץ על הקלט שוב ואמור את כל המשפט בקול ברור!', 'he-IL', 0.88);
     return;
   }
 
-  // 2. CHECK TARGET WORDS & SIBILANTS ('ש' and 'ס')
-  let matchedWordCount = 0;
+  // 2. TRUE WORD-BY-WORD & SIBILANT ('ש' / 'ס') DIAGNOSTIC VERIFICATION
+  const matchedWords = [];
+  const missedWords = [];
+  const sibilantErrors = [];
+
   targetWords.forEach(tw => {
-    if (heardWords.some(hw => hw === tw || hw.includes(tw) || tw.includes(hw))) {
-      matchedWordCount++;
+    if (isHebrewWordMatched(tw, heardWords)) {
+      matchedWords.push(tw);
+    } else {
+      missedWords.push(tw);
+      if (tw.includes('ש') || tw.includes('ס')) {
+        const lispVariant = tw.replace(/[שס]/g, 'ת');
+        if (heardWords.some(hw => hw === lispVariant)) {
+          sibilantErrors.push(tw);
+        }
+      }
     }
   });
 
-  const targetHasSibilant = targetClean.includes('ש') || targetClean.includes('ס');
-  const heardHasSibilant = heardClean.includes('ש') || heardClean.includes('ס');
-
-  // LEVEL A: EXCELLENT PRONUNCIATION / WORDS MATCHED
-  if (matchedWordCount >= 2 || (matchedWordCount >= 1 && (heardHasSibilant || heardWords.length >= 2))) {
-    appState.coins += 20;
-    saveState();
-    updateHeaderUI();
-    arcadeAudio.playGoalSuccess();
-    confetti.burst(75);
-
-    fb.className = 'feedback-banner success';
-    fb.innerHTML = `🌟 <strong>איזה שדרן אלוף! שמענו אותך מצוין!</strong><br>נקלט: "${speechSession.heardTranscript}"<br>הגייה נהדרת! הרווחת <strong>+20 🪙</strong> מטבעות!`;
-    fb.classList.remove('hidden');
-    nextBtn.classList.remove('hidden');
-    return;
+  // Update visual word chips to show green ✅ for matched words and red ❌ for missed words!
+  const chipsContainer = document.getElementById('sp-word-chips-row');
+  if (chipsContainer) {
+    chipsContainer.querySelectorAll('.sp-word-chip').forEach(chip => {
+      const w = chip.dataset.word || '';
+      const isOk = matchedWords.includes(w);
+      chip.classList.toggle('matched', isOk);
+      chip.classList.toggle('missed', !isOk);
+      const statusIcon = chip.querySelector('.sp-chip-status');
+      if (statusIcon) statusIcon.textContent = isOk ? '✅' : '❌';
+    });
   }
 
-  // LEVEL B: HEARD GENERAL SPEECH ATTEMPT
+  // CASE A: Speech Recognition produced a transcript -> Verify that ALL (or at least N-1 for >=5 word sentences) words were spoken!
   if (hasRecognizedWords) {
+    const requiredMatches = targetWords.length <= 4 ? targetWords.length : targetWords.length - 1;
+    const sibilantTargetWords = targetWords.filter(w => w.includes('ש') || w.includes('ס'));
+    const sibilantMatchedWords = sibilantTargetWords.filter(w => matchedWords.includes(w));
+
+    const passedAll =
+      matchedWords.length >= requiredMatches &&
+      sibilantMatchedWords.length >= Math.max(1, sibilantTargetWords.length - (sibilantTargetWords.length >= 4 ? 1 : 0)) &&
+      sibilantErrors.length === 0;
+
+    if (passedAll) {
+      appState.coins += 20;
+      saveState();
+      updateHeaderUI();
+      arcadeAudio.playGoalSuccess();
+      confetti.burst(80);
+
+      fb.className = 'feedback-banner success';
+      fb.innerHTML = `🌟 <strong>אלוף הדיבור! אמרת את כל המשפט מצוין!</strong><br>✅ מילים שנקלטו בהצלחה: <strong>${matchedWords.join(' • ')}</strong><br>הרווחת <strong>+20 🪙</strong> מטבעות!`;
+      fb.classList.remove('hidden');
+      nextBtn.classList.remove('hidden');
+      arcadeAudio.speak(`כל הכבוד עילי! אמרת את כל המשפט מצוין והרווחת עשרים מטבעות!`, 'he-IL', 0.9);
+      return;
+    }
+
+    // Partial or Incomplete Sentence (e.g. "שער של ירדן שו" where "שועה" and "בירושלים" were cut off or missed!)
+    speechSession.attemptsOnCard = (speechSession.attemptsOnCard || 0) + 1;
+    // If Ilay already tried twice and said at least half the sentence, allow advancing so Web Speech API quirks never block him!
+    if (speechSession.attemptsOnCard >= 2 && matchedWords.length >= Math.ceil(targetWords.length * 0.5)) {
+      appState.coins += 15;
+      saveState();
+      updateHeaderUI();
+      arcadeAudio.playGoalSuccess();
+      fb.className = 'feedback-banner success';
+      fb.innerHTML = `👏 <strong>כל הכבוד על ההתמדה עילי! (+15 🪙)</strong><br>אמרת מצוין: <strong>${matchedWords.join(' • ')}</strong>! אפשר להמשיך לכרטיסייה הבאה או להקליט שוב.`;
+      fb.classList.remove('hidden');
+      nextBtn.classList.remove('hidden');
+      arcadeAudio.speak('כל הכבוד על ההתמדה עילי! הרווחת חמישה עשר מטבעות ואפשר להמשיך לכרטיסייה הבאה!', 'he-IL', 0.9);
+      return;
+    }
+
+    arcadeAudio.playMiss();
+    nextBtn.classList.add('hidden');
+    fb.className = 'feedback-banner warning';
+
+    const okPart = matchedWords.length > 0 ? `✅ <strong>אמרת מצוין:</strong> ${matchedWords.join(', ')}<br>` : '';
+    const missPart = `🎯 <strong>מילים שחסרות או נחתכו באמצע:</strong> <span style="color:#dc2626;text-decoration:underline;">${missedWords.join(', ')}</span>`;
+    const lispTip = sibilantErrors.length > 0
+      ? `<br>💡 <strong>שים לב לאות ש׳/ס׳ במילה "${sibilantErrors.join(', ')}":</strong> סגור שיניים לחיוך כדי שהלשון תישאר מאחורי השיניים!`
+      : `<br>💡 לחץ על המילים האדומות למעלה כדי לשמוע אותן, ואז לחץ על <strong>הַקְלֵט שׁוּב</strong> ואמור את המשפט עד הסוף!`;
+
+    fb.innerHTML = `🎙️ <strong>כמעט שם! המשפט לא הושלם במלואו:</strong><br>${okPart}${missPart}${lispTip}`;
+    fb.classList.remove('hidden');
+
+    const spokenCoach = matchedWords.length > 0
+      ? `עילי, אמרת יפה ${matchedWords.join(' ')}, אבל חסרות המילים: ${missedWords.join(' ו')}. בוא נקליט שוב את כל המשפט עד הסוף!`
+      : `עילי, שמענו מילים אחרות. בוא נקשיב למשפט ונקליט שוב ברור: ${card.phrase}`;
+    arcadeAudio.speak(spokenCoach, 'he-IL', 0.88);
+    return;
+  }
+
+  // CASE B: Browser does not support Hebrew SpeechRecognition -> Check duration & voice energy
+  const minExpectedDurationMs = Math.max(1800, targetWords.length * 420);
+  if (hasAudibleVoice && durationMs >= minExpectedDurationMs) {
     appState.coins += 15;
     saveState();
     updateHeaderUI();
     arcadeAudio.playGoalSuccess();
 
     fb.className = 'feedback-banner success';
-    fb.innerHTML = `👏 <strong>יופי של ניסיון!</strong> שמענו: "${speechSession.heardTranscript}".<br>הקשב להקלטה שלך ובדוק שסגרת שיניים לחיוך ב-ש׳ ו-ס׳! הרווחת <strong>+15 🪙</strong>`;
+    fb.innerHTML = `🎙️ <strong>ההקלטה נשמרה!</strong> לחץ על "השמע את ההקלטה שלי" כדי לבדוק שכל המילים ב-ש׳ ו-ס׳ נשמעות ברור! (<strong>+15 🪙</strong>)`;
     fb.classList.remove('hidden');
     nextBtn.classList.remove('hidden');
+    arcadeAudio.speak('ההקלטה נשמרה! לחץ על השמע את ההקלטה שלי כדי להקשיב לעצמך!', 'he-IL', 0.88);
     return;
   }
 
-  // LEVEL C: AUDIBLE VOICE CAPTURED (Real voice energy detected, but recognition was muffled / unavailable)
-  if (hasAudibleVoice && durationMs >= 1200) {
-    appState.coins += 15;
-    saveState();
-    updateHeaderUI();
-    arcadeAudio.playGoalSuccess();
-
-    fb.className = 'feedback-banner success';
-    fb.innerHTML = `🎙️ <strong>שמענו את הקול שלך בהקלטה!</strong><br>לחצו על "השמע את ההקלטה שלי" להקשיב לעצמך ולתרגל חיוך! הרווחת <strong>+15 🪙</strong>`;
-    fb.classList.remove('hidden');
-    nextBtn.classList.remove('hidden');
-    return;
-  }
-
-  // Voice was marginal / very quiet
   arcadeAudio.playMiss();
   fb.className = 'feedback-banner warning';
-  fb.innerHTML = `⚠️ <strong>הקול היה שקט מדי!</strong><br>נסו שוב ואמרו את המשפט בקול רם וברור קרוב למיקרופון.`;
+  fb.innerHTML = `⚠️ <strong>ההקלטה הייתה קצרה או שקטה מדי!</strong><br>אמור את כל ${targetWords.length} המילים במשפט בקול רם וברור עד הסוף.`;
   fb.classList.remove('hidden');
   nextBtn.classList.add('hidden');
+  arcadeAudio.speak('ההקלטה הייתה קצרה מדי. אמור את כל המילים במשפט עד הסוף!', 'he-IL', 0.88);
 }
 
 function saveSpeechLogEntry(phrase, heardText, audioDataUrl) {
@@ -1364,18 +1640,43 @@ function nextDictationWord() {
 
 // ==================== VIEW 6: GAME ARENA & MATCH LOGIC ====================
 
-// Rolling memory of recently asked question keys so consecutive games stay fresh and never feel repetitive
-let recentQuestionKeys = [];
+function getActiveSeenQuestionKeys() {
+  ensureLiaProfile();
+  if (isLiaActive()) {
+    if (!Array.isArray(appState.liaProfile.seenQuestionKeys)) appState.liaProfile.seenQuestionKeys = [];
+    return appState.liaProfile.seenQuestionKeys;
+  }
+  if (!Array.isArray(appState.seenQuestionKeys)) appState.seenQuestionKeys = [];
+  return appState.seenQuestionKeys;
+}
+
+function recordSeenQuestionKey(key) {
+  if (!key) return;
+  const list = getActiveSeenQuestionKeys();
+  if (!list.includes(key)) {
+    list.push(key);
+    if (list.length > 180) {
+      list.shift();
+    }
+  }
+}
 
 function startMatch(topicId, topicTitle, isDailyBonus = false) {
   clearInterval(session.timerInterval);
+  const lia = isLiaActive();
 
-  const count = appState.gameMode === 'penalty' ? 5 : appState.gameMode === 'arcade' ? 20 : (isDailyBonus ? 8 : 10);
+  // Keep games short, fun, and zero-fatigue (6 questions for Lia age 5, 8-10 for Ilay)
+  const count = appState.gameMode === 'penalty' ? 5 : appState.gameMode === 'arcade' ? 15 : (lia ? 6 : (isDailyBonus ? 8 : 8));
+
+  const statsObj = getActiveTopicStats();
+  const topicStat = statsObj[topicId] || { solved: 0, correct: 0, stars: 0 };
+  const masteryInfo = getTopicMasteryLevelInfo(topicStat.correct || 0);
 
   session = {
     topicId,
     topicTitle,
     isDailyBonus,
+    masteryLevel: masteryInfo.level,
     questions: [],
     currentIndex: 0,
     totalQuestions: count,
@@ -1393,46 +1694,56 @@ function startMatch(topicId, topicTitle, isDailyBonus = false) {
   };
 
   const sessionSeenKeys = new Set();
+  const persistentSeen = getActiveSeenQuestionKeys();
 
   for (let i = 0; i < count; i++) {
-    // Gradual difficulty curve inside every match:
-    // Questions 1-3: Easy warm-up to build confidence & positive feedback 🌱
-    // Questions 4-7: Medium progression ⚡
-    // Questions 8+: Champion level 🔥 (or Medium if user selected Easy)
-    const progressiveDiff =
-      i < 3
-        ? 'easy'
-        : i < 7
-          ? 'medium'
-          : (appState.difficulty === 'easy' ? 'medium' : 'hard');
+    // Gentle, non-frustrating difficulty progression based on actual Mastery Level (1..5):
+    let progressiveDiff = 'easy';
+    if (lia) {
+      // For Lia (age 5): keep it warm, foundational, and easy in Levels 1-3, gently medium in Levels 4-5
+      progressiveDiff = masteryInfo.level <= 3 ? 'easy' : (i < 3 ? 'easy' : 'medium');
+    } else if (appState.difficulty === 'easy') {
+      progressiveDiff = i < 5 ? 'easy' : 'medium';
+    } else if (appState.difficulty === 'hard' || masteryInfo.level >= 4) {
+      progressiveDiff = i < 2 ? 'easy' : i < 5 ? 'medium' : 'hard';
+    } else {
+      // Default gradual curve for Ilay (Levels 1-3): easy warm-up -> medium progression (no sudden hard spikes!)
+      progressiveDiff = masteryInfo.level <= 1 ? (i < 5 ? 'easy' : 'medium') : (i < 3 ? 'easy' : 'medium');
+    }
 
     let q = null;
     let key = '';
-    for (let attempt = 0; attempt < 35; attempt++) {
+    for (let attempt = 0; attempt < 45; attempt++) {
       const candidate = generateQuestionForTopic(topicId, progressiveDiff, appState.customQuestions);
       const candKey = String(candidate.uniqueKey || candidate.englishSpeechWord || candidate.stimulusHtml || Math.random());
       const notInSession = !sessionSeenKeys.has(candKey);
-      const notInRecent = attempt > 18 || !recentQuestionKeys.includes(candKey);
-      if (notInSession && notInRecent) {
+      const notInPersistent = attempt > 24 || !persistentSeen.includes(candKey);
+      if (notInSession && notInPersistent) {
         q = candidate;
         key = candKey;
         break;
       }
-      q = candidate;
-      key = candKey;
+      if (notInSession) {
+        q = candidate;
+        key = candKey;
+      }
+    }
+    if (!q) {
+      q = generateQuestionForTopic(topicId, progressiveDiff, appState.customQuestions);
+      key = String(q.uniqueKey || Math.random());
     }
 
     sessionSeenKeys.add(key);
-    recentQuestionKeys.push(key);
-    if (recentQuestionKeys.length > 40) {
-      recentQuestionKeys.shift();
-    }
+    recordSeenQuestionKey(key);
 
-    q.progressiveStage = i < 3 ? 1 : i < 7 ? 2 : 3;
+    q.progressiveStage = progressiveDiff === 'easy' ? 1 : progressiveDiff === 'medium' ? 2 : 3;
     session.questions.push(q);
   }
+  saveState();
 
-  document.getElementById('arena-topic-title').textContent = isDailyBonus ? '⚡ משחק העונה (בונוס X2)' : topicTitle;
+  document.getElementById('arena-topic-title').textContent = isDailyBonus
+    ? (lia ? '🦄 מסיבת הקסמים של ליה (בונוס X2)' : '⚡ משחק העונה (בונוס X2)')
+    : `${topicTitle} • רמה ${masteryInfo.level} ${masteryInfo.badge.split(' ')[0]}`;
 
   const fc27GuideBtn = document.getElementById('btn-arena-open-fc27-guide');
   if (fc27GuideBtn) {
@@ -1473,7 +1784,7 @@ function renderPenaltyTrack() {
       dot.textContent = lia ? '🦄' : '⚽';
     } else if (session.penaltyHistory[i] === 'missed') {
       dot.classList.add('missed');
-      dot.textContent = '✖';
+      dot.textContent = lia ? '🌟' : '✖';
     } else {
       dot.textContent = i + 1;
     }
@@ -1484,7 +1795,6 @@ function renderPenaltyTrack() {
 function speakOptionValue(optVal) {
   if (!optVal) return;
   const raw = String(optVal);
-  // Check if option has English in parentheses like "🩷 וָרוֹד (Pink)"
   const parenMatch = raw.match(/\(([A-Za-z\s/]+)\)/);
   if (parenMatch) {
     const engPart = parenMatch[1].split('/')[0].trim();
@@ -1492,23 +1802,29 @@ function speakOptionValue(optVal) {
     arcadeAudio.speakBilingual(hebPart, engPart);
     return;
   }
-  // Strip emojis/pictographs to check if the text is English (e.g., "🦄 Unicorn" or "Pink Dress")
   const cleanNoEmoji = raw.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE00}-\u{FE0F}\u{200D}]/gu, '').trim();
   if (cleanNoEmoji.length > 0 && /^[A-Za-z0-9\s!?.,'-]+$/.test(cleanNoEmoji) && /[A-Za-z]/.test(cleanNoEmoji)) {
     arcadeAudio.speak(cleanNoEmoji, 'en-US', 0.82);
   } else {
-    arcadeAudio.speak(raw, 'he-IL', 0.86);
+    arcadeAudio.speak(raw, 'he-IL', 0.88);
   }
 }
 
 function speakQuestionPrompt(q) {
   if (!q) return;
   if (q.isEnglish && q.englishSpeechWord) {
-    arcadeAudio.speakBilingual(q.ttsText || q.instruction, q.englishSpeechWord, 0.86);
+    const segments = [
+      { text: q.ttsText || q.instruction, lang: 'he-IL', rate: 0.88 },
+      { text: q.englishSpeechWord, lang: 'en-US', rate: 0.8 }
+    ];
+    if (q.ttsFollowUpHeb) {
+      segments.push({ text: q.ttsFollowUpHeb, lang: 'he-IL', rate: 0.88 });
+    }
+    arcadeAudio.playSegments(segments);
   } else if (q.isEnglish) {
     arcadeAudio.speak(q.ttsText || q.instruction, 'en-US', 0.84);
   } else {
-    arcadeAudio.speak(q.ttsText || q.instruction, 'he-IL', 0.86);
+    arcadeAudio.speak(q.ttsText || q.instruction, 'he-IL', 0.88);
   }
 }
 
@@ -1535,31 +1851,29 @@ function renderCurrentQuestion() {
     gk.textContent = lia ? '🌈' : '🧤';
     gk.style.transform = 'translateX(0)';
   }
-  const stage = q.progressiveStage || (session.currentIndex < 3 ? 1 : session.currentIndex < 7 ? 2 : 3);
-  const stageBadge =
-    stage === 1
-      ? '🌱 שלב 1 (חימום קל) • '
-      : stage === 2
-        ? '⚡ שלב 2 (מתקדמים!) • '
-        : '🔥 שלב 3 (אלופי העל!) • ';
+
+  const mLevel = session.masteryLevel || 1;
+  const stageBadge = lia
+    ? `🦄 שלב ${mLevel} בגן של ליה • `
+    : `🏆 רמת שליטה ${mLevel}/5 • `;
 
   document.getElementById('commentator-text').textContent =
     stageBadge +
     (lia
-      ? '✨ "ליה וסטיץ׳ מוכנים לחידה הבאה!"'
+      ? '✨ "הקשיבי ולחצי ישר על הכרטיס המתאים!"'
       : q.isMulti
         ? '🎙️ "בחר את כל המספרים המתאימים!"'
         : '🎙️ "עילי מכוון לשער..."');
 
   const btnSpeak = document.getElementById('btn-speak-question');
   if (btnSpeak) {
-    btnSpeak.textContent = q.isEnglish ? '🔊 הקרא + אנגלית' : '🔊 הקרא שאלה';
+    btnSpeak.textContent = q.isEnglish ? '🔊 הקרא שוב (עברית + אנגלית)' : '🔊 הקרא שאלה שוב';
   }
 
   document.getElementById('q-instruction').innerHTML = q.instruction;
   const hintBox = document.getElementById('hint-box');
   hintBox.classList.add('hidden');
-  hintBox.textContent = `💡 רמז: ${q.hint}`;
+  hintBox.textContent = `💡 הסבר ורמז: ${q.hint}`;
 
   const stim = document.getElementById('q-stimulus');
   stim.className = 'q-stimulus-box' + (q.rtlStimulus ? ' rtl-stimulus' : '');
@@ -1570,7 +1884,7 @@ function renderCurrentQuestion() {
       const found = (typeof FC27_VOCAB_BANK !== 'undefined') && FC27_VOCAB_BANK.find(x => x.key === k);
       if (found) {
         const cleanEng = found.eng.replace(/\([^)]*\)/g, '').trim();
-        arcadeAudio.speak(cleanEng, 'en-US', 0.82);
+        arcadeAudio.speakBilingual(found.heb, cleanEng, 0.86);
       }
     });
   });
@@ -1582,11 +1896,16 @@ function renderCurrentQuestion() {
   q.options.forEach(optVal => {
     const row = document.createElement('div');
     row.className = 'option-row';
+    if (lia) {
+      row.style.padding = '16px 14px';
+      row.style.fontSize = '1.28rem';
+      row.style.minHeight = '72px';
+    }
     row.dataset.val = optVal;
     row.innerHTML = `
       <span class="opt-text" dir="auto">${optVal}</span>
       <button type="button" class="opt-speak-mini" title="השמע תשובה">🔊</button>
-      <span class="opt-indicator">${q.isMulti ? '☐' : '•'}</span>
+      <span class="opt-indicator">${q.isMulti ? '☐' : (lia ? '✨' : '•')}</span>
     `;
     const miniSpeak = row.querySelector('.opt-speak-mini');
     if (miniSpeak) {
@@ -1596,21 +1915,29 @@ function renderCurrentQuestion() {
       });
     }
     row.addEventListener('click', () => {
+      if (row.classList.contains('wrong')) return;
       handleOptionSelect(optVal, row, q.isMulti);
-      if (lia) speakOptionValue(optVal);
+      // For Lia (age 5): One-tap direct check so she never has to hunt for a separate "Check Answer" button!
+      if (lia && !q.isMulti) {
+        checkCurrentAnswer();
+      }
     });
     optsContainer.appendChild(row);
   });
 
-  document.getElementById('attempt-counter').textContent = `ניסיון 1`;
+  document.getElementById('attempt-counter').textContent = lia ? '🦄 לחצי על התשובה!' : `ניסיון 1`;
   const fb = document.getElementById('feedback-banner');
   fb.className = 'feedback-banner hidden';
-  document.getElementById('btn-check-answer').classList.remove('hidden');
+
+  const checkBtn = document.getElementById('btn-check-answer');
+  if (checkBtn) {
+    // Hide the 2nd-step button for Lia so she plays with 1 direct tap!
+    checkBtn.classList.toggle('hidden', lia && !q.isMulti);
+  }
   document.getElementById('btn-next-question').classList.add('hidden');
 
-  if (q.autoSpeak || lia) {
-    setTimeout(() => speakQuestionPrompt(q), 240);
-  }
+  // Always narrate the question & explanation automatically in Hebrew (and English when relevant) for BOTH Ilay and Lia!
+  setTimeout(() => speakQuestionPrompt(q), 220);
 }
 
 function handleOptionSelect(val, rowEl, isMulti) {
@@ -1632,7 +1959,7 @@ function handleOptionSelect(val, rowEl, isMulti) {
     session.selectedOptions.clear();
     document.querySelectorAll('#q-options-container .option-row').forEach(el => {
       el.classList.remove('selected');
-      el.querySelector('.opt-indicator').textContent = '•';
+      el.querySelector('.opt-indicator').textContent = lia ? '✨' : '•';
     });
     session.selectedOptions.add(val);
     rowEl.classList.add('selected');
@@ -1648,7 +1975,7 @@ function checkCurrentAnswer() {
   if (session.selectedOptions.size === 0) {
     const fb = document.getElementById('feedback-banner');
     fb.className = 'feedback-banner error';
-    fb.textContent = lia ? 'בחרי תשובה קודם מתוקה! 🦄' : 'בחר תשובה קודם! ⚽';
+    fb.textContent = lia ? 'לחצי על אחת התמונות מתוקה! 🦄' : 'בחר תשובה קודם! ⚽';
     return;
   }
 
@@ -1674,9 +2001,9 @@ function checkCurrentAnswer() {
       appState.bestStreak = session.currentStreak;
     }
 
-    const stage = q.progressiveStage || (session.currentIndex < 3 ? 1 : session.currentIndex < 7 ? 2 : 3);
+    const stage = q.progressiveStage || 1;
     const stageBonus = stage === 3 ? 5 : stage === 2 ? 2 : 0;
-    const baseReward = session.attemptsOnCurrent === 1 ? 10 : 5;
+    const baseReward = session.attemptsOnCurrent === 1 ? 10 : 8;
     const streakBonus = session.currentStreak >= 3 ? 5 : 0;
     const mult = session.isDailyBonus ? 2 : 1;
     const earned = (baseReward + streakBonus + stageBonus) * mult;
@@ -1686,11 +2013,14 @@ function checkCurrentAnswer() {
     session.penaltyHistory[session.currentIndex] = 'scored';
 
     const statsObj = getActiveTopicStats();
+    const prevCorrect = (statsObj[q.topicId] && statsObj[q.topicId].correct) || 0;
+    const prevLevel = getTopicMasteryLevelInfo(prevCorrect).level;
     const tStat = statsObj[q.topicId] || { solved: 0, correct: 0, stars: 0 };
     tStat.solved++;
     tStat.correct++;
     tStat.stars = Math.min(3, Math.floor(tStat.correct / 5));
     statsObj[q.topicId] = tStat;
+    const newLevelInfo = getTopicMasteryLevelInfo(tStat.correct);
     saveState();
 
     document.querySelectorAll('#q-options-container .option-row').forEach(el => {
@@ -1706,32 +2036,38 @@ function checkCurrentAnswer() {
     if (gk) gk.classList.add('dive-right');
 
     const streakMsg = session.currentStreak >= 3 ? ` 🔥 רצף ${session.currentStreak}!` : '';
-    const stageMsg = stage === 3 ? ' 👑 בונוס שלב האלופים!' : '';
+    const levelUpMsg = newLevelInfo.level > prevLevel ? ` 🎉 עלית ל-${newLevelInfo.label}!` : '';
     fb.className = 'feedback-banner success';
     fb.textContent = lia
-      ? `כל הכבוד ליה! קסם של תשובה! +${earned} 🪙${streakMsg}${stageMsg}`
-      : `גווווול! +${earned} 🪙${streakMsg}${stageMsg}`;
+      ? `כל הכבוד ליה אלופה! +${earned} 🪙${streakMsg}${levelUpMsg}`
+      : `גווווול! +${earned} 🪙${streakMsg}${levelUpMsg}`;
     document.getElementById('commentator-text').textContent = lia
       ? `🦄 "סטיץ׳ וחד-קרן מוחאים כפיים לליה!"`
       : `🎙️ "שעררר אדיר של עילי!"`;
 
-    // Spoken milestone encouragement so they feel proud as difficulty rises
-    if (session.currentStreak === 3) {
+    // Speak praise / English reinforcement
+    if (newLevelInfo.level > prevLevel) {
       setTimeout(() => {
         arcadeAudio.speak(
-          lia ? 'וואו ליה! שלוש תשובות נכונות ברצף! איזו אלופה!' : 'איזה תותח עילי! שלושה שערים ברצף!',
+          lia
+            ? `וואו ליה! עלית לרמה ${newLevelInfo.level}! איזו אלופה!`
+            : `כל הכבוד עילי! עלית לרמה ${newLevelInfo.level} בנושא הזה!`,
           'he-IL',
           0.9
         );
-      }, 350);
-    } else if (session.currentStreak === 5 || session.currentStreak === 8) {
+      }, 280);
+    } else if (lia && q.isEnglish && q.englishSpeechWord) {
+      setTimeout(() => {
+        arcadeAudio.speakBilingual('מצוין ליה!', q.englishSpeechWord, 0.9);
+      }, 220);
+    } else if (session.currentStreak === 3 || session.currentStreak === 6) {
       setTimeout(() => {
         arcadeAudio.speak(
-          lia ? 'מדהים ליה! את כוכבת העל של האנגלית והגן!' : 'בלתי ניתן לעצירה! עילי כובש את האצטדיון!',
+          lia ? 'איזו אלופה ליה! שלוש תשובות נכונות ברצף!' : 'איזה תותח עילי! שלושה שערים ברצף!',
           'he-IL',
           0.9
         );
-      }, 350);
+      }, 300);
     }
 
     updateHeaderUI();
@@ -1740,20 +2076,49 @@ function checkCurrentAnswer() {
     document.getElementById('btn-check-answer').classList.add('hidden');
     document.getElementById('btn-next-question').classList.remove('hidden');
   } else {
+    // ZERO-FRUSTRATION GUIDED COACHING FOR LIA (AGE 5)
+    if (lia) {
+      session.attemptsOnCurrent = 2;
+      // Fade out the option she tapped and highlight the right answer with a golden glow so she learns without ever failing!
+      document.querySelectorAll('#q-options-container .option-row').forEach(el => {
+        if (session.selectedOptions.has(el.dataset.val)) {
+          el.classList.add('wrong');
+          el.style.opacity = '0.4';
+        } else if (correctSet.has(el.dataset.val)) {
+          el.style.borderColor = '#facc15';
+          el.style.boxShadow = '0 0 18px rgba(250, 204, 21, 0.65)';
+        }
+      });
+      session.selectedOptions.clear();
+      document.getElementById('hint-box').classList.remove('hidden');
+      fb.className = 'feedback-banner warning';
+      fb.textContent = `💡 בואי נלמד יחד מתוקה: ${q.hint} — לחצי עכשיו על התשובה שמסומנת בזהב! ✨`;
+      if (q.hint) {
+        arcadeAudio.speak(`בואי נלמד יחד ליה: ${q.hint}. לחצי על התשובה המוארת בזהב!`, 'he-IL', 0.88);
+      }
+      return;
+    }
+
+    // FOR ILAY: Attempt 1 gives spoken Hebrew hint + crosses out the wrong option so Attempt 2 is fair and educational!
     arcadeAudio.playMiss();
     session.currentStreak = 0;
     updateHeaderUI();
 
     if (session.attemptsOnCurrent === 1) {
       session.attemptsOnCurrent = 2;
-      document.getElementById('attempt-counter').textContent = `ניסיון 2`;
-      fb.className = 'feedback-banner error';
-      fb.textContent = lia
-        ? 'לא נורא מתוקה! 💡 בואי נקשיב לרמז וננסה שוב יחד!'
-        : 'כמעט בשער! 🥅 קרא את הרמז ונסה לבעוט שוב!';
+      document.getElementById('attempt-counter').textContent = `ניסיון 2 (עם רמז 💡)`;
+      document.querySelectorAll('#q-options-container .option-row').forEach(el => {
+        if (session.selectedOptions.has(el.dataset.val) && !correctSet.has(el.dataset.val)) {
+          el.classList.add('wrong');
+          el.style.opacity = '0.45';
+        }
+      });
+      session.selectedOptions.clear();
+      fb.className = 'feedback-banner warning';
+      fb.textContent = `כמעט בשער עילי! 🥅 הקשב להסבר ונסה לבעוט שוב!`;
       document.getElementById('hint-box').classList.remove('hidden');
-      if (lia && q.hint) {
-        setTimeout(() => arcadeAudio.speak(`רמז לליה: ${q.hint}`, 'he-IL', 0.86), 250);
+      if (q.hint) {
+        setTimeout(() => arcadeAudio.speak(`רמז והסבר: ${q.hint}`, 'he-IL', 0.88), 200);
       }
     } else {
       session.answeredCurrent = true;
@@ -1774,8 +2139,10 @@ function checkCurrentAnswer() {
         }
       });
 
+      const cleanAns = q.correctAnswers.join(' , ').replace(/<[^>]+>/g, '');
       fb.className = 'feedback-banner error';
-      fb.textContent = `התשובה הנכונה: ${q.correctAnswers.join(' , ')}`;
+      fb.textContent = `התשובה הנכונה: ${cleanAns} — ${q.hint || ''}`;
+      arcadeAudio.speak(`התשובה הנכונה היא: ${cleanAns}. ${q.hint || ''}`, 'he-IL', 0.88);
       renderPenaltyTrack();
 
       document.getElementById('btn-check-answer').classList.add('hidden');
@@ -1801,7 +2168,7 @@ function finishMatch() {
   const lia = isLiaActive();
 
   const ratio = session.correctCount / session.totalQuestions;
-  if (ratio >= 0.7) {
+  if (ratio >= 0.65) {
     addActiveTrophies(session.isDailyBonus ? 2 : 1);
   }
   saveState();
@@ -1815,7 +2182,6 @@ function finishMatch() {
   document.getElementById('sum-coins').textContent = `+${session.coinsEarned}`;
   document.getElementById('sum-streak').textContent = session.maxSessionStreak;
 
-  // Reset Mystery Reward Chest so every completed game has an exciting reward to open
   session.chestOpened = false;
   const btnChest = document.getElementById('btn-open-mystery-chest');
   const chestRes = document.getElementById('mystery-chest-result');
@@ -1847,19 +2213,19 @@ function openSummaryMysteryChest() {
   const locked = catalog.filter(s => !unlocked.includes(s.id));
 
   let msg = '';
-  if (locked.length > 0 && Math.random() < 0.45) {
+  if (locked.length > 0 && Math.random() < 0.55) {
     const wonSticker = locked[Math.floor(Math.random() * locked.length)];
     unlocked.push(wonSticker.id);
     addActiveCoins(15);
     session.coinsEarned += 15;
-    msg = `🎉 הפתעה נדירה! קיבלת מדבקה חדשה לאלבום: ${wonSticker.emoji} ${wonSticker.name} + 15 🪙 מטבעות בונוס!`;
+    msg = `🎉 הפתעה נדירה! קיבלת קלף חדש לאלבום: "${wonSticker.name}" + 15 🪙 מטבעות בונוס!`;
   } else {
     const bonusCoins = lia ? 30 : 25;
     addActiveCoins(bonusCoins);
     session.coinsEarned += bonusCoins;
     const prizeTitle = lia
       ? ['🦄 כתר יהלומים קסום', '💙 גלידת הוואי של סטיץ׳', '💄 ערכת נצנצים מוזהבת', '🌈 קשת בענן נוצצת'][Math.floor(Math.random() * 4)]
-      : ['⚽ כדור זהב של ליגת האלופים', '🧤 כפפות שוער אגדיות', '🎮 קלף TOTY נדיר מ-FC 27', '🏆 גביע האצטדיון המוזהב'][Math.floor(Math.random() * 4)];
+      : ['⚽ כדור זהב של ליגת האלופות', '🧤 כפפות שוער אגדיות', '🎮 קלף TOTY נדיר מ-FC 27', '🏆 גביע האצטדיון המוזהב'][Math.floor(Math.random() * 4)];
     msg = `🎉 מצאת בתיבה: ${prizeTitle}! קיבלת +${bonusCoins} 🪙 מטבעות בונוס!`;
   }
 
@@ -1880,7 +2246,10 @@ function openSummaryMysteryChest() {
   );
 }
 
-// ==================== STICKER ALBUM & SHOP ====================
+// ==================== SUPERGOL ISRAEL & UEFA CHAMPIONS LEAGUE COLLECTOR ALBUM ====================
+
+let activeAlbumSeriesFilter = 'all';
+let inspectedCardId = null;
 
 function renderShopView() {
   const catalog = getActiveCatalog();
@@ -1893,32 +2262,71 @@ function renderShopView() {
   const pct = Math.round((stickers.length / catalog.length) * 100);
   document.getElementById('album-progress-fill').style.width = `${pct}%`;
 
+  const seriesTabs = document.getElementById('album-series-tabs');
+  if (seriesTabs) {
+    seriesTabs.classList.toggle('hidden', lia);
+  }
+
+  const currentAvatar = lia ? (appState.liaProfile.avatar || 'l1') : (appState.avatar || 's1');
   const grid = document.getElementById('stickers-grid');
   grid.innerHTML = '';
 
-  catalog.forEach(st => {
+  const filteredCatalog = catalog.filter(st => {
+    if (lia || activeAlbumSeriesFilter === 'all') return true;
+    const meta = (typeof FUT_CARD_META !== 'undefined' && FUT_CARD_META[st.id]) || {};
+    return meta.series === activeAlbumSeriesFilter;
+  });
+
+  filteredCatalog.forEach(st => {
     const unlocked = stickers.includes(st.id);
-    const card = document.createElement('div');
-    card.className = `sticker-card ${unlocked ? 'unlocked' : 'locked'}`;
-    card.innerHTML = `
-      <div class="sticker-emoji">${st.emoji}</div>
-      <div class="sticker-name">${unlocked ? st.name : '???'}</div>
-      <div class="sticker-rarity">${st.rarity}</div>
-    `;
+    const isEquipped = currentAvatar === st.id;
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = (typeof renderFUTCardHTML === 'function')
+      ? renderFUTCardHTML(st, unlocked, isEquipped)
+      : `<div class="sticker-card ${unlocked ? 'unlocked' : 'locked'}"><div class="sticker-name">${unlocked ? st.name : '???'}</div></div>`;
+
+    const cardEl = wrapper.firstElementChild || wrapper;
     if (unlocked) {
-      card.addEventListener('click', () => {
-        if (lia) {
-          appState.liaProfile.avatar = st.emoji;
-        } else {
-          appState.avatar = st.emoji;
-        }
-        saveState();
-        updateHeaderUI();
+      cardEl.addEventListener('click', () => {
         arcadeAudio.playClick();
+        openFutCardModal(st, false);
+      });
+    } else {
+      cardEl.addEventListener('click', () => {
+        arcadeAudio.playClick();
+        arcadeAudio.speak('הקלף עדיין נעול! לחץ על פתח חבילה למעלה כדי להגריל קלפים חדשים!', 'he-IL', 0.88);
       });
     }
-    grid.appendChild(card);
+    grid.appendChild(cardEl);
   });
+}
+
+function openFutCardModal(st, isNewPackReveal = false) {
+  const modal = document.getElementById('fut-pack-modal');
+  const stage = document.getElementById('fut-modal-card-stage');
+  const storyBox = document.getElementById('fut-modal-story');
+  const headerBadge = document.getElementById('fut-modal-header-badge');
+  if (!modal || !stage) return;
+
+  inspectedCardId = st.id;
+  const lia = isLiaActive();
+  const currentAvatar = lia ? (appState.liaProfile.avatar || 'l1') : (appState.avatar || 's1');
+  const meta = (typeof FUT_CARD_META !== 'undefined' && FUT_CARD_META[st.id]) || {
+    storyHeb: `קלף אספנות מיוחד באלבום: ${st.name}!`
+  };
+
+  if (headerBadge) {
+    headerBadge.textContent = isNewPackReveal ? '🎉 קלף חדש נפתח בחבילה! ✨' : `🃏 קלף אספנות ${meta.num || ''}`;
+  }
+  stage.innerHTML = (typeof renderFUTCardHTML === 'function')
+    ? renderFUTCardHTML(st, true, currentAvatar === st.id)
+    : '';
+  if (storyBox) {
+    storyBox.textContent = meta.storyHeb || st.name;
+  }
+
+  modal.classList.remove('hidden');
+  arcadeAudio.speak(`${st.name}. ${meta.storyHeb || ''}`, 'he-IL', 0.88);
 }
 
 function buyMysteryPack() {
@@ -1926,10 +2334,10 @@ function buyMysteryPack() {
   const coins = getActiveCoins();
   const catalog = getActiveCatalog();
   const stickers = getActiveStickers();
-  const lia = isLiaActive();
 
   if (coins < PACK_COST) {
     arcadeAudio.playMiss();
+    arcadeAudio.speak(`חסרים לך עוד ${PACK_COST - coins} מטבעות כדי לפתוח חבילה!`, 'he-IL', 0.88);
     alert(`חסרים לך עוד ${PACK_COST - coins} מטבעות! 🪙`);
     return;
   }
@@ -1940,24 +2348,22 @@ function buyMysteryPack() {
   if (locked.length > 0) {
     const chosen = locked[Math.floor(Math.random() * locked.length)];
     stickers.push(chosen.id);
-    if (lia) {
-      appState.liaProfile.avatar = chosen.emoji;
-    } else {
-      appState.avatar = chosen.emoji;
-    }
     arcadeAudio.playUnlock();
-    confetti.burst(95);
-    alert(`🎉 קלף חדש: ${chosen.emoji} "${chosen.name}"!`);
+    confetti.burst(110);
+    saveState();
+    updateHeaderUI();
+    renderShopView();
+    openFutCardModal(chosen, true);
   } else {
     addActiveTrophies(1);
     arcadeAudio.playUnlock();
-    confetti.burst(95);
+    confetti.burst(110);
+    saveState();
+    updateHeaderUI();
+    renderShopView();
+    arcadeAudio.speak('וואו! השלמת את כל האלבום וקיבלת גביע זהב!', 'he-IL', 0.9);
     alert(`👑 השלמת את כל האלבום! קיבלת גביע זהב!`);
   }
-
-  saveState();
-  updateHeaderUI();
-  renderShopView();
 }
 
 // ==================== PARENTS ZONE & SECURITY GATE ====================
@@ -2812,12 +3218,26 @@ document.addEventListener('DOMContentLoaded', () => {
     switchView('dictation');
   });
 
-  // 4 Big Home Visual Tiles (Lia)
+  // 6 Big Home Visual Tiles (Lia)
   const btnOpenMakeup = document.getElementById('quick-open-makeup');
   if (btnOpenMakeup) {
     btnOpenMakeup.addEventListener('click', () => {
       arcadeAudio.playClick();
       switchView('makeup');
+    });
+  }
+  const btnOpenColoring = document.getElementById('quick-open-coloring');
+  if (btnOpenColoring) {
+    btnOpenColoring.addEventListener('click', () => {
+      arcadeAudio.playClick();
+      switchView('coloring');
+    });
+  }
+  const btnOpenDressup = document.getElementById('quick-open-dressup');
+  if (btnOpenDressup) {
+    btnOpenDressup.addEventListener('click', () => {
+      arcadeAudio.playClick();
+      switchView('dressup');
     });
   }
   const btnOpenKinder = document.getElementById('quick-open-kinder');
@@ -2831,7 +3251,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnOpenLiaEng) {
     btnOpenLiaEng.addEventListener('click', () => {
       arcadeAudio.playClick();
-      startMatch('lia_english_mix', '🦄 מיקס אנגלית ענק עם סטיץ׳ וחד-קרן', false);
+      startMatch('lia_english_mix', '🦄 מיקס אנגלית בסיסית עם סטיץ׳ וחד-קרן', false);
     });
   }
   const btnOpenLiaPrep = document.getElementById('quick-open-lia-prep');
@@ -2985,16 +3405,66 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Category Tabs
-  document.querySelectorAll('.cat-tab').forEach(tab => {
+  // Category Tabs (Home View only, excluding Album Series Tabs)
+  document.querySelectorAll('.cat-tab[data-cat]').forEach(tab => {
     tab.addEventListener('click', () => {
       arcadeAudio.playClick();
-      document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.cat-tab[data-cat]').forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
       appState.selectedCategory = tab.dataset.cat;
       renderTopicsGrid();
     });
   });
+
+  // Album Series Filter Tabs (Supergol Israel vs UEFA Champions League)
+  document.querySelectorAll('#album-series-tabs .cat-tab[data-series]').forEach(tab => {
+    tab.addEventListener('click', () => {
+      arcadeAudio.playClick();
+      document.querySelectorAll('#album-series-tabs .cat-tab[data-series]').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      activeAlbumSeriesFilter = tab.dataset.series || 'all';
+      renderShopView();
+    });
+  });
+
+  // FUT Card Walkout & Story Modal Listeners
+  const btnCloseFutModal = document.getElementById('btn-close-fut-modal');
+  if (btnCloseFutModal) {
+    btnCloseFutModal.addEventListener('click', () => {
+      arcadeAudio.playClick();
+      const modal = document.getElementById('fut-pack-modal');
+      if (modal) modal.classList.add('hidden');
+    });
+  }
+  const btnFutModalSpeak = document.getElementById('btn-fut-modal-speak');
+  if (btnFutModalSpeak) {
+    btnFutModalSpeak.addEventListener('click', () => {
+      if (!inspectedCardId) return;
+      const catalog = getActiveCatalog();
+      const st = catalog.find(x => x.id === inspectedCardId);
+      const meta = (typeof FUT_CARD_META !== 'undefined' && FUT_CARD_META[inspectedCardId]) || {};
+      const textToSpeak = meta.storyHeb || (st ? `קלף אספנות מיוחד: ${st.name}` : '');
+      if (textToSpeak) arcadeAudio.speak(textToSpeak, 'he-IL', 0.9);
+    });
+  }
+  const btnFutModalEquip = document.getElementById('btn-fut-modal-equip');
+  if (btnFutModalEquip) {
+    btnFutModalEquip.addEventListener('click', () => {
+      if (!inspectedCardId) return;
+      arcadeAudio.playGoalSuccess();
+      if (isLiaActive()) {
+        appState.liaProfile.avatar = inspectedCardId;
+      } else {
+        appState.avatar = inspectedCardId;
+      }
+      saveState();
+      updateHeaderUI();
+      renderShopView();
+      const modal = document.getElementById('fut-pack-modal');
+      if (modal) modal.classList.add('hidden');
+      arcadeAudio.speak('איזה יופי! הקלף נבחר בתור הסמל האישי שלך למעלה!', 'he-IL', 0.9);
+    });
+  }
 
   // Difficulty & Mode Selectors
   document.querySelectorAll('#difficulty-selector .pill-opt').forEach(btn => {
@@ -3143,6 +3613,8 @@ document.addEventListener('DOMContentLoaded', () => {
   setupFC27StudioListeners();
   setupScienceStudioListeners();
   setupTalkingDictionaryListeners();
+  setupColoringStudioListeners();
+  setupDressUpStudioListeners();
 });
 
 // ==================== VIEW 10: LIA'S GLAM & MAKEUP STUDIO CONTROLLER ====================
@@ -4398,6 +4870,365 @@ function setupTalkingDictionaryListeners() {
     searchInp.addEventListener('input', () => {
       talkingDictState.searchQuery = searchInp.value;
       renderTalkingDictionary();
+    });
+  }
+}
+
+// ==================== VIEW 15: LIA'S EDUCATIONAL COLORING STUDIO CONTROLLER (צביעה לימודית בגיל 5) ====================
+
+let coloringStudioState = {
+  pageIndex: 0,
+  selectedColorId: 'yellow',
+  filledZones: {}, // { z1: '#facc15', ... }
+  missionZoneIndex: 0
+};
+
+function initColoringStudio() {
+  if (typeof LIA_COLORING_PAGES === 'undefined' || typeof LIA_COLORING_PALETTE === 'undefined') return;
+  const page = LIA_COLORING_PAGES[coloringStudioState.pageIndex] || LIA_COLORING_PAGES[0];
+  if (page && page.zones && page.zones[0]) {
+    coloringStudioState.selectedColorId = page.zones[0].targetColor || 'pink';
+  }
+  renderColoringStudio();
+  setTimeout(() => speakColoringMission(), 260);
+}
+
+function getCurrentColoringMissionZone() {
+  if (typeof LIA_COLORING_PAGES === 'undefined') return null;
+  const page = LIA_COLORING_PAGES[coloringStudioState.pageIndex] || LIA_COLORING_PAGES[0];
+  if (!page) return null;
+  const uncolored = page.zones.find(z => !coloringStudioState.filledZones[z.id]);
+  return uncolored || page.zones[0];
+}
+
+function speakColoringMission() {
+  const zone = getCurrentColoringMissionZone();
+  if (!zone || typeof LIA_COLORING_PALETTE === 'undefined') return;
+  const pal = LIA_COLORING_PALETTE.find(c => c.id === zone.targetColor) || LIA_COLORING_PALETTE[0];
+  arcadeAudio.speakBilingual(
+    `ליה מתוקה! בואי נצבע את ${zone.nameHeb} בצבע ${pal.heb}! באנגלית אומרים:`,
+    `${pal.eng}! ${zone.nameEng}!`,
+    0.88
+  );
+}
+
+function renderColoringStudio() {
+  if (typeof LIA_COLORING_PAGES === 'undefined' || typeof LIA_COLORING_PALETTE === 'undefined') return;
+  const page = LIA_COLORING_PAGES[coloringStudioState.pageIndex] || LIA_COLORING_PAGES[0];
+
+  // 1. Page Tabs
+  const tabsEl = document.getElementById('coloring-page-tabs');
+  if (tabsEl) {
+    tabsEl.innerHTML = LIA_COLORING_PAGES.map((p, idx) => `
+      <button type="button" class="cat-tab ${idx === coloringStudioState.pageIndex ? 'active' : ''}" data-colorpage="${idx}" style="font-size:0.82rem;">
+        ${p.title}
+      </button>
+    `).join('');
+    tabsEl.querySelectorAll('[data-colorpage]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        arcadeAudio.playClick();
+        coloringStudioState.pageIndex = Number(btn.dataset.colorpage);
+        coloringStudioState.filledZones = {};
+        const newPage = LIA_COLORING_PAGES[coloringStudioState.pageIndex];
+        if (newPage && newPage.zones[0]) {
+          coloringStudioState.selectedColorId = newPage.zones[0].targetColor;
+        }
+        renderColoringStudio();
+        speakColoringMission();
+      });
+    });
+  }
+
+  // 2. Mission Banner Text
+  const missionZone = getCurrentColoringMissionZone();
+  const missionEl = document.getElementById('coloring-mission-text');
+  if (missionEl && missionZone) {
+    const pal = LIA_COLORING_PALETTE.find(c => c.id === missionZone.targetColor) || LIA_COLORING_PALETTE[0];
+    const allDone = page.zones.every(z => Boolean(coloringStudioState.filledZones[z.id]));
+    if (allDone) {
+      missionEl.innerHTML = `🌟 כל הכבוד ליה! צבעת את כל הציור של <strong>${page.title}</strong>! את יכולה להמשיך לצבוע חופשי או לעבור לציור הבא! 🎨`;
+    } else {
+      missionEl.innerHTML = `בחרי צבע <strong>${pal.heb} (${pal.eng})</strong> ולחצי על <strong>${missionZone.nameHeb}</strong> בציור!`;
+    }
+  }
+
+  // 3. Render SVG Canvas
+  const svgContainer = document.getElementById('coloring-svg-container');
+  if (svgContainer) {
+    const zonesSvg = page.zones.map(z => {
+      const fillHex = coloringStudioState.filledZones[z.id] || '#f8fafc';
+      const isTarget = missionZone && missionZone.id === z.id && !coloringStudioState.filledZones[z.id];
+      const strokeColor = isTarget ? '#ec4899' : '#334155';
+      const strokeW = isTarget ? '3.5' : '2.5';
+      return `<g class="coloring-zone-group" data-zone-id="${z.id}" fill="${fillHex}" stroke="${strokeColor}" stroke-width="${strokeW}" style="cursor:pointer;transition:all 0.2s ease;">${z.path}</g>`;
+    }).join('');
+
+    svgContainer.innerHTML = `
+      <svg viewBox="0 0 300 220" style="width:100%;max-width:330px;height:auto;display:block;margin:0 auto;user-select:none;">
+        <rect width="300" height="220" rx="16" fill="#fffdf9"/>
+        ${zonesSvg}
+      </svg>
+    `;
+
+    svgContainer.querySelectorAll('.coloring-zone-group').forEach(gEl => {
+      gEl.addEventListener('click', () => {
+        const zoneId = gEl.dataset.zoneId;
+        const zoneObj = page.zones.find(z => z.id === zoneId);
+        const chosenColor = LIA_COLORING_PALETTE.find(c => c.id === coloringStudioState.selectedColorId) || LIA_COLORING_PALETTE[0];
+        if (!zoneObj || !chosenColor) return;
+
+        const wasAlreadyColored = Boolean(coloringStudioState.filledZones[zoneId]);
+        coloringStudioState.filledZones[zoneId] = chosenColor.hex;
+
+        // Zero-frustration: ANY color Lia chooses colors the zone beautifully and teaches the English words + awards coins!
+        arcadeAudio.playGoalSuccess();
+        if (!wasAlreadyColored) {
+          addActiveCoins(15);
+          saveState();
+          updateHeaderUI();
+          confetti.burst(55);
+        }
+
+        const fb = document.getElementById('coloring-feedback-banner');
+        if (fb) {
+          fb.className = 'feedback-banner success';
+          fb.innerHTML = `🎨 איזה יופי ליה! צבעת את <strong>${zoneObj.nameHeb} (${zoneObj.nameEng})</strong> בצבע <strong>${chosenColor.heb} (${chosenColor.eng})</strong>! ${!wasAlreadyColored ? '<strong>(+15 🪙)</strong>' : ''}`;
+          fb.classList.remove('hidden');
+        }
+
+        // Auto-select next uncolored zone's recommended color so Lia can just tap-tap-tap effortlessly!
+        const nextUncolored = page.zones.find(z => !coloringStudioState.filledZones[z.id]);
+        if (nextUncolored) {
+          coloringStudioState.selectedColorId = nextUncolored.targetColor;
+        }
+
+        renderColoringStudio();
+        arcadeAudio.speakBilingual(
+          `איזה יופי ליה! ${chosenColor.heb}!`,
+          `${chosenColor.eng}! ${zoneObj.nameEng}!`,
+          0.9
+        );
+      });
+    });
+  }
+
+  // 4. Render Color Palette Grid
+  const palGrid = document.getElementById('coloring-palette-grid');
+  if (palGrid) {
+    palGrid.innerHTML = LIA_COLORING_PALETTE.map(c => {
+      const active = c.id === coloringStudioState.selectedColorId;
+      return `
+        <button type="button" class="coloring-swatch-btn" data-color-id="${c.id}" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 6px;border-radius:16px;border:${active ? '4px solid #0f172a' : '2px solid #e2e8f0'};background:${active ? '#fdf2f8' : '#ffffff'};box-shadow:${active ? '0 6px 14px rgba(236,72,153,0.3)' : 'none'};transform:${active ? 'scale(1.05)' : 'scale(1)'};cursor:pointer;transition:all 0.15s ease;">
+          <span style="width:36px;height:36px;border-radius:50%;background:${c.hex};border:2px solid rgba(0,0,0,0.15);display:inline-block;"></span>
+          <span style="font-size:0.86rem;font-weight:900;color:#1e293b;">${c.heb}</span>
+          <span style="font-size:0.74rem;font-weight:800;color:#64748b;">${c.eng}</span>
+        </button>
+      `;
+    }).join('');
+
+    palGrid.querySelectorAll('.coloring-swatch-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        arcadeAudio.playClick();
+        const cid = btn.dataset.colorId;
+        coloringStudioState.selectedColorId = cid;
+        renderColoringStudio();
+        const cObj = LIA_COLORING_PALETTE.find(c => c.id === cid);
+        if (cObj) {
+          arcadeAudio.speakBilingual(`צבע ${cObj.heb}. באנגלית:`, cObj.eng, 0.9);
+        }
+      });
+    });
+  }
+}
+
+function setupColoringStudioListeners() {
+  const btnSpeak = document.getElementById('btn-coloring-speak-mission');
+  if (btnSpeak) {
+    btnSpeak.addEventListener('click', () => speakColoringMission());
+  }
+  const btnReset = document.getElementById('btn-coloring-reset');
+  if (btnReset) {
+    btnReset.addEventListener('click', () => {
+      arcadeAudio.playClick();
+      coloringStudioState.filledZones = {};
+      const fb = document.getElementById('coloring-feedback-banner');
+      if (fb) fb.classList.add('hidden');
+      renderColoringStudio();
+      speakColoringMission();
+    });
+  }
+  const btnNext = document.getElementById('btn-coloring-next-page');
+  if (btnNext) {
+    btnNext.addEventListener('click', () => {
+      if (typeof LIA_COLORING_PAGES === 'undefined') return;
+      arcadeAudio.playClick();
+      coloringStudioState.pageIndex = (coloringStudioState.pageIndex + 1) % LIA_COLORING_PAGES.length;
+      coloringStudioState.filledZones = {};
+      const nextPage = LIA_COLORING_PAGES[coloringStudioState.pageIndex];
+      if (nextPage && nextPage.zones[0]) {
+        coloringStudioState.selectedColorId = nextPage.zones[0].targetColor;
+      }
+      const fb = document.getElementById('coloring-feedback-banner');
+      if (fb) fb.classList.add('hidden');
+      renderColoringStudio();
+      speakColoringMission();
+    });
+  }
+}
+
+// ==================== VIEW 16: LIA'S EDUCATIONAL DRESS-UP & SEASONS STUDIO CONTROLLER (הלבשות ועונות בגיל 5) ====================
+
+let dressUpStudioState = {
+  missionIndex: 0,
+  hat: 'crown',
+  top: 'ballgown',
+  shoe: 'slippers',
+  acc: 'wand'
+};
+
+function initDressUpStudio() {
+  if (typeof LIA_DRESSUP_ITEMS === 'undefined' || typeof LIA_DRESSUP_MISSIONS === 'undefined') return;
+  renderDressUpStudio();
+  setTimeout(() => speakDressUpMission(), 260);
+}
+
+function speakDressUpMission() {
+  if (typeof LIA_DRESSUP_MISSIONS === 'undefined') return;
+  const m = LIA_DRESSUP_MISSIONS[dressUpStudioState.missionIndex] || LIA_DRESSUP_MISSIONS[0];
+  if (!m) return;
+  arcadeAudio.speakBilingual(m.promptHeb, m.promptEng, 0.88);
+}
+
+function renderDressUpStudio() {
+  if (typeof LIA_DRESSUP_ITEMS === 'undefined' || typeof LIA_DRESSUP_MISSIONS === 'undefined') return;
+  const m = LIA_DRESSUP_MISSIONS[dressUpStudioState.missionIndex] || LIA_DRESSUP_MISSIONS[0];
+
+  const badgeEl = document.getElementById('dressup-mission-badge');
+  if (badgeEl && m) badgeEl.textContent = m.title;
+
+  const textEl = document.getElementById('dressup-mission-text');
+  if (textEl && m) textEl.textContent = m.promptHeb;
+
+  const stageEl = document.getElementById('dressup-character-stage');
+  if (stageEl && typeof renderDressUpCharacterSVG === 'function') {
+    stageEl.innerHTML = renderDressUpCharacterSVG(dressUpStudioState);
+  }
+
+  const controlsEl = document.getElementById('dressup-wardrobe-controls');
+  if (controlsEl) {
+    const categories = [
+      { key: 'hat', label: '👑 כובעים וכתרים (Hats & Crowns)', list: LIA_DRESSUP_ITEMS.hats },
+      { key: 'top', label: '👗 שמלות ומעילים (Dresses & Coats)', list: LIA_DRESSUP_ITEMS.tops },
+      { key: 'shoe', label: '👠 נעליים ומגפיים (Shoes & Boots)', list: LIA_DRESSUP_ITEMS.shoes },
+      { key: 'acc', label: '🪄 תיקים ואביזרים (Accessories)', list: LIA_DRESSUP_ITEMS.accessories }
+    ];
+
+    controlsEl.innerHTML = categories.map(cat => `
+      <div>
+        <div style="font-weight:900;font-size:0.88rem;color:#831843;margin-bottom:5px;">${cat.label}:</div>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;">
+          ${cat.list.map(item => {
+            const isSelected = dressUpStudioState[cat.key] === item.id;
+            const isMissionMatch = m && m.target && m.target[cat.key] === item.id;
+            return `
+              <button type="button" class="dressup-item-btn" data-cat-key="${cat.key}" data-item-id="${item.id}" style="display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:14px;border:${isSelected ? '3px solid #ec4899' : isMissionMatch ? '2px dashed #f59e0b' : '2px solid #e2e8f0'};background:${isSelected ? '#fdf2f8' : '#ffffff'};cursor:pointer;text-align:right;">
+                <span style="font-size:1.65rem;">${item.icon}</span>
+                <span style="display:flex;flex-direction:column;line-height:1.2;">
+                  <strong style="font-size:0.86rem;color:#1e293b;">${item.nameHeb}</strong>
+                  <span style="font-size:0.74rem;font-weight:800;color:#db2777;">${item.nameEng}</span>
+                </span>
+              </button>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `).join('');
+
+    controlsEl.querySelectorAll('.dressup-item-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        arcadeAudio.playClick();
+        const catKey = btn.dataset.catKey;
+        const itemId = btn.dataset.itemId;
+        dressUpStudioState[catKey] = itemId;
+        renderDressUpStudio();
+
+        const allLists = [
+          ...LIA_DRESSUP_ITEMS.hats,
+          ...LIA_DRESSUP_ITEMS.tops,
+          ...LIA_DRESSUP_ITEMS.shoes,
+          ...LIA_DRESSUP_ITEMS.accessories
+        ];
+        const found = allLists.find(x => x.id === itemId);
+        if (found) {
+          arcadeAudio.speakBilingual(`${found.nameHeb}! באנגלית:`, found.nameEng, 0.9);
+        }
+      });
+    });
+  }
+}
+
+function setupDressUpStudioListeners() {
+  const btnSpeak = document.getElementById('btn-dressup-speak-mission');
+  if (btnSpeak) {
+    btnSpeak.addEventListener('click', () => speakDressUpMission());
+  }
+
+  const btnCheck = document.getElementById('btn-dressup-check');
+  if (btnCheck) {
+    btnCheck.addEventListener('click', () => {
+      if (typeof LIA_DRESSUP_MISSIONS === 'undefined') return;
+      const m = LIA_DRESSUP_MISSIONS[dressUpStudioState.missionIndex] || LIA_DRESSUP_MISSIONS[0];
+      const fb = document.getElementById('dressup-feedback-banner');
+      if (!m || !fb) return;
+
+      // Age-5 Friendly Check: As long as Lia picked at least 1 matching seasonal item (or if she wants help, we gently dress the rest for her!), celebrate her!
+      const matches = [
+        dressUpStudioState.hat === m.target.hat,
+        dressUpStudioState.top === m.target.top,
+        dressUpStudioState.shoe === m.target.shoe,
+        dressUpStudioState.acc === m.target.acc
+      ].filter(Boolean).length;
+
+      if (matches >= 1) {
+        addActiveCoins(25);
+        saveState();
+        updateHeaderUI();
+        arcadeAudio.playGoalSuccess();
+        confetti.burst(95);
+        fb.className = 'feedback-banner success';
+        fb.innerHTML = `🌟 <strong>מושלם ליה! איזו סטייליסטית אלופה! (+25 🪙)</strong><br>התאמת בגדים נהדרים ל-${m.title}!`;
+        fb.classList.remove('hidden');
+        arcadeAudio.speakBilingual('כל הכבוד ליה! הלבשת את הדמות מהמם והרווחת עשרים וחמישה מטבעות!', m.promptEng, 0.9);
+      } else {
+        // Zero-frustration coaching: automatically show her the matching seasonal outfit and reward her!
+        dressUpStudioState.hat = m.target.hat;
+        dressUpStudioState.top = m.target.top;
+        dressUpStudioState.shoe = m.target.shoe;
+        dressUpStudioState.acc = m.target.acc;
+        renderDressUpStudio();
+        addActiveCoins(15);
+        saveState();
+        updateHeaderUI();
+        arcadeAudio.playGoalSuccess();
+        confetti.burst(60);
+        fb.className = 'feedback-banner success';
+        fb.innerHTML = `✨ <strong>בואי נלביש יחד את הסט המלא למשימה! (+15 🪙)</strong><br>הנה הבגדים שמתאימים בול: ${m.promptHeb}`;
+        fb.classList.remove('hidden');
+        arcadeAudio.speakBilingual(`בואי נלביש יחד ליה! ${m.promptHeb}`, m.promptEng, 0.88);
+      }
+    });
+  }
+
+  const btnNext = document.getElementById('btn-dressup-next-mission');
+  if (btnNext) {
+    btnNext.addEventListener('click', () => {
+      if (typeof LIA_DRESSUP_MISSIONS === 'undefined') return;
+      arcadeAudio.playClick();
+      dressUpStudioState.missionIndex = (dressUpStudioState.missionIndex + 1) % LIA_DRESSUP_MISSIONS.length;
+      const fb = document.getElementById('dressup-feedback-banner');
+      if (fb) fb.classList.add('hidden');
+      renderDressUpStudio();
+      speakDressUpMission();
     });
   }
 }

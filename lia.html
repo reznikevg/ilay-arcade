@@ -1,0 +1,1287 @@
+﻿<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="referrer" content="no-referrer">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="עילי">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="manifest" href="manifest.json">
+  <title>עילי וליה - למידה ומשחקים</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Rubik:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css?v=5.0">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body class="theme-beitar">
+
+  <!-- ==================== LOCK SCREEN (FAMILY PIN / GOOGLE SSO) ==================== -->
+  <div class="auth-gate-overlay" id="auth-gate-overlay">
+    <div class="auth-gate-card">
+      <div class="auth-logo-circle">🦁🦄</div>
+      <h2>האפליקציה של עילי וליה</h2>
+      <p>הזינו קוד משפחתי כדי להיכנס</p>
+
+      <form id="form-family-pin" class="pin-login-form">
+        <input
+          type="tel"
+          id="family-pin-input"
+          class="pin-input"
+          placeholder="1936"
+          inputmode="numeric"
+          maxlength="8"
+          autocomplete="off"
+          required
+        />
+        <button type="submit" class="btn-primary-large">כניסה</button>
+      </form>
+
+      <div class="auth-divider"><span>או כניסת הורים</span></div>
+
+      <div class="google-sso-box" id="google-sso-box">
+        <div id="g-signin-btn-container"></div>
+        <button type="button" class="google-custom-btn" id="btn-google-sso">
+          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="" width="18" height="18">
+          <span>התחברות עם Google</span>
+        </button>
+      </div>
+
+      <div class="auth-error hidden" id="auth-error-msg">קוד שגוי, נסה שוב</div>
+    </div>
+  </div>
+
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- ==================== MOBILE APP SHELL ==================== -->
+  <div class="app-shell">
+
+    <!-- Sticky iOS-Style Top Bar -->
+    <header class="app-header">
+      <div class="header-user" id="btn-profile">
+        <div class="avatar-circle" id="current-avatar">🦁</div>
+        <div class="user-meta">
+          <span class="user-name" id="player-name-display">עילי</span>
+          <span class="user-sub" id="player-rank-display">כיתה ב׳</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <div class="team-pill-toggle" id="team-switcher">
+          <button type="button" class="team-btn active" data-team="beitar" id="btn-team-beitar">בית"ר</button>
+          <button type="button" class="team-btn" data-team="real" id="btn-team-real">ריאל</button>
+          <button type="button" class="team-btn hidden" data-team="unicorn" id="btn-team-unicorn">🦄 חד-קרן</button>
+          <button type="button" class="team-btn hidden" data-team="stitch" id="btn-team-stitch">💙 סטיץ׳</button>
+        </div>
+
+        <div class="score-chip">
+          <span>🪙</span>
+          <span id="stat-coins">0</span>
+        </div>
+        <div class="score-chip trophy-chip">
+          <span>🏆</span>
+          <span id="stat-trophies">0</span>
+        </div>
+        <div class="hidden" id="streak-pill"><span id="stat-streak">0</span></div>
+
+        <button type="button" class="icon-circle-btn" id="btn-sound-toggle" aria-label="צליל">🔊</button>
+        <button type="button" class="icon-circle-btn nav-btn" data-view="parents" id="nav-parents" aria-label="הגדרות הורים">⚙️</button>
+      </div>
+    </header>
+
+    <!-- Kid Profile Switcher Bar (Ilay & Lia) -->
+    <div class="kid-switcher-bar" id="kid-switcher-bar">
+      <button type="button" class="kid-switch-btn active" data-kid="ilay" id="btn-kid-ilay">
+        <span class="kid-switch-emoji">👦⚽</span>
+        <span class="kid-switch-text"><strong>עילי</strong> <small>(כיתה ב׳)</small></span>
+      </button>
+      <button type="button" class="kid-switch-btn" data-kid="lia" id="btn-kid-lia">
+        <span class="kid-switch-emoji">👧🦄</span>
+        <span class="kid-switch-text"><strong>ליה</strong> <small>(גן חובה • בת 5)</small></span>
+      </button>
+    </div>
+
+    <!-- Scrollable Viewport -->
+    <main class="main-container">
+
+      <!-- ==================== VIEW 1: HOME ==================== -->
+      <section id="view-home" class="view-section active">
+        <!-- Daily Overview Card -->
+        <div class="hero-card" id="btn-daily-match">
+          <div class="hero-card-info">
+            <span class="hero-tag" id="hero-tag-text">אתגר יומי • בונוס כפול</span>
+            <h3 id="hero-title-text">משחק האלופים המהיר</h3>
+            <p id="hero-desc-text">8 שאלות בחשבון ושפה על גביע יומי</p>
+          </div>
+          <div class="hero-play-circle">▶</div>
+        </div>
+
+        <!-- ILAY'S 4 Core Daily Modules (2x2 Grid) -->
+        <div class="bento-grid" id="ilay-bento-grid">
+          <button type="button" class="bento-card bento-speech" id="quick-open-speech">
+            <div class="bento-icon-wrap">🎙️</div>
+            <div class="bento-title">תרגול ש׳ ו-ס׳</div>
+            <div class="bento-sub" id="quick-speech-summary">קלינאית תקשורת</div>
+          </button>
+
+          <button type="button" class="bento-card bento-hw" id="quick-open-hw">
+            <div class="bento-icon-wrap">✅</div>
+            <div class="bento-title">שיעורי בית</div>
+            <div class="bento-sub" id="quick-hw-summary">משימות להיום</div>
+          </button>
+
+          <button type="button" class="bento-card bento-dict" id="quick-open-dict">
+            <div class="bento-icon-wrap">🎧</div>
+            <div class="bento-title">הכתבה</div>
+            <div class="bento-sub" id="quick-dict-summary">שמיעה וכתיבה</div>
+          </button>
+
+          <button type="button" class="bento-card bento-sched" id="quick-open-schedule">
+            <div class="bento-icon-wrap">📅</div>
+            <div class="bento-title">היום שלי</div>
+            <div class="bento-sub" id="quick-sched-summary">מערכת וחוגים</div>
+          </button>
+        </div>
+
+        <!-- EA SPORTS FC 27 English Academy Banner (Ilay) - Direct 4-Mode Hub -->
+        <div class="fc27-home-banner" id="fc27-home-banner" style="flex-direction:column;align-items:stretch;gap:10px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+            <div class="fc27-banner-left">
+              <div class="fc27-logo-pill">EA SPORTS<br>FC™ 27</div>
+              <div class="fc27-banner-text">
+                <h4>🎮 אקדמיית פיפא FC 27 של עילי: מסכים, איך להתחיל משחק, שדרן וסרטונים!</h4>
+                <p>בחר מה בא לך לראות ולשמוע עכשיו — כל מסך, כל כפתור בשלט וכל משפט של השדרן עם דוגמאות!</p>
+              </div>
+            </div>
+            <span class="fc27-banner-play">פתח הכל ⚽</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;" id="fc27-home-quick-modes">
+            <button type="button" class="btn-chip" data-fc27jump="howto" style="background:#00ff87;color:#090d16;font-weight:900;border:none;padding:8px 6px;font-size:0.8rem;">▶️ איך מתחילים משחק (צעד-אחר-צעד)</button>
+            <button type="button" class="btn-chip" data-fc27jump="screens" style="background:#38bdf8;color:#090d16;font-weight:900;border:none;padding:8px 6px;font-size:0.8rem;">🖥️ מה אומר כל מסך בפיפא (6 מסכים)</button>
+            <button type="button" class="btn-chip" data-fc27jump="commentator" style="background:#fbbf24;color:#090d16;font-weight:900;border:none;padding:8px 6px;font-size:0.8rem;">🎙️ מה השדרן אומר + דוגמאות</button>
+            <button type="button" class="btn-chip" data-fc27jump="videos" style="background:#f43f5e;color:#ffffff;font-weight:900;border:none;padding:8px 6px;font-size:0.8rem;">🎬 5 סרטוני הדרכה ושלט</button>
+          </div>
+        </div>
+
+        <!-- LIA'S 6 Core Daily Modules (Makeup, Coloring+Learning, Dress-Up+Learning, Kindergarten Teacher, English, Prep) -->
+        <div class="bento-grid hidden" id="lia-bento-grid">
+          <button type="button" class="bento-card bento-makeup" id="quick-open-makeup">
+            <div class="bento-icon-wrap">💄</div>
+            <div class="bento-title">סטודיו האיפור של ליה</div>
+            <div class="bento-sub">לאפר ולהתאפר + צבעים באנגלית!</div>
+          </button>
+
+          <button type="button" class="bento-card bento-makeup" id="quick-open-coloring" style="background:linear-gradient(135deg,#fef9c3 0%,#fce7f3 100%);border-color:#f472b6;">
+            <div class="bento-icon-wrap">🎨</div>
+            <div class="bento-title">צביעה לימודית קסומה</div>
+            <div class="bento-sub">לצבוע לפי מספרים וצבעים באנגלית!</div>
+          </button>
+
+          <button type="button" class="bento-card bento-kinder" id="quick-open-dressup" style="background:linear-gradient(135deg,#e0f2fe 0%,#f3e8ff 100%);border-color:#a855f7;">
+            <div class="bento-icon-wrap">👗</div>
+            <div class="bento-title">סטודיו הלבשות ועונות</div>
+            <div class="bento-sub">להלביש לפי מזג אוויר + בגדים באנגלית!</div>
+          </button>
+
+          <button type="button" class="bento-card bento-kinder" id="quick-open-kinder">
+            <div class="bento-icon-wrap">👩‍🏫</div>
+            <div class="bento-title">הגן של הגננת ליה</div>
+            <div class="bento-sub">מפגש בוקר עם סטיץ׳ וחד-קרן!</div>
+          </button>
+
+          <button type="button" class="bento-card bento-lia-eng" id="quick-open-lia-eng">
+            <div class="bento-icon-wrap">🦄</div>
+            <div class="bento-title">אנגלית עם סטיץ׳</div>
+            <div class="bento-sub">מילים, צבעים וחיות בשמיעה!</div>
+          </button>
+
+          <button type="button" class="bento-card bento-lia-prep" id="quick-open-lia-prep">
+            <div class="bento-icon-wrap">🔤</div>
+            <div class="bento-title">מוכנות לגן חובה</div>
+            <div class="bento-sub">אותיות, חרוזים וספירה עד 10</div>
+          </button>
+        </div>
+
+        <!-- SCIENCE & HOW THINGS WORK DISCOVERY BANNER (For both Ilay & Lia!) -->
+        <div class="fc27-home-banner" id="science-home-banner" style="background:linear-gradient(135deg,#0284c7 0%,#312e81 100%);border-color:#38bdf8;box-shadow:0 6px 18px rgba(56,189,248,0.25);">
+          <div class="fc27-banner-left">
+            <div class="fc27-logo-pill" style="background:#38bdf8;color:#0f172a;box-shadow:0 0 12px rgba(56,189,248,0.6);">SCIENCE<br>LAB 🔬</div>
+            <div class="fc27-banner-text">
+              <h4 style="color:#bae6fd;" id="science-banner-title">🔬 מעבדת המדע (20 גילויים + 3 ניסויים חיים): איך דברים עובדים?</h4>
+              <p style="color:#e0f2fe;" id="science-banner-sub">ניסויים חיים, הסברים עם קול: מכוניות, צוללות, חלל, דינוזאורים, גוף האדם, וויי-פיי והר געש!</p>
+            </div>
+          </div>
+          <span class="fc27-banner-play" style="background:rgba(56,189,248,0.22);border-color:#7dd3fc;color:#fff;">למעבדה 🧪</span>
+        </div>
+
+        <!-- TALKING ILLUSTRATED ENGLISH & SCIENCE DICTIONARY BANNER (New in v4.0!) -->
+        <div class="fc27-home-banner" id="dictionary-home-banner" style="background:linear-gradient(135deg,#059669 0%,#064e3b 100%);border-color:#34d399;box-shadow:0 6px 18px rgba(16,185,129,0.22);">
+          <div class="fc27-banner-left">
+            <div class="fc27-logo-pill" style="background:#34d399;color:#064e3b;box-shadow:0 0 12px rgba(52,211,153,0.6);">TALKING<br>DICT 📖</div>
+            <div class="fc27-banner-text">
+              <h4 style="color:#a7f3d0;">📖 המילון המדבר המאויר: אנגלית, פיפא, מדע ויופי עם משפטים לדוגמא!</h4>
+              <p style="color:#d1fae5;">מילים ומשפטים שלמים באנגלית ובעברית עם הקראה רגילה 🔊 והקראה איטית וברורה 🐢!</p>
+            </div>
+          </div>
+          <span class="fc27-banner-play" style="background:rgba(52,211,153,0.22);border-color:#6ee7b7;color:#fff;">למילון 🔊</span>
+        </div>
+
+        <!-- Practice Games Section -->
+        <div class="section-bar">
+          <h2 class="section-heading" id="practice-section-heading">תרגול לימודי</h2>
+          <div class="segmented-tabs">
+            <button type="button" class="cat-tab active" data-cat="all">הכל</button>
+            <button type="button" class="cat-tab" data-cat="math">חשבון</button>
+            <button type="button" class="cat-tab" data-cat="hebrew">שפה</button>
+            <button type="button" class="cat-tab" data-cat="english">אנגלית 🇬🇧</button>
+            <button type="button" class="cat-tab" data-cat="science">מדע 🔬</button>
+            <button type="button" class="cat-tab" data-cat="custom" id="tab-custom">מיוחד</button>
+          </div>
+        </div>
+
+        <!-- Difficulty & Game Mode Controls -->
+        <div class="game-options-row">
+          <div class="pill-group" id="difficulty-selector">
+            <button type="button" class="pill-opt" data-diff="easy">🌟 קל</button>
+            <button type="button" class="pill-opt active" data-diff="medium">⚡ רגיל</button>
+            <button type="button" class="pill-opt" data-diff="hard">🔥 אלופים</button>
+          </div>
+          <div class="pill-group" id="gamemode-selector">
+            <button type="button" class="pill-opt active" data-mode="practice">🎯 אימון</button>
+            <button type="button" class="pill-opt" data-mode="penalty">⚽ פנדלים</button>
+            <button type="button" class="pill-opt" data-mode="arcade">⏱️ 60 שניות</button>
+          </div>
+        </div>
+
+        <div class="topics-list" id="topics-grid"></div>
+      </section>
+
+      <!-- ==================== VIEW 2: SPEECH THERAPY (ש׳ ו-ס׳) ==================== -->
+      <section id="view-speech" class="view-section">
+        <div class="screen-nav-bar">
+          <button type="button" class="btn-back" id="btn-leave-speech">‹ חזרה</button>
+          <span class="screen-title">תרגול הגייה (ש׳ / ס׳)</span>
+          <span class="badge-counter"><span id="sp-current-num">1</span>/<span id="sp-total-num">5</span></span>
+          <div class="hidden" id="sp-progress-fill"></div>
+        </div>
+
+        <div class="surface-card">
+          <div class="coach-tip-row">
+            <div class="coach-tip-text">
+              <strong>איך הוגים נכון?</strong> סוגרים שיניים לחיוך 😁 והלשון נשארת מאחורי השיניים.
+            </div>
+            <button type="button" class="btn-chip" id="btn-sp-model-listen">🔊 הדגמה</button>
+          </div>
+
+          <div class="speech-stage">
+            <div class="sp-emoji-huge" id="sp-emoji">⚽</div>
+            <div class="sp-target-phrase" id="sp-phrase">שַׁעַר שֶׁל שׁוּעָה!</div>
+            <div class="sp-word-chips-row" id="sp-word-chips-row"></div>
+            <div style="font-size:0.8rem;color:#64748b;margin-top:8px;font-weight:700;">💡 לחץ על כל מילה כדי לשמוע אותה בנפרד! כשמדברים, כל מילה שתאמר נכון תיצבע בירוק ✅</div>
+          </div>
+
+          <div class="speech-action-stack">
+            <button type="button" class="btn-record-main" id="btn-sp-record">
+              <span id="sp-mic-icon">🎙️</span>
+              <span id="sp-mic-label">לחץ להקלטה</span>
+            </button>
+            <button type="button" class="btn-secondary-pill hidden" id="btn-sp-play-self">▶️ השמע את ההקלטה שלי</button>
+          </div>
+
+          <div class="sp-wave-bars hidden" id="sp-wave-bars">
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+
+          <div class="sp-recognized-box hidden" id="sp-recognized-box">
+            <strong id="sp-recognized-text"></strong>
+          </div>
+
+          <div class="card-footer-bar">
+            <span id="sp-status-lbl" class="muted-note">בונוס: +20 מטבעות</span>
+            <div class="feedback-banner hidden" id="sp-feedback-banner"></div>
+            <button type="button" class="btn-primary-action hidden" id="btn-sp-next">המשך ⬅</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 3: SCHEDULE (היום שלי) ==================== -->
+      <section id="view-schedule" class="view-section">
+        <div class="screen-nav-bar">
+          <button type="button" class="btn-back" onclick="switchView('home')">‹ חזרה</button>
+          <span class="screen-title">מערכת שעות וחוגים</span>
+          <button type="button" class="btn-chip" id="btn-speak-day">🔊 הקרא</button>
+        </div>
+
+        <div class="day-selector-strip" id="day-tabs-bar">
+          <button type="button" class="day-tab" data-day="0">א׳</button>
+          <button type="button" class="day-tab" data-day="1">ב׳</button>
+          <button type="button" class="day-tab" data-day="2">ג׳</button>
+          <button type="button" class="day-tab" data-day="3">ד׳</button>
+          <button type="button" class="day-tab" data-day="4">ה׳</button>
+          <button type="button" class="day-tab" data-day="5">ו׳</button>
+          <button type="button" class="day-tab" data-day="6">ש׳</button>
+        </div>
+
+        <div class="quick-tags-bar kid-quick-add-bar">
+          <span class="quick-tags-lbl">+ הוסף להיום:</span>
+          <button type="button" class="kqa-btn" data-icon="⚽" data-title="אימון כדורגל">⚽ כדורגל</button>
+          <button type="button" class="kqa-btn" data-icon="🌍" data-title="שיעור אנגלית">🌍 אנגלית</button>
+          <button type="button" class="kqa-btn" data-icon="🎙️" data-title="תרגול ש׳ ו-ס׳">🎙️ דיבור</button>
+          <button type="button" class="kqa-btn" data-icon="👦" data-title="חבר">👦 חבר</button>
+        </div>
+
+        <div class="schedule-stack">
+          <div class="surface-card">
+            <h4 class="group-subtitle">🏫 בוקר בבית הספר</h4>
+            <div class="sched-grid" id="sched-school-list"></div>
+          </div>
+
+          <div class="surface-card">
+            <h4 class="group-subtitle">⚽ אחר הצהריים (חוגים ואימונים)</h4>
+            <div class="sched-grid" id="sched-after-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 4: HOMEWORK & TASKS (משימות) ==================== -->
+      <section id="view-homework" class="view-section">
+        <div class="screen-nav-bar">
+          <button type="button" class="btn-back" onclick="switchView('home')">‹ חזרה</button>
+          <span class="screen-title">שיעורי בית ומשימות</span>
+          <span class="badge-counter" id="hw-done-count">0/0</span>
+        </div>
+
+        <!-- Webtop Quick Live Sync Banner -->
+        <div class="webtop-quick-bar" style="display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg, #f0f7ff, #e1f0ff);border:1.5px solid #0071e3;border-radius:16px;padding:12px 16px;margin:12px 0 16px;box-shadow:0 2px 8px rgba(0,113,227,0.08);">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="font-size:1.6rem;">🏫</span>
+            <div style="text-align:right;">
+              <div style="font-weight:800;font-size:0.98rem;color:#0071e3;">Webtop רביבים ב׳3 (עילי)</div>
+              <div id="hw-webtop-status-label" style="font-size:0.8rem;color:#444;margin-top:2px;">⏰ סנכרון אוטומטי מתוזמן לענן כל יום ב-14:00</div>
+            </div>
+          </div>
+          <button type="button" id="btn-quick-sync-webtop" class="btn-secondary-pill" style="border:1.5px solid #0071e3;background:#fff;color:#0071e3;font-weight:800;padding:8px 14px;font-size:0.9rem;border-radius:20px;cursor:pointer;">
+            🔄 סנכרן עכשיו
+          </button>
+        </div>
+
+        <div class="surface-card">
+          <form id="form-kid-add-hw" class="inline-add-form">
+            <input type="text" id="kid-hw-input" placeholder="הוסף משימה או שיעורי בית..." required>
+            <button type="submit" class="btn-primary-action">הוסף</button>
+          </form>
+
+          <div id="hw-kids-list" class="task-list"></div>
+
+          <div class="completion-banner hidden" id="hw-all-done-banner">
+            🏆 כל הכבוד! השלמת את כל המשימות להיום!
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 5: DICTATION (הכתבה) ==================== -->
+      <section id="view-dictation" class="view-section">
+        <div class="screen-nav-bar">
+          <button type="button" class="btn-back" id="btn-leave-dictation">‹ חזרה</button>
+          <span class="screen-title">הכנה להכתבה</span>
+          <button type="button" class="btn-chip" id="btn-open-dict-editor" style="font-size:0.8rem;padding:4px 10px;">📝 ערוך מילים</button>
+          <span class="badge-counter"><span id="dict-current-num">1</span>/<span id="dict-total-num">10</span></span>
+          <div class="hidden" id="dict-progress-fill"></div>
+        </div>
+
+        <div class="surface-card">
+          <div class="dictation-audio-bar">
+            <button type="button" class="btn-listen-primary" id="btn-dict-speak">🔊 השמע מילה</button>
+            <button type="button" class="btn-chip" id="btn-dict-speak-slow">🐢 לאט</button>
+            <button type="button" class="btn-chip" id="btn-dict-peek">💡 רמז</button>
+          </div>
+
+          <div class="dict-hint-line" id="dict-sentence-context"></div>
+          <div class="hint-callout hidden" id="dict-peek-box"></div>
+          <div class="dict-letter-slots" id="dict-letter-slots"></div>
+
+          <div class="dict-input-row">
+            <input
+              type="text"
+              id="dict-user-input"
+              class="dict-text-input"
+              placeholder="הקלד את המילה..."
+              autocomplete="off"
+              autocorrect="off"
+              autocapitalize="off"
+              spellcheck="false"
+            />
+            <button type="button" class="btn-backspace" id="btn-dict-backspace">⌫</button>
+          </div>
+
+          <div class="hebrew-keyboard" id="hebrew-keyboard"></div>
+
+          <div class="card-footer-bar">
+            <span class="muted-note" id="dict-attempt-counter">ניסיון 1</span>
+            <div class="feedback-banner hidden" id="dict-feedback-banner"></div>
+            <div class="footer-btns">
+              <button type="button" class="btn-primary-action" id="btn-dict-check">בדיקה</button>
+              <button type="button" class="btn-success-action hidden" id="btn-dict-next">הבא ⬅</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 6: QUESTION ARENA ==================== -->
+      <section id="view-arena" class="view-section">
+        <div class="screen-nav-bar">
+          <button type="button" class="btn-back" id="btn-leave-arena">‹ חזרה</button>
+          <span class="screen-title" id="arena-topic-title">תרגול</span>
+          <span class="badge-counter"><span id="q-current-num">1</span>/<span id="q-total-num">10</span></span>
+          <div class="timer-pill hidden" id="arena-timer">⏱️ <span id="timer-seconds">60</span></div>
+          <div class="hidden" id="q-progress-fill"></div>
+        </div>
+
+        <div class="arena-visual-banner" id="arena-visual-banner">
+          <div class="arena-stage-row">
+            <div class="arena-keeper" id="goalkeeper">🧤</div>
+            <div class="penalty-dots-row" id="penalty-balls-track"></div>
+            <div class="arena-ball" id="soccer-ball-shot">⚽</div>
+          </div>
+          <div class="arena-commentary" id="commentator-text">מוכנים? בואו נתחיל!</div>
+        </div>
+
+        <button type="button" id="btn-arena-open-fc27-guide" class="btn-primary-large hidden" style="margin-bottom:10px;background:linear-gradient(135deg,#00ff87,#10b981);color:#090d16;font-weight:900;border:none;">
+          🎮 פתח את אקדמיית פיפא FC 27 (מסכים, איך מתחילים משחק, שדרן וסרטונים!)
+        </button>
+
+        <div class="surface-card" id="question-card">
+          <div class="q-top-row">
+            <button type="button" class="btn-chip" id="btn-speak-question">🔊 הקרא</button>
+            <div class="q-instruction-text" id="q-instruction"></div>
+            <button type="button" class="btn-chip" id="btn-hint">💡 רמז</button>
+          </div>
+
+          <div class="hint-callout hidden" id="hint-box"></div>
+          <div class="q-stimulus-box" id="q-stimulus" dir="ltr"></div>
+          <div class="options-container" id="q-options-container"></div>
+
+          <div class="card-footer-bar">
+            <span class="muted-note" id="attempt-counter">ניסיון 1</span>
+            <div class="feedback-banner hidden" id="feedback-banner"></div>
+            <div class="footer-btns">
+              <button type="button" class="btn-primary-action" id="btn-check-answer">בדיקה</button>
+              <button type="button" class="btn-success-action hidden" id="btn-next-question">הבא ⬅</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 7: SUMMARY ==================== -->
+      <section id="view-summary" class="view-section">
+        <div class="surface-card summary-view-card">
+          <div class="summary-medal" id="summary-icon">🏆</div>
+          <h2 id="summary-title">כל הכבוד עילי!</h2>
+          <p class="muted-note" id="summary-subtitle">סיימת את האימון בהצלחה</p>
+
+          <div class="summary-metrics">
+            <div class="metric-box">
+              <span class="metric-val" id="sum-correct">0/10</span>
+              <span class="metric-lbl">נכונות</span>
+            </div>
+            <div class="metric-box">
+              <span class="metric-val" id="sum-coins">+0</span>
+              <span class="metric-lbl">מטבעות</span>
+            </div>
+            <div class="metric-box">
+              <span class="metric-val" id="sum-streak">0</span>
+              <span class="metric-lbl">רצף</span>
+            </div>
+          </div>
+
+          <!-- Mystery Reward Chest -->
+          <div class="mystery-chest-box" id="summary-chest-box" style="margin: 12px 0; padding: 12px; border-radius: 16px; background: linear-gradient(135deg, #fef9c3, #fde047); border: 2px solid #eab308;">
+            <button type="button" class="btn-primary-large" id="btn-open-mystery-chest" style="background: linear-gradient(135deg, #d97706, #b45309); font-size: 1.05rem;">
+              🎁 פתח תיבת הפתעה של אלופים!
+            </button>
+            <div id="mystery-chest-result" class="hidden" style="font-size: 1.08rem; font-weight: 800; color: #78350f; margin-top: 6px;"></div>
+          </div>
+
+          <div class="summary-btn-row">
+            <button type="button" class="btn-primary-action" id="btn-play-again">שחק שוב</button>
+            <button type="button" class="btn-secondary-pill" id="btn-summary-shop">לאלבום הקלפים</button>
+            <button type="button" class="btn-secondary-pill" id="btn-summary-home">מסך הבית</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 8: SUPERGOL & CHAMPIONS LEAGUE FUT ALBUM ==================== -->
+      <section id="view-shop" class="view-section">
+        <div class="screen-nav-bar">
+          <button type="button" class="btn-back" onclick="switchView('home')">‹ חזרה</button>
+          <span class="screen-title">🏆 אלבום סופרגול וליגת האלופות (<span id="album-count">0/24</span>)</span>
+          <button type="button" class="btn-primary-action" id="btn-buy-pack" style="padding:8px 14px;font-size:0.86rem;background:linear-gradient(135deg,#facc15,#eab308);color:#090d16;font-weight:900;">🎁 פתח מעטפת סופרגול (🪙50)</button>
+          <div class="hidden" id="shop-coins-balance"></div>
+        </div>
+
+        <!-- Album Progress & Series Filter Bar -->
+        <div class="surface-card" style="background:linear-gradient(135deg,#090d16 0%,#1e293b 100%);border:2px solid #facc15;color:#fff;padding:12px 14px;margin-bottom:12px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;">
+            <span style="font-size:0.88rem;font-weight:900;color:#fde047;">⭐ התקדמות באלבום האלופים:</span>
+            <span style="font-size:0.8rem;color:#cbd5e1;">לחץ על כל קלף פתוח כדי להגדיל, לשמוע ולבחור כסמל!</span>
+          </div>
+          <div style="width:100%;height:10px;background:#334155;border-radius:99px;overflow:hidden;margin-bottom:10px;">
+            <div id="album-progress-fill" style="width:10%;height:100%;background:linear-gradient(90deg,#facc15,#00ff87);transition:width 0.35s ease;"></div>
+          </div>
+          <div class="segmented-tabs" id="album-series-tabs" style="background:#0f172a;padding:4px;border-radius:12px;">
+            <button type="button" class="cat-tab active" data-albumcat="all" style="color:#fff;font-size:0.78rem;">🌟 כל האלבום</button>
+            <button type="button" class="cat-tab" data-albumcat="beitar" style="color:#fff;font-size:0.78rem;">💛🖤 סופרגול בית"ר</button>
+            <button type="button" class="cat-tab" data-albumcat="real" style="color:#fff;font-size:0.78rem;">👑 ריאל וליגת האלופות</button>
+            <button type="button" class="cat-tab" data-albumcat="world" style="color:#fff;font-size:0.78rem;">🌍 אגדות עולמיות ו-TOTY</button>
+          </div>
+        </div>
+
+        <div class="stickers-grid" id="stickers-grid"></div>
+
+        <!-- 3D Pack Walkout & Card Inspection Modal -->
+        <div id="fut-pack-modal" class="hidden" style="position:fixed;inset:0;z-index:9500;background:rgba(9,13,22,0.88);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:18px;">
+          <div style="background:linear-gradient(145deg,#0f172a,#1e1b4b);border:3px solid #facc15;border-radius:24px;max-width:380px;width:100%;padding:20px;text-align:center;color:#fff;box-shadow:0 20px 50px rgba(0,0,0,0.65);">
+            <div id="fut-modal-badge" style="display:inline-block;background:#00ff87;color:#090d16;font-weight:900;font-size:0.8rem;padding:4px 12px;border-radius:99px;margin-bottom:10px;">🎉 קלף סופרגול וליגת האלופות!</div>
+            <div id="fut-modal-card-slot" style="max-width:230px;margin:0 auto 12px;"></div>
+            <div id="fut-modal-story" style="font-size:0.92rem;font-weight:700;color:#e2e8f0;line-height:1.45;background:rgba(255,255,255,0.08);padding:10px 12px;border-radius:12px;margin-bottom:12px;"></div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <button type="button" class="btn-primary-large" id="btn-fut-modal-equip" style="background:linear-gradient(135deg,#facc15,#eab308);color:#090d16;font-weight:900;">⭐ קבע כסמל האלוף שלי בראש האפליקציה</button>
+              <div style="display:flex;gap:8px;">
+                <button type="button" class="btn-secondary-pill" id="btn-fut-modal-speak" style="flex:1;background:#38bdf8;color:#090d16;border:none;font-weight:900;">🔊 השמע סיפור קלף</button>
+                <button type="button" class="btn-secondary-pill" id="btn-fut-modal-close" style="flex:1;background:#334155;color:#fff;border:none;font-weight:800;">סגור ✖</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 9: PARENTS ZONE ==================== -->
+      <section id="view-parents" class="view-section">
+        <div class="screen-nav-bar">
+          <button type="button" class="btn-back" onclick="switchView('home')">‹ חזרה</button>
+          <span class="screen-title">אזור הורים וניהול</span>
+          <div style="display:flex;gap:6px;">
+            <button type="button" class="btn-chip" id="btn-logout-device">🔒 נעל</button>
+            <button type="button" class="btn-chip" id="btn-reset-progress">איפוס</button>
+          </div>
+        </div>
+
+        <div class="parents-stack">
+
+          <!-- 1. FAST DIRECT DICTATION WORDS (Immediate & Reliable) -->
+          <div class="surface-card parent-highlight-card" style="border: 2px solid #10b981; background: linear-gradient(135deg, #f0fdf4, #ffffff);">
+            <div class="card-title-row">
+              <h3>🎧 מילים להכתבה (הזנה מהירה וישירה)</h3>
+            </div>
+            <p class="card-desc"><strong>מחר הכתבה!</strong> הקלידו או הדביקו כאן את המילים (מילה בכל שורה או מופרדות בפסיקים). זו הדרך הכי מהירה ונוחה — 100% מדויק ללא צורך בצילום תמונה!</p>
+
+            <form id="form-save-dictation" class="stack-form">
+              <label class="field-lbl">רשימת המילים להכתבה (ניתן להוסיף רמז עם מקף, למשל: מָזוֹן - אוכל שמזין):</label>
+              <textarea id="dict-words-textarea" rows="6" style="font-size:1.15rem;font-family:'Assistant',sans-serif;line-height:1.6;font-weight:600;direction:rtl;" placeholder="מזון&#10;שמש&#10;עץ&#10;ירוק&#10;עלה&#10;צבעים&#10;מתיבש&#10;אור&#10;קרקע&#10;צהוב"></textarea>
+              
+              <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;">
+                <button type="submit" class="btn-primary-action" style="flex:2;background:#059669;font-size:1.05rem;">
+                  💾 שמור ועדכן מילים לעילי עכשיו
+                </button>
+                <button type="button" class="btn-secondary-pill" id="btn-load-tomorrow-dictation" style="flex:1;border:1.5px solid #059669;color:#059669;font-weight:700;">
+                  ✨ 10 המילים של מחר
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- 2. Direct Webtop Live Sync + Photo/Text Importer -->
+          <div class="surface-card">
+            <div class="card-title-row">
+              <h3>🏫 סנכרון ישיר מ-Webtop (רביבים ב׳3)</h3>
+            </div>
+            <p class="card-desc">האפליקציה מחוברת ישירות לחשבון של עילי. <strong>הסנכרון רץ אוטומטית בענן כל יום בשעה 14:00</strong> ומכניס את כל שיעורי הבית מבית הספר למשימות של עילי. ניתן גם לסנכרן ידנית בכל רגע:</p>
+            
+            <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px;">
+              <button type="button" class="btn-primary-large" id="btn-sync-webtop-direct" style="background:#0a84ff;font-size:1.05rem;">
+                🔄 סנכרן שיעורי בית מ-Webtop עכשיו
+              </button>
+              <div id="webtop-sync-status" class="ocr-progress-banner">⏰ סנכרון אוטומטי פעיל: כל יום ב-14:00</div>
+            </div>
+
+            <hr class="divider-line" style="margin:16px 0;">
+
+            <div class="card-title-row">
+              <h3>📲 הוספת דף עבודה, מחברת או הודעת וואטסאפ</h3>
+            </div>
+            <p class="card-desc">לדפי עבודה מהמחברת, דפי קשר או הודעות מקבוצת הוואטסאפ הכיתתית — בחרו תמונה מהגלריה, הדביקו תמונה או הדביקו טקסט (למילים להכתבה מומלץ להקליד ישירות בתיבה שלמעלה):</p>
+
+            <!-- Native iOS/Android Compatible File Picker Label + Paste Button -->
+            <div class="upload-actions-row">
+              <label class="native-file-btn">
+                <span>🖼️ בחר תמונה מהגלריה / מצלמה</span>
+                <input type="file" id="webtop-image-upload" accept="image/*" class="sr-file-input">
+              </label>
+              <button type="button" class="btn-secondary-pill" id="btn-paste-clipboard">📋 הדבק מהלוח</button>
+            </div>
+
+            <!-- Live Image Preview -->
+            <div id="smart-img-preview-box" class="img-preview-card hidden">
+              <img id="smart-img-preview" src="" alt="תצוגה מקדימה">
+              <div class="img-preview-meta">
+                <span id="attached-img-name">צילום מסך נבחר</span>
+                <button type="button" id="btn-remove-smart-img" class="btn-text-danger">הסר תמונה</button>
+              </div>
+            </div>
+
+            <div id="ocr-status-box" class="ocr-progress-banner hidden">⏳ קורא את הטקסט מתוך התמונה...</div>
+
+            <form id="form-smart-import" class="stack-form">
+              <textarea id="smart-import-text" rows="3" placeholder="הטקסט שיפוענח מהתמונה יופיע כאן (או הדבק כאן הודעה ישירות)..."></textarea>
+              <button type="submit" class="btn-primary-large" id="btn-smart-submit">פענח ועדכן לעילי</button>
+            </form>
+
+            <div id="smart-import-result" class="success-callout hidden"></div>
+          </div>
+
+          <!-- 2. Homework Manager -->
+          <div class="surface-card">
+            <h3>✅ ניהול שיעורי בית ומשימות</h3>
+            <form id="form-add-hw" class="stack-form">
+              <div class="two-col-inputs">
+                <select id="hw-subject">
+                  <option value="🔢|חשבון">🔢 חשבון</option>
+                  <option value="📖|עברית ושפה">📖 שפה</option>
+                  <option value="🎧|אימון הכתבה">🎧 הכתבה</option>
+                  <option value="🎙️|תרגול קלינאית (ש׳ ו-ס׳)">🎙️ קלינאית</option>
+                  <option value="🌍|אנגלית">🌍 אנגלית</option>
+                </select>
+                <input type="text" id="hw-title" placeholder="פירוט המשימה..." required>
+              </div>
+              <button type="submit" class="btn-primary-action">+ הוסף משימה</button>
+            </form>
+            <div id="parent-hw-list" class="clean-admin-list"></div>
+          </div>
+
+          <!-- 3. Speech Therapy Manager -->
+          <div class="surface-card">
+            <h3>🎙️ קלינאית תקשורת (ש׳ ו-ס׳)</h3>
+            <div id="parent-speech-logs" class="clean-admin-list" style="margin-bottom:10px;"></div>
+            <span id="parent-sp-log-count" class="hidden">0</span>
+            <form id="form-save-speech" class="stack-form">
+              <label class="field-lbl">משפטים לתרגול יומי (שורה לכל משפט):</label>
+              <textarea id="speech-words-textarea" rows="4"></textarea>
+              <button type="submit" class="btn-primary-action">שמור משפטים</button>
+            </form>
+          </div>
+
+          <!-- 4. Weekly Schedule Editor -->
+          <div class="surface-card">
+            <h3>📅 עריכת מערכת שעות וחוגים</h3>
+            <form id="form-add-schedule" class="stack-form">
+              <div class="two-col-inputs">
+                <select id="sched-day-select">
+                  <option value="0">יום ראשון</option>
+                  <option value="1">יום שני</option>
+                  <option value="2">יום שלישי</option>
+                  <option value="3">יום רביעי</option>
+                  <option value="4">יום חמישי</option>
+                  <option value="5">יום שישי</option>
+                  <option value="6">יום שבת</option>
+                </select>
+                <select id="sched-part-select">
+                  <option value="school">🏫 בוקר (בי"ס)</option>
+                  <option value="after">⚽ אחה״צ (חוג)</option>
+                </select>
+              </div>
+              <div class="two-col-inputs">
+                <select id="sched-preset-select">
+                  <option value="⚽|אימון כדורגל">⚽ אימון כדורגל</option>
+                  <option value="🎙️|קלינאית תקשורת">🎙️ קלינאית תקשורת</option>
+                  <option value="🌍|שיעור אנגלית">🌍 שיעור אנגלית</option>
+                  <option value="🔢|חשבון">🔢 חשבון</option>
+                  <option value="📖|עברית ושפה">📖 שפה</option>
+                  <option value="🏃|ספורט">🏃 ספורט</option>
+                  <option value="📜|תורה">📜 תורה</option>
+                </select>
+                <input type="text" id="sched-time-input" placeholder="שעה (17:00)">
+              </div>
+              <button type="submit" class="btn-primary-action">+ הוסף למערכת</button>
+            </form>
+            <div id="parent-sched-list" class="clean-admin-list"></div>
+          </div>
+
+          <!-- 5. Dev Feature Requests & Security -->
+          <div class="surface-card">
+            <h3>🚀 בקשות שדרוג ואבטחה</h3>
+            <form id="form-dev-request" class="stack-form" style="margin-bottom:14px;">
+              <textarea id="dev-req-input" rows="2" placeholder="כתוב כאן כל פיצ'ר שתרצה שאבנה לעילי ולליה..." required></textarea>
+              <button type="submit" class="btn-secondary-pill">שלח בקשת פיתוח</button>
+            </form>
+            <div id="dev-requests-list" class="clean-admin-list"></div>
+            <span id="dev-req-count" class="hidden">0</span>
+
+            <hr class="divider-line">
+            <form id="form-security-settings" class="stack-form">
+              <div class="two-col-inputs">
+                <div>
+                  <label class="field-lbl">קוד כניסה (<span id="current-pin-display">1936</span>):</label>
+                  <input type="text" id="sec-family-pin" placeholder="1936" required>
+                </div>
+                <div>
+                  <label class="field-lbl">מיילים מורשים (Google):</label>
+                  <input type="text" id="sec-allowed-emails" placeholder="email@gmail.com">
+                </div>
+              </div>
+              <label class="field-lbl" style="margin-top:4px;">מפתח Gemini AI לקריאת תמונות חכמה (אופציונלי):</label>
+              <input type="password" id="sec-gemini-key" placeholder="AIzaSy... (לפענוח תמונות מושלם עם Gemini Vision)">
+              <input type="text" id="sec-google-client-id" class="hidden">
+              <button type="submit" class="btn-secondary-pill">שמור הגדרות</button>
+            </form>
+            <div class="hidden" id="logged-in-user-badge"></div>
+            <div class="hidden" id="p-total-solved"></div>
+            <div class="hidden" id="p-accuracy"></div>
+            <div class="hidden" id="parent-topic-stats"></div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 10: LIA'S GLAM & MAKEUP STUDIO (סטודיו האיפור של ליה) ==================== -->
+      <section id="view-makeup" class="view-section">
+        <div class="screen-nav-bar">
+          <button type="button" class="btn-back" onclick="switchView('home')">‹ חזרה</button>
+          <span class="screen-title">💄 סטודיו האיפור והיופי של ליה</span>
+          <span class="badge-counter">בונוס אנגלית ✨</span>
+        </div>
+
+        <!-- Client Request Mission Card (English + Glam) -->
+        <div class="surface-card glam-mission-card" id="glam-mission-box">
+          <div class="glam-mission-header">
+            <span class="glam-badge">🎯 משימת איפור באנגלית (+25 🪙)</span>
+            <button type="button" class="btn-chip" id="btn-glam-speak-mission">🔊 הקרא משימה</button>
+          </div>
+          <div class="glam-mission-text" id="glam-mission-text">בחרי שפתון ורוד (Pink Lipstick) וכתר זהב (Gold Crown)!</div>
+          <button type="button" class="btn-secondary-pill" id="btn-glam-new-mission" style="margin-top:8px;font-size:0.82rem;">🔄 משימה חדשה</button>
+        </div>
+
+        <!-- Character Stage / Mirror -->
+        <div class="surface-card glam-mirror-stage" id="glam-mirror-stage">
+          <div class="glam-model-selector">
+            <button type="button" class="glam-model-btn active" data-model="👸" data-name="הנסיכה ליה">👸 נסיכה</button>
+            <button type="button" class="glam-model-btn" data-model="🦄" data-name="חד-קרן קסום">🦄 חד-קרן</button>
+            <button type="button" class="glam-model-btn" data-model="💙" data-name="סטיץ׳ גלאם">💙 סטיץ׳</button>
+            <button type="button" class="glam-model-btn" data-model="👩‍🏫" data-name="הגננת ליה">👩‍🏫 הגננת ליה</button>
+          </div>
+
+          <div class="glam-vanity-mirror" id="glam-vanity-mirror">
+            <div class="glam-crown-slot" id="glam-crown-slot">👑</div>
+            <div class="glam-face-circle" id="glam-face-circle">
+              <span class="glam-main-avatar" id="glam-main-avatar">👸</span>
+              <div class="glam-blush-left" id="glam-blush-left"></div>
+              <div class="glam-blush-right" id="glam-blush-right"></div>
+            </div>
+            <div class="glam-equipped-row">
+              <span class="glam-equip-pill" id="glam-lip-pill">💄 שפתון: ורוד (Pink)</span>
+              <span class="glam-equip-pill" id="glam-eye-pill">✨ צללית: סגול (Purple)</span>
+              <span class="glam-equip-pill" id="glam-nail-pill">💅 לק: נצנצים (Sparkle)</span>
+            </div>
+          </div>
+
+          <div class="glam-palettes">
+            <div class="glam-palette-group">
+              <div class="glam-palette-title">💄 בחרי צבע שפתון ואודם (Lipstick Color):</div>
+              <div class="glam-swatches" id="glam-lip-swatches">
+                <button type="button" class="glam-swatch active" data-type="lip" data-eng="Pink Lipstick" data-heb="שפתון ורוד" data-color="#ec4899" style="background:#ec4899;">🩷 Pink</button>
+                <button type="button" class="glam-swatch" data-type="lip" data-eng="Red Lipstick" data-heb="שפתון אדום" data-color="#ef4444" style="background:#ef4444;">❤️ Red</button>
+                <button type="button" class="glam-swatch" data-type="lip" data-eng="Purple Lipstick" data-heb="שפתון סגול" data-color="#a855f7" style="background:#a855f7;">💜 Purple</button>
+                <button type="button" class="glam-swatch" data-type="lip" data-eng="Peach Glow" data-heb="שפתון אפרסק" data-color="#fb7185" style="background:#fb7185;">🍑 Peach</button>
+              </div>
+            </div>
+
+            <div class="glam-palette-group">
+              <div class="glam-palette-title">✨ בחרי צלליות וסומק נוצץ (Eyeshadow & Blush):</div>
+              <div class="glam-swatches" id="glam-eye-swatches">
+                <button type="button" class="glam-swatch active" data-type="eye" data-eng="Purple Sparkle" data-heb="צללית סגולה" data-color="#c084fc" style="background:#c084fc;">💜 Purple</button>
+                <button type="button" class="glam-swatch" data-type="eye" data-eng="Stitch Blue" data-heb="צללית כחול סטיץ׳" data-color="#38bdf8" style="background:#38bdf8;">💙 Blue</button>
+                <button type="button" class="glam-swatch" data-type="eye" data-eng="Gold Shimmer" data-heb="צללית זהב" data-color="#fbbf24" style="background:#fbbf24;color:#1e293b;">🌟 Gold</button>
+                <button type="button" class="glam-swatch" data-type="eye" data-eng="Rainbow Magic" data-heb="צללית קשת בענן" data-color="#f472b6" style="background:linear-gradient(90deg,#ec4899,#8b5cf6,#38bdf8);">🌈 Rainbow</button>
+              </div>
+            </div>
+
+            <div class="glam-palette-group">
+              <div class="glam-palette-title">👑 בחרי כתר או קישוט לשיער (Crown & Hair):</div>
+              <div class="glam-swatches" id="glam-crown-swatches">
+                <button type="button" class="glam-item-btn active" data-type="crown" data-eng="Gold Crown" data-heb="כתר זהב" data-icon="👑">👑 Gold Crown</button>
+                <button type="button" class="glam-item-btn" data-type="crown" data-eng="Unicorn Horn" data-heb="קרן של חד-קרן" data-icon="🦄">🦄 Unicorn</button>
+                <button type="button" class="glam-item-btn" data-type="crown" data-eng="Pink Bow" data-heb="סרט ורוד" data-icon="🎀">🎀 Pink Bow</button>
+                <button type="button" class="glam-item-btn" data-type="crown" data-eng="Stitch Flower" data-heb="פרח הוואי של סטיץ׳" data-icon="🌺">🌺 Flower</button>
+              </div>
+            </div>
+
+            <div class="glam-palette-group">
+              <div class="glam-palette-title">💅 בחרי לק לציפורניים (Nail Polish):</div>
+              <div class="glam-swatches" id="glam-nail-swatches">
+                <button type="button" class="glam-item-btn active" data-type="nail" data-eng="Pink Nails" data-heb="לק ורוד נוצץ" data-icon="💅🩷">💅 Pink</button>
+                <button type="button" class="glam-item-btn" data-type="nail" data-eng="Blue Nails" data-heb="לק כחול סטיץ׳" data-icon="💅💙">💅 Blue</button>
+                <button type="button" class="glam-item-btn" data-type="nail" data-eng="Purple Nails" data-heb="לק סגול חד-קרן" data-icon="💅💜">💅 Purple</button>
+                <button type="button" class="glam-item-btn" data-type="nail" data-eng="Gold Star Nails" data-heb="לק כוכבי זהב" data-icon="💅⭐">💅 Gold</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="glam-footer-actions">
+            <button type="button" class="btn-primary-large" id="btn-glam-finish">📸 סיימתי לאפר! בדיקת מראה וצילום (+מטבעות)</button>
+          </div>
+          <div class="feedback-banner hidden" id="glam-feedback-banner" style="margin-top:10px;"></div>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 11: TEACHER LIA'S KINDERGARTEN (הגן של הגננת ליה) ==================== -->
+      <section id="view-kinder" class="view-section">
+        <div class="screen-nav-bar">
+          <button type="button" class="btn-back" onclick="switchView('home')">‹ חזרה</button>
+          <span class="screen-title">👩‍🏫 הגן של הגננת ליה</span>
+          <span class="badge-counter">⭐ <span id="kinder-stars-count">0</span> כוכבים</span>
+        </div>
+
+        <!-- Morning Circle Attendance & Stickers -->
+        <div class="surface-card">
+          <div class="panel-title">☀️ מפגש בוקר בגן של הגננת ליה!</div>
+          <p class="muted-note" style="margin-bottom:12px;">לחצי על הילדים בגן כדי לבדוק מי הגיע היום, לשמוע אותם מברכים באנגלית ולחלק להם מדבקת כוכב ⭐!</p>
+
+          <div class="kinder-circle-grid" id="kinder-students-grid"></div>
+        </div>
+
+        <!-- Teacher Lia Checks Her Students' Answers! -->
+        <div class="surface-card" id="kinder-quiz-card">
+          <div class="glam-mission-header">
+            <span class="glam-badge">👩‍🏫 הגננת ליה בודקת את ילדי הגן! (+20 🪙)</span>
+            <button type="button" class="btn-chip" id="btn-kinder-speak">🔊 הקרא</button>
+          </div>
+
+          <div class="kinder-board-box" id="kinder-board-box">
+            <div class="kinder-student-speaker" id="kinder-quiz-avatar">💙 סטיץ׳ שואל:</div>
+            <div class="kinder-question-bubble" id="kinder-quiz-text">הגננת ליה! ספרתי 4 פרחים: 🌸🌸🌸🌸 — צדקתי?</div>
+          </div>
+
+          <div class="kinder-teacher-btns">
+            <button type="button" class="btn-kinder-approve" id="btn-kinder-yes">✅ נכון מאוד חמוד! קבל כוכב ⭐</button>
+            <button type="button" class="btn-kinder-correct" id="btn-kinder-no">💡 לא מדויק, הגננת ליה תסביר לך!</button>
+          </div>
+
+          <div class="feedback-banner hidden" id="kinder-feedback-banner" style="margin-top:10px;"></div>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 12: EA SPORTS FC 27 INTERACTIVE ACADEMY (אקדמיית פיפא FC 27 לעילי) ==================== -->
+      <section id="view-fc27" class="view-section">
+        <div class="screen-nav-bar">
+          <button type="button" class="btn-back" onclick="switchView('home')">‹ חזרה</button>
+          <span class="screen-title">🎮 אקדמיית פיפא FC 27 לעילי</span>
+          <button type="button" class="btn-primary-action" id="btn-fc27-start-quiz" style="background:#059669;padding:6px 12px;font-size:0.82rem;">⚽ לחידון FC 27</button>
+        </div>
+
+        <div class="surface-card" style="background:#0f172a;color:#f8fafc;border-color:#1e293b;">
+          <div style="margin-bottom:10px;">
+            <h3 style="margin:0;color:#00ff87;font-size:1.12rem;">⚽ הכל על פיפא (EA SPORTS FC™ 27) באנגלית פשוטה!</h3>
+            <p style="margin:3px 0 0;font-size:0.82rem;color:#cbd5e1;">בחר למעלה מה בא לך ללמוד: מה אומר כל מסך, איך מתחילים משחק צעד-אחר-צעד, מה השדרן צועק במגרש או סרטוני הדרכה!</p>
+          </div>
+
+          <!-- 4 Main Mode Tabs inside FC 27 Academy -->
+          <div class="segmented-tabs" id="fc27-main-mode-tabs" style="margin-bottom:12px;background:#1e293b;width:100%;display:grid;grid-template-columns:repeat(2,1fr);gap:6px;padding:6px;">
+            <button type="button" class="cat-tab active" data-fc27mode="screens" style="color:#fff;font-size:0.85rem;padding:8px 6px;">🖥️ 1. מה אומר כל מסך?</button>
+            <button type="button" class="cat-tab" data-fc27mode="howto" style="color:#fff;font-size:0.85rem;padding:8px 6px;">▶️ 2. איך מתחילים משחק?</button>
+            <button type="button" class="cat-tab" data-fc27mode="commentator" style="color:#fff;font-size:0.85rem;padding:8px 6px;">🎙️ 3. מה השדרן אומר?</button>
+            <button type="button" class="cat-tab" data-fc27mode="videos" style="color:#fff;font-size:0.85rem;padding:8px 6px;">🎬 4. סרטוני הדרכה</button>
+          </div>
+
+          <!-- ==================== PANEL 1: INTERACTIVE SCREENS EXPLORER (6 SCREENS + EXAMPLES) ==================== -->
+          <div id="fc27-panel-screens" class="fc27-subpanel">
+            <!-- 6 Screen Switcher Tabs -->
+            <div class="segmented-tabs" id="fc27-screen-tabs" style="margin-bottom:10px;background:#1e293b;width:100%;display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;">
+              <button type="button" class="cat-tab active" data-screen="main_menu" style="color:#fff;font-size:0.78rem;">🏟️ תפריט ראשי</button>
+              <button type="button" class="cat-tab" data-screen="pre_match" style="color:#fff;font-size:0.78rem;">🎮 התחלת משחק</button>
+              <button type="button" class="cat-tab" data-screen="pause_menu" style="color:#fff;font-size:0.78rem;">⏸️ עצירה וחילוף</button>
+              <button type="button" class="cat-tab" data-screen="end_match" style="color:#fff;font-size:0.78rem;">🏁 סיום ותיקו</button>
+              <button type="button" class="cat-tab" data-screen="fut_card" style="color:#fff;font-size:0.78rem;">🃏 קלפי FUT</button>
+              <button type="button" class="cat-tab" data-screen="pitch_hud" style="color:#fff;font-size:0.78rem;">⚽ שלט ומגרש</button>
+            </div>
+
+            <!-- Interactive FC 27 TV Screenshot Stage -->
+            <div id="fc27-interactive-stage"></div>
+
+            <!-- Selected Word Translation, Audio & Real Example Callout -->
+            <div class="surface-card" id="fc27-word-explain-box" style="margin-top:12px;margin-bottom:0;background:linear-gradient(135deg,#064e3b,#0f172a);border:2px solid #00ff87;color:#fff;">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+                <div>
+                  <div id="fc27-exp-eng" style="font-size:1.45rem;font-weight:900;color:#00ff87;letter-spacing:0.5px;">KICK OFF</div>
+                  <div id="fc27-exp-heb" style="font-size:1.08rem;font-weight:800;color:#fff;margin-top:2px;">⚽ משחק מהיר (בעיטת פתיחה)</div>
+                </div>
+                <button type="button" class="btn-chip" id="btn-fc27-speak-current" style="background:#00ff87;color:#090d16;font-weight:900;border:none;padding:8px 14px;">🔊 השמע</button>
+              </div>
+              <div id="fc27-exp-hint" style="margin-top:8px;font-size:0.88rem;color:#e2e8f0;border-top:1px solid rgba(255,255,255,0.15);padding-top:6px;">
+                בתפריט הראשי של FC 27 לוחצים על KICK OFF כדי להתחיל מיד משחק כדורגל!
+              </div>
+              <div id="fc27-exp-example" style="margin-top:8px;background:rgba(0,255,135,0.14);border-right:4px solid #00ff87;padding:8px 10px;border-radius:8px;font-size:0.86rem;font-weight:700;color:#a7f3d0;">
+                📌 דוגמא: הדלקת את הפלייסטיישן ובא לך לשחק מיד משחק של בית"ר נגד ריאל? לוחצים על KICK OFF!
+              </div>
+            </div>
+
+            <!-- Full Cheat-Sheet List of ALL Buttons on This Screen -->
+            <div id="fc27-screen-full-table" style="margin-top:12px;"></div>
+          </div>
+
+          <!-- ==================== PANEL 2: HOW TO START A MATCH STEP-BY-STEP SIMULATOR ==================== -->
+          <div id="fc27-panel-howto" class="fc27-subpanel hidden">
+            <div class="surface-card" style="background:linear-gradient(135deg,#1e293b,#090d16);border:2px solid #38bdf8;color:#fff;margin-bottom:10px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
+                <span id="fc27-howto-step-badge" style="background:#38bdf8;color:#090d16;font-weight:900;padding:4px 10px;border-radius:20px;font-size:0.8rem;">שלב 1 מתוך 6</span>
+                <button type="button" class="btn-chip" id="btn-fc27-howto-autoplay" style="background:#00ff87;color:#090d16;font-weight:900;border:none;">🎬 נגן הדרכה אוטומטית עם קול</button>
+              </div>
+
+              <h4 id="fc27-howto-title" style="margin:0 0 6px;font-size:1.15rem;color:#38bdf8;">שלב 1 מתוך 6: כניסה למשחק — KICK OFF</h4>
+
+              <!-- Step Dots -->
+              <div id="fc27-howto-dots" style="display:flex;gap:6px;margin-bottom:10px;"></div>
+
+              <!-- Live Screen Preview for Current Step -->
+              <div id="fc27-howto-screen-stage"></div>
+
+              <!-- Controller Action + Explanation + Real Example -->
+              <div id="fc27-howto-controller" style="margin-top:10px;background:rgba(56,189,248,0.18);border:1px solid #38bdf8;padding:8px 10px;border-radius:10px;font-weight:800;font-size:0.9rem;color:#bae6fd;"></div>
+              <div id="fc27-howto-explain" style="margin-top:8px;font-size:0.92rem;line-height:1.45;color:#f8fafc;"></div>
+              <div id="fc27-howto-example" style="margin-top:8px;background:rgba(250,204,21,0.14);border-right:4px solid #facc15;padding:8px 10px;border-radius:8px;font-size:0.86rem;font-weight:700;color:#fef08a;"></div>
+
+              <div style="display:flex;gap:8px;margin-top:12px;">
+                <button type="button" class="btn-secondary-action" id="btn-fc27-howto-prev" style="flex:1;background:#334155;color:#fff;border:none;">➡️ שלב קודם</button>
+                <button type="button" class="btn-chip" id="btn-fc27-howto-speak" style="background:#38bdf8;color:#090d16;font-weight:900;border:none;padding:8px 14px;">🔊 השמע שלב</button>
+                <button type="button" class="btn-primary-action" id="btn-fc27-howto-next" style="flex:1.4;background:#00ff87;color:#090d16;font-weight:900;">שלב הבא ⬅️</button>
+              </div>
+            </div>
+
+            <!-- Complete 6-Step Overview Roadmap + 8-Button Controller Master Guide -->
+            <div id="fc27-howto-all-steps-list" style="margin-top:10px;"></div>
+            <div id="fc27-controller-guide-list" style="margin-top:12px;"></div>
+          </div>
+
+          <!-- ==================== PANEL 3: WHAT THE COMMENTATOR SAYS (16 LIVE CALLS + EXAMPLES) ==================== -->
+          <div id="fc27-panel-commentator" class="fc27-subpanel hidden">
+            <!-- Live Broadcast TV Replay Monitor -->
+            <div class="surface-card" id="fc27-comm-tv" style="background:radial-gradient(circle at top,#064e3b 0%,#090d16 85%);border:2px solid #00ff87;color:#fff;margin-bottom:12px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.74rem;color:#a7f3d0;font-weight:800;margin-bottom:6px;">
+                <span>📺 שידור חי • EA SPORTS FC™ 27 COMMENTARY</span>
+                <span id="fc27-comm-scene-label" style="color:#fbbf24;">GOAL! • TOP CORNER</span>
+              </div>
+
+              <div id="fc27-comm-visual" class="fc27-pitch-graphic" style="font-size:1.7rem;padding:12px 8px;text-align:center;margin-bottom:8px;">
+                🏃‍♂️⚡ ☄️⚽ ➡️ 🥅💥 🎉
+              </div>
+
+              <div style="text-align:center;margin-bottom:8px;">
+                <div style="font-size:0.76rem;color:#94a3b8;font-weight:700;">🎙️ השדרן צועק באנגלית:</div>
+                <div id="fc27-comm-eng" style="font-size:1.35rem;font-weight:900;color:#00ff87;letter-spacing:0.4px;direction:ltr;">"What a goal! Unbelievable!"</div>
+                <div id="fc27-comm-heb" style="font-size:1.05rem;font-weight:800;color:#ffffff;margin-top:3px;">🔥⚽ איזה שער! לא ייאמן!</div>
+              </div>
+
+              <!-- 3 Audio Buttons: Normal English, Slow Clear English, Full Hebrew + English -->
+              <div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:10px;">
+                <button type="button" class="btn-chip" id="btn-fc27-comm-speak-eng" style="background:#00ff87;color:#090d16;font-weight:900;border:none;">🔊 שמע שדרן באנגלית</button>
+                <button type="button" class="btn-chip" id="btn-fc27-comm-speak-slow" style="background:#38bdf8;color:#090d16;font-weight:900;border:none;">🐢 שמע לאט וברור</button>
+                <button type="button" class="btn-chip" id="btn-fc27-comm-speak-both" style="background:#fbbf24;color:#090d16;font-weight:900;border:none;">🇮🇱 הסבר בעברית + אנגלית</button>
+              </div>
+
+              <div id="fc27-comm-situation" style="font-size:0.86rem;color:#e2e8f0;border-top:1px solid rgba(255,255,255,0.15);padding-top:6px;"></div>
+              <div id="fc27-comm-example" style="margin-top:6px;background:rgba(0,255,135,0.14);border-right:4px solid #00ff87;padding:8px 10px;border-radius:8px;font-size:0.85rem;font-weight:700;color:#a7f3d0;"></div>
+            </div>
+
+            <div style="font-size:0.85rem;font-weight:800;color:#cbd5e1;margin-bottom:6px;">👇 לחץ על כל משפט של השדרן כדי לשמוע ולראות דוגמא במגרש:</div>
+            <div id="fc27-comm-cards-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;max-height:320px;overflow-y:auto;padding-right:2px;"></div>
+          </div>
+
+          <!-- ==================== PANEL 4: ANIMATED VIDEO TUTORIALS PLAYER (3 EPISODES) ==================== -->
+          <div id="fc27-panel-videos" class="fc27-subpanel hidden">
+            <!-- Episode Selector -->
+            <div id="fc27-video-episodes" style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px;"></div>
+
+            <!-- Animated Video Player Screen -->
+            <div class="surface-card" style="background:linear-gradient(160deg,#090d16,#1e293b);border:2px solid #facc15;color:#fff;margin-bottom:0;">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;">
+                <span id="fc27-vid-badge" style="background:#facc15;color:#090d16;font-weight:900;padding:3px 10px;border-radius:20px;font-size:0.76rem;">סצנה 1 מתוך 6</span>
+                <span id="fc27-vid-status" style="font-size:0.76rem;color:#fde047;font-weight:800;">🎬 מוכן להפעלה</span>
+              </div>
+
+              <!-- Progress Bar -->
+              <div style="width:100%;height:6px;background:#334155;border-radius:99px;overflow:hidden;margin-bottom:10px;">
+                <div id="fc27-vid-progress" style="width:16%;height:100%;background:#00ff87;transition:width 0.35s ease;"></div>
+              </div>
+
+              <!-- Animated Visual Stage -->
+              <div id="fc27-vid-stage" class="fc27-pitch-graphic" style="font-size:1.35rem;font-weight:900;padding:18px 10px;text-align:center;direction:ltr;color:#fff;margin-bottom:10px;min-height:74px;display:flex;align-items:center;justify-content:center;"></div>
+
+              <div id="fc27-vid-eng-title" style="font-size:1.3rem;font-weight:900;color:#00ff87;text-align:center;direction:ltr;margin-bottom:4px;"></div>
+              <div id="fc27-vid-heb-sub" style="font-size:0.95rem;font-weight:700;color:#f8fafc;text-align:center;line-height:1.45;background:rgba(15,23,42,0.75);padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.12);"></div>
+
+              <!-- Video Player Controls -->
+              <div style="display:flex;gap:8px;margin-top:12px;">
+                <button type="button" class="btn-secondary-action" id="btn-fc27-vid-prev" style="flex:0.8;background:#334155;color:#fff;border:none;">⏮️ הקודם</button>
+                <button type="button" class="btn-primary-action" id="btn-fc27-vid-playpause" style="flex:1.5;background:#facc15;color:#090d16;font-weight:900;">▶️ הפעל סרטון עם קריינות</button>
+                <button type="button" class="btn-secondary-action" id="btn-fc27-vid-next" style="flex:0.8;background:#334155;color:#fff;border:none;">הבא ⏭️</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dual Quiz Launch Buttons at Bottom -->
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px;margin-top:12px;">
+            <button type="button" class="btn-primary-large" id="btn-fc27-launch-match" style="background:#00ff87;color:#090d16;font-weight:900;">
+              🖥️ חידון מסכי FC 27 ואיך מתחילים משחק (+מטבעות 🪙)
+            </button>
+            <button type="button" class="btn-primary-large" id="btn-fc27-launch-comm-quiz" style="background:#38bdf8;color:#090d16;font-weight:900;">
+              🎙️ חידון מה השדרן בפיפא אומר? (+מטבעות 🪙)
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 13: INTERACTIVE SCIENCE & HOW THINGS WORK LAB (מעבדת המדע ואיך דברים עובדים) ==================== -->
+      <section id="view-science" class="view-section">
+        <div class="screen-nav-bar">
+          <button type="button" class="btn-back" onclick="switchView('home')">‹ חזרה</button>
+          <span class="screen-title">🔬 מעבדת המדע ואיך דברים עובדים</span>
+          <button type="button" class="btn-primary-action" id="btn-science-top-quiz" style="background:#0284c7;padding:6px 12px;font-size:0.82rem;">🧪 לחידון המדע</button>
+        </div>
+
+        <!-- 1. Interactive Science Discovery Card ("How It Works" Step-by-Step) -->
+        <div class="surface-card" style="background:linear-gradient(145deg,#0f172a 0%,#1e1b4b 100%);color:#f8fafc;border:2px solid #38bdf8;">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
+            <div>
+              <h3 style="margin:0;color:#38bdf8;font-size:1.12rem;">🔍 איך דברים עובדים בעולם? (הסברים מונפשים + קול)</h3>
+              <p style="margin:2px 0 0;font-size:0.82rem;color:#cbd5e1;">בחר נושא למטה או סנן לפי קטגוריה כדי לגלות איך העולם עובד צעד אחר צעד!</p>
+            </div>
+          </div>
+
+          <!-- Category Filter Tabs -->
+          <div class="segmented-tabs" id="science-cat-tabs" style="margin-bottom:12px;background:#1e293b;width:100%;display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;">
+            <button type="button" class="cat-tab active" data-scicat="all" style="color:#fff;font-size:0.78rem;">🌟 הכל (20)</button>
+            <button type="button" class="cat-tab" data-scicat="physics" style="color:#fff;font-size:0.78rem;">⚽ פיזיקה ומכונות</button>
+            <button type="button" class="cat-tab" data-scicat="space" style="color:#fff;font-size:0.78rem;">🚀 חלל ומזג אוויר</button>
+            <button type="button" class="cat-tab" data-scicat="nature" style="color:#fff;font-size:0.78rem;">🌱 טבע ודינוזאורים</button>
+            <button type="button" class="cat-tab" data-scicat="body" style="color:#fff;font-size:0.78rem;">🧠 גוף האדם</button>
+            <button type="button" class="cat-tab" data-scicat="tech" style="color:#fff;font-size:0.78rem;">💡 חשמל ואינטרנט</button>
+          </div>
+
+          <!-- Active Science Topic Stage -->
+          <div class="surface-card" id="science-active-stage" style="background:rgba(15,23,42,0.85);border:2px solid #38bdf8;color:#fff;margin-bottom:12px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span id="sci-stage-icon" style="font-size:2.4rem;">⚽🌪️</span>
+                <div>
+                  <h4 id="sci-stage-title" style="margin:0;font-size:1.15rem;color:#38bdf8;">איך כדורגל מסתובב באוויר ("בעיטת בננה")?</h4>
+                  <div id="sci-stage-eng" style="font-size:0.82rem;color:#fde047;font-weight:800;margin-top:2px;">🌍 באנגלית: Spin & Airflow (סיבוב וזרימת אוויר)</div>
+                </div>
+              </div>
+              <div style="display:flex;gap:6px;">
+                <button type="button" class="btn-chip" id="btn-sci-speak-explain" style="background:#38bdf8;color:#0f172a;font-weight:900;border:none;padding:8px 12px;">🔊 הקרא הסבר</button>
+                <button type="button" class="btn-chip" id="btn-sci-speak-eng" style="background:#facc15;color:#0f172a;font-weight:900;border:none;padding:8px 12px;">🇬🇧 באנגלית</button>
+              </div>
+            </div>
+
+            <!-- 3 Visual Steps of How It Works -->
+            <div id="sci-stage-steps" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:6px;margin-bottom:10px;"></div>
+
+            <!-- Clear Explanation -->
+            <div id="sci-stage-explain" style="font-size:0.95rem;line-height:1.5;color:#f8fafc;background:rgba(30,41,59,0.9);padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.12);margin-bottom:8px;"></div>
+
+            <!-- Try It Yourself & Fun Fact -->
+            <div id="sci-stage-experiment" style="background:rgba(16,185,129,0.16);border-right:4px solid #10b981;padding:8px 10px;border-radius:8px;font-size:0.86rem;font-weight:700;color:#a7f3d0;margin-bottom:6px;"></div>
+            <div id="sci-stage-funfact" style="background:rgba(250,204,21,0.15);border-right:4px solid #facc15;padding:8px 10px;border-radius:8px;font-size:0.86rem;font-weight:700;color:#fef08a;"></div>
+          </div>
+
+          <div style="font-size:0.85rem;font-weight:800;color:#bae6fd;margin-bottom:6px;">👇 בחר שאלה מסקרנת כדי לגלות איך היא עובדת:</div>
+          <div id="science-cards-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;max-height:290px;overflow-y:auto;padding-right:2px;"></div>
+        </div>
+
+        <!-- 2. Interactive Hands-On Experiments Station (ניסויים אינטראקטיביים במעבדה!) -->
+        <div class="surface-card" style="background:linear-gradient(135deg,#f0f9ff 0%,#e0f2fe 100%);border:2px solid #0284c7;">
+          <h3 style="margin:0 0 6px;color:#0369a1;font-size:1.1rem;">🧪 שולחן הניסויים החיים של עילי וליה! (+מטבעות 🪙)</h3>
+          <p class="muted-note" style="margin-bottom:10px;">לחצו על החומרים והכפתורים כדי לבצע ניסויי מדע אמיתיים ולראות מה קורה!</p>
+
+          <!-- Experiment 1: Color Mixing Beaker -->
+          <div class="surface-card" style="margin-bottom:10px;border-color:#7dd3fc;">
+            <div style="font-weight:800;color:#0c4a6e;margin-bottom:6px;">🎨 ניסוי 1: מעבדת ערבוב צבעים ואור — בחרו צירוף צבעים:</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
+              <button type="button" class="btn-chip sci-mix-btn" data-mix="💙 כחול + 💛 צהוב = 💚 ירוק (Green)!" data-heb="כחול ועוד צהוב יוצרים צבע ירוק, כמו הדשא והעלים!" data-eng="Blue and Yellow make Green!">💙 כחול + 💛 צהוב</button>
+              <button type="button" class="btn-chip sci-mix-btn" data-mix="❤️ אדום + 💛 צהוב = 🧡 כתום (Orange)!" data-heb="אדום ועוד צהוב יוצרים צבע כתום, כמו תפוז ושקיעה!" data-eng="Red and Yellow make Orange!">❤️ אדום + 💛 צהוב</button>
+              <button type="button" class="btn-chip sci-mix-btn" data-mix="❤️ אדום + 💙 כחול = 💜 סגול (Purple)!" data-heb="אדום ועוד כחול יוצרים צבע סגול קסום!" data-eng="Red and Blue make Purple!">❤️ אדום + 💙 כחול</button>
+              <button type="button" class="btn-chip sci-mix-btn" data-mix="❤️ אדום + 🤍 לבן = 🩷 ורוד (Pink)!" data-heb="אדום ועוד לבן יוצרים צבע ורוד מתוק!" data-eng="Red and White make Pink!">❤️ אדום + 🤍 לבן</button>
+            </div>
+            <div id="sci-mix-result" style="font-size:1.05rem;font-weight:900;color:#0369a1;background:#fff;padding:8px 12px;border-radius:10px;border:1px solid #bae6fd;">🧪 לחצו על שני צבעים למעלה כדי לערבב אותם במבחנה!</div>
+          </div>
+
+          <!-- Experiment 2: Float or Sink Water Tank -->
+          <div class="surface-card" style="margin-bottom:10px;border-color:#7dd3fc;">
+            <div style="font-weight:800;color:#0c4a6e;margin-bottom:6px;">🌊 ניסוי 2: צף או שוקע במים? זרקו חפץ לאקווריום ובדקו!</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
+              <button type="button" class="btn-chip sci-float-btn" data-res="🦆 ברווז הגומי צף למעלה! ⬆️ כי הוא קל ומלא באוויר!" data-speech="ברווז הגומי צף על פני המים כי הוא קל ומלא באוויר!">🦆 ברווז גומי</button>
+              <button type="button" class="btn-chip sci-float-btn" data-res="🪨 האבן שקעה לקרקעית! ⬇️ כי היא צפופה וכבדה יותר מהמים!" data-speech="האבן שקעה לקרקעית כי היא כבדה וצפופה יותר מהמים!">🪨 אבן</button>
+              <button type="button" class="btn-chip sci-float-btn" data-res="🪵 בול העץ צף על המים! ⬆️ מעץ אפילו בונים סירות ורפסודות!" data-speech="בול העץ צף על המים! בגלל זה בונים מעץ סירות!">🪵 בול עץ</button>
+              <button type="button" class="btn-chip sci-float-btn" data-res="🪙 מטבע המתכת שקע למטה! ⬇️ מתכת צפופה שוקעת במים!" data-speech="מטבע המתכת שקע למטה לקרקעית!">🪙 מטבע מתכת</button>
+              <button type="button" class="btn-chip sci-float-btn" data-res="🍎 התפוח צף במים! ⬆️ הידעתם שבתוך תפוח יש כמעט רבע אוויר?" data-speech="התפוח צף במים כי בתוכו יש המון כיסי אוויר קטנים!">🍎 תפוח עץ</button>
+            </div>
+            <div id="sci-float-result" style="font-size:1.02rem;font-weight:900;color:#0369a1;background:#fff;padding:8px 12px;border-radius:10px;border:1px solid #bae6fd;">🛁 בחרו חפץ כדי להפיל אותו למים!</div>
+          </div>
+
+          <!-- Experiment 3: Volcano Eruption -->
+          <div class="surface-card" style="margin-bottom:10px;border-color:#fca5a5;background:#fff1f2;">
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+              <div>
+                <div style="font-weight:900;color:#be123c;">🌋 ניסוי 3: הר געש של סודה לשתייה וחומץ!</div>
+                <div id="sci-volcano-status" style="font-size:0.86rem;color:#881337;margin-top:2px;">ערבבו אבקת סודה לשתייה עם חומץ וראו איך נוצרות בועות גז מתפרצות!</div>
+              </div>
+              <button type="button" class="btn-primary-action" id="btn-sci-erupt-volcano" style="background:#e11d48;font-weight:900;">🌋 הפעל התפרצות הר געש! (+10 🪙)</button>
+            </div>
+          </div>
+
+          <button type="button" class="btn-primary-large" id="btn-science-start-quiz" style="background:#0284c7;font-weight:900;">
+            🏆 התחל משחק שאלות במעבדת המדע ואיך דברים עובדים (+מטבעות 🪙)
+          </button>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 14: TALKING ILLUSTRATED ENGLISH & SCIENCE DICTIONARY (מילון מדבר מאויר) ==================== -->
+      <section id="view-dictionary" class="view-section">
+        <div class="screen-nav-bar">
+          <button type="button" class="btn-back" onclick="switchView('home')">‹ חזרה</button>
+          <span class="screen-title">📖 המילון המדבר של עילי וליה</span>
+          <span class="badge-counter">מילים + משפטים 🔊</span>
+        </div>
+
+        <div class="surface-card" style="background:linear-gradient(145deg,#064e3b 0%,#0f172a 100%);color:#f8fafc;border:2px solid #34d399;">
+          <div style="margin-bottom:10px;">
+            <h3 style="margin:0;color:#6ee7b7;font-size:1.12rem;">🗣️ מילון אנגלית, פיפא, מדע ויופי עם משפטים שלמים לדוגמא!</h3>
+            <p style="margin:3px 0 0;font-size:0.83rem;color:#d1fae5;">לחצו על כל כרטיס כדי לשמוע את המילה ואת המשפט השלם באנגלית (רגיל 🔊 או לאט 🐢)!</p>
+          </div>
+
+          <input
+            type="search"
+            id="dict-search-input"
+            placeholder="🔍 חפש מילה בעברית או באנגלית (למשל: Kick Off, שער, כבידה, כתר...)"
+            style="width:100%;padding:10px 12px;border-radius:12px;border:2px solid #34d399;background:#0f172a;color:#fff;font-size:0.92rem;margin-bottom:10px;"
+          />
+
+          <div class="segmented-tabs" id="dict-cat-tabs" style="margin-bottom:12px;background:#1e293b;width:100%;display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;"></div>
+
+          <div id="dict-cards-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;"></div>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 15: LIA'S EDUCATIONAL COLORING STUDIO (סטודיו הצביעה הלימודי של ליה) ==================== -->
+      <section id="view-coloring" class="view-section">
+        <div class="screen-nav-bar">
+          <button type="button" class="btn-back" onclick="switchView('home')">‹ חזרה</button>
+          <span class="screen-title">🎨 סטודיו הצביעה הלימודי של ליה</span>
+          <span class="badge-counter">צבעים ומספרים באנגלית ✨</span>
+        </div>
+
+        <!-- Guided Coloring Learning Mission Box -->
+        <div class="surface-card glam-mission-card">
+          <div class="glam-mission-header">
+            <span class="glam-badge" style="background:#8b5cf6;">🎯 משימת צביעה לימודית (+15 🪙 לכל חלק!)</span>
+            <button type="button" class="btn-chip" id="btn-coloring-speak-mission">🔊 הקרא משימה</button>
+          </div>
+          <div class="glam-mission-text" id="coloring-mission-text">בחרי צבע צהוב (Yellow) וצבעי את קרן הקסם (מספר 1)!</div>
+        </div>
+
+        <div class="surface-card">
+          <!-- Coloring Page Selector -->
+          <div class="segmented-tabs" id="coloring-page-tabs" style="margin-bottom:12px;"></div>
+
+          <!-- Interactive SVG Canvas -->
+          <div id="coloring-svg-container" class="coloring-svg-stage" style="background:#fff;border:3px solid #f9a8d4;border-radius:20px;padding:12px;max-width:360px;margin:0 auto 14px;text-align:center;"></div>
+
+          <!-- Color Palette Swatches (Bilingual) -->
+          <div style="font-weight:800;font-size:0.9rem;color:#831843;margin-bottom:6px;">🎨 בחרי צבע מהפלטה (לחיצה משמיעה את הצבע בעברית ובאנגלית):</div>
+          <div id="coloring-palette-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;"></div>
+
+          <div class="feedback-banner hidden" id="coloring-feedback-banner" style="margin-bottom:10px;"></div>
+
+          <div style="display:flex;gap:8px;">
+            <button type="button" class="btn-secondary-pill" id="btn-coloring-reset" style="flex:1;">🔄 נקה ציור</button>
+            <button type="button" class="btn-primary-action" id="btn-coloring-next-page" style="flex:1.5;background:#ec4899;">לציור הבא 🎨⬅️</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 16: LIA'S EDUCATIONAL DRESS-UP & SEASONS STUDIO (סטודיו הלבשות ועונות השנה) ==================== -->
+      <section id="view-dressup" class="view-section">
+        <div class="screen-nav-bar">
+          <button type="button" class="btn-back" onclick="switchView('home')">‹ חזרה</button>
+          <span class="screen-title">👗 סטודיו ההלבשות והאופנה של ליה</span>
+          <span class="badge-counter">עונות ובגדים באנגלית ✨</span>
+        </div>
+
+        <!-- Dress-Up Weather / Occasion Mission Card -->
+        <div class="surface-card glam-mission-card" style="border-color:#a855f7;">
+          <div class="glam-mission-header">
+            <span class="glam-badge" style="background:#7c3aed;" id="dressup-mission-badge">🌧️ משימה 1 מתוך 4</span>
+            <button type="button" class="btn-chip" id="btn-dressup-speak-mission">🔊 הקרא משימה</button>
+          </div>
+          <div class="glam-mission-text" id="dressup-mission-text">בחוץ יורד גשם! הלבישי מעיל חם, כובע צמר, מגפי גשם ומטרייה!</div>
+        </div>
+
+        <div class="surface-card">
+          <!-- Interactive Character SVG Stage -->
+          <div id="dressup-character-stage" style="margin-bottom:12px;"></div>
+
+          <!-- Wardrobe Selectors -->
+          <div id="dressup-wardrobe-controls" style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px;"></div>
+
+          <div class="feedback-banner hidden" id="dressup-feedback-banner" style="margin-bottom:10px;"></div>
+
+          <div style="display:flex;gap:8px;">
+            <button type="button" class="btn-primary-large" id="btn-dressup-check" style="background:linear-gradient(135deg,#ec4899,#8b5cf6);font-weight:900;">✨ בדקי את ההופעה שבחרתי! (+25 🪙)</button>
+            <button type="button" class="btn-secondary-pill" id="btn-dressup-next-mission">משימה הבאה ⬅️</button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Fixed iOS Bottom Tab Bar -->
+    <nav class="bottom-nav">
+      <button type="button" class="nav-btn active" data-view="home" id="nav-home">
+        <span class="btn-icon">🏠</span>
+        <span class="btn-text">בית</span>
+      </button>
+      <button type="button" class="nav-btn" data-view="speech" id="nav-speech">
+        <span class="btn-icon" id="nav-2-icon">🎙️</span>
+        <span class="btn-text" id="nav-2-text">הגייה</span>
+        <span class="shop-badge hidden" id="speech-notif">!</span>
+      </button>
+      <button type="button" class="nav-btn" data-view="homework" id="nav-homework">
+        <span class="btn-icon" id="nav-3-icon">✅</span>
+        <span class="btn-text" id="nav-3-text">משימות</span>
+        <span class="shop-badge hidden" id="hw-notif">0</span>
+      </button>
+      <button type="button" class="nav-btn" data-view="dictation" id="nav-dictation">
+        <span class="btn-icon" id="nav-4-icon">🎧</span>
+        <span class="btn-text" id="nav-4-text">הכתבה</span>
+      </button>
+      <button type="button" class="nav-btn" data-view="schedule" id="nav-schedule">
+        <span class="btn-icon">📅</span>
+        <span class="btn-text">מערכת</span>
+      </button>
+      <button type="button" class="nav-btn" data-view="shop" id="nav-shop">
+        <span class="btn-icon">🏆</span>
+        <span class="btn-text">אלבום</span>
+        <span class="shop-badge hidden" id="shop-notif">!</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <script>window.FORCE_KID_PROFILE = 'lia';</script>
+  <script src="js/sound.js?v=5.0"></script>
+  <script src="js/questions.js?v=5.0"></script>
+  <script src="js/cards_svg.js?v=5.0"></script>
+  <script src="js/app.js?v=5.0"></script>
+</body>
+</html>
+

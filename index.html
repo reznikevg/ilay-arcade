@@ -2,6 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
   <meta charset="UTF-8">
+  <meta name="referrer" content="no-referrer">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -12,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Rubik:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=4.0">
+  <link rel="stylesheet" href="css/styles.css?v=5.0">
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body class="theme-beitar">
@@ -164,12 +165,24 @@
           </div>
         </div>
 
-        <!-- LIA'S 4 Core Daily Modules (2x2 Grid: Makeup, Kindergarten Teacher, English, Prep) -->
+        <!-- LIA'S 6 Core Daily Modules (Makeup, Coloring+Learning, Dress-Up+Learning, Kindergarten Teacher, English, Prep) -->
         <div class="bento-grid hidden" id="lia-bento-grid">
           <button type="button" class="bento-card bento-makeup" id="quick-open-makeup">
             <div class="bento-icon-wrap">💄</div>
             <div class="bento-title">סטודיו האיפור של ליה</div>
             <div class="bento-sub">לאפר ולהתאפר + צבעים באנגלית!</div>
+          </button>
+
+          <button type="button" class="bento-card bento-makeup" id="quick-open-coloring" style="background:linear-gradient(135deg,#fef9c3 0%,#fce7f3 100%);border-color:#f472b6;">
+            <div class="bento-icon-wrap">🎨</div>
+            <div class="bento-title">צביעה לימודית קסומה</div>
+            <div class="bento-sub">לצבוע לפי מספרים וצבעים באנגלית!</div>
+          </button>
+
+          <button type="button" class="bento-card bento-kinder" id="quick-open-dressup" style="background:linear-gradient(135deg,#e0f2fe 0%,#f3e8ff 100%);border-color:#a855f7;">
+            <div class="bento-icon-wrap">👗</div>
+            <div class="bento-title">סטודיו הלבשות ועונות</div>
+            <div class="bento-sub">להלביש לפי מזג אוויר + בגדים באנגלית!</div>
           </button>
 
           <button type="button" class="bento-card bento-kinder" id="quick-open-kinder">
@@ -265,6 +278,8 @@
           <div class="speech-stage">
             <div class="sp-emoji-huge" id="sp-emoji">⚽</div>
             <div class="sp-target-phrase" id="sp-phrase">שַׁעַר שֶׁל שׁוּעָה!</div>
+            <div class="sp-word-chips-row" id="sp-word-chips-row"></div>
+            <div style="font-size:0.8rem;color:#64748b;margin-top:8px;font-weight:700;">💡 לחץ על כל מילה כדי לשמוע אותה בנפרד! כשמדברים, כל מילה שתאמר נכון תיצבע בירוק ✅</div>
           </div>
 
           <div class="speech-action-stack">
@@ -497,17 +512,49 @@
         </div>
       </section>
 
-      <!-- ==================== VIEW 8: ALBUM ==================== -->
+      <!-- ==================== VIEW 8: SUPERGOL & CHAMPIONS LEAGUE FUT ALBUM ==================== -->
       <section id="view-shop" class="view-section">
         <div class="screen-nav-bar">
           <button type="button" class="btn-back" onclick="switchView('home')">‹ חזרה</button>
-          <span class="screen-title">אלבום הקלפים (<span id="album-count">0/20</span>)</span>
-          <button type="button" class="btn-primary-action" id="btn-buy-pack" style="padding:7px 14px;font-size:0.85rem;">🎁 פתח קלף (🪙50)</button>
+          <span class="screen-title">🏆 אלבום סופרגול וליגת האלופות (<span id="album-count">0/24</span>)</span>
+          <button type="button" class="btn-primary-action" id="btn-buy-pack" style="padding:8px 14px;font-size:0.86rem;background:linear-gradient(135deg,#facc15,#eab308);color:#090d16;font-weight:900;">🎁 פתח מעטפת סופרגול (🪙50)</button>
           <div class="hidden" id="shop-coins-balance"></div>
-          <div class="hidden" id="album-progress-fill"></div>
+        </div>
+
+        <!-- Album Progress & Series Filter Bar -->
+        <div class="surface-card" style="background:linear-gradient(135deg,#090d16 0%,#1e293b 100%);border:2px solid #facc15;color:#fff;padding:12px 14px;margin-bottom:12px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;">
+            <span style="font-size:0.88rem;font-weight:900;color:#fde047;">⭐ התקדמות באלבום האלופים:</span>
+            <span style="font-size:0.8rem;color:#cbd5e1;">לחץ על כל קלף פתוח כדי להגדיל, לשמוע ולבחור כסמל!</span>
+          </div>
+          <div style="width:100%;height:10px;background:#334155;border-radius:99px;overflow:hidden;margin-bottom:10px;">
+            <div id="album-progress-fill" style="width:10%;height:100%;background:linear-gradient(90deg,#facc15,#00ff87);transition:width 0.35s ease;"></div>
+          </div>
+          <div class="segmented-tabs" id="album-series-tabs" style="background:#0f172a;padding:4px;border-radius:12px;">
+            <button type="button" class="cat-tab active" data-albumcat="all" style="color:#fff;font-size:0.78rem;">🌟 כל האלבום</button>
+            <button type="button" class="cat-tab" data-albumcat="beitar" style="color:#fff;font-size:0.78rem;">💛🖤 סופרגול בית"ר</button>
+            <button type="button" class="cat-tab" data-albumcat="real" style="color:#fff;font-size:0.78rem;">👑 ריאל וליגת האלופות</button>
+            <button type="button" class="cat-tab" data-albumcat="world" style="color:#fff;font-size:0.78rem;">🌍 אגדות עולמיות ו-TOTY</button>
+          </div>
         </div>
 
         <div class="stickers-grid" id="stickers-grid"></div>
+
+        <!-- 3D Pack Walkout & Card Inspection Modal -->
+        <div id="fut-pack-modal" class="hidden" style="position:fixed;inset:0;z-index:9500;background:rgba(9,13,22,0.88);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:18px;">
+          <div style="background:linear-gradient(145deg,#0f172a,#1e1b4b);border:3px solid #facc15;border-radius:24px;max-width:380px;width:100%;padding:20px;text-align:center;color:#fff;box-shadow:0 20px 50px rgba(0,0,0,0.65);">
+            <div id="fut-modal-badge" style="display:inline-block;background:#00ff87;color:#090d16;font-weight:900;font-size:0.8rem;padding:4px 12px;border-radius:99px;margin-bottom:10px;">🎉 קלף סופרגול וליגת האלופות!</div>
+            <div id="fut-modal-card-slot" style="max-width:230px;margin:0 auto 12px;"></div>
+            <div id="fut-modal-story" style="font-size:0.92rem;font-weight:700;color:#e2e8f0;line-height:1.45;background:rgba(255,255,255,0.08);padding:10px 12px;border-radius:12px;margin-bottom:12px;"></div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <button type="button" class="btn-primary-large" id="btn-fut-modal-equip" style="background:linear-gradient(135deg,#facc15,#eab308);color:#090d16;font-weight:900;">⭐ קבע כסמל האלוף שלי בראש האפליקציה</button>
+              <div style="display:flex;gap:8px;">
+                <button type="button" class="btn-secondary-pill" id="btn-fut-modal-speak" style="flex:1;background:#38bdf8;color:#090d16;border:none;font-weight:900;">🔊 השמע סיפור קלף</button>
+                <button type="button" class="btn-secondary-pill" id="btn-fut-modal-close" style="flex:1;background:#334155;color:#fff;border:none;font-weight:800;">סגור ✖</button>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
       <!-- ==================== VIEW 9: PARENTS ZONE ==================== -->
@@ -1125,6 +1172,76 @@
         </div>
       </section>
 
+      <!-- ==================== VIEW 15: LIA'S EDUCATIONAL COLORING STUDIO (סטודיו הצביעה הלימודי של ליה) ==================== -->
+      <section id="view-coloring" class="view-section">
+        <div class="screen-nav-bar">
+          <button type="button" class="btn-back" onclick="switchView('home')">‹ חזרה</button>
+          <span class="screen-title">🎨 סטודיו הצביעה הלימודי של ליה</span>
+          <span class="badge-counter">צבעים ומספרים באנגלית ✨</span>
+        </div>
+
+        <!-- Guided Coloring Learning Mission Box -->
+        <div class="surface-card glam-mission-card">
+          <div class="glam-mission-header">
+            <span class="glam-badge" style="background:#8b5cf6;">🎯 משימת צביעה לימודית (+15 🪙 לכל חלק!)</span>
+            <button type="button" class="btn-chip" id="btn-coloring-speak-mission">🔊 הקרא משימה</button>
+          </div>
+          <div class="glam-mission-text" id="coloring-mission-text">בחרי צבע צהוב (Yellow) וצבעי את קרן הקסם (מספר 1)!</div>
+        </div>
+
+        <div class="surface-card">
+          <!-- Coloring Page Selector -->
+          <div class="segmented-tabs" id="coloring-page-tabs" style="margin-bottom:12px;"></div>
+
+          <!-- Interactive SVG Canvas -->
+          <div id="coloring-svg-container" class="coloring-svg-stage" style="background:#fff;border:3px solid #f9a8d4;border-radius:20px;padding:12px;max-width:360px;margin:0 auto 14px;text-align:center;"></div>
+
+          <!-- Color Palette Swatches (Bilingual) -->
+          <div style="font-weight:800;font-size:0.9rem;color:#831843;margin-bottom:6px;">🎨 בחרי צבע מהפלטה (לחיצה משמיעה את הצבע בעברית ובאנגלית):</div>
+          <div id="coloring-palette-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;"></div>
+
+          <div class="feedback-banner hidden" id="coloring-feedback-banner" style="margin-bottom:10px;"></div>
+
+          <div style="display:flex;gap:8px;">
+            <button type="button" class="btn-secondary-pill" id="btn-coloring-reset" style="flex:1;">🔄 נקה ציור</button>
+            <button type="button" class="btn-primary-action" id="btn-coloring-next-page" style="flex:1.5;background:#ec4899;">לציור הבא 🎨⬅️</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 16: LIA'S EDUCATIONAL DRESS-UP & SEASONS STUDIO (סטודיו הלבשות ועונות השנה) ==================== -->
+      <section id="view-dressup" class="view-section">
+        <div class="screen-nav-bar">
+          <button type="button" class="btn-back" onclick="switchView('home')">‹ חזרה</button>
+          <span class="screen-title">👗 סטודיו ההלבשות והאופנה של ליה</span>
+          <span class="badge-counter">עונות ובגדים באנגלית ✨</span>
+        </div>
+
+        <!-- Dress-Up Weather / Occasion Mission Card -->
+        <div class="surface-card glam-mission-card" style="border-color:#a855f7;">
+          <div class="glam-mission-header">
+            <span class="glam-badge" style="background:#7c3aed;" id="dressup-mission-badge">🌧️ משימה 1 מתוך 4</span>
+            <button type="button" class="btn-chip" id="btn-dressup-speak-mission">🔊 הקרא משימה</button>
+          </div>
+          <div class="glam-mission-text" id="dressup-mission-text">בחוץ יורד גשם! הלבישי מעיל חם, כובע צמר, מגפי גשם ומטרייה!</div>
+        </div>
+
+        <div class="surface-card">
+          <!-- Interactive Character SVG Stage -->
+          <div id="dressup-character-stage" style="margin-bottom:12px;"></div>
+
+          <!-- Wardrobe Selectors -->
+          <div id="dressup-wardrobe-controls" style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px;"></div>
+
+          <div class="feedback-banner hidden" id="dressup-feedback-banner" style="margin-bottom:10px;"></div>
+
+          <div style="display:flex;gap:8px;">
+            <button type="button" class="btn-primary-large" id="btn-dressup-check" style="background:linear-gradient(135deg,#ec4899,#8b5cf6);font-weight:900;">✨ בדקי את ההופעה שבחרתי! (+25 🪙)</button>
+            <button type="button" class="btn-secondary-pill" id="btn-dressup-next-mission">משימה הבאה ⬅️</button>
+          </div>
+        </div>
+      </section>
+
     </main>
 
     <!-- Fixed iOS Bottom Tab Bar -->
@@ -1152,7 +1269,7 @@
         <span class="btn-text">מערכת</span>
       </button>
       <button type="button" class="nav-btn" data-view="shop" id="nav-shop">
-        <span class="btn-icon">🏅</span>
+        <span class="btn-icon">🏆</span>
         <span class="btn-text">אלבום</span>
         <span class="shop-badge hidden" id="shop-notif">!</span>
       </button>
@@ -1160,8 +1277,9 @@
 
   </div>
 
-  <script src="js/sound.js?v=4.0"></script>
-  <script src="js/questions.js?v=4.0"></script>
-  <script src="js/app.js?v=4.0"></script>
+  <script src="js/sound.js?v=5.0"></script>
+  <script src="js/questions.js?v=5.0"></script>
+  <script src="js/cards_svg.js?v=5.0"></script>
+  <script src="js/app.js?v=5.0"></script>
 </body>
 </html>
