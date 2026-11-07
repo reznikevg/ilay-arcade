@@ -627,6 +627,7 @@ function switchView(viewName) {
   if (viewName === 'makeup') initMakeupStudio();
   if (viewName === 'kinder') initKinderStudio();
   if (viewName === 'fc27') initFC27Studio();
+  if (viewName === 'science') initScienceStudio();
   updateHeaderUI();
 }
 
@@ -3130,10 +3131,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Setup Lia's Studios & Ilay's FC 27 Studio
+  // Setup Lia's Studios, Ilay's FC 27 Studio & Science Lab
   setupMakeupStudioListeners();
   setupKinderStudioListeners();
   setupFC27StudioListeners();
+  setupScienceStudioListeners();
 });
 
 // ==================== VIEW 10: LIA'S GLAM & MAKEUP STUDIO CONTROLLER ====================
@@ -3965,4 +3967,181 @@ function setupFC27StudioListeners() {
       startMatch('english_fc27_commentator', '🎙️ מה השדרן בפיפא אומר?', false);
     });
   }
+}
+
+// ==================== VIEW 13: INTERACTIVE SCIENCE & HOW THINGS WORK LAB CONTROLLER ====================
+
+let scienceLabState = {
+  cat: 'all',
+  selectedId: 'sci_banana_kick'
+};
+
+function initScienceStudio() {
+  renderScienceStudio();
+}
+
+function renderScienceStudio() {
+  if (typeof SCIENCE_DISCOVERY_CARDS === 'undefined') return;
+
+  const filtered = SCIENCE_DISCOVERY_CARDS.filter(c => {
+    if (scienceLabState.cat === 'all') return true;
+    return c.cat === scienceLabState.cat;
+  });
+
+  let activeCard = filtered.find(c => c.id === scienceLabState.selectedId) || filtered[0] || SCIENCE_DISCOVERY_CARDS[0];
+  scienceLabState.selectedId = activeCard.id;
+
+  const iconEl = document.getElementById('sci-stage-icon');
+  const titleEl = document.getElementById('sci-stage-title');
+  const engEl = document.getElementById('sci-stage-eng');
+  const stepsEl = document.getElementById('sci-stage-steps');
+  const expEl = document.getElementById('sci-stage-explain');
+  const exprEl = document.getElementById('sci-stage-experiment');
+  const factEl = document.getElementById('sci-stage-funfact');
+
+  if (iconEl) iconEl.textContent = activeCard.icon;
+  if (titleEl) titleEl.textContent = activeCard.title;
+  if (engEl) engEl.textContent = `🌍 באנגלית: ${activeCard.engWord} (${activeCard.engHeb})`;
+  if (expEl) expEl.textContent = activeCard.explain;
+  if (exprEl) exprEl.textContent = activeCard.experiment;
+  if (factEl) factEl.textContent = activeCard.funFact;
+
+  if (stepsEl) {
+    stepsEl.innerHTML = '';
+    activeCard.steps.forEach(st => {
+      const box = document.createElement('div');
+      box.style.cssText = 'background:linear-gradient(135deg,#0284c7,#1e3a8a);border:1px solid #7dd3fc;border-radius:10px;padding:8px 10px;font-size:0.86rem;font-weight:800;color:#fff;';
+      box.textContent = st;
+      stepsEl.appendChild(box);
+    });
+  }
+
+  const grid = document.getElementById('science-cards-grid');
+  if (grid) {
+    grid.innerHTML = '';
+    filtered.forEach(card => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      const isSel = card.id === activeCard.id;
+      btn.style.cssText = `
+        text-align:right;
+        background:${isSel ? 'linear-gradient(135deg,#0284c7,#1d4ed8)' : '#1e293b'};
+        border:2px solid ${isSel ? '#38bdf8' : '#334155'};
+        border-radius:12px;
+        padding:9px 10px;
+        color:#fff;
+        cursor:pointer;
+        font-family:inherit;
+      `;
+      btn.innerHTML = `
+        <div style="font-size:1.3rem;margin-bottom:3px;">${card.icon}</div>
+        <div style="font-size:0.86rem;font-weight:800;color:#f8fafc;line-height:1.3;">${card.title}</div>
+        <div style="font-size:0.74rem;color:#7dd3fc;margin-top:3px;direction:ltr;text-align:left;">🌍 ${card.engWord}</div>
+      `;
+      btn.addEventListener('click', () => {
+        arcadeAudio.playClick();
+        scienceLabState.selectedId = card.id;
+        renderScienceStudio();
+        speakCurrentScienceCard('heb');
+      });
+      grid.appendChild(btn);
+    });
+  }
+}
+
+function speakCurrentScienceCard(mode = 'heb') {
+  if (typeof SCIENCE_DISCOVERY_CARDS === 'undefined') return;
+  const activeCard = SCIENCE_DISCOVERY_CARDS.find(c => c.id === scienceLabState.selectedId) || SCIENCE_DISCOVERY_CARDS[0];
+  if (!activeCard) return;
+
+  if (mode === 'eng') {
+    arcadeAudio.speakBilingual(activeCard.engHeb, activeCard.engWord, 0.86);
+  } else {
+    arcadeAudio.speak(`${activeCard.title}. ${activeCard.explain}`, 'he-IL', 0.88);
+  }
+}
+
+function setupScienceStudioListeners() {
+  const banner = document.getElementById('science-home-banner');
+  if (banner) {
+    banner.addEventListener('click', () => {
+      arcadeAudio.playClick();
+      switchView('science');
+      setTimeout(() => speakCurrentScienceCard('heb'), 280);
+    });
+  }
+
+  document.querySelectorAll('#science-cat-tabs .cat-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      arcadeAudio.playClick();
+      document.querySelectorAll('#science-cat-tabs .cat-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      scienceLabState.cat = tab.dataset.scicat;
+      renderScienceStudio();
+      speakCurrentScienceCard('heb');
+    });
+  });
+
+  const btnSpeakExplain = document.getElementById('btn-sci-speak-explain');
+  if (btnSpeakExplain) {
+    btnSpeakExplain.addEventListener('click', () => speakCurrentScienceCard('heb'));
+  }
+
+  const btnSpeakEng = document.getElementById('btn-sci-speak-eng');
+  if (btnSpeakEng) {
+    btnSpeakEng.addEventListener('click', () => speakCurrentScienceCard('eng'));
+  }
+
+  // Interactive Experiment 1: Color Mixing
+  document.querySelectorAll('.sci-mix-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      arcadeAudio.playGoalSuccess();
+      const resEl = document.getElementById('sci-mix-result');
+      if (resEl) resEl.textContent = `✨ תוצאת הניסוי: ${btn.dataset.mix}`;
+      arcadeAudio.speakBilingual(btn.dataset.heb, btn.dataset.eng, 0.88);
+    });
+  });
+
+  // Interactive Experiment 2: Float or Sink
+  document.querySelectorAll('.sci-float-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      arcadeAudio.playGoalSuccess();
+      const resEl = document.getElementById('sci-float-result');
+      if (resEl) resEl.textContent = btn.dataset.res;
+      arcadeAudio.speak(btn.dataset.speech, 'he-IL', 0.88);
+    });
+  });
+
+  // Interactive Experiment 3: Volcano Eruption
+  const btnVolcano = document.getElementById('btn-sci-erupt-volcano');
+  if (btnVolcano) {
+    btnVolcano.addEventListener('click', () => {
+      arcadeAudio.playGoalSuccess();
+      confetti.burst(110);
+      addActiveCoins(10);
+      saveState();
+      updateHeaderUI();
+      const stEl = document.getElementById('sci-volcano-status');
+      if (stEl) {
+        stEl.textContent = '🌋 בוווום! הסודה לשתייה והחומץ יצרו גז פחמן דו-חמצני שהקציף והתפרץ כמו לבה! (+10 🪙)';
+      }
+      arcadeAudio.speak('וואו! תגובה כימית! הסודה לשתייה והחומץ יצרו בועות גז שהתפרצו כמו הר געש! הרווחתם עשרה מטבעות!', 'he-IL', 0.9);
+    });
+  }
+
+  // Quiz Launchers
+  const launchSciQuiz = () => {
+    arcadeAudio.playClick();
+    if (isLiaActive()) {
+      startMatch('lia_science_wonder', '🔬🌈 מעבדת המדע של ליה וסטיץ׳', false);
+    } else {
+      startMatch('science_how_it_works', '🔬 מעבדת המדע: איך דברים עובדים?', false);
+    }
+  };
+
+  const btnTopQuiz = document.getElementById('btn-science-top-quiz');
+  if (btnTopQuiz) btnTopQuiz.addEventListener('click', launchSciQuiz);
+
+  const btnBotQuiz = document.getElementById('btn-science-start-quiz');
+  if (btnBotQuiz) btnBotQuiz.addEventListener('click', launchSciQuiz);
 }

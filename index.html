@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Rubik:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=3.2">
+  <link rel="stylesheet" href="css/styles.css?v=3.3">
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body class="theme-beitar">
@@ -183,6 +183,18 @@
           </button>
         </div>
 
+        <!-- SCIENCE & HOW THINGS WORK DISCOVERY BANNER (For both Ilay & Lia!) -->
+        <div class="fc27-home-banner" id="science-home-banner" style="background:linear-gradient(135deg,#0284c7 0%,#312e81 100%);border-color:#38bdf8;box-shadow:0 6px 18px rgba(56,189,248,0.25);">
+          <div class="fc27-banner-left">
+            <div class="fc27-logo-pill" style="background:#38bdf8;color:#0f172a;box-shadow:0 0 12px rgba(56,189,248,0.6);">SCIENCE<br>LAB 🔬</div>
+            <div class="fc27-banner-text">
+              <h4 style="color:#bae6fd;" id="science-banner-title">🔬 מעבדת המדע: איך דברים עובדים בעולם?</h4>
+              <p style="color:#e0f2fe;" id="science-banner-sub">ניסויים חיים, הסברים עם קול: חלל, כדורגל, טבע, גוף האדם, חשמל והר געש!</p>
+            </div>
+          </div>
+          <span class="fc27-banner-play" style="background:rgba(56,189,248,0.22);border-color:#7dd3fc;color:#fff;">למעבדה 🧪</span>
+        </div>
+
         <!-- Practice Games Section -->
         <div class="section-bar">
           <h2 class="section-heading" id="practice-section-heading">תרגול לימודי</h2>
@@ -191,6 +203,7 @@
             <button type="button" class="cat-tab" data-cat="math">חשבון</button>
             <button type="button" class="cat-tab" data-cat="hebrew">שפה</button>
             <button type="button" class="cat-tab" data-cat="english">אנגלית 🇬🇧</button>
+            <button type="button" class="cat-tab" data-cat="science">מדע 🔬</button>
             <button type="button" class="cat-tab" data-cat="custom" id="tab-custom">מיוחד</button>
           </div>
         </div>
@@ -949,6 +962,111 @@
         </div>
       </section>
 
+      <!-- ==================== VIEW 13: INTERACTIVE SCIENCE & HOW THINGS WORK LAB (מעבדת המדע ואיך דברים עובדים) ==================== -->
+      <section id="view-science" class="view-section">
+        <div class="screen-nav-bar">
+          <button type="button" class="btn-back" onclick="switchView('home')">‹ חזרה</button>
+          <span class="screen-title">🔬 מעבדת המדע ואיך דברים עובדים</span>
+          <button type="button" class="btn-primary-action" id="btn-science-top-quiz" style="background:#0284c7;padding:6px 12px;font-size:0.82rem;">🧪 לחידון המדע</button>
+        </div>
+
+        <!-- 1. Interactive Science Discovery Card ("How It Works" Step-by-Step) -->
+        <div class="surface-card" style="background:linear-gradient(145deg,#0f172a 0%,#1e1b4b 100%);color:#f8fafc;border:2px solid #38bdf8;">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
+            <div>
+              <h3 style="margin:0;color:#38bdf8;font-size:1.12rem;">🔍 איך דברים עובדים בעולם? (הסברים מונפשים + קול)</h3>
+              <p style="margin:2px 0 0;font-size:0.82rem;color:#cbd5e1;">בחר נושא למטה או סנן לפי קטגוריה כדי לגלות איך העולם עובד צעד אחר צעד!</p>
+            </div>
+          </div>
+
+          <!-- Category Filter Tabs -->
+          <div class="segmented-tabs" id="science-cat-tabs" style="margin-bottom:12px;background:#1e293b;width:100%;display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;">
+            <button type="button" class="cat-tab active" data-scicat="all" style="color:#fff;font-size:0.78rem;">🌟 הכל (12)</button>
+            <button type="button" class="cat-tab" data-scicat="physics" style="color:#fff;font-size:0.78rem;">⚽ פיזיקה ותעופה</button>
+            <button type="button" class="cat-tab" data-scicat="space" style="color:#fff;font-size:0.78rem;">🚀 חלל ומזג אוויר</button>
+            <button type="button" class="cat-tab" data-scicat="nature" style="color:#fff;font-size:0.78rem;">🌱 טבע וצמחים</button>
+            <button type="button" class="cat-tab" data-scicat="body" style="color:#fff;font-size:0.78rem;">🧠 גוף האדם</button>
+            <button type="button" class="cat-tab" data-scicat="tech" style="color:#fff;font-size:0.78rem;">💡 חשמל וטכנולוגיה</button>
+          </div>
+
+          <!-- Active Science Topic Stage -->
+          <div class="surface-card" id="science-active-stage" style="background:rgba(15,23,42,0.85);border:2px solid #38bdf8;color:#fff;margin-bottom:12px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span id="sci-stage-icon" style="font-size:2.4rem;">⚽🌪️</span>
+                <div>
+                  <h4 id="sci-stage-title" style="margin:0;font-size:1.15rem;color:#38bdf8;">איך כדורגל מסתובב באוויר ("בעיטת בננה")?</h4>
+                  <div id="sci-stage-eng" style="font-size:0.82rem;color:#fde047;font-weight:800;margin-top:2px;">🌍 באנגלית: Spin & Airflow (סיבוב וזרימת אוויר)</div>
+                </div>
+              </div>
+              <div style="display:flex;gap:6px;">
+                <button type="button" class="btn-chip" id="btn-sci-speak-explain" style="background:#38bdf8;color:#0f172a;font-weight:900;border:none;padding:8px 12px;">🔊 הקרא הסבר</button>
+                <button type="button" class="btn-chip" id="btn-sci-speak-eng" style="background:#facc15;color:#0f172a;font-weight:900;border:none;padding:8px 12px;">🇬🇧 באנגלית</button>
+              </div>
+            </div>
+
+            <!-- 3 Visual Steps of How It Works -->
+            <div id="sci-stage-steps" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:6px;margin-bottom:10px;"></div>
+
+            <!-- Clear Explanation -->
+            <div id="sci-stage-explain" style="font-size:0.95rem;line-height:1.5;color:#f8fafc;background:rgba(30,41,59,0.9);padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.12);margin-bottom:8px;"></div>
+
+            <!-- Try It Yourself & Fun Fact -->
+            <div id="sci-stage-experiment" style="background:rgba(16,185,129,0.16);border-right:4px solid #10b981;padding:8px 10px;border-radius:8px;font-size:0.86rem;font-weight:700;color:#a7f3d0;margin-bottom:6px;"></div>
+            <div id="sci-stage-funfact" style="background:rgba(250,204,21,0.15);border-right:4px solid #facc15;padding:8px 10px;border-radius:8px;font-size:0.86rem;font-weight:700;color:#fef08a;"></div>
+          </div>
+
+          <div style="font-size:0.85rem;font-weight:800;color:#bae6fd;margin-bottom:6px;">👇 בחר שאלה מסקרנת כדי לגלות איך היא עובדת:</div>
+          <div id="science-cards-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;max-height:290px;overflow-y:auto;padding-right:2px;"></div>
+        </div>
+
+        <!-- 2. Interactive Hands-On Experiments Station (ניסויים אינטראקטיביים במעבדה!) -->
+        <div class="surface-card" style="background:linear-gradient(135deg,#f0f9ff 0%,#e0f2fe 100%);border:2px solid #0284c7;">
+          <h3 style="margin:0 0 6px;color:#0369a1;font-size:1.1rem;">🧪 שולחן הניסויים החיים של עילי וליה! (+מטבעות 🪙)</h3>
+          <p class="muted-note" style="margin-bottom:10px;">לחצו על החומרים והכפתורים כדי לבצע ניסויי מדע אמיתיים ולראות מה קורה!</p>
+
+          <!-- Experiment 1: Color Mixing Beaker -->
+          <div class="surface-card" style="margin-bottom:10px;border-color:#7dd3fc;">
+            <div style="font-weight:800;color:#0c4a6e;margin-bottom:6px;">🎨 ניסוי 1: מעבדת ערבוב צבעים ואור — בחרו צירוף צבעים:</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
+              <button type="button" class="btn-chip sci-mix-btn" data-mix="💙 כחול + 💛 צהוב = 💚 ירוק (Green)!" data-heb="כחול ועוד צהוב יוצרים צבע ירוק, כמו הדשא והעלים!" data-eng="Blue and Yellow make Green!">💙 כחול + 💛 צהוב</button>
+              <button type="button" class="btn-chip sci-mix-btn" data-mix="❤️ אדום + 💛 צהוב = 🧡 כתום (Orange)!" data-heb="אדום ועוד צהוב יוצרים צבע כתום, כמו תפוז ושקיעה!" data-eng="Red and Yellow make Orange!">❤️ אדום + 💛 צהוב</button>
+              <button type="button" class="btn-chip sci-mix-btn" data-mix="❤️ אדום + 💙 כחול = 💜 סגול (Purple)!" data-heb="אדום ועוד כחול יוצרים צבע סגול קסום!" data-eng="Red and Blue make Purple!">❤️ אדום + 💙 כחול</button>
+              <button type="button" class="btn-chip sci-mix-btn" data-mix="❤️ אדום + 🤍 לבן = 🩷 ורוד (Pink)!" data-heb="אדום ועוד לבן יוצרים צבע ורוד מתוק!" data-eng="Red and White make Pink!">❤️ אדום + 🤍 לבן</button>
+            </div>
+            <div id="sci-mix-result" style="font-size:1.05rem;font-weight:900;color:#0369a1;background:#fff;padding:8px 12px;border-radius:10px;border:1px solid #bae6fd;">🧪 לחצו על שני צבעים למעלה כדי לערבב אותם במבחנה!</div>
+          </div>
+
+          <!-- Experiment 2: Float or Sink Water Tank -->
+          <div class="surface-card" style="margin-bottom:10px;border-color:#7dd3fc;">
+            <div style="font-weight:800;color:#0c4a6e;margin-bottom:6px;">🌊 ניסוי 2: צף או שוקע במים? זרקו חפץ לאקווריום ובדקו!</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
+              <button type="button" class="btn-chip sci-float-btn" data-res="🦆 ברווז הגומי צף למעלה! ⬆️ כי הוא קל ומלא באוויר!" data-speech="ברווז הגומי צף על פני המים כי הוא קל ומלא באוויר!">🦆 ברווז גומי</button>
+              <button type="button" class="btn-chip sci-float-btn" data-res="🪨 האבן שקעה לקרקעית! ⬇️ כי היא צפופה וכבדה יותר מהמים!" data-speech="האבן שקעה לקרקעית כי היא כבדה וצפופה יותר מהמים!">🪨 אבן</button>
+              <button type="button" class="btn-chip sci-float-btn" data-res="🪵 בול העץ צף על המים! ⬆️ מעץ אפילו בונים סירות ורפסודות!" data-speech="בול העץ צף על המים! בגלל זה בונים מעץ סירות!">🪵 בול עץ</button>
+              <button type="button" class="btn-chip sci-float-btn" data-res="🪙 מטבע המתכת שקע למטה! ⬇️ מתכת צפופה שוקעת במים!" data-speech="מטבע המתכת שקע למטה לקרקעית!">🪙 מטבע מתכת</button>
+              <button type="button" class="btn-chip sci-float-btn" data-res="🍎 התפוח צף במים! ⬆️ הידעתם שבתוך תפוח יש כמעט רבע אוויר?" data-speech="התפוח צף במים כי בתוכו יש המון כיסי אוויר קטנים!">🍎 תפוח עץ</button>
+            </div>
+            <div id="sci-float-result" style="font-size:1.02rem;font-weight:900;color:#0369a1;background:#fff;padding:8px 12px;border-radius:10px;border:1px solid #bae6fd;">🛁 בחרו חפץ כדי להפיל אותו למים!</div>
+          </div>
+
+          <!-- Experiment 3: Volcano Eruption -->
+          <div class="surface-card" style="margin-bottom:10px;border-color:#fca5a5;background:#fff1f2;">
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+              <div>
+                <div style="font-weight:900;color:#be123c;">🌋 ניסוי 3: הר געש של סודה לשתייה וחומץ!</div>
+                <div id="sci-volcano-status" style="font-size:0.86rem;color:#881337;margin-top:2px;">ערבבו אבקת סודה לשתייה עם חומץ וראו איך נוצרות בועות גז מתפרצות!</div>
+              </div>
+              <button type="button" class="btn-primary-action" id="btn-sci-erupt-volcano" style="background:#e11d48;font-weight:900;">🌋 הפעל התפרצות הר געש! (+10 🪙)</button>
+            </div>
+          </div>
+
+          <button type="button" class="btn-primary-large" id="btn-science-start-quiz" style="background:#0284c7;font-weight:900;">
+            🏆 התחל משחק שאלות במעבדת המדע ואיך דברים עובדים (+מטבעות 🪙)
+          </button>
+        </div>
+      </section>
+
     </main>
 
     <!-- Fixed iOS Bottom Tab Bar -->
@@ -984,8 +1102,8 @@
 
   </div>
 
-  <script src="js/sound.js?v=3.2"></script>
-  <script src="js/questions.js?v=3.2"></script>
-  <script src="js/app.js?v=3.2"></script>
+  <script src="js/sound.js?v=3.3"></script>
+  <script src="js/questions.js?v=3.3"></script>
+  <script src="js/app.js?v=3.3"></script>
 </body>
 </html>
