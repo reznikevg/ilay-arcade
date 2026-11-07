@@ -617,10 +617,13 @@ function updateHeaderUI() {
     btnStitch.classList.toggle('hidden', !lia);
   }
 
-  // Toggle Home Bento grids & Hero card text
+  // Toggle Home Bento grids, Settings Strip & Hero card text
   const ilayBento = document.getElementById('ilay-bento-grid');
   const liaBento = document.getElementById('lia-bento-grid');
   const fc27Banner = document.getElementById('fc27-home-banner');
+  const sciBanner = document.getElementById('science-home-banner');
+  const dictBanner = document.getElementById('dictionary-home-banner');
+  const settingsStrip = document.querySelector('.settings-strip');
   if (ilayBento && liaBento) {
     ilayBento.classList.toggle('hidden', lia);
     liaBento.classList.toggle('hidden', !lia);
@@ -628,6 +631,10 @@ function updateHeaderUI() {
   if (fc27Banner) {
     fc27Banner.classList.toggle('hidden', lia);
   }
+  // Hide text-heavy banners & timer/difficulty selectors for Lia (age 5, non-reader) so her screen is 100% simple and visual!
+  if (sciBanner) sciBanner.classList.toggle('hidden', lia);
+  if (dictBanner) dictBanner.classList.toggle('hidden', lia);
+  if (settingsStrip) settingsStrip.classList.toggle('hidden', lia);
 
   const heroTag = document.getElementById('hero-tag-text');
   const heroTitle = document.getElementById('hero-title-text');
@@ -635,33 +642,45 @@ function updateHeaderUI() {
   const practiceHeading = document.getElementById('practice-section-heading');
   if (heroTag && heroTitle && heroDesc) {
     if (lia) {
-      heroTag.textContent = 'מסיבת הקסמים של ליה • בונוס כפול ✨';
-      heroTitle.textContent = 'הרפתקת סטיץ׳ וחד-קרן 🦄💙';
-      heroDesc.textContent = '8 חידות שמחות באנגלית, אותיות וחשבון לגן חובה!';
-      if (practiceHeading) practiceHeading.textContent = 'משחקי הכנה לגן חובה ואנגלית לליה 🦄';
+      heroTag.textContent = 'מסיבת הקסמים של ליה • עם קול ותמונות ✨';
+      heroTitle.textContent = 'משחק הקסמים של סטיץ׳ וחד-קרן 🦄💙';
+      heroDesc.textContent = '6 חידות בתמונות וקול — בלי צורך לקרוא!';
+      if (practiceHeading) practiceHeading.textContent = 'לחצי על תמונה כדי לשחק (עם הקראה בעברית 🔊):';
     } else {
       heroTag.textContent = 'אתגר יומי • בונוס כפול';
       heroTitle.textContent = 'משחק האלופים המהיר';
-      heroDesc.textContent = '8 שאלות בחשבון ושפה על גביע יומי';
-      if (practiceHeading) practiceHeading.textContent = 'תרגול לימודי (כיתה ב׳)';
+      heroDesc.textContent = '8 שאלות בחשבון ושפה על גביע יומי (עם הקראה 🔊)';
+      if (practiceHeading) practiceHeading.textContent = 'תרגול לימודי (כיתה ב׳ • לחץ על 🔊 להקראה):';
     }
   }
 
-  // Update Bottom Nav buttons for Lia vs Ilay
+  // Update Bottom Nav buttons for Lia vs Ilay so Lia NEVER lands in 2nd-grade keyboard dictation!
   const nav2Icon = document.getElementById('nav-2-icon');
   const nav2Text = document.getElementById('nav-2-text');
   const nav2Btn = document.getElementById('nav-speech');
   const nav3Icon = document.getElementById('nav-3-icon');
   const nav3Text = document.getElementById('nav-3-text');
   const nav3Btn = document.getElementById('nav-homework');
-  if (nav2Btn && nav3Btn) {
+  const nav4Icon = document.getElementById('nav-4-icon');
+  const nav4Text = document.getElementById('nav-4-text');
+  const nav4Btn = document.getElementById('nav-dictation');
+  const nav5Btn = document.getElementById('nav-schedule');
+  if (nav2Btn && nav3Btn && nav4Btn && nav5Btn) {
+    const nav5Icon = nav5Btn.querySelector('.btn-icon');
+    const nav5Text = nav5Btn.querySelector('.btn-text');
     if (lia) {
       nav2Btn.dataset.view = 'makeup';
       if (nav2Icon) nav2Icon.textContent = '💄';
       if (nav2Text) nav2Text.textContent = 'איפור';
-      nav3Btn.dataset.view = 'kinder';
-      if (nav3Icon) nav3Icon.textContent = '👩‍🏫';
-      if (nav3Text) nav3Text.textContent = 'הגן שלי';
+      nav3Btn.dataset.view = 'coloring';
+      if (nav3Icon) nav3Icon.textContent = '🎨';
+      if (nav3Text) nav3Text.textContent = 'צביעה';
+      nav4Btn.dataset.view = 'dressup';
+      if (nav4Icon) nav4Icon.textContent = '👗';
+      if (nav4Text) nav4Text.textContent = 'הלבשות';
+      nav5Btn.dataset.view = 'kinder';
+      if (nav5Icon) nav5Icon.textContent = '👩‍🏫';
+      if (nav5Text) nav5Text.textContent = 'הגן שלי';
     } else {
       nav2Btn.dataset.view = 'speech';
       if (nav2Icon) nav2Icon.textContent = '🎙️';
@@ -669,6 +688,12 @@ function updateHeaderUI() {
       nav3Btn.dataset.view = 'homework';
       if (nav3Icon) nav3Icon.textContent = '✅';
       if (nav3Text) nav3Text.textContent = 'משימות';
+      nav4Btn.dataset.view = 'dictation';
+      if (nav4Icon) nav4Icon.textContent = '🎧';
+      if (nav4Text) nav4Text.textContent = 'הכתבה';
+      nav5Btn.dataset.view = 'schedule';
+      if (nav5Icon) nav5Icon.textContent = '📅';
+      if (nav5Text) nav5Text.textContent = 'מערכת';
     }
   }
 
@@ -811,11 +836,14 @@ function renderTopicsGrid() {
     card.innerHTML = `
       <div style="flex:1;">
         <div class="topic-card-top">
-          <div class="topic-icon">${topic.icon}</div>
-          <span class="topic-tag">${topic.tag}</span>
+          <div class="topic-icon" style="${lia ? 'font-size:2.4rem;width:54px;height:54px;' : ''}">${topic.icon}</div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <button type="button" class="btn-chip topic-speak-btn" title="הקרא שם משחק" style="padding:4px 8px;font-size:0.82rem;background:#f1f5f9;border:1px solid #cbd5e1;">🔊</button>
+            <span class="topic-tag">${topic.tag}</span>
+          </div>
         </div>
         <div style="flex:1;">
-          <div class="topic-title">${topic.title}</div>
+          <div class="topic-title" style="${lia ? 'font-size:1.05rem;' : ''}">${topic.title}</div>
           <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
             <span style="font-size:0.72rem;font-weight:800;color:${mastery.color};background:#f8fafc;border:1px solid #e2e8f0;padding:1px 7px;border-radius:99px;">${mastery.label}</span>
             <span style="font-size:0.7rem;color:#64748b;">(${st.correct || 0} הצלחות)</span>
@@ -827,6 +855,13 @@ function renderTopicsGrid() {
         <span class="play-mini-btn">${playLabel}</span>
       </div>
     `;
+    const spkBtn = card.querySelector('.topic-speak-btn');
+    if (spkBtn) {
+      spkBtn.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        arcadeAudio.speak(`${topic.title}. ${topic.desc || ''}`, 'he-IL', 0.88);
+      });
+    }
     card.addEventListener('click', () => {
       arcadeAudio.playClick();
       startMatch(topic.id, topic.title, false);
@@ -1516,13 +1551,40 @@ function renderDictationWord() {
   inp.value = '';
   updateDictationSlots();
 
+  // Render big clickable Word Letter Tiles above the keyboard so a slow reader can tap the word's letters easily!
+  let helperBar = document.getElementById('dict-word-tiles-helper');
+  const kb = document.getElementById('hebrew-keyboard');
+  if (!helperBar && kb && kb.parentNode) {
+    helperBar = document.createElement('div');
+    helperBar.id = 'dict-word-tiles-helper';
+    helperBar.style.cssText = 'background:#f0fdf4;border:2px solid #34d399;border-radius:14px;padding:10px;margin-bottom:10px;text-align:center;';
+    kb.parentNode.insertBefore(helperBar, kb);
+  }
+  if (helperBar) {
+    const chars = shuffle(cleanWord.split(''));
+    helperBar.innerHTML = `
+      <div style="font-size:0.86rem;font-weight:900;color:#065f46;margin-bottom:6px;">🧩 עזרה מהירה לעילי: לחץ על האותיות של המילה לפי הסדר!</div>
+      <div style="display:flex;justify-content:center;flex-wrap:wrap;gap:8px;">
+        ${chars.map((c, idx) => `<button type="button" class="dict-helper-tile" data-char="${c}" data-idx="${idx}" style="font-size:1.55rem;font-weight:900;min-width:48px;height:48px;border-radius:12px;border:2px solid #059669;background:#ffffff;color:#0f172a;cursor:pointer;box-shadow:0 3px 8px rgba(5,150,105,0.18);">${c}</button>`).join('')}
+      </div>
+    `;
+    helperBar.querySelectorAll('.dict-helper-tile').forEach(btn => {
+      btn.addEventListener('click', () => {
+        arcadeAudio.playClick();
+        inp.value += btn.dataset.char;
+        btn.style.opacity = '0.35';
+        updateDictationSlots();
+      });
+    });
+  }
+
   document.getElementById('dict-attempt-counter').textContent = 'ניסיון 1';
   document.getElementById('dict-feedback-banner').className = 'feedback-banner hidden';
   document.getElementById('btn-dict-check').classList.remove('hidden');
   document.getElementById('btn-dict-next').classList.add('hidden');
 
   setTimeout(() => {
-    arcadeAudio.speak(item.word, 'he-IL', 0.88);
+    arcadeAudio.speak(`המילה היא: ${item.word}. ${item.hint || ''}`, 'he-IL', 0.85);
   }, 300);
 }
 
@@ -1896,17 +1958,32 @@ function renderCurrentQuestion() {
   q.options.forEach(optVal => {
     const row = document.createElement('div');
     row.className = 'option-row';
-    if (lia) {
-      row.style.padding = '16px 14px';
-      row.style.fontSize = '1.28rem';
-      row.style.minHeight = '72px';
-    }
     row.dataset.val = optVal;
-    row.innerHTML = `
-      <span class="opt-text" dir="auto">${optVal}</span>
-      <button type="button" class="opt-speak-mini" title="השמע תשובה">🔊</button>
-      <span class="opt-indicator">${q.isMulti ? '☐' : (lia ? '✨' : '•')}</span>
-    `;
+
+    if (lia) {
+      // For Lia (age 5, CANNOT READ IN ANY LANGUAGE): Render a GIANT Picture-First card so she chooses by picture + voice!
+      const parts = String(optVal).trim().split(/\s+/);
+      const firstToken = parts[0] || '🦄';
+      const hasLeadingIcon = /[^\u0590-\u05FFa-zA-Z0-9]/.test(firstToken);
+      const bigPicture = hasLeadingIcon ? firstToken : '🦄';
+      const labelText = hasLeadingIcon ? parts.slice(1).join(' ') : optVal;
+
+      row.style.cssText = 'display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 12px;min-height:125px;text-align:center;gap:6px;position:relative;';
+      row.innerHTML = `
+        <button type="button" class="opt-speak-mini" title="השמע תשובה" style="position:absolute;top:8px;left:8px;width:36px;height:36px;border-radius:50%;border:2px solid #f472b6;background:#fdf2f8;font-size:1.1rem;cursor:pointer;">🔊</button>
+        <div style="font-size:3.6rem;line-height:1.1;">${bigPicture}</div>
+        <span class="opt-text" dir="auto" style="font-size:1.12rem;font-weight:900;color:#4a044e;">${labelText}</span>
+        <span class="opt-indicator" style="display:none;">✨</span>
+      `;
+    } else {
+      // For Ilay (reads Hebrew slowly): Large clear font + prominent 🔊 button + touching the row reads it aloud!
+      row.innerHTML = `
+        <span class="opt-text" dir="auto" style="font-size:1.16rem;font-weight:800;">${optVal}</span>
+        <button type="button" class="opt-speak-mini" title="השמע תשובה בקול" style="width:36px;height:36px;border-radius:50%;border:1px solid #cbd5e1;background:#f8fafc;font-size:1rem;cursor:pointer;flex-shrink:0;">🔊</button>
+        <span class="opt-indicator">${q.isMulti ? '☐' : '•'}</span>
+      `;
+    }
+
     const miniSpeak = row.querySelector('.opt-speak-mini');
     if (miniSpeak) {
       miniSpeak.addEventListener('click', (ev) => {
@@ -1916,10 +1993,19 @@ function renderCurrentQuestion() {
     }
     row.addEventListener('click', () => {
       if (row.classList.contains('wrong')) return;
-      handleOptionSelect(optVal, row, q.isMulti);
       // For Lia (age 5): One-tap direct check so she never has to hunt for a separate "Check Answer" button!
       if (lia && !q.isMulti) {
+        handleOptionSelect(optVal, row, q.isMulti);
         checkCurrentAnswer();
+        return;
+      }
+      // For Ilay (slow reader): First tap on an option selects it AND reads it aloud in Hebrew! Second tap on the already-selected option checks the answer!
+      const wasAlreadySelected = !q.isMulti && session.selectedOptions.has(optVal);
+      handleOptionSelect(optVal, row, q.isMulti);
+      if (wasAlreadySelected) {
+        checkCurrentAnswer();
+      } else {
+        speakOptionValue(optVal);
       }
     });
     optsContainer.appendChild(row);
@@ -3648,6 +3734,10 @@ let glamState = {
 function initMakeupStudio() {
   renderGlamMission();
   updateGlamMirrorUI();
+  setTimeout(() => {
+    const m = GLAM_MISSIONS[glamState.missionIndex % GLAM_MISSIONS.length];
+    if (m) arcadeAudio.speakBilingual(m.heb, m.eng, 0.88);
+  }, 260);
 }
 
 function renderGlamMission() {
@@ -3656,6 +3746,18 @@ function renderGlamMission() {
   if (txtEl) txtEl.textContent = m.display;
   const fb = document.getElementById('glam-feedback-banner');
   if (fb) fb.className = 'feedback-banner hidden';
+
+  // Highlight the requested lipstick and crown buttons with a golden glow so Lia (age 5, non-reader) sees visually which ones match the mission!
+  document.querySelectorAll('#glam-lip-swatches .glam-swatch').forEach(btn => {
+    const isTarget = btn.dataset.eng === m.lip;
+    btn.style.boxShadow = isTarget ? '0 0 16px rgba(250, 204, 21, 0.9)' : '';
+    btn.style.outline = isTarget ? '3px dashed #facc15' : '';
+  });
+  document.querySelectorAll('#glam-crown-swatches .glam-item-btn').forEach(btn => {
+    const isTarget = btn.dataset.eng === m.crown;
+    btn.style.boxShadow = isTarget ? '0 0 16px rgba(250, 204, 21, 0.9)' : '';
+    btn.style.outline = isTarget ? '3px dashed #facc15' : '';
+  });
 }
 
 function updateGlamMirrorUI() {
@@ -3812,18 +3914,16 @@ const KINDER_STUDENTS = [
 ];
 
 const KINDER_QUESTIONS = [
-  { speaker: '💙 סטיץ׳ שואל:', text: 'הגננת ליה! ספרתי 4 פרחים: 🌸🌸🌸🌸 — ספרתי נכון?', isRight: true, explain: 'נכון מאוד! יש כאן בדיוק 4 פרחים ורודים!' },
-  { speaker: '🦄 חד-קרן שואל:', text: 'הגננת ליה! המילה לִיָּה מתחילה באות ל׳ — זה נכון?', isRight: true, explain: 'כל הכבוד! לִיָּה מתחילה באות ל׳!' },
-  { speaker: '🧸 הדובי טדי שואל:', text: 'הגננת ליה! תפוח אדום 🍎 באנגלית זה Blue (כחול) — זה נכון?', isRight: false, explain: 'איזו גננת חכמה את ליה! תפוח אדום הוא Red, ו-Blue זה כחול!' },
-  { speaker: '🧚‍♀️ הפיה לילי שואלת:', text: 'הגננת ליה! שפתון ורוד 💄 באנגלית זה Pink Lipstick — זה נכון?', isRight: true, explain: 'מדויק! Pink Lipstick זה שפתון ורוד!' },
-  { speaker: '🐱 החתלתולה מיצי שואלת:', text: 'הגננת ליה! ספרתי 5 כוכבים: ⭐⭐ — זה נכון?', isRight: false, explain: 'תפסת אותה הגננת ליה! יש כאן רק 2 כוכבים ולא 5!' },
-  { speaker: '💙 סטיץ׳ שואל:', text: 'הגננת ליה! המילה גְּלִידָה 🍦 מתחרזת עם חִידָה 🧩 — זה נכון?', isRight: true, explain: 'חרוז מושלם! גלידה — חידה!' },
-  { speaker: '🦄 חד-קרן שואל:', text: 'הגננת ליה! באנגלית אומרים "Good Morning" בבוקר ☀️ — זה נכון?', isRight: true, explain: 'נכון מאוד! Good Morning זה בוקר טוב!' },
-  { speaker: '🧸 הדובי טדי שואל:', text: 'הגננת ליה! כלב 🐶 באנגלית זה Cat — זה נכון?', isRight: false, explain: 'איזו אלופה! כלב באנגלית זה Dog, ו-Cat זה חתול!' },
-  { speaker: '🧚‍♀️ הפיה לילי שואלת:', text: 'הגננת ליה! אם יש לי 3 סוכריות 🍬🍬🍬 וקיבלתי עוד 1 🍬, יש לי עכשיו 4 — זה נכון?', isRight: true, explain: 'חשבון מושלם! 3 ועוד 1 שווה 4!' },
-  { speaker: '🐱 החתלתולה מיצי שואלת:', text: 'הגננת ליה! ההפך מ-גָּדוֹל 🐘 זה קָטָן 🐭 — זה נכון?', isRight: true, explain: 'נכון מאוד! גדול וקטן הם הפכים!' },
-  { speaker: '💙 סטיץ׳ שואל:', text: 'הגננת ליה! המילה שֶׁמֶשׁ ☀️ מתחילה באות ב׳ — זה נכון?', isRight: false, explain: 'כל הכבוד לגננת ליה! שֶׁמֶשׁ מתחילה באות שׁ׳!' },
-  { speaker: '🦄 חד-קרן שואל:', text: 'הגננת ליה! פרפר 🦋 באנגלית זה Butterfly — זה נכון?', isRight: true, explain: 'אלופה באנגלית! Butterfly זה פרפר!' }
+  { speaker: '💙 סטיץ׳ שואל:', bigVisual: '🌸 🌸 🌸 🌸 = 4', text: 'הגננת ליה! ספרתי 4 פרחים ורודים: 1, 2, 3, 4 — ספרתי נכון?', isRight: true, explain: 'נכון מאוד! יש כאן בדיוק 4 פרחים ורודים!' },
+  { speaker: '🦄 חד-קרן שואל:', bigVisual: '👧👑 ל׳ — לִיָּה', text: 'הגננת ליה! השם המתוק ליה מתחיל בצליל לְ, באות ל׳ — זה נכון?', isRight: true, explain: 'כל הכבוד! לִיָּה מתחילה באות ל׳!' },
+  { speaker: '🧸 הדובי טדי שואל:', bigVisual: '🍎 = 💙 כחול?', text: 'הגננת ליה! תפוח אדום הוא בצבע כחול — זה נכון?', isRight: false, explain: 'איזו גננת חכמה את ליה! תפוח הוא אדום (Red) ולא כחול (Blue)!' },
+  { speaker: '🧚‍♀️ הפיה לילי שואלת:', bigVisual: '💄🩷 = Pink', text: 'הגננת ליה! צבע ורוד באנגלית אומרים Pink — זה נכון?', isRight: true, explain: 'מדויק! ורוד באנגלית זה Pink!' },
+  { speaker: '🐱 החתלתולה מיצי שואלת:', bigVisual: '⭐ ⭐ = 5?', text: 'הגננת ליה! יש כאן רק 2 כוכבים אבל אמרתי שיש 5 — ספרתי נכון?', isRight: false, explain: 'תפסת אותה הגננת ליה! יש כאן 2 כוכבים ולא 5!' },
+  { speaker: '💙 סטיץ׳ שואל:', bigVisual: '🍦 גְּלִידָה ↔️ 🧩 חִידָה', text: 'הגננת ליה! המילה גלידה מתחרזת עם המילה חידה — זה נכון?', isRight: true, explain: 'חרוז מושלם! גלידה — חידה!' },
+  { speaker: '🦄 חד-קרן שואל:', bigVisual: '🐶 = 🐱 חתול?', text: 'הגננת ליה! כלב באנגלית אומרים Dog, אבל הדובי אמר שכלב זה חתול — הוא צודק?', isRight: false, explain: 'איזו אלופה! כלב באנגלית זה Dog!' },
+  { speaker: '🧚‍♀️ הפיה לילי שואלת:', bigVisual: '🍬🍬 + 🍬 = 3', text: 'הגננת ליה! היו לי 2 סוכריות וקיבלתי עוד 1, ועכשיו יש לי 3 סוכריות — זה נכון?', isRight: true, explain: 'חשבון מושלם! 2 ועוד 1 שווה 3!' },
+  { speaker: '🐱 החתלתולה מיצי שואלת:', bigVisual: '🐘 גָּדוֹל ↔️ 🐭 קָטָן', text: 'הגננת ליה! הפיל הוא גדול והעכבר הוא קטן — זה נכון?', isRight: true, explain: 'נכון מאוד! גדול וקטן הם הפכים!' },
+  { speaker: '💙 סטיץ׳ שואל:', bigVisual: '☀️ שֶׁמֶשׁ = ש׳', text: 'הגננת ליה! המילה שמש מתחילה בצליל שֶׁ, באות ש׳ — זה נכון?', isRight: true, explain: 'כל הכבוד לגננת ליה! שֶׁמֶשׁ מתחילה באות שׁ׳!' }
 ];
 
 let kinderQuizIndex = 0;
@@ -3831,7 +3931,7 @@ let kinderQuizIndex = 0;
 function initKinderStudio() {
   ensureLiaProfile();
   renderKinderStudents();
-  renderKinderQuiz();
+  renderKinderQuiz(true);
 }
 
 function renderKinderStudents() {
@@ -3866,19 +3966,32 @@ function renderKinderStudents() {
   });
 }
 
-function renderKinderQuiz() {
+function renderKinderQuiz(autoSpeak = true) {
   const q = KINDER_QUESTIONS[kinderQuizIndex % KINDER_QUESTIONS.length];
   const av = document.getElementById('kinder-quiz-avatar');
   const txt = document.getElementById('kinder-quiz-text');
   const fb = document.getElementById('kinder-feedback-banner');
+  const btnYes = document.getElementById('btn-kinder-yes');
+  const btnNo = document.getElementById('btn-kinder-no');
+  if (btnYes) btnYes.style.boxShadow = '';
+  if (btnNo) btnNo.style.boxShadow = '';
   if (av) av.textContent = q.speaker;
-  if (txt) txt.textContent = q.text;
+  if (txt) {
+    txt.innerHTML = `<div style="font-size:2.4rem;font-weight:900;color:#db2777;margin-bottom:6px;">${q.bigVisual || '🦄✨'}</div><div>${q.text}</div>`;
+  }
   if (fb) fb.className = 'feedback-banner hidden';
+  if (autoSpeak) {
+    setTimeout(() => {
+      arcadeAudio.speak(q.text, 'he-IL', 0.85);
+    }, 240);
+  }
 }
 
 function handleKinderTeacherCheck(teacherSaysYes) {
   const q = KINDER_QUESTIONS[kinderQuizIndex % KINDER_QUESTIONS.length];
   const fb = document.getElementById('kinder-feedback-banner');
+  const btnYes = document.getElementById('btn-kinder-yes');
+  const btnNo = document.getElementById('btn-kinder-no');
   if (teacherSaysYes === q.isRight) {
     addActiveCoins(20);
     appState.liaProfile.kinderStars = (appState.liaProfile.kinderStars || 0) + 1;
@@ -3894,15 +4007,19 @@ function handleKinderTeacherCheck(teacherSaysYes) {
     arcadeAudio.speak(`כל הכבוד להגננת ליה! ${q.explain}`, 'he-IL', 0.88);
     setTimeout(() => {
       kinderQuizIndex = (kinderQuizIndex + 1) % KINDER_QUESTIONS.length;
-      renderKinderQuiz();
+      renderKinderQuiz(true);
     }, 2800);
   } else {
-    arcadeAudio.playMiss();
-    if (fb) {
-      fb.className = 'feedback-banner error';
-      fb.textContent = `💡 בואי נבדוק שוב הגננת ליה: ${q.explain}`;
+    // ZERO-FRUSTRATION FOR LIA: Never play error buzzer! Highlight the right button in gold and explain warmly!
+    const rightBtn = q.isRight ? btnYes : btnNo;
+    if (rightBtn) {
+      rightBtn.style.boxShadow = '0 0 20px rgba(250, 204, 21, 0.95)';
     }
-    arcadeAudio.speak(`בואי נבדוק שוב הגננת ליה: ${q.explain}`, 'he-IL', 0.88);
+    if (fb) {
+      fb.className = 'feedback-banner warning';
+      fb.textContent = `💡 בואי נבדוק יחד הגננת ליה: ${q.explain} — לחצי על הכפתור המואר! ✨`;
+    }
+    arcadeAudio.speak(`בואי נבדוק יחד הגננת ליה: ${q.explain}. לחצי על הכפתור השני!`, 'he-IL', 0.86);
   }
 }
 

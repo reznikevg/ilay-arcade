@@ -701,32 +701,32 @@ function genHebrewGrammar() {
 
 const HEBREW_READING_BANK = [
   {
-    q: 'קִרְאוּ אֶת הַקֶּטַע: <br>"עִילַי לָבַשׁ אֶת הַחֻלְצָה הַצְּהֻבָּה-שְׁחוֹרָה שֶׁל בֵּיתָ"ר יְרוּשָׁלַיִם וְיָצָא עִם אַבָּא לְאִצְטַדְיוֹן טֶדִי. בַּדַּקָּה הַ-90 עִילַי קָפַץ מִשִּׂמְחָה כִּי הַקְּבוּצָה הִבְקִיעָה שַׁעַר נִצָּחוֹן!"<br><strong>מַדּוּעַ קָפַץ עִילַי מִשִּׂמְחָה?</strong>',
-    tts: 'עילי לבש את החולצה הצהובה שחורה של ביתר ירושלים ויצא עם אבא לאצטדיון טדי. בדקה ה-90 עילי קפץ משמחה כי הקבוצה הבקיעה שער ניצחון! מדוע קפץ עילי משמחה?',
-    ans: 'כִּי הַקְּבוּצָה הִבְקִיעָה שַׁעַר נִצָּחוֹן',
-    wrong: ['כִּי יָרַד גֶּשֶׁם בַּמִּגְרָשׁ', 'כִּי הַמִּשְׂחָק בֻּטַּל', 'כִּי הוּא שָׁכַח אֶת הַצָּעִיף'],
-    hint: 'התשובה מופיעה במשפט האחרון בסיפור!'
+    q: '🦁 עִילַי לָבַשׁ חֻלְצָה שֶׁל <strong>בֵּיתָ"ר</strong>.<br>⚽ הַקְּבוּצָה הִבְקִיעָה <strong>שַׁעַר נִצָּחוֹן</strong> וְעִילַי קָפַץ מִשִּׂמְחָה!<br><strong>לָמָּה קָפַץ עִילַי?</strong>',
+    tts: 'עילי לבש חולצה של ביתר. הקבוצה הבקיעה שער ניצחון ועילי קפץ משמחה! למה קפץ עילי?',
+    ans: '⚽ כִּי הַקְּבוּצָה הִבְקִיעָה שַׁעַר נִצָּחוֹן',
+    wrong: ['🌧️ כִּי יָרַד גֶּשֶׁם', '🛑 כִּי הַמִּשְׂחָק בֻּטַּל', '🧣 כִּי הוּא שָׁכַח צָעִיף'],
+    hint: 'הקבוצה הבקיעה שער ניצחון!'
   },
   {
-    q: 'קִרְאוּ אֶת הַקֶּטַע: <br>"לְרֵיאָל מַדְרִיד יֵשׁ מַדִּים לְבָנִים וְסֵמֶל עִם כֶּתֶר מוּזָהָב. הָאִצְטַדְיוֹן הַבֵּיתִי שֶׁלָּהֶם נִמְצָא בָּעִיר מַדְרִיד שֶׁבִּסְפָרַד."<br><strong>אֵיפֹה נִמְצָא הָאִצְטַדְיוֹן שֶׁל רֵיאָל מַדְרִיד?</strong>',
-    tts: 'לריאל מדריד יש מדים לבנים וסמל עם כתר מוזהב. האצטדיון הביתי שלהם נמצא בעיר מדריד שבספרד. איפה נמצא האצטדיון של ריאל מדריד?',
-    ans: 'בָּעִיר מַדְרִיד שֶׁבִּסְפָרַד',
-    wrong: ['בְּלוֹנְדּוֹן שֶׁבְּאַנְגְּלִיָּה', 'בְּרוֹמָא שֶׁבְּאִיטַלְיָה', 'בְּחֵיפָה'],
-    hint: 'חפשו את שם המדינה בסיפור.'
+    q: '👑 לְ<strong>רֵיאָל מַדְרִיד</strong> יֵשׁ חֻלְצָה לְבָנָה.<br>🏟️ הַמִּגְרָשׁ שֶׁלָּהֶם נִמְצָא בָּעִיר <strong>מַדְרִיד שֶׁבִּסְפָרַד</strong>.<br><strong>אֵיפֹה הַמִּגְרָשׁ שֶׁל רֵיאָל?</strong>',
+    tts: 'לריאל מדריד יש חולצה לבנה. המגרש שלהם נמצא בעיר מדריד שבספרד. איפה המגרש של ריאל?',
+    ans: '🇪🇸 בְּמַדְרִיד שֶׁבִּסְפָרַד',
+    wrong: ['🇬🇧 בְּלוֹנְדּוֹן', '🇮🇹 בְּרוֹמָא', '⚓ בְּחֵיפָה'],
+    hint: 'חפשו את שם העיר מדריד!'
   },
   {
-    q: 'אֵיךְ כּוֹתְבִים <strong>לְלֹא שְׁגִיאוֹת כְּתִיב</strong> אֶת עִיר הַבִּירָה שֶׁלָּנוּ?',
-    tts: 'איך כותבים ללא שגיאות כתיב את עיר הבירה שלנו, ירושלים?',
-    ans: 'יְרוּשָׁלַיִם',
+    q: '🏛️ אֵיךְ כּוֹתְבִים נָכוֹן אֶת שֵׁם עִיר הַבִּירָה שֶׁלָּנוּ — <strong>יְרוּשָׁלַיִם</strong>?',
+    tts: 'איך כותבים נכון את שם עיר הבירה שלנו, ירושלים?',
+    ans: '🦁 יְרוּשָׁלַיִם',
     wrong: ['יְרוֹשָׁלַעִים', 'יְרֻשָׁלַתִים', 'יְרוּשָׁלָם'],
-    hint: 'בסוף המילה יש י׳ ו-ם סופית!'
+    hint: 'בסוף המילה ירושלים יש י׳ ואחריה ם סופית!'
   },
   {
-    q: 'בַּחֲרוּ אֶת הַמִּלָּה שֶׁמַּשְׁלִימָה אֶת הַמִּשְׁפָּט בְּצוּרָה הֶגְיוֹנִית:<br>"לִפְנֵי הַמִּשְׂחָק הַשַּׂחְקָנִים עוֹשִׂים חִמּוּם ______ שֶׁלֹּא יִפָּצְעוּ."',
-    tts: 'בחרו את המילה שמשלימה את המשפט: לפני המשחק השחקנים עושים חימום... שלא ייפצעו.',
-    ans: 'כְּדֵי',
-    wrong: ['אֲבָל', 'לַמְרוֹת', 'אִלּוּ'],
-    hint: 'מהי המילה שמסבירה את המטרה של החימום?'
+    q: '🏃‍♂️ הַשַּׂחְקָנִים עוֹשִׂים חִמּוּם ______ שֶׁלֹּא יִפָּצְעוּ.',
+    tts: 'השלימו את המשפט: השחקנים עושים חימום... שלא ייפצעו.',
+    ans: '✅ כְּדֵי',
+    wrong: ['❌ אֲבָל', '❌ לַמְרוֹת', '❌ אִלּוּ'],
+    hint: 'מהי המילה שמסבירה את המטרה של החימום? כְּדֵי!'
   }
 ];
 
@@ -734,9 +734,9 @@ function genHebrewReading() {
   const item = HEBREW_READING_BANK[randInt(0, HEBREW_READING_BANK.length - 1)];
   return {
     isMulti: false,
-    instruction: 'הֲבָנַת הַנִּקְרָא וּכְתִיב נָכוֹן:',
+    instruction: '📖 קְרִיאָה קְצָרָה וּבְרוּרָה (אֶפְשָׁר גַּם לְהַקְשִׁיב 🔊):',
     ttsText: item.tts,
-    stimulusHtml: `<span>${item.q}</span>`,
+    stimulusHtml: `<div style="line-height:1.65;font-size:1.35rem;">${item.q}</div>`,
     rtlStimulus: true,
     options: shuffle([item.ans, ...item.wrong]),
     correctAnswers: [item.ans],
@@ -746,136 +746,125 @@ function genHebrewReading() {
 
 
 
-// ==================== COMPREHENSIVE ENGLISH ACADEMY (GRADE 2) ====================
+// ==================== COMPREHENSIVE ENGLISH ACADEMY (GRADE 2 - HEBREW-READER FRIENDLY!) ====================
 
 const ENGLISH_ABC_MATCH = [
-  { cap: 'A', low: 'a', wrong: ['e', 'o', 'd'] },
-  { cap: 'B', low: 'b', wrong: ['d', 'p', 'q'] },
-  { cap: 'C', low: 'c', wrong: ['s', 'o', 'e'] },
-  { cap: 'D', low: 'd', wrong: ['b', 'p', 'q'] },
-  { cap: 'E', low: 'e', wrong: ['a', 'c', 'o'] },
-  { cap: 'F', low: 'f', wrong: ['t', 'j', 'l'] },
-  { cap: 'G', low: 'g', wrong: ['q', 'j', 'y'] },
-  { cap: 'H', low: 'h', wrong: ['n', 'b', 'k'] },
-  { cap: 'M', low: 'm', wrong: ['w', 'n', 'u'] },
-  { cap: 'N', low: 'n', wrong: ['m', 'u', 'h'] },
-  { cap: 'R', low: 'r', wrong: ['p', 'n', 'v'] },
-  { cap: 'S', low: 's', wrong: ['z', 'c', 'e'] },
-  { cap: 'T', low: 't', wrong: ['f', 'l', 'i'] },
-  { cap: 'Y', low: 'y', wrong: ['v', 'u', 'g'] }
+  { cap: 'A', low: 'a', hebSound: 'אֵיי (A)', wordEx: '🍎 Apple (תַּפּוּחַ)', wrong: ['e', 'o', 'd'] },
+  { cap: 'B', low: 'b', hebSound: 'בִּי (B)', wordEx: '⚽ Ball (כַּדּוּר)', wrong: ['d', 'p', 'q'] },
+  { cap: 'C', low: 'c', hebSound: 'סִי / קִי (C)', wordEx: '🐱 Cat (חָתוּל)', wrong: ['s', 'o', 'e'] },
+  { cap: 'D', low: 'd', hebSound: 'דִּי (D)', wordEx: '🐶 Dog (כֶּלֶב)', wrong: ['b', 'p', 'q'] },
+  { cap: 'E', low: 'e', hebSound: 'אִי (E)', wordEx: '🐘 Elephant (פִּיל)', wrong: ['a', 'c', 'o'] },
+  { cap: 'F', low: 'f', hebSound: 'אֶף (F)', wordEx: '🐟 Fish (דָּג)', wrong: ['t', 'j', 'l'] },
+  { cap: 'G', low: 'g', hebSound: 'ג׳ִי / גְּ (G)', wordEx: '🥅 Goal (שַׁעַר)', wrong: ['q', 'j', 'y'] },
+  { cap: 'H', low: 'h', hebSound: 'אֵייץ׳ (H)', wordEx: '👋 Hello (שָׁלוֹם)', wrong: ['n', 'b', 'k'] },
+  { cap: 'M', low: 'm', hebSound: 'אֶם (M)', wordEx: '👑 Madrid (מַדְרִיד)', wrong: ['w', 'n', 'u'] },
+  { cap: 'N', low: 'n', hebSound: 'אֶן (N)', wordEx: '🥅 Net (רֶשֶׁת)', wrong: ['m', 'u', 'h'] },
+  { cap: 'R', low: 'r', hebSound: 'אָר (R)', wordEx: '🏃 Run (לָרוּץ)', wrong: ['p', 'n', 'v'] },
+  { cap: 'S', low: 's', hebSound: 'אֶס (S)', wordEx: '☀️ Sun (שֶׁמֶשׁ)', wrong: ['z', 'c', 'e'] },
+  { cap: 'T', low: 't', hebSound: 'טִי (T)', wordEx: '🏟️ Teddy (טֶדִי)', wrong: ['f', 'l', 'i'] },
+  { cap: 'Y', low: 'y', hebSound: 'וַואי (Y)', wordEx: '💛 Yellow (צָהֹב)', wrong: ['v', 'u', 'g'] }
 ];
 
 const ENGLISH_PHONICS = [
-  { word: 'Ball', hebrew: 'כַּדּוּר ⚽', letter: 'B', wrong: ['D', 'P', 'T'] },
-  { word: 'Goal', hebrew: 'שַׁעַר 🥅', letter: 'G', wrong: ['C', 'J', 'K'] },
-  { word: 'Lion', hebrew: 'אַרְיֵה 🦁', letter: 'L', wrong: ['R', 'M', 'N'] },
-  { word: 'Sun', hebrew: 'שֶׁמֶשׁ ☀️', letter: 'S', wrong: ['C', 'Z', 'X'] },
-  { word: 'Dog', hebrew: 'כֶּלֶב 🐶', letter: 'D', wrong: ['B', 'P', 'T'] },
-  { word: 'Cat', hebrew: 'חָתוּל 🐱', letter: 'C', wrong: ['K', 'S', 'G'] },
-  { word: 'King', hebrew: 'מֶלֶךְ 👑', letter: 'K', wrong: ['C', 'G', 'Q'] },
-  { word: 'Apple', hebrew: 'תַּפּוּחַ 🍎', letter: 'A', wrong: ['E', 'O', 'I'] },
-  { word: 'Fish', hebrew: 'דָּג 🐟', letter: 'F', wrong: ['V', 'P', 'T'] },
-  { word: 'Run', hebrew: 'לָרוּץ 🏃', letter: 'R', wrong: ['P', 'B', 'W'] }
+  { word: 'Ball', hebPhonetic: 'בּוֹל', hebrew: 'כַּדּוּר ⚽', letter: 'B (בְּ)', wrong: ['D (דְּ)', 'P (פְּ)', 'T (טְ)'] },
+  { word: 'Goal', hebPhonetic: 'גּוֹל', hebrew: 'שַׁעַר 🥅', letter: 'G (גְּ)', wrong: ['C (קְ)', 'J (ג׳)', 'K (קְ)'] },
+  { word: 'Lion', hebPhonetic: 'לַאיְוֹן', hebrew: 'אַרְיֵה 🦁', letter: 'L (לְ)', wrong: ['R (רְ)', 'M (מְ)', 'N (נְ)'] },
+  { word: 'Sun', hebPhonetic: 'סַאן', hebrew: 'שֶׁמֶשׁ ☀️', letter: 'S (סְ)', wrong: ['C (קְ)', 'Z (זְ)', 'X (אֶקְס)'] },
+  { word: 'Dog', hebPhonetic: 'דּוֹג', hebrew: 'כֶּלֶב 🐶', letter: 'D (דְּ)', wrong: ['B (בְּ)', 'P (פְּ)', 'T (טְ)'] },
+  { word: 'Cat', hebPhonetic: 'קָאט', hebrew: 'חָתוּל 🐱', letter: 'C (קְ)', wrong: ['S (סְ)', 'M (מְ)', 'G (גְּ)'] },
+  { word: 'King', hebPhonetic: 'קִינְג', hebrew: 'מֶלֶךְ 👑', letter: 'K (קְ)', wrong: ['S (סְ)', 'G (גְּ)', 'B (בְּ)'] },
+  { word: 'Apple', hebPhonetic: 'אָפֶּל', hebrew: 'תַּפּוּחַ 🍎', letter: 'A (אַ)', wrong: ['E (אֶ)', 'O (אוֹ)', 'I (אִי)'] },
+  { word: 'Fish', hebPhonetic: 'פִישׁ', hebrew: 'דָּג 🐟', letter: 'F (פְ)', wrong: ['V (וְ)', 'P (פְּ)', 'T (טְ)'] },
+  { word: 'Run', hebPhonetic: 'רַאן', hebrew: 'לָרוּץ 🏃', letter: 'R (רְ)', wrong: ['P (פְּ)', 'B (בְּ)', 'W (וְ)'] }
 ];
 
 const ENGLISH_NUMBERS = [
-  { num: 1, word: 'One', wrong: ['Two', 'Three', 'Four'] },
-  { num: 2, word: 'Two', wrong: ['One', 'Three', 'Five'] },
-  { num: 3, word: 'Three', wrong: ['Two', 'Four', 'Ten'] },
-  { num: 4, word: 'Four', wrong: ['Five', 'Six', 'One'] },
-  { num: 5, word: 'Five', wrong: ['Four', 'Six', 'Seven'] },
-  { num: 6, word: 'Six', wrong: ['Seven', 'Five', 'Eight'] },
-  { num: 7, word: 'Seven', wrong: ['Six', 'Eight', 'Nine'] },
-  { num: 8, word: 'Eight', wrong: ['Seven', 'Nine', 'Ten'] },
-  { num: 9, word: 'Nine', wrong: ['Eight', 'Ten', 'Six'] },
-  { num: 10, word: 'Ten', wrong: ['Seven', 'Eight', 'Five'] },
-  { num: 20, word: 'Twenty', wrong: ['Ten', 'Twelve', 'Two'] }
+  { num: 1, word: 'One', hebPhonetic: 'וַאן (One)', wrong: ['טְוּ (Two)', 'ת׳רִי (Three)', 'פוֹר (Four)'] },
+  { num: 2, word: 'Two', hebPhonetic: 'טְוּ (Two)', wrong: ['וַאן (One)', 'ת׳רִי (Three)', 'פַייב (Five)'] },
+  { num: 3, word: 'Three', hebPhonetic: 'ת׳רִי (Three)', wrong: ['טְוּ (Two)', 'פוֹר (Four)', 'טֶן (Ten)'] },
+  { num: 4, word: 'Four', hebPhonetic: 'פוֹר (Four)', wrong: ['פַייב (Five)', 'סִיקְס (Six)', 'וַאן (One)'] },
+  { num: 5, word: 'Five', hebPhonetic: 'פַייב (Five)', wrong: ['פוֹר (Four)', 'סִיקְס (Six)', 'סֶבֶן (Seven)'] },
+  { num: 6, word: 'Six', hebPhonetic: 'סִיקְס (Six)', wrong: ['סֶבֶן (Seven)', 'פַייב (Five)', 'אֵייט (Eight)'] },
+  { num: 7, word: 'Seven', hebPhonetic: 'סֶבֶן (Seven)', wrong: ['סִיקְס (Six)', 'אֵייט (Eight)', 'נַיין (Nine)'] },
+  { num: 8, word: 'Eight', hebPhonetic: 'אֵייט (Eight)', wrong: ['סֶבֶן (Seven)', 'נַיין (Nine)', 'טֶן (Ten)'] },
+  { num: 9, word: 'Nine', hebPhonetic: 'נַיין (Nine)', wrong: ['אֵייט (Eight)', 'טֶן (Ten)', 'סִיקְס (Six)'] },
+  { num: 10, word: 'Ten', hebPhonetic: 'טֶן (Ten)', wrong: ['סֶבֶן (Seven)', 'אֵייט (Eight)', 'פַייב (Five)'] }
 ];
 
 const ENGLISH_COLORS = [
-  { color: 'Yellow', heb: 'צָהֹב 💛', note: 'הַצֶּבַע הָאֲהוּב שֶׁל בֵּיתָ"ר יְרוּשָׁלַיִם!', wrong: ['אָדֹם', 'כָּחֹל', 'יָרֹק'] },
-  { color: 'White', heb: 'לָבָן 🤍', note: 'הַצֶּבַע הָאַגָּדִי שֶׁל רֵיאָל מַדְרִיד!', wrong: ['שָׁחוֹר', 'סָגֹל', 'כָּתֹם'] },
-  { color: 'Black', heb: 'שָׁחוֹר 🖤', note: 'הַצֶּבַע שֶׁל בֵּיתָ"ר יַחַד עִם צָהֹב!', wrong: ['כָּחֹל', 'יָרֹק', 'אָדֹם'] },
-  { color: 'Green', heb: 'יָרוֹק 🌱', note: 'הַצֶּבַע שֶׁל דֶּשֶׁא הַמִּגְרָשׁ!', wrong: ['צָהֹב', 'כָּחֹל', 'אָדֹם'] },
-  { color: 'Blue', heb: 'כָּחֹל 💙', note: 'צֶבַע הַשָּׁמַיִם וְהַיָּם!', wrong: ['אָדֹם', 'יָרֹק', 'צָהֹב'] },
-  { color: 'Red', heb: 'אָדֹם ❤️', note: 'הַצֶּבַע שֶׁל כַּרְטִיס אָדֹם!', wrong: ['כָּחֹל', 'צָהֹב', 'יָרֹק'] },
-  { color: 'Orange', heb: 'כָּתֹם 🧡', note: 'הַצֶּבַע שֶׁל תַּפּוּז!', wrong: ['סָגֹל', 'יָרֹק', 'כָּחֹל'] }
+  { color: 'Yellow', hebPhonetic: 'יֶלוֹ', heb: '💛 צָהֹב', note: 'הַצֶּבַע הָאֲהוּב שֶׁל בֵּיתָ"ר יְרוּשָׁלַיִם!', wrong: ['❤️ אָדֹם', '💙 כָּחֹל', '💚 יָרֹק'] },
+  { color: 'White', hebPhonetic: 'וַואייט', heb: '🤍 לָבָן', note: 'הַצֶּבַע הָאַגָּדִי שֶׁל רֵיאָל מַדְרִיד!', wrong: ['🖤 שָׁחוֹר', '💜 סָגֹל', '🧡 כָּתֹם'] },
+  { color: 'Black', hebPhonetic: 'בְּלָאק', heb: '🖤 שָׁחוֹר', note: 'הַצֶּבַע שֶׁל בֵּיתָ"ר יַחַד עִם צָהֹב!', wrong: ['💙 כָּחֹל', '💚 יָרֹק', '❤️ אָדֹם'] },
+  { color: 'Green', hebPhonetic: 'גְּרִין', heb: '🌱 יָרוֹק', note: 'הַצֶּבַע שֶׁל דֶּשֶׁא הַמִּגְרָשׁ!', wrong: ['💛 צָהֹב', '💙 כָּחֹל', '❤️ אָדֹם'] },
+  { color: 'Blue', hebPhonetic: 'בְּלוּ', heb: '💙 כָּחֹל', note: 'צֶבַע הַשָּׁמַיִם וְהַיָּם!', wrong: ['❤️ אָדֹם', '💚 יָרֹק', '💛 צָהֹב'] },
+  { color: 'Red', hebPhonetic: 'רֶד', heb: '❤️ אָדֹם', note: 'הַצֶּבַע שֶׁל כַּרְטִיס אָדֹם!', wrong: ['💙 כָּחֹל', '💛 צָהֹב', '💚 יָרֹק'] },
+  { color: 'Orange', hebPhonetic: 'אוֹרֶנְג׳', heb: '🧡 כָּתֹם', note: 'הַצֶּבַע שֶׁל תַּפּוּז!', wrong: ['💜 סָגֹל', '💚 יָרֹק', '💙 כָּחֹל'] }
 ];
 
 const ENGLISH_SOCCER_WORDS = [
-  { eng: 'Ball', heb: 'כַּדּוּר ⚽', wrong: ['Bag', 'Box', 'Book'] },
-  { eng: 'Goal', heb: 'שַׁעַר 🥅', wrong: ['Gold', 'Game', 'Good'] },
-  { eng: 'Champion', heb: 'אַלּוּף 🏆', wrong: ['Coach', 'Captain', 'Club'] },
-  { eng: 'Team', heb: 'קְבוּצָה 👥', wrong: ['Time', 'Ticket', 'Train'] },
-  { eng: 'Stadium', heb: 'אִצְטַדְיוֹן (כְּמוֹ טֶדִי אוֹ הַבֶּרְנַבֵּאוּ!) 🏟️', wrong: ['School', 'Street', 'Station'] },
-  { eng: 'Shoes', heb: 'נַעֲלַיִם (נַעֲלֵי כַּדּוּרֶגֶל) 👟', wrong: ['Shirts', 'Socks', 'Shorts'] },
-  { eng: 'Win', heb: 'לְנַצֵּחַ! 🥇', wrong: ['Walk', 'Wait', 'Water'] },
-  { eng: 'Run', heb: 'לָרוּץ 🏃', wrong: ['Read', 'Rest', 'Ring'] },
-  { eng: 'Kick', heb: 'לִבְעֹט בַּכַּדּוּר ⚽', wrong: ['Kiss', 'Keep', 'Know'] },
-  { eng: 'Player', heb: 'שַׂחְקָן 🌟', wrong: ['Plane', 'Paper', 'Party'] },
-  { eng: 'Fast', heb: 'מָהִיר (כְּמוֹ וִינִיסְיוּס!) ⚡', wrong: ['Fat', 'First', 'Full'] }
+  { eng: 'Ball', hebPhonetic: 'בּוֹל (Ball)', heb: '⚽ כַּדּוּר', wrongHeb: ['🥅 שַׁעַר', '🏆 אַלּוּף', '👟 נַעֲלַיִם'] },
+  { eng: 'Goal', hebPhonetic: 'גּוֹל (Goal)', heb: '🥅 שַׁעַר', wrongHeb: ['⚽ כַּדּוּר', '👥 קְבוּצָה', '🏃 לָרוּץ'] },
+  { eng: 'Champion', hebPhonetic: 'צ׳אמְפְּיוֹן (Champion)', heb: '🏆 אַלּוּף', wrongHeb: ['👟 נַעֲלַיִם', '⚽ כַּדּוּר', '🏟️ אִצְטַדְיוֹן'] },
+  { eng: 'Team', hebPhonetic: 'טִים (Team)', heb: '👥 קְבוּצָה', wrongHeb: ['🥅 שַׁעַר', '🏆 אַלּוּף', '⚡ מָהִיר'] },
+  { eng: 'Stadium', hebPhonetic: 'סְטֵיידְיוּם (Stadium)', heb: '🏟️ אִצְטַדְיוֹן (כְּמוֹ טֶדִי!)', wrongHeb: ['⚽ כַּדּוּר', '👟 נַעֲלַיִם', '🥇 לְנַצֵּחַ'] },
+  { eng: 'Shoes', hebPhonetic: 'שׁוּז (Shoes)', heb: '👟 נַעֲלֵי כַּדּוּרֶגֶל', wrongHeb: ['🏟️ אִצְטַדְיוֹן', '🥅 שַׁעַר', '👥 קְבוּצָה'] },
+  { eng: 'Win', hebPhonetic: 'וִין (Win)', heb: '🥇 לְנַצֵּחַ!', wrongHeb: ['👟 נַעֲלַיִם', '🏟️ אִצְטַדְיוֹן', '⚽ כַּדּוּר'] },
+  { eng: 'Run', hebPhonetic: 'רַאן (Run)', heb: '🏃 לָרוּץ מָהֵר', wrongHeb: ['🥅 שַׁעַר', '🏆 אַלּוּף', '👥 קְבוּצָה'] },
+  { eng: 'Kick', hebPhonetic: 'קִיק (Kick)', heb: '🦵⚽ לִבְעֹט בַּכַּדּוּר', wrongHeb: ['🏟️ אִצְטַדְיוֹן', '👥 קְבוּצָה', '👟 נַעֲלַיִם'] },
+  { eng: 'Player', hebPhonetic: 'פְּלֵייאֶר (Player)', heb: '🌟 שַׂחְקָן כַּדּוּרֶגֶל', wrongHeb: ['⚽ כַּדּוּר', '🥅 שַׁעַר', '🏟️ אִצְטַדְיוֹן'] },
+  { eng: 'Fast', hebPhonetic: 'פָאסְט (Fast)', heb: '⚡ מָהִיר (כְּמוֹ וִינִיסְיוּס!)', wrongHeb: ['👟 נַעֲלַיִם', '👥 קְבוּצָה', '🥅 שַׁעַר'] }
 ];
 
 const ENGLISH_DAILY_WORDS = [
-  { eng: 'Hello', heb: 'שָׁלוֹם 👋', wrong: ['Help', 'Home', 'Hand'] },
-  { eng: 'Goodbye', heb: 'לְהִתְרָאוֹת! 👋', wrong: ['Good', 'Gold', 'Great'] },
-  { eng: 'Thank you', heb: 'תּוֹדָה רַבָּה 🙏', wrong: ['Think', 'That', 'There'] },
-  { eng: 'School', heb: 'בֵּית סֵפֶר 🏫', wrong: ['Street', 'Store', 'Star'] },
-  { eng: 'Friend', heb: 'חָבֵר 👦', wrong: ['Family', 'Father', 'Food'] },
-  { eng: 'Family', heb: 'מִשְׁפָּחָה 👨‍👩‍👦', wrong: ['Friend', 'Father', 'Future'] },
-  { eng: 'Water', heb: 'מַיִם 💧', wrong: ['Winter', 'Winner', 'Window'] },
-  { eng: 'Pizza', heb: 'פִּיצָה 🍕', wrong: ['Pasta', 'Pear', 'Paper'] },
-  { eng: 'Lion', heb: 'אַרְיֵה (הַסֵּמֶל שֶׁל בֵּיתָ"ר!) 🦁', wrong: ['Line', 'Lemon', 'Light'] },
-  { eng: 'Dog', heb: 'כֶּלֶב 🐶', wrong: ['Door', 'Duck', 'Doll'] },
-  { eng: 'Cat', heb: 'חָתוּל 🐱', wrong: ['Car', 'Cup', 'Cap'] }
+  { eng: 'Hello', hebPhonetic: 'הֶלוֹ', heb: '👋 שָׁלוֹם', wrongHeb: ['💧 מַיִם', '🍕 פִּיצָה', '🐶 כֶּלֶב'] },
+  { eng: 'Goodbye', hebPhonetic: 'גּוּד-בַּיי', heb: '👋 לְהִתְרָאוֹת!', wrongHeb: ['🏫 בֵּית סֵפֶר', '🐱 חָתוּל', '🦁 אַרְיֵה'] },
+  { eng: 'Thank you', hebPhonetic: 'ת׳אנק יוּ', heb: '🙏 תּוֹדָה רַבָּה', wrongHeb: ['🍕 פִּיצָה', '🐶 כֶּלֶב', '💧 מַיִם'] },
+  { eng: 'School', hebPhonetic: 'סְקוּל', heb: '🏫 בֵּית סֵפֶר', wrongHeb: ['🦁 אַרְיֵה', '🍕 פִּיצָה', '🙏 תּוֹדָה רַבָּה'] },
+  { eng: 'Friend', hebPhonetic: 'פְרֶנְד', heb: '👦 חָבֵר טוֹב', wrongHeb: ['💧 מַיִם', '🐱 חָתוּל', '🏫 בֵּית סֵפֶר'] },
+  { eng: 'Family', hebPhonetic: 'פָאמִילִי', heb: '👨‍👩‍👦 מִשְׁפָּחָה', wrongHeb: ['🍕 פִּיצָה', '🐶 כֶּלֶב', '🏫 בֵּית סֵפֶר'] },
+  { eng: 'Water', hebPhonetic: 'ווֹטֶר', heb: '💧 מַיִם', wrongHeb: ['🦁 אַרְיֵה', '👦 חָבֵר טוֹב', '👋 שָׁלוֹם'] },
+  { eng: 'Pizza', hebPhonetic: 'פִּיצָה', heb: '🍕 פִּיצָה', wrongHeb: ['💧 מַיִם', '🐶 כֶּלֶב', '🏫 בֵּית סֵפֶר'] },
+  { eng: 'Lion', hebPhonetic: 'לַאיְוֹן', heb: '🦁 אַרְיֵה (בֵּיתָ"ר!)', wrongHeb: ['🐱 חָתוּל', '💧 מַיִם', '🍕 פִּיצָה'] },
+  { eng: 'Dog', hebPhonetic: 'דּוֹג', heb: '🐶 כֶּלֶב', wrongHeb: ['🦁 אַרְיֵה', '🏫 בֵּית סֵפֶר', '💧 מַיִם'] },
+  { eng: 'Cat', hebPhonetic: 'קָאט', heb: '🐱 חָתוּל', wrongHeb: ['🐶 כֶּלֶב', '🍕 פִּיצָה', '👦 חָבֵר טוֹב'] }
 ];
 
 function genEnglishABC() {
   const isMatch = Math.random() > 0.45;
   if (isMatch) {
     const item = ENGLISH_ABC_MATCH[randInt(0, ENGLISH_ABC_MATCH.length - 1)];
-    const isCapToLow = Math.random() > 0.5;
-    if (isCapToLow) {
-      return {
-        isEnglish: true,
-        isMulti: false,
-        instruction: '🔤 הַתְאָמַת אוֹתִיּוֹת ABC: בַּחֲרוּ אֶת הָאוֹת הַקְּטַנָּה הַמַּתְאִימָה:',
-        ttsText: `מהי האות הקטנה של האות ${item.cap}?`,
-        englishSpeechWord: item.cap,
-        stimulusHtml: `<div style="font-size:2.4rem;font-weight:800;color:#0a84ff;">${item.cap}</div><div style="font-size:1rem;color:#64748b;margin-top:4px;">איזו אות קטנה מתאימה לאות הזו?</div>`,
-        rtlStimulus: false,
-        options: shuffle([item.low, ...item.wrong]),
-        correctAnswers: [item.low],
-        hint: `האות ${item.cap} נכתבת בקטן כ-${item.low}!`
-      };
-    } else {
-      return {
-        isEnglish: true,
-        isMulti: false,
-        instruction: '🔤 הַתְאָמַת אוֹתִיּוֹת ABC: בַּחֲרוּ אֶת הָאוֹת הַגְּדוֹלָה הַמַּתְאִימָה:',
-        ttsText: `מהי האות הגדולה של האות ${item.low}?`,
-        englishSpeechWord: item.low,
-        stimulusHtml: `<div style="font-size:2.4rem;font-weight:800;color:#0a84ff;">${item.low}</div><div style="font-size:1rem;color:#64748b;margin-top:4px;">איזו אות גדולה מתאימה לאות הזו?</div>`,
-        rtlStimulus: false,
-        options: shuffle([item.cap, ...item.wrong.map(w => w.toUpperCase())]),
-        correctAnswers: [item.cap],
-        hint: `האות הקטנה ${item.low} שייכת לאות הגדולה ${item.cap}!`
-      };
-    }
+    return {
+      isEnglish: true,
+      isMulti: false,
+      instruction: `🔤 אוֹתִיּוֹת בְּאַנְגְּלִית: הָאוֹת הַגְּדוֹלָה הִיא <strong>${item.cap}</strong> (${item.hebSound}). מַהִי הָאוֹת הַקְּטַנָּה שֶׁלָּהּ?`,
+      ttsText: `עילי, האות הגדולה היא ${item.hebSound}, כמו במילה ${item.wordEx}. מצא את האות הקטנה שלה:`,
+      englishSpeechWord: item.cap,
+      stimulusHtml: `
+        <div style="font-size:3rem;font-weight:900;color:#0a84ff;">${item.cap} <span style="font-size:1.5rem;color:#64748b;">➔ ?</span></div>
+        <div style="font-size:1.1rem;font-weight:800;color:#1e293b;margin-top:4px;">צְלִיל: <strong>${item.hebSound}</strong> • דֻּגְמָה: <strong>${item.wordEx}</strong></div>
+      `,
+      rtlStimulus: false,
+      options: shuffle([item.low, ...item.wrong]),
+      correctAnswers: [item.low],
+      hint: `האות הגדולה ${item.cap} נכתבת בקטן ככה: ${item.low}!`
+    };
   } else {
-    // Phonics beginning letter
+    // Phonics beginning letter with Hebrew phonetic guide!
     const p = ENGLISH_PHONICS[randInt(0, ENGLISH_PHONICS.length - 1)];
     return {
       isEnglish: true,
       isMulti: false,
-      instruction: '🎵 צְלִיל פּוֹתֵחַ (Phonics): בְּאֵיזוֹ אוֹת מַתְחִילָה הַמִּלָּה?',
-      ttsText: `באיזו אות מתחילה המילה ${p.word}?`,
+      instruction: '🎵 צְלִיל פּוֹתֵחַ בְּאַנְגְּלִית: בְּאֵיזוֹ אוֹת מַתְחִילָה הַמִּלָּה?',
+      ttsText: `עילי, המילה ${p.hebrew} באנגלית היא ${p.hebPhonetic}. באיזו אות היא מתחילה?`,
       englishSpeechWord: p.word,
-      stimulusHtml: `<div style="font-size:1.8rem;font-weight:800;color:#059669;">${p.word}</div><div style="font-size:1.05rem;color:#334155;margin-top:6px;">פירוש: <strong>${p.hebrew}</strong></div>`,
+      stimulusHtml: `
+        <div style="font-size:2.2rem;font-weight:900;color:#059669;">${p.word} <span style="font-size:1.25rem;color:#475569;">(${p.hebPhonetic})</span></div>
+        <div style="font-size:1.25rem;font-weight:800;color:#1e293b;margin-top:6px;">פֵּרוּשׁ: <strong>${p.hebrew}</strong></div>
+      `,
       rtlStimulus: false,
       options: shuffle([p.letter, ...p.wrong]),
       correctAnswers: [p.letter],
-      hint: `המילה ${p.word} מתחילה באות ${p.letter}!`
+      hint: `המילה ${p.word} (${p.hebPhonetic}) מתחילה בצליל ובאות ${p.letter}!`
     };
   }
 }
@@ -883,39 +872,26 @@ function genEnglishABC() {
 function genEnglishWords() {
   const mode = randInt(1, 3);
   if (mode === 1) {
-    // Numbers
+    // Numbers - Always show Hebrew phonetic + digit options so Ilay never has to read raw English spelling alone!
     const numObj = ENGLISH_NUMBERS[randInt(0, ENGLISH_NUMBERS.length - 1)];
-    const toEng = Math.random() > 0.5;
-    if (toEng) {
-      return {
-        isEnglish: true,
-        isMulti: false,
-        instruction: '🔟 מִסְפָּרִים בְּאַנְגְּלִית: אֵיךְ אוֹמְרִים אֶת הַמִּסְפָּר בְּאַנְגְּלִית?',
-        ttsText: `איך אומרים את המספר ${numObj.num} באנגלית?`,
-        englishSpeechWord: numObj.word,
-        stimulusHtml: `<div style="font-size:3rem;font-weight:800;color:#0a84ff;">${numObj.num}</div>`,
-        rtlStimulus: false,
-        options: shuffle([numObj.word, ...numObj.wrong]),
-        correctAnswers: [numObj.word],
-        hint: `ספרו באנגלית עד שמגיעים למספר ${numObj.num} (${numObj.word})!`
-      };
-    } else {
-      return {
-        isEnglish: true,
-        isMulti: false,
-        instruction: '🔟 מִסְפָּרִים בְּאַנְגְּלִית: אֵיזֶה מִסְפָּר זֶה?',
-        ttsText: `איזה מספר הוא ${numObj.word}?`,
-        englishSpeechWord: numObj.word,
-        stimulusHtml: `<div style="font-size:2.2rem;font-weight:800;color:#0a84ff;">${numObj.word.toUpperCase()}</div>`,
-        rtlStimulus: false,
-        options: shuffle([String(numObj.num), ...numObj.wrong.map(w => {
-          const found = ENGLISH_NUMBERS.find(n => n.word === w);
-          return found ? String(found.num) : '0';
-        })]),
-        correctAnswers: [String(numObj.num)],
-        hint: `${numObj.word} הוא המספר ${numObj.num}!`
-      };
-    }
+    return {
+      isEnglish: true,
+      isMulti: false,
+      instruction: '🔟 מִסְפָּרִים בְּאַנְגְּלִית: הַקְשֵׁב לַמִּסְפָּר וּבְחַר אוֹתוֹ!',
+      ttsText: `עילי, איזה מספר זה באנגלית: ${numObj.hebPhonetic.split(' ')[0]}?`,
+      englishSpeechWord: numObj.word,
+      stimulusHtml: `
+        <div style="font-size:2.4rem;font-weight:900;color:#0a84ff;">🔊 ${numObj.word.toUpperCase()}</div>
+        <div style="font-size:1.2rem;font-weight:800;color:#334155;margin-top:4px;">קוֹרְאִים בְּעִבְרִית: <strong>${numObj.hebPhonetic}</strong></div>
+      `,
+      rtlStimulus: false,
+      options: shuffle([String(numObj.num), ...numObj.wrong.map(w => {
+        const found = ENGLISH_NUMBERS.find(n => n.hebPhonetic === w);
+        return found ? String(found.num) : '10';
+      })]),
+      correctAnswers: [String(numObj.num)],
+      hint: `${numObj.hebPhonetic} באנגלית זה המספר ${numObj.num}!`
+    };
   } else if (mode === 2) {
     // Colors
     const col = ENGLISH_COLORS[randInt(0, ENGLISH_COLORS.length - 1)];
@@ -923,13 +899,16 @@ function genEnglishWords() {
       isEnglish: true,
       isMulti: false,
       instruction: '🎨 צְבָעִים בְּאַנְגְּלִית: מַהוּ הַצֶּבַע?',
-      ttsText: `איזה צבע הוא ${col.color}?`,
+      ttsText: `עילי, איזה צבע זה באנגלית: ${col.hebPhonetic}? ${col.note}`,
       englishSpeechWord: col.color,
-      stimulusHtml: `<div style="font-size:2.2rem;font-weight:800;color:#d97706;">${col.color.toUpperCase()}</div><div style="font-size:0.95rem;color:#64748b;margin-top:6px;">${col.note}</div>`,
+      stimulusHtml: `
+        <div style="font-size:2.2rem;font-weight:900;color:#d97706;">🔊 ${col.color.toUpperCase()} (${col.hebPhonetic})</div>
+        <div style="font-size:1.05rem;font-weight:800;color:#475569;margin-top:6px;">💡 ${col.note}</div>
+      `,
       rtlStimulus: false,
       options: shuffle([col.heb, ...col.wrong]),
       correctAnswers: [col.heb],
-      hint: `${col.color} פירושו ${col.heb}!`
+      hint: `${col.color} (${col.hebPhonetic}) פירושו ${col.heb}!`
     };
   } else {
     // Animals / daily
@@ -937,52 +916,53 @@ function genEnglishWords() {
     return {
       isEnglish: true,
       isMulti: false,
-      instruction: '🌍 מִילִים שֶׁל יוֹמְיוֹם וְחַיּוֹת בְּאַנְגְּלִית:',
-      ttsText: `איך אומרים בעברית ${d.eng}?`,
+      instruction: '🌍 מִילִים בְּאַנְגְּלִית: הַקְשֵׁב לַמִּלָּה וּבְחַר אֶת הַפֵּרוּשׁ בְּעִבְרִית!',
+      ttsText: `עילי, מה הפירוש בעברית של המילה באנגלית: ${d.hebPhonetic}?`,
       englishSpeechWord: d.eng,
-      stimulusHtml: `<div style="font-size:2.2rem;font-weight:800;color:#7c3aed;">${d.eng}</div><div style="font-size:1rem;color:#475569;margin-top:6px;">מה הפירוש בעברית?</div>`,
+      stimulusHtml: `
+        <div style="font-size:2.3rem;font-weight:900;color:#7c3aed;">🔊 ${d.eng}</div>
+        <div style="font-size:1.15rem;font-weight:800;color:#334155;margin-top:4px;">קוֹרְאִים: <strong>${d.hebPhonetic}</strong> — מָה הַפֵּרוּשׁ?</div>
+      `,
       rtlStimulus: false,
-      options: shuffle([d.heb, ...d.wrong.map(w => {
-        const found = ENGLISH_DAILY_WORDS.find(x => x.eng === w);
-        return found ? found.heb : 'מילה אחרת';
-      })]),
+      options: shuffle([d.heb, ...d.wrongHeb]),
       correctAnswers: [d.heb],
-      hint: `${d.eng} פירושו ${d.heb}!`
+      hint: `${d.eng} (${d.hebPhonetic}) פירושו ${d.heb}!`
     };
   }
 }
 
 function genEnglishSoccer() {
   const item = ENGLISH_SOCCER_WORDS[randInt(0, ENGLISH_SOCCER_WORDS.length - 1)];
-  const toHeb = Math.random() > 0.4;
+  const toHeb = Math.random() > 0.35;
   if (toHeb) {
     return {
       isEnglish: true,
       isMulti: false,
-      instruction: '⚽ אַנְגְּלִית שֶׁל אַלּוּפֵי כַּדּוּרֶגֶל:',
-      ttsText: `מה הפירוש של ${item.eng}?`,
+      instruction: '⚽ אַנְגְּלִית שֶׁל כַּדּוּרֶגֶל: מָה הַפֵּרוּשׁ בְּעִבְרִית?',
+      ttsText: `עילי, מה הפירוש בעולם הכדורגל של המילה ${item.hebPhonetic.split(' ')[0]}?`,
       englishSpeechWord: item.eng,
-      stimulusHtml: `<div style="font-size:2.4rem;font-weight:800;color:#0a84ff;">${item.eng.toUpperCase()}</div><div style="font-size:1rem;color:#475569;margin-top:6px;">מה הפירוש בעולם הכדורגל?</div>`,
+      stimulusHtml: `
+        <div style="font-size:2.4rem;font-weight:900;color:#0a84ff;">🔊 ${item.eng.toUpperCase()}</div>
+        <div style="font-size:1.15rem;font-weight:800;color:#334155;margin-top:6px;">קוֹרְאִים בְּעִבְרִית: <strong>${item.hebPhonetic}</strong></div>
+      `,
       rtlStimulus: false,
-      options: shuffle([item.heb, ...item.wrong.map(w => {
-        const found = ENGLISH_SOCCER_WORDS.find(x => x.eng === w);
-        return found ? found.heb : 'מילה אחרת';
-      })]),
+      options: shuffle([item.heb, ...item.wrongHeb]),
       correctAnswers: [item.heb],
-      hint: `${item.eng} פירושו ${item.heb}!`
+      hint: `${item.hebPhonetic} פירושו ${item.heb}!`
     };
   } else {
+    const distractors = shuffle(ENGLISH_SOCCER_WORDS.filter(x => x.eng !== item.eng)).slice(0, 3);
     return {
       isEnglish: true,
       isMulti: false,
-      instruction: '⚽ אַנְגְּלִית שֶׁל אַלּוּפֵי כַּדּוּרֶגֶל: אֵיךְ אוֹמְרִים בְּאַנְגְּלִית?',
-      ttsText: `איך אומרים ${item.heb} באנגלית?`,
+      instruction: '⚽ אַנְגְּלִית שֶׁל כַּדּוּרֶגֶל: אֵיךְ אוֹמְרִים בְּאַנְגְּלִית?',
+      ttsText: `עילי, איך אומרים ${item.heb} באנגלית? רמז: תקשיב למילה באנגלית:`,
       englishSpeechWord: item.eng,
-      stimulusHtml: `<div style="font-size:2rem;font-weight:800;color:#059669;">${item.heb}</div>`,
+      stimulusHtml: `<div style="font-size:2.2rem;font-weight:900;color:#059669;">${item.heb}</div>`,
       rtlStimulus: true,
-      options: shuffle([item.eng, ...item.wrong]),
-      correctAnswers: [item.eng],
-      hint: `${item.heb} באנגלית זה ${item.eng}!`
+      options: shuffle([item.hebPhonetic, ...distractors.map(d => d.hebPhonetic)]),
+      correctAnswers: [item.hebPhonetic],
+      hint: `${item.heb} באנגלית אומרים ${item.hebPhonetic}!`
     };
   }
 }
@@ -2358,12 +2338,9 @@ function buildLiaEnglishQuestion(bank, categoryTitle, diff = 'medium') {
   const mainEmoji = item.emoji || '🦄';
   const opts = shuffle([item.heb, ...distractors.map(d => d.heb)]);
 
-  // Teach-First pedagogy for a 5-year-old who doesn't know English yet:
-  // In easy/medium (Levels 1-4), we warmly TEACH the word in Hebrew + English first, then let her tap the matching picture!
-  const isGuidedTeach = diff !== 'hard';
-  const ttsIntro = isGuidedTeach
-    ? `ליה מתוקה, בואי נלמד מילה באנגלית! ${hebClean} באנגלית אומרים:`
-    : `ליה אלופה, הקשיבי למילה באנגלית ומצאי את התמונה המתאימה:`;
+  // Teach-First pedagogy for a 5-year-old who CANNOT read in ANY language (not Hebrew, not English!):
+  // ALWAYS warmly TEACH the word in Hebrew + English first, show the giant picture, and let her tap the matching picture card!
+  const ttsIntro = `ליה מתוקה, בואי נלמד מילה באנגלית! ${hebClean} באנגלית אומרים:`;
 
   return {
     isEnglish: true,
@@ -2371,17 +2348,15 @@ function buildLiaEnglishQuestion(bank, categoryTitle, diff = 'medium') {
     autoSpeak: true,
     isMulti: false,
     uniqueKey: `lia_eng_${item.eng}`,
-    instruction: isGuidedTeach
-      ? `🌱 לוֹמְדִים יַחַד: <strong>${hebClean}</strong> בְּאַנְגְּלִית זֶה <strong>${item.eng}</strong>! לַחֲצִי עַל הַתְּמוּנָה שֶׁל <strong>${hebClean}</strong>:`
-      : `🌟 ${categoryTitle}: הַקְשִׁיבִי לַמִּילָה <strong>${item.eng}</strong> וּלְחֲצִי עַל הַתְּמוּנָה הַמַּתְאִימָה!`,
+    instruction: `🌱 לוֹמְדִים יַחַד (בְּלִי צֹרֶךְ לִקְרֹא!): <strong>${hebClean}</strong> בְּאַנְגְּלִית זֶה <strong>${item.eng}</strong>! לַחֲצִי עַל הַתְּמוּנָה שֶׁל <strong>${hebClean}</strong>:`,
     ttsText: ttsIntro,
     englishSpeechWord: item.eng,
-    ttsFollowUpHeb: isGuidedTeach ? `עכשיו לחצי על התמונה של ${hebClean}!` : '',
+    ttsFollowUpHeb: `עכשיו לחצי על התמונה של ${hebClean}!`,
     stimulusHtml: `
       <div style="background:linear-gradient(135deg,#fdf2f8,#f3e8ff);border:3px solid #f472b6;border-radius:20px;padding:12px 16px;text-align:center;box-shadow:0 6px 16px rgba(236,72,153,0.14);">
-        <div style="font-size:3.8rem;line-height:1.15;margin-bottom:4px;">${mainEmoji}</div>
+        <div style="font-size:4.2rem;line-height:1.12;margin-bottom:4px;">${mainEmoji}</div>
         <div style="font-size:1.85rem;font-weight:900;color:#db2777;letter-spacing:1px;direction:ltr;">🔊 ${item.eng.toUpperCase()}</div>
-        <div style="font-size:1.25rem;font-weight:800;color:#6b21a8;margin-top:4px;">${isGuidedTeach ? `✨ בעברית: <strong>${hebClean}</strong>` : `💡 לחצי על כרטיס התמונה המתאים!`}</div>
+        <div style="font-size:1.25rem;font-weight:800;color:#6b21a8;margin-top:4px;">✨ בעברית: <strong>${hebClean}</strong></div>
       </div>
     `,
     rtlStimulus: false,
@@ -2392,34 +2367,34 @@ function buildLiaEnglishQuestion(bank, categoryTitle, diff = 'medium') {
 }
 
 function genLiaHebLetters() {
-  // 12 core familiar kindergarten words & letters with visual cues on every option!
+  // 12 core familiar kindergarten words & letters where every option starts with the GIANT PICTURE EMOJI first so Lia never has to read!
   const items = [
-    { word: 'לִיָּה', emoji: '👧👑', sound: 'לְ', letter: 'ל׳ — 👧 לִיָּה וְלֵב', wrong: ['א׳ — 🦁 אַרְיֵה', 'ש׳ — ☀️ שֶׁמֶשׁ'], hint: 'השם המתוק לִיָּה מתחיל בצליל לְ — האות ל׳!' },
-    { word: 'אַבָּא וְאִמָּא', emoji: '👨👩💖', sound: 'אַ', letter: 'א׳ — 💖 אַבָּא וְאִמָּא', wrong: ['ב׳ — 🎈 בָּלוֹן', 'ג׳ — 🍦 גְּלִידָה'], hint: 'אַבָּא וְאִמָּא מתחילים באות הראשונה: א׳!' },
-    { word: 'סְטִיץ׳', emoji: '💙🌺', sound: 'סְ', letter: 'ס׳ — 💙 סְטִיץ׳', wrong: ['ל׳ — 👧 לִיָּה', 'כ׳ — 👑 כֶּתֶר'], hint: 'סְטִיץ׳ מתחיל בצליל סְ — האות ס׳!' },
-    { word: 'חַד-קֶרֶן', emoji: '🦄🌈', sound: 'חַ', letter: 'ח׳ — 🦄 חַד-קֶרֶן', wrong: ['ד׳ — 🧸 דֻּבִּי', 'פ׳ — 🦋 פַּרְפַּר'], hint: 'חַד-קֶרֶן מתחיל בצליל חַ — האות ח׳!' },
-    { word: 'בֻּבָּה', emoji: '🪆🎀', sound: 'בּוּ', letter: 'ב׳ — 🪆 בֻּבָּה', wrong: ['ש׳ — ☀️ שֶׁמֶשׁ', 'ל׳ — 👧 לִיָּה'], hint: 'בֻּבָּה מתחילה בצליל בּוּ — האות ב׳!' },
-    { word: 'שֶׁמֶשׁ', emoji: '☀️💛', sound: 'שֶׁ', letter: 'ש׳ — ☀️ שֶׁמֶשׁ', wrong: ['א׳ — 🍎 אֲבַטִּיחַ', 'ד׳ — 🧸 דֻּבִּי'], hint: 'שֶׁמֶשׁ מתחילה בצליל שֶׁ — האות ש׳!' },
-    { word: 'כֶּתֶר', emoji: '👑✨', sound: 'כֶּ', letter: 'כ׳ — 👑 כֶּתֶר', wrong: ['ב׳ — 🪆 בֻּבָּה', 'ס׳ — 💙 סְטִיץ׳'], hint: 'כֶּתֶר של נסיכה מתחיל באות כ׳!' },
-    { word: 'גְּלִידָה', emoji: '🍦🍓', sound: 'גְּ', letter: 'ג׳ — 🍦 גְּלִידָה', wrong: ['ל׳ — 👧 לִיָּה', 'פ׳ — 🦋 פַּרְפַּר'], hint: 'גְּלִידָה מתוקה (וגם גַּן!) מתחילה באות ג׳!' },
-    { word: 'דֻּבִּי', emoji: '🧸💛', sound: 'דּוּ', letter: 'ד׳ — 🧸 דֻּבִּי', wrong: ['א׳ — 🦁 אַרְיֵה', 'כ׳ — 👑 כֶּתֶר'], hint: 'דֻּבִּי חמוד מתחיל באות ד׳!' },
-    { word: 'פַּרְפַּר', emoji: '🦋🌸', sound: 'פַּ', letter: 'פ׳ — 🦋 פַּרְפַּר', wrong: ['ש׳ — ☀️ שֶׁמֶשׁ', 'ב׳ — 🎈 בָּלוֹן'], hint: 'פַּרְפַּר צבעוני מתחיל באות פ׳!' },
-    { word: 'תּוּת', emoji: '🍓❤️', sound: 'תּוּ', letter: 'ת׳ — 🍓 תּוּת', wrong: ['ג׳ — 🍦 גְּלִידָה', 'ח׳ — 🦄 חַד-קֶרֶן'], hint: 'תּוּת מתוק מתחיל באות ת׳!' },
-    { word: 'עִילַי', emoji: '👦⚽', sound: 'עִי', letter: 'ע׳ — 👦 עִילַי וְעוּגָה', wrong: ['ד׳ — 🧸 דֻּבִּי', 'ס׳ — 💙 סְטִיץ׳'], hint: 'השם של אחיך עִילַי (וגם עוּגָה!) מתחיל באות ע׳!' }
+    { word: 'לִיָּה', emoji: '👧👑', sound: 'לְ', letter: '👧👑 ל׳ — לִיָּה', wrong: ['🦁 א׳ — אַרְיֵה', '☀️ ש׳ — שֶׁמֶשׁ'], hint: 'השם המתוק לִיָּה מתחיל בצליל לְ — האות ל׳!' },
+    { word: 'אַבָּא וְאִמָּא', emoji: '👨👩', sound: 'אַ', letter: '👨👩 א׳ — אַבָּא וְאִמָּא', wrong: ['🎈 ב׳ — בָּלוֹן', '🍦 ג׳ — גְּלִידָה'], hint: 'אַבָּא וְאִמָּא מתחילים באות הראשונה: א׳!' },
+    { word: 'סְטִיץ׳', emoji: '💙🌺', sound: 'סְ', letter: '💙🌺 ס׳ — סְטִיץ׳', wrong: ['👧👑 ל׳ — לִיָּה', '👑 כ׳ — כֶּתֶר'], hint: 'סְטִיץ׳ מתחיל בצליל סְ — האות ס׳!' },
+    { word: 'חַד-קֶרֶן', emoji: '🦄🌈', sound: 'חַ', letter: '🦄🌈 ח׳ — חַד-קֶרֶן', wrong: ['🧸 ד׳ — דֻּבִּי', '🦋 פ׳ — פַּרְפַּר'], hint: 'חַד-קֶרֶן מתחיל בצליל חַ — האות ח׳!' },
+    { word: 'בֻּבָּה', emoji: '🪆🎀', sound: 'בּוּ', letter: '🪆🎀 ב׳ — בֻּבָּה', wrong: ['☀️ ש׳ — שֶׁמֶשׁ', '👧👑 ל׳ — לִיָּה'], hint: 'בֻּבָּה מתחילה בצליל בּוּ — האות ב׳!' },
+    { word: 'שֶׁמֶשׁ', emoji: '☀️💛', sound: 'שֶׁ', letter: '☀️💛 ש׳ — שֶׁמֶשׁ', wrong: ['🍎 א׳ — תַּפּוּחַ', '🧸 ד׳ — דֻּבִּי'], hint: 'שֶׁמֶשׁ מתחילה בצליל שֶׁ — האות ש׳!' },
+    { word: 'כֶּתֶר', emoji: '👑✨', sound: 'כֶּ', letter: '👑✨ כ׳ — כֶּתֶר', wrong: ['🪆🎀 ב׳ — בֻּבָּה', '💙🌺 ס׳ — סְטִיץ׳'], hint: 'כֶּתֶר של נסיכה מתחיל באות כ׳!' },
+    { word: 'גְּלִידָה', emoji: '🍦🍓', sound: 'גְּ', letter: '🍦🍓 ג׳ — גְּלִידָה', wrong: ['👧👑 ל׳ — לִיָּה', '🦋 פ׳ — פַּרְפַּר'], hint: 'גְּלִידָה מתוקה (וגם גַּן!) מתחילה באות ג׳!' },
+    { word: 'דֻּבִּי', emoji: '🧸💛', sound: 'דּוּ', letter: '🧸💛 ד׳ — דֻּבִּי', wrong: ['🦁 א׳ — אַרְיֵה', '👑✨ כ׳ — כֶּתֶר'], hint: 'דֻּבִּי חמוד מתחיל באות ד׳!' },
+    { word: 'פַּרְפַּר', emoji: '🦋🌸', sound: 'פַּ', letter: '🦋🌸 פ׳ — פַּרְפַּר', wrong: ['☀️💛 ש׳ — שֶׁמֶשׁ', '🎈 ב׳ — בָּלוֹן'], hint: 'פַּרְפַּר צבעוני מתחיל באות פ׳!' },
+    { word: 'תּוּת', emoji: '🍓❤️', sound: 'תּוּ', letter: '🍓❤️ ת׳ — תּוּת', wrong: ['🍦🍓 ג׳ — גְּלִידָה', '🦄🌈 ח׳ — חַד-קֶרֶן'], hint: 'תּוּת מתוק מתחיל באות ת׳!' },
+    { word: 'עִילַי', emoji: '👦⚽', sound: 'עִי', letter: '👦⚽ ע׳ — עִילַי', wrong: ['🧸💛 ד׳ — דֻּבִּי', '💙🌺 ס׳ — סְטִיץ׳'], hint: 'השם של אחיך עִילַי (וגם עוּגָה!) מתחיל באות ע׳!' }
   ];
   const item = items[randInt(0, items.length - 1)];
+  const rawLet = item.letter.split(' ')[1];
   return {
     isLia: true,
     autoSpeak: true,
     isMulti: false,
     uniqueKey: `heb_let_${item.word}`,
-    instruction: `🔤 הַמִּילָה <strong>${item.word}</strong> מַתְחִילָה בָּאוֹת <strong>${item.letter.split(' ')[0]}</strong>! לַחֲצִי עָלֶיהָ:`,
-    ttsText: `ליה מתוקה, המילה ${item.word} מתחילה בצליל ${item.sound}, באות ${item.letter.split(' ')[0]}! לחצי על הכרטיס של ${item.word}!`,
+    instruction: `🔤 הַמִּילָה <strong>${item.word}</strong> מַתְחִילָה בָּאוֹת <strong>${rawLet}</strong>! לַחֲצִי עַל הַתְּמוּנָה שֶׁל <strong>${item.word}</strong>:`,
+    ttsText: `ליה מתוקה, המילה ${item.word} מתחילה בצליל ${item.sound}, באות ${rawLet}! לחצי על התמונה של ${item.word}!`,
     stimulusHtml: `
       <div style="background:linear-gradient(135deg,#faf5ff,#fdf2f8);border:3px solid #c084fc;border-radius:20px;padding:12px 16px;text-align:center;">
-        <div style="font-size:3.6rem;margin-bottom:4px;">${item.emoji}</div>
-        <div style="font-size:2.1rem;font-weight:900;color:#7e22ce;">${item.word}</div>
-        <div style="font-size:1.1rem;font-weight:800;color:#db2777;margin-top:4px;">מתחיל באות <strong>${item.letter.split(' ')[0]}</strong></div>
+        <div style="font-size:4rem;margin-bottom:4px;">${item.emoji}</div>
+        <div style="font-size:2.4rem;font-weight:900;color:#7e22ce;">הָאוֹת ${rawLet} — ${item.word}</div>
       </div>
     `,
     rtlStimulus: true,
@@ -2485,9 +2460,10 @@ function genLiaMathCounting(diff = 'medium') {
   while (numOptsSet.size < 3) {
     numOptsSet.add(randInt(1, 6));
   }
-  const opts = shuffle(Array.from(numOptsSet).map(String));
-
   const countWordsHeb = ['', 'אחת', 'שתיים', 'שלוש', 'ארבע', 'חמש', 'שש', 'שבע', 'שמונה', 'תשע', 'עשר'];
+  const formatVisualNumOpt = (n) => `${Array(n).fill(picked.icon).join('')} ${n} (${countWordsHeb[n] || n})`;
+  const opts = shuffle(Array.from(numOptsSet).map(formatVisualNumOpt));
+  const correctOpt = formatVisualNumOpt(count);
   const countSequence = Array.from({ length: count }, (_, idx) => idx + 1).join(', ');
 
   return {
@@ -2496,15 +2472,16 @@ function genLiaMathCounting(diff = 'medium') {
     isMulti: false,
     uniqueKey: `cnt_${picked.icon}_${count}`,
     instruction: `🦄 בּוֹאִי נִסְפֹּר יַחַד: כַּמָּה ${picked.name} יֵשׁ בַּתְּמוּנָה?`,
-    ttsText: `ליה מתוקה, בואי נספור יחד כמה ${picked.name} יש בתמונה: ${countSequence}! לחצי על המספר ${countWordsHeb[count] || count}!`,
+    ttsText: `ליה מתוקה, בואי נספור יחד כמה ${picked.name} יש בתמונה: ${countSequence}! יש לנו ${countWordsHeb[count] || count} ${picked.name}! לחצי על הכרטיס עם ${countWordsHeb[count] || count}!`,
     stimulusHtml: `
       <div style="background:linear-gradient(135deg,#fdf2f8,#f5f3ff);border:3px solid #f472b6;border-radius:20px;padding:14px;">
-        <div style="font-size:3.2rem;letter-spacing:10px;line-height:1.45;">${visual}</div>
+        <div style="font-size:3.4rem;letter-spacing:10px;line-height:1.45;">${visual}</div>
+        <div style="font-size:1.4rem;font-weight:900;color:#db2777;margin-top:6px;">${count} — ${countWordsHeb[count] || count}</div>
       </div>
     `,
     rtlStimulus: false,
     options: opts,
-    correctAnswers: [String(count)],
+    correctAnswers: [correctOpt],
     hint: `בואי נספור באצבע: ${countSequence} — יש כאן ${count} ${picked.name}!`
   };
 }
