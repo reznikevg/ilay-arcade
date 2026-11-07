@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Rubik:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=3.1">
+  <link rel="stylesheet" href="css/styles.css?v=3.2">
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body class="theme-beitar">
@@ -149,11 +149,11 @@
           <div class="fc27-banner-left">
             <div class="fc27-logo-pill">EA SPORTS<br>FC™ 27</div>
             <div class="fc27-banner-text">
-              <h4>🎮 אנגלית של FC 27 (כולל צילומי מסך!)</h4>
-              <p>לחץ על כפתורים במסכי המשחק או שחק בחידון FC 27!</p>
+              <h4>🎮 אקדמיית פיפא FC 27: מסכים, שדרן וסרטונים!</h4>
+              <p>איך מתחילים משחק צעד-אחר-צעד, מה אומר כל מסך ומה השדרן צועק באנגלית!</p>
             </div>
           </div>
-          <span class="fc27-banner-play">פתח מסכים ⚽</span>
+          <span class="fc27-banner-play">פתח אקדמיה ⚽</span>
         </div>
 
         <!-- LIA'S 4 Core Daily Modules (2x2 Grid: Makeup, Kindergarten Teacher, English, Prep) -->
@@ -787,50 +787,165 @@
         </div>
       </section>
 
-      <!-- ==================== VIEW 12: EA SPORTS FC 27 INTERACTIVE SCREEN EXPLORER (אקדמיית FC 27 לעילי) ==================== -->
+      <!-- ==================== VIEW 12: EA SPORTS FC 27 INTERACTIVE ACADEMY (אקדמיית פיפא FC 27 לעילי) ==================== -->
       <section id="view-fc27" class="view-section">
         <div class="screen-nav-bar">
           <button type="button" class="btn-back" onclick="switchView('home')">‹ חזרה</button>
-          <span class="screen-title">🎮 אקדמיית FC 27 באנגלית</span>
+          <span class="screen-title">🎮 אקדמיית פיפא FC 27 לעילי</span>
           <button type="button" class="btn-primary-action" id="btn-fc27-start-quiz" style="background:#059669;padding:6px 12px;font-size:0.82rem;">⚽ לחידון FC 27</button>
         </div>
 
         <div class="surface-card" style="background:#0f172a;color:#f8fafc;border-color:#1e293b;">
-          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
-            <div>
-              <h3 style="margin:0;color:#00ff87;font-size:1.1rem;">🖥️ סימולטור המסכים של EA SPORTS FC™ 27</h3>
-              <p style="margin:2px 0 0;font-size:0.82rem;color:#cbd5e1;">בחר צילום מסך מהמשחק ולחץ על כל מילה באנגלית כדי לשמוע ולגלות מה היא עושה!</p>
+          <div style="margin-bottom:10px;">
+            <h3 style="margin:0;color:#00ff87;font-size:1.12rem;">⚽ הכל על פיפא (EA SPORTS FC™ 27) באנגלית פשוטה!</h3>
+            <p style="margin:3px 0 0;font-size:0.82rem;color:#cbd5e1;">בחר למעלה מה בא לך ללמוד: מה אומר כל מסך, איך מתחילים משחק צעד-אחר-צעד, מה השדרן צועק במגרש או סרטוני הדרכה!</p>
+          </div>
+
+          <!-- 4 Main Mode Tabs inside FC 27 Academy -->
+          <div class="segmented-tabs" id="fc27-main-mode-tabs" style="margin-bottom:12px;background:#1e293b;width:100%;display:grid;grid-template-columns:repeat(2,1fr);gap:6px;padding:6px;">
+            <button type="button" class="cat-tab active" data-fc27mode="screens" style="color:#fff;font-size:0.85rem;padding:8px 6px;">🖥️ 1. מה אומר כל מסך?</button>
+            <button type="button" class="cat-tab" data-fc27mode="howto" style="color:#fff;font-size:0.85rem;padding:8px 6px;">▶️ 2. איך מתחילים משחק?</button>
+            <button type="button" class="cat-tab" data-fc27mode="commentator" style="color:#fff;font-size:0.85rem;padding:8px 6px;">🎙️ 3. מה השדרן אומר?</button>
+            <button type="button" class="cat-tab" data-fc27mode="videos" style="color:#fff;font-size:0.85rem;padding:8px 6px;">🎬 4. סרטוני הדרכה</button>
+          </div>
+
+          <!-- ==================== PANEL 1: INTERACTIVE SCREENS EXPLORER (6 SCREENS + EXAMPLES) ==================== -->
+          <div id="fc27-panel-screens" class="fc27-subpanel">
+            <!-- 6 Screen Switcher Tabs -->
+            <div class="segmented-tabs" id="fc27-screen-tabs" style="margin-bottom:10px;background:#1e293b;width:100%;display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;">
+              <button type="button" class="cat-tab active" data-screen="main_menu" style="color:#fff;font-size:0.78rem;">🏟️ תפריט ראשי</button>
+              <button type="button" class="cat-tab" data-screen="pre_match" style="color:#fff;font-size:0.78rem;">🎮 התחלת משחק</button>
+              <button type="button" class="cat-tab" data-screen="pause_menu" style="color:#fff;font-size:0.78rem;">⏸️ עצירה וחילוף</button>
+              <button type="button" class="cat-tab" data-screen="end_match" style="color:#fff;font-size:0.78rem;">🏁 סיום ותיקו</button>
+              <button type="button" class="cat-tab" data-screen="fut_card" style="color:#fff;font-size:0.78rem;">🃏 קלפי FUT</button>
+              <button type="button" class="cat-tab" data-screen="pitch_hud" style="color:#fff;font-size:0.78rem;">⚽ שלט ומגרש</button>
             </div>
-          </div>
 
-          <!-- 4 Screen Switcher Tabs -->
-          <div class="segmented-tabs" id="fc27-screen-tabs" style="margin-bottom:12px;background:#1e293b;width:100%;display:grid;grid-template-columns:repeat(4,1fr);">
-            <button type="button" class="cat-tab active" data-screen="main_menu" style="color:#fff;">🏟️ ראשי</button>
-            <button type="button" class="cat-tab" data-screen="pause_menu" style="color:#fff;">⏸️ עצירה</button>
-            <button type="button" class="cat-tab" data-screen="fut_card" style="color:#fff;">🏆 קלף FUT</button>
-            <button type="button" class="cat-tab" data-screen="pitch_hud" style="color:#fff;">🎮 מגרש</button>
-          </div>
+            <!-- Interactive FC 27 TV Screenshot Stage -->
+            <div id="fc27-interactive-stage"></div>
 
-          <!-- Interactive FC 27 TV Screenshot Stage -->
-          <div id="fc27-interactive-stage"></div>
-
-          <!-- Selected Word Translation & Audio Callout -->
-          <div class="surface-card" id="fc27-word-explain-box" style="margin-top:12px;margin-bottom:0;background:linear-gradient(135deg,#064e3b,#0f172a);border:2px solid #00ff87;color:#fff;">
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
-              <div>
-                <div id="fc27-exp-eng" style="font-size:1.45rem;font-weight:900;color:#00ff87;letter-spacing:0.5px;">KICK OFF</div>
-                <div id="fc27-exp-heb" style="font-size:1.08rem;font-weight:800;color:#fff;margin-top:2px;">⚽ משחק ידידות מהיר (בעיטת פתיחה)</div>
+            <!-- Selected Word Translation, Audio & Real Example Callout -->
+            <div class="surface-card" id="fc27-word-explain-box" style="margin-top:12px;margin-bottom:0;background:linear-gradient(135deg,#064e3b,#0f172a);border:2px solid #00ff87;color:#fff;">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+                <div>
+                  <div id="fc27-exp-eng" style="font-size:1.45rem;font-weight:900;color:#00ff87;letter-spacing:0.5px;">KICK OFF</div>
+                  <div id="fc27-exp-heb" style="font-size:1.08rem;font-weight:800;color:#fff;margin-top:2px;">⚽ משחק מהיר (בעיטת פתיחה)</div>
+                </div>
+                <button type="button" class="btn-chip" id="btn-fc27-speak-current" style="background:#00ff87;color:#090d16;font-weight:900;border:none;padding:8px 14px;">🔊 השמע</button>
               </div>
-              <button type="button" class="btn-chip" id="btn-fc27-speak-current" style="background:#00ff87;color:#090d16;font-weight:900;border:none;padding:8px 14px;">🔊 השמע</button>
-            </div>
-            <div id="fc27-exp-hint" style="margin-top:8px;font-size:0.86rem;color:#a7f3d0;border-top:1px solid rgba(255,255,255,0.15);padding-top:6px;">
-              בתפריט הראשי של FC 27 לוחצים על KICK OFF כדי להתחיל מיד משחק כדורגל!
+              <div id="fc27-exp-hint" style="margin-top:8px;font-size:0.88rem;color:#e2e8f0;border-top:1px solid rgba(255,255,255,0.15);padding-top:6px;">
+                בתפריט הראשי של FC 27 לוחצים על KICK OFF כדי להתחיל מיד משחק כדורגל!
+              </div>
+              <div id="fc27-exp-example" style="margin-top:8px;background:rgba(0,255,135,0.14);border-right:4px solid #00ff87;padding:8px 10px;border-radius:8px;font-size:0.86rem;font-weight:700;color:#a7f3d0;">
+                📌 דוגמא: הדלקת את הפלייסטיישן ובא לך לשחק מיד משחק של בית"ר נגד ריאל? לוחצים על KICK OFF!
+              </div>
             </div>
           </div>
 
-          <button type="button" class="btn-primary-large" id="btn-fc27-launch-match" style="margin-top:12px;background:#00ff87;color:#090d16;font-weight:900;">
-            🏆 התחל משחק שאלות על צילומי מסך FC 27 (+מטבעות 🪙)
-          </button>
+          <!-- ==================== PANEL 2: HOW TO START A MATCH STEP-BY-STEP SIMULATOR ==================== -->
+          <div id="fc27-panel-howto" class="fc27-subpanel hidden">
+            <div class="surface-card" style="background:linear-gradient(135deg,#1e293b,#090d16);border:2px solid #38bdf8;color:#fff;margin-bottom:10px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
+                <span id="fc27-howto-step-badge" style="background:#38bdf8;color:#090d16;font-weight:900;padding:4px 10px;border-radius:20px;font-size:0.8rem;">שלב 1 מתוך 6</span>
+                <button type="button" class="btn-chip" id="btn-fc27-howto-autoplay" style="background:#00ff87;color:#090d16;font-weight:900;border:none;">🎬 נגן הדרכה אוטומטית עם קול</button>
+              </div>
+
+              <h4 id="fc27-howto-title" style="margin:0 0 6px;font-size:1.15rem;color:#38bdf8;">שלב 1 מתוך 6: כניסה למשחק — KICK OFF</h4>
+
+              <!-- Step Dots -->
+              <div id="fc27-howto-dots" style="display:flex;gap:6px;margin-bottom:10px;"></div>
+
+              <!-- Live Screen Preview for Current Step -->
+              <div id="fc27-howto-screen-stage"></div>
+
+              <!-- Controller Action + Explanation + Real Example -->
+              <div id="fc27-howto-controller" style="margin-top:10px;background:rgba(56,189,248,0.18);border:1px solid #38bdf8;padding:8px 10px;border-radius:10px;font-weight:800;font-size:0.9rem;color:#bae6fd;"></div>
+              <div id="fc27-howto-explain" style="margin-top:8px;font-size:0.92rem;line-height:1.45;color:#f8fafc;"></div>
+              <div id="fc27-howto-example" style="margin-top:8px;background:rgba(250,204,21,0.14);border-right:4px solid #facc15;padding:8px 10px;border-radius:8px;font-size:0.86rem;font-weight:700;color:#fef08a;"></div>
+
+              <div style="display:flex;gap:8px;margin-top:12px;">
+                <button type="button" class="btn-secondary-action" id="btn-fc27-howto-prev" style="flex:1;background:#334155;color:#fff;border:none;">➡️ שלב קודם</button>
+                <button type="button" class="btn-chip" id="btn-fc27-howto-speak" style="background:#38bdf8;color:#090d16;font-weight:900;border:none;padding:8px 14px;">🔊 השמע שלב</button>
+                <button type="button" class="btn-primary-action" id="btn-fc27-howto-next" style="flex:1.4;background:#00ff87;color:#090d16;font-weight:900;">שלב הבא ⬅️</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ==================== PANEL 3: WHAT THE COMMENTATOR SAYS (16 LIVE CALLS + EXAMPLES) ==================== -->
+          <div id="fc27-panel-commentator" class="fc27-subpanel hidden">
+            <!-- Live Broadcast TV Replay Monitor -->
+            <div class="surface-card" id="fc27-comm-tv" style="background:radial-gradient(circle at top,#064e3b 0%,#090d16 85%);border:2px solid #00ff87;color:#fff;margin-bottom:12px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.74rem;color:#a7f3d0;font-weight:800;margin-bottom:6px;">
+                <span>📺 שידור חי • EA SPORTS FC™ 27 COMMENTARY</span>
+                <span id="fc27-comm-scene-label" style="color:#fbbf24;">GOAL! • TOP CORNER</span>
+              </div>
+
+              <div id="fc27-comm-visual" class="fc27-pitch-graphic" style="font-size:1.7rem;padding:12px 8px;text-align:center;margin-bottom:8px;">
+                🏃‍♂️⚡ ☄️⚽ ➡️ 🥅💥 🎉
+              </div>
+
+              <div style="text-align:center;margin-bottom:8px;">
+                <div style="font-size:0.76rem;color:#94a3b8;font-weight:700;">🎙️ השדרן צועק באנגלית:</div>
+                <div id="fc27-comm-eng" style="font-size:1.35rem;font-weight:900;color:#00ff87;letter-spacing:0.4px;direction:ltr;">"What a goal! Unbelievable!"</div>
+                <div id="fc27-comm-heb" style="font-size:1.05rem;font-weight:800;color:#ffffff;margin-top:3px;">🔥⚽ איזה שער! לא ייאמן!</div>
+              </div>
+
+              <!-- 3 Audio Buttons: Normal English, Slow Clear English, Full Hebrew + English -->
+              <div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:10px;">
+                <button type="button" class="btn-chip" id="btn-fc27-comm-speak-eng" style="background:#00ff87;color:#090d16;font-weight:900;border:none;">🔊 שמע שדרן באנגלית</button>
+                <button type="button" class="btn-chip" id="btn-fc27-comm-speak-slow" style="background:#38bdf8;color:#090d16;font-weight:900;border:none;">🐢 שמע לאט וברור</button>
+                <button type="button" class="btn-chip" id="btn-fc27-comm-speak-both" style="background:#fbbf24;color:#090d16;font-weight:900;border:none;">🇮🇱 הסבר בעברית + אנגלית</button>
+              </div>
+
+              <div id="fc27-comm-situation" style="font-size:0.86rem;color:#e2e8f0;border-top:1px solid rgba(255,255,255,0.15);padding-top:6px;"></div>
+              <div id="fc27-comm-example" style="margin-top:6px;background:rgba(0,255,135,0.14);border-right:4px solid #00ff87;padding:8px 10px;border-radius:8px;font-size:0.85rem;font-weight:700;color:#a7f3d0;"></div>
+            </div>
+
+            <div style="font-size:0.85rem;font-weight:800;color:#cbd5e1;margin-bottom:6px;">👇 לחץ על כל משפט של השדרן כדי לשמוע ולראות דוגמא במגרש:</div>
+            <div id="fc27-comm-cards-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;max-height:320px;overflow-y:auto;padding-right:2px;"></div>
+          </div>
+
+          <!-- ==================== PANEL 4: ANIMATED VIDEO TUTORIALS PLAYER (3 EPISODES) ==================== -->
+          <div id="fc27-panel-videos" class="fc27-subpanel hidden">
+            <!-- Episode Selector -->
+            <div id="fc27-video-episodes" style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px;"></div>
+
+            <!-- Animated Video Player Screen -->
+            <div class="surface-card" style="background:linear-gradient(160deg,#090d16,#1e293b);border:2px solid #facc15;color:#fff;margin-bottom:0;">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;">
+                <span id="fc27-vid-badge" style="background:#facc15;color:#090d16;font-weight:900;padding:3px 10px;border-radius:20px;font-size:0.76rem;">סצנה 1 מתוך 6</span>
+                <span id="fc27-vid-status" style="font-size:0.76rem;color:#fde047;font-weight:800;">🎬 מוכן להפעלה</span>
+              </div>
+
+              <!-- Progress Bar -->
+              <div style="width:100%;height:6px;background:#334155;border-radius:99px;overflow:hidden;margin-bottom:10px;">
+                <div id="fc27-vid-progress" style="width:16%;height:100%;background:#00ff87;transition:width 0.35s ease;"></div>
+              </div>
+
+              <!-- Animated Visual Stage -->
+              <div id="fc27-vid-stage" class="fc27-pitch-graphic" style="font-size:1.35rem;font-weight:900;padding:18px 10px;text-align:center;direction:ltr;color:#fff;margin-bottom:10px;min-height:74px;display:flex;align-items:center;justify-content:center;"></div>
+
+              <div id="fc27-vid-eng-title" style="font-size:1.3rem;font-weight:900;color:#00ff87;text-align:center;direction:ltr;margin-bottom:4px;"></div>
+              <div id="fc27-vid-heb-sub" style="font-size:0.95rem;font-weight:700;color:#f8fafc;text-align:center;line-height:1.45;background:rgba(15,23,42,0.75);padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.12);"></div>
+
+              <!-- Video Player Controls -->
+              <div style="display:flex;gap:8px;margin-top:12px;">
+                <button type="button" class="btn-secondary-action" id="btn-fc27-vid-prev" style="flex:0.8;background:#334155;color:#fff;border:none;">⏮️ הקודם</button>
+                <button type="button" class="btn-primary-action" id="btn-fc27-vid-playpause" style="flex:1.5;background:#facc15;color:#090d16;font-weight:900;">▶️ הפעל סרטון עם קריינות</button>
+                <button type="button" class="btn-secondary-action" id="btn-fc27-vid-next" style="flex:0.8;background:#334155;color:#fff;border:none;">הבא ⏭️</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dual Quiz Launch Buttons at Bottom -->
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px;margin-top:12px;">
+            <button type="button" class="btn-primary-large" id="btn-fc27-launch-match" style="background:#00ff87;color:#090d16;font-weight:900;">
+              🖥️ חידון מסכי FC 27 ואיך מתחילים משחק (+מטבעות 🪙)
+            </button>
+            <button type="button" class="btn-primary-large" id="btn-fc27-launch-comm-quiz" style="background:#38bdf8;color:#090d16;font-weight:900;">
+              🎙️ חידון מה השדרן בפיפא אומר? (+מטבעות 🪙)
+            </button>
+          </div>
         </div>
       </section>
 
@@ -869,8 +984,8 @@
 
   </div>
 
-  <script src="js/sound.js?v=3.1"></script>
-  <script src="js/questions.js?v=3.1"></script>
-  <script src="js/app.js?v=3.1"></script>
+  <script src="js/sound.js?v=3.2"></script>
+  <script src="js/questions.js?v=3.2"></script>
+  <script src="js/app.js?v=3.2"></script>
 </body>
 </html>

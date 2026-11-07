@@ -3443,17 +3443,72 @@ function setupKinderStudioListeners() {
   }
 }
 
-// ==================== VIEW 12: EA SPORTS FC 27 INTERACTIVE SCREEN EXPLORER ====================
+// ==================== VIEW 12: EA SPORTS FC 27 INTERACTIVE ACADEMY (SCREENS, HOW-TO-START, COMMENTATOR & VIDEOS) ====================
 
 let fc27ExplorerState = {
+  mode: 'screens',
   screen: 'main_menu',
-  selectedKey: 'KICK OFF'
+  selectedKey: 'KICK OFF',
+  howToIndex: 0,
+  howToTimer: null,
+  commIndex: 1,
+  videoEpisodeIndex: 0,
+  videoSceneIndex: 0,
+  videoPlaying: false,
+  videoTimer: null
 };
 
-function initFC27Studio() {
-  renderFC27ExplorerScreen();
+function stopFC27Timers() {
+  if (fc27ExplorerState.howToTimer) {
+    clearTimeout(fc27ExplorerState.howToTimer);
+    fc27ExplorerState.howToTimer = null;
+  }
+  if (fc27ExplorerState.videoTimer) {
+    clearTimeout(fc27ExplorerState.videoTimer);
+    fc27ExplorerState.videoTimer = null;
+  }
+  fc27ExplorerState.videoPlaying = false;
+  const btnPlayPause = document.getElementById('btn-fc27-vid-playpause');
+  if (btnPlayPause) btnPlayPause.textContent = '▶️ הפעל סרטון עם קריינות';
+  const btnHowToAuto = document.getElementById('btn-fc27-howto-autoplay');
+  if (btnHowToAuto) btnHowToAuto.textContent = '🎬 נגן הדרכה אוטומטית עם קול';
 }
 
+function initFC27Studio() {
+  stopFC27Timers();
+  renderFC27ExplorerScreen();
+  renderFC27HowToStep();
+  renderFC27CommentatorStudio();
+  renderFC27VideoPlayer();
+}
+
+function switchFC27SubMode(mode) {
+  stopFC27Timers();
+  fc27ExplorerState.mode = mode;
+
+  document.querySelectorAll('#fc27-main-mode-tabs .cat-tab').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.fc27mode === mode);
+  });
+
+  ['screens', 'howto', 'commentator', 'videos'].forEach(m => {
+    const panel = document.getElementById(`fc27-panel-${m}`);
+    if (panel) panel.classList.toggle('hidden', m !== mode);
+  });
+
+  if (mode === 'screens') {
+    renderFC27ExplorerScreen();
+  } else if (mode === 'howto') {
+    renderFC27HowToStep();
+    speakCurrentFC27HowToStep();
+  } else if (mode === 'commentator') {
+    renderFC27CommentatorStudio();
+    speakCurrentFC27Commentator('both');
+  } else if (mode === 'videos') {
+    renderFC27VideoPlayer();
+  }
+}
+
+// --- 1. SCREENS EXPLORER ---
 function renderFC27ExplorerScreen() {
   if (typeof FC27_VOCAB_BANK === 'undefined' || typeof renderFC27Screenshot === 'undefined') return;
 
@@ -3478,9 +3533,11 @@ function renderFC27ExplorerScreen() {
   const engEl = document.getElementById('fc27-exp-eng');
   const hebEl = document.getElementById('fc27-exp-heb');
   const hintEl = document.getElementById('fc27-exp-hint');
+  const exEl = document.getElementById('fc27-exp-example');
   if (engEl) engEl.textContent = activeItem.eng.toUpperCase();
   if (hebEl) hebEl.textContent = activeItem.heb;
   if (hintEl) hintEl.textContent = activeItem.hint;
+  if (exEl) exEl.textContent = activeItem.example || `📌 דוגמא: לחץ על ${activeItem.eng} במסך כשאתה רוצה ${activeItem.heb}!`;
 }
 
 function speakCurrentFC27ExplorerWord() {
@@ -3488,7 +3545,275 @@ function speakCurrentFC27ExplorerWord() {
   const activeItem = FC27_VOCAB_BANK.find(w => w.key === fc27ExplorerState.selectedKey) || FC27_VOCAB_BANK[0];
   if (!activeItem) return;
   const cleanEng = activeItem.eng.replace(/\([^)]*\)/g, '').trim();
-  arcadeAudio.speakBilingual(activeItem.heb, cleanEng, 0.88);
+  arcadeAudio.speakBilingual(`${activeItem.heb}. ${activeItem.hint}`, cleanEng, 0.88);
+}
+
+// --- 2. HOW TO START A MATCH (6-STEP SIMULATOR) ---
+function renderFC27HowToStep() {
+  if (typeof FC27_START_MATCH_STEPS === 'undefined' || typeof FC27_VOCAB_BANK === 'undefined') return;
+  const total = FC27_START_MATCH_STEPS.length;
+  const idx = ((fc27ExplorerState.howToIndex % total) + total) % total;
+  fc27ExplorerState.howToIndex = idx;
+  const stepObj = FC27_START_MATCH_STEPS[idx];
+
+  const badgeEl = document.getElementById('fc27-howto-step-badge');
+  const titleEl = document.getElementById('fc27-howto-title');
+  const ctrlEl = document.getElementById('fc27-howto-controller');
+  const expEl = document.getElementById('fc27-howto-explain');
+  const exEl = document.getElementById('fc27-howto-example');
+  const dotsEl = document.getElementById('fc27-howto-dots');
+  const stageEl = document.getElementById('fc27-howto-screen-stage');
+
+  if (badgeEl) badgeEl.textContent = `שלב ${stepObj.step} מתוך ${total}`;
+  if (titleEl) titleEl.textContent = stepObj.title;
+  if (ctrlEl) ctrlEl.textContent = stepObj.controllerTip;
+  if (expEl) expEl.textContent = stepObj.hebExplain;
+  if (exEl) exEl.textContent = stepObj.example;
+
+  if (dotsEl) {
+    dotsEl.innerHTML = '';
+    for (let i = 0; i < total; i++) {
+      const d = document.createElement('button');
+      d.type = 'button';
+      d.style.cssText = `flex:1;height:10px;border-radius:99px;border:none;cursor:pointer;background:${i === idx ? '#00ff87' : i < idx ? '#38bdf8' : '#334155'};`;
+      d.title = `שלב ${i + 1}`;
+      d.addEventListener('click', () => {
+        stopFC27Timers();
+        fc27ExplorerState.howToIndex = i;
+        renderFC27HowToStep();
+        speakCurrentFC27HowToStep();
+      });
+      dotsEl.appendChild(d);
+    }
+  }
+
+  if (stageEl && typeof renderFC27Screenshot !== 'undefined') {
+    const vocabMatch = FC27_VOCAB_BANK.find(w => w.key === stepObj.engKey) || {
+      screen: stepObj.screenId,
+      key: stepObj.engKey,
+      eng: stepObj.engSpeech
+    };
+    stageEl.innerHTML = renderFC27Screenshot(vocabMatch);
+    stageEl.querySelectorAll('[data-fc27-key]').forEach(el => {
+      el.addEventListener('click', () => {
+        if (el.dataset.fc27Key === stepObj.engKey) {
+          arcadeAudio.playGoalSuccess();
+          if (fc27ExplorerState.howToIndex < total - 1) {
+            fc27ExplorerState.howToIndex++;
+            renderFC27HowToStep();
+            speakCurrentFC27HowToStep();
+          } else {
+            confetti.burst(80);
+            addActiveCoins(15);
+            saveState();
+            updateHeaderUI();
+            arcadeAudio.speak('כל הכבוד עילי! למדת את כל ששת הצעדים להתחלת משחק בפיפא וקיבלת חמישה עשר מטבעות!', 'he-IL', 0.9);
+          }
+        } else {
+          const found = FC27_VOCAB_BANK.find(x => x.key === el.dataset.fc27Key);
+          if (found) {
+            const cleanEng = found.eng.replace(/\([^)]*\)/g, '').trim();
+            arcadeAudio.speakBilingual(found.heb, cleanEng, 0.88);
+          }
+        }
+      });
+    });
+  }
+}
+
+function speakCurrentFC27HowToStep() {
+  if (typeof FC27_START_MATCH_STEPS === 'undefined') return;
+  const stepObj = FC27_START_MATCH_STEPS[fc27ExplorerState.howToIndex];
+  if (!stepObj) return;
+  arcadeAudio.speakBilingual(`${stepObj.hebExplain}`, stepObj.engSpeech, 0.88);
+}
+
+function toggleFC27HowToAutoPlay() {
+  if (typeof FC27_START_MATCH_STEPS === 'undefined') return;
+  const btn = document.getElementById('btn-fc27-howto-autoplay');
+  if (fc27ExplorerState.howToTimer) {
+    stopFC27Timers();
+    return;
+  }
+  fc27ExplorerState.howToIndex = 0;
+  if (btn) btn.textContent = '⏹️ עצור הדגמה אוטומטית';
+
+  const runStep = () => {
+    renderFC27HowToStep();
+    speakCurrentFC27HowToStep();
+    if (fc27ExplorerState.howToIndex < FC27_START_MATCH_STEPS.length - 1) {
+      fc27ExplorerState.howToTimer = setTimeout(() => {
+        fc27ExplorerState.howToIndex++;
+        runStep();
+      }, 6500);
+    } else {
+      fc27ExplorerState.howToTimer = setTimeout(() => {
+        stopFC27Timers();
+        confetti.burst(70);
+      }, 6500);
+    }
+  };
+  runStep();
+}
+
+// --- 3. WHAT THE COMMENTATOR SAYS (16 LIVE CALLS + REPLAY MONITOR) ---
+function renderFC27CommentatorStudio() {
+  if (typeof FC27_COMMENTATOR_BANK === 'undefined') return;
+  const active = FC27_COMMENTATOR_BANK[fc27ExplorerState.commIndex] || FC27_COMMENTATOR_BANK[0];
+
+  const sceneLbl = document.getElementById('fc27-comm-scene-label');
+  const visEl = document.getElementById('fc27-comm-visual');
+  const engEl = document.getElementById('fc27-comm-eng');
+  const hebEl = document.getElementById('fc27-comm-heb');
+  const sitEl = document.getElementById('fc27-comm-situation');
+  const exEl = document.getElementById('fc27-comm-example');
+
+  if (sceneLbl) sceneLbl.textContent = active.sceneLabel;
+  if (visEl) visEl.textContent = active.sceneEmoji;
+  if (engEl) engEl.textContent = `"${active.eng}"`;
+  if (hebEl) hebEl.textContent = active.heb;
+  if (sitEl) sitEl.textContent = `🎙️ מתי השדרן אומר את זה? ${active.situation}`;
+  if (exEl) exEl.textContent = active.example;
+
+  const grid = document.getElementById('fc27-comm-cards-grid');
+  if (grid) {
+    grid.innerHTML = '';
+    FC27_COMMENTATOR_BANK.forEach((item, idx) => {
+      const card = document.createElement('button');
+      card.type = 'button';
+      const isSel = idx === fc27ExplorerState.commIndex;
+      card.style.cssText = `
+        text-align:right;
+        background:${isSel ? 'linear-gradient(135deg,#064e3b,#047857)' : '#1e293b'};
+        border:2px solid ${isSel ? '#00ff87' : '#334155'};
+        border-radius:12px;
+        padding:8px 10px;
+        color:#fff;
+        cursor:pointer;
+        font-family:inherit;
+      `;
+      card.innerHTML = `
+        <div style="font-size:0.9rem;font-weight:900;color:#00ff87;direction:ltr;text-align:left;">🎙️ "${item.eng}"</div>
+        <div style="font-size:0.82rem;font-weight:700;color:#f8fafc;margin-top:3px;">${item.heb}</div>
+      `;
+      card.addEventListener('click', () => {
+        arcadeAudio.playClick();
+        fc27ExplorerState.commIndex = idx;
+        renderFC27CommentatorStudio();
+        speakCurrentFC27Commentator('both');
+      });
+      grid.appendChild(card);
+    });
+  }
+}
+
+function speakCurrentFC27Commentator(mode = 'both') {
+  if (typeof FC27_COMMENTATOR_BANK === 'undefined') return;
+  const active = FC27_COMMENTATOR_BANK[fc27ExplorerState.commIndex] || FC27_COMMENTATOR_BANK[0];
+  if (!active) return;
+
+  if (mode === 'eng') {
+    arcadeAudio.speak(active.eng, 'en-US', 0.92);
+  } else if (mode === 'slow') {
+    arcadeAudio.speak(active.eng, 'en-US', 0.62);
+  } else {
+    arcadeAudio.speakBilingual(`${active.heb}. ${active.situation}`, active.eng, 0.88);
+  }
+}
+
+// --- 4. ANIMATED VIDEO TUTORIALS PLAYER (3 EPISODES) ---
+function renderFC27VideoPlayer() {
+  if (typeof FC27_VIDEO_TUTORIALS === 'undefined') return;
+  const epIdx = fc27ExplorerState.videoEpisodeIndex % FC27_VIDEO_TUTORIALS.length;
+  const ep = FC27_VIDEO_TUTORIALS[epIdx];
+  const scIdx = ((fc27ExplorerState.videoSceneIndex % ep.scenes.length) + ep.scenes.length) % ep.scenes.length;
+  fc27ExplorerState.videoSceneIndex = scIdx;
+  const sc = ep.scenes[scIdx];
+
+  const epList = document.getElementById('fc27-video-episodes');
+  if (epList) {
+    epList.innerHTML = '';
+    FC27_VIDEO_TUTORIALS.forEach((v, i) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      const active = i === epIdx;
+      btn.style.cssText = `
+        text-align:right;
+        padding:10px 12px;
+        border-radius:12px;
+        border:2px solid ${active ? '#facc15' : '#334155'};
+        background:${active ? 'rgba(250,204,21,0.16)' : '#1e293b'};
+        color:#fff;
+        cursor:pointer;
+        font-family:inherit;
+      `;
+      btn.innerHTML = `
+        <div style="font-size:0.92rem;font-weight:900;color:${active ? '#fde047' : '#f8fafc'};">${v.title}</div>
+        <div style="font-size:0.76rem;color:#cbd5e1;margin-top:2px;">${v.subtitle}</div>
+      `;
+      btn.addEventListener('click', () => {
+        stopFC27Timers();
+        arcadeAudio.playClick();
+        fc27ExplorerState.videoEpisodeIndex = i;
+        fc27ExplorerState.videoSceneIndex = 0;
+        renderFC27VideoPlayer();
+        startFC27VideoPlayback();
+      });
+      epList.appendChild(btn);
+    });
+  }
+
+  const badgeEl = document.getElementById('fc27-vid-badge');
+  const statusEl = document.getElementById('fc27-vid-status');
+  const progEl = document.getElementById('fc27-vid-progress');
+  const stageEl = document.getElementById('fc27-vid-stage');
+  const engEl = document.getElementById('fc27-vid-eng-title');
+  const hebEl = document.getElementById('fc27-vid-heb-sub');
+  const btnPlay = document.getElementById('btn-fc27-vid-playpause');
+
+  if (badgeEl) badgeEl.textContent = sc.badge;
+  if (statusEl) statusEl.textContent = fc27ExplorerState.videoPlaying ? '🔊 מנגן סרטון...' : '🎬 לחץ הפעל לצפייה עם קול';
+  if (progEl) progEl.style.width = `${Math.round(((scIdx + 1) / ep.scenes.length) * 100)}%`;
+  if (stageEl) stageEl.textContent = sc.visual;
+  if (engEl) engEl.textContent = sc.engTitle;
+  if (hebEl) hebEl.textContent = sc.hebText;
+  if (btnPlay) btnPlay.textContent = fc27ExplorerState.videoPlaying ? '⏸️ השהה סרטון' : '▶️ הפעל סרטון עם קריינות';
+}
+
+function speakCurrentFC27VideoScene() {
+  if (typeof FC27_VIDEO_TUTORIALS === 'undefined') return;
+  const ep = FC27_VIDEO_TUTORIALS[fc27ExplorerState.videoEpisodeIndex] || FC27_VIDEO_TUTORIALS[0];
+  const sc = ep.scenes[fc27ExplorerState.videoSceneIndex] || ep.scenes[0];
+  if (!sc) return;
+  arcadeAudio.speakBilingual(sc.hebText, sc.engSpeech, 0.88);
+}
+
+function startFC27VideoPlayback() {
+  if (typeof FC27_VIDEO_TUTORIALS === 'undefined') return;
+  const ep = FC27_VIDEO_TUTORIALS[fc27ExplorerState.videoEpisodeIndex] || FC27_VIDEO_TUTORIALS[0];
+  fc27ExplorerState.videoPlaying = true;
+
+  const playNextScene = () => {
+    if (!fc27ExplorerState.videoPlaying) return;
+    renderFC27VideoPlayer();
+    speakCurrentFC27VideoScene();
+
+    if (fc27ExplorerState.videoSceneIndex < ep.scenes.length - 1) {
+      fc27ExplorerState.videoTimer = setTimeout(() => {
+        if (!fc27ExplorerState.videoPlaying) return;
+        fc27ExplorerState.videoSceneIndex++;
+        playNextScene();
+      }, 7200);
+    } else {
+      fc27ExplorerState.videoTimer = setTimeout(() => {
+        stopFC27Timers();
+        confetti.burst(80);
+        renderFC27VideoPlayer();
+      }, 7200);
+    }
+  };
+
+  playNextScene();
 }
 
 function setupFC27StudioListeners() {
@@ -3501,6 +3826,15 @@ function setupFC27StudioListeners() {
     });
   }
 
+  // 4 Main Sub-Mode Tabs
+  document.querySelectorAll('#fc27-main-mode-tabs .cat-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      arcadeAudio.playClick();
+      switchFC27SubMode(tab.dataset.fc27mode);
+    });
+  });
+
+  // 6 Screen Tabs inside Panel 1
   document.querySelectorAll('#fc27-screen-tabs .cat-tab').forEach(tab => {
     tab.addEventListener('click', () => {
       arcadeAudio.playClick();
@@ -3521,19 +3855,114 @@ function setupFC27StudioListeners() {
     });
   }
 
+  // Panel 2: How-To-Start Controls
+  const btnHowPrev = document.getElementById('btn-fc27-howto-prev');
+  if (btnHowPrev) {
+    btnHowPrev.addEventListener('click', () => {
+      stopFC27Timers();
+      arcadeAudio.playClick();
+      fc27ExplorerState.howToIndex--;
+      renderFC27HowToStep();
+      speakCurrentFC27HowToStep();
+    });
+  }
+  const btnHowNext = document.getElementById('btn-fc27-howto-next');
+  if (btnHowNext) {
+    btnHowNext.addEventListener('click', () => {
+      stopFC27Timers();
+      arcadeAudio.playClick();
+      fc27ExplorerState.howToIndex++;
+      renderFC27HowToStep();
+      speakCurrentFC27HowToStep();
+    });
+  }
+  const btnHowSpeak = document.getElementById('btn-fc27-howto-speak');
+  if (btnHowSpeak) {
+    btnHowSpeak.addEventListener('click', () => {
+      speakCurrentFC27HowToStep();
+    });
+  }
+  const btnHowAuto = document.getElementById('btn-fc27-howto-autoplay');
+  if (btnHowAuto) {
+    btnHowAuto.addEventListener('click', () => {
+      arcadeAudio.playClick();
+      toggleFC27HowToAutoPlay();
+    });
+  }
+
+  // Panel 3: Commentator Controls
+  const btnCommEng = document.getElementById('btn-fc27-comm-speak-eng');
+  if (btnCommEng) {
+    btnCommEng.addEventListener('click', () => speakCurrentFC27Commentator('eng'));
+  }
+  const btnCommSlow = document.getElementById('btn-fc27-comm-speak-slow');
+  if (btnCommSlow) {
+    btnCommSlow.addEventListener('click', () => speakCurrentFC27Commentator('slow'));
+  }
+  const btnCommBoth = document.getElementById('btn-fc27-comm-speak-both');
+  if (btnCommBoth) {
+    btnCommBoth.addEventListener('click', () => speakCurrentFC27Commentator('both'));
+  }
+
+  // Panel 4: Video Player Controls
+  const btnVidPlay = document.getElementById('btn-fc27-vid-playpause');
+  if (btnVidPlay) {
+    btnVidPlay.addEventListener('click', () => {
+      arcadeAudio.playClick();
+      if (fc27ExplorerState.videoPlaying) {
+        stopFC27Timers();
+        renderFC27VideoPlayer();
+      } else {
+        startFC27VideoPlayback();
+      }
+    });
+  }
+  const btnVidPrev = document.getElementById('btn-fc27-vid-prev');
+  if (btnVidPrev) {
+    btnVidPrev.addEventListener('click', () => {
+      stopFC27Timers();
+      arcadeAudio.playClick();
+      fc27ExplorerState.videoSceneIndex--;
+      renderFC27VideoPlayer();
+      speakCurrentFC27VideoScene();
+    });
+  }
+  const btnVidNext = document.getElementById('btn-fc27-vid-next');
+  if (btnVidNext) {
+    btnVidNext.addEventListener('click', () => {
+      stopFC27Timers();
+      arcadeAudio.playClick();
+      fc27ExplorerState.videoSceneIndex++;
+      renderFC27VideoPlayer();
+      speakCurrentFC27VideoScene();
+    });
+  }
+
+  // Quiz Launch Buttons
   const btnQuiz1 = document.getElementById('btn-fc27-start-quiz');
   if (btnQuiz1) {
     btnQuiz1.addEventListener('click', () => {
+      stopFC27Timers();
       arcadeAudio.playClick();
-      startMatch('english_fc27', '🎮 אנגלית של FC 27 (מסכים)', false);
+      startMatch('english_fc27', '🎮 מסכי FC 27 ואיך מתחילים משחק', false);
     });
   }
 
   const btnQuiz2 = document.getElementById('btn-fc27-launch-match');
   if (btnQuiz2) {
     btnQuiz2.addEventListener('click', () => {
+      stopFC27Timers();
       arcadeAudio.playClick();
-      startMatch('english_fc27', '🎮 אנגלית של FC 27 (מסכים)', false);
+      startMatch('english_fc27', '🎮 מסכי FC 27 ואיך מתחילים משחק', false);
+    });
+  }
+
+  const btnQuizComm = document.getElementById('btn-fc27-launch-comm-quiz');
+  if (btnQuizComm) {
+    btnQuizComm.addEventListener('click', () => {
+      stopFC27Timers();
+      arcadeAudio.playClick();
+      startMatch('english_fc27_commentator', '🎙️ מה השדרן בפיפא אומר?', false);
     });
   }
 }
