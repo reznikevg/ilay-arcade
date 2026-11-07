@@ -20,7 +20,7 @@ const STICKER_CATALOG = [
   { id: 's17', emoji: '👟', name: 'נעל הזהב של האלופים', rarity: 'נדיר' },
   { id: 's18', emoji: '🛡️', name: 'קפטן בית"ר ירושלים', rarity: 'בית"ר 💛🖤' },
   { id: 's19', emoji: '💎', name: 'הגלאקטיקוס של מדריד', rarity: 'ריאל מדריד 🤍' },
-  { id: 's20', emoji: '🦸‍♂️', name: 'עילאי כוכב העל (#10)', rarity: 'אגדי ⭐' }
+  { id: 's20', emoji: '🦸‍♂️', name: 'עילי כוכב העל (#10)', rarity: 'אגדי ⭐' }
 ];
 
 const LIA_STICKER_CATALOG = [
@@ -363,8 +363,8 @@ async function loadState() {
   if (!appState.dictationWords || appState.dictationWords.length === 0 || (appState.dictationWords[0] && (appState.dictationWords[0].word === 'ירושלים' || appState.dictationWords[0].word === 'יְרוּשָׁלַיִם'))) {
     appState.dictationWords = [...DEFAULT_DICTATION_WORDS];
   }
-  if (!appState.playerName || appState.playerName === 'עילי') {
-    appState.playerName = 'עילאי';
+  if (!appState.playerName || appState.playerName === 'עילי' || appState.playerName === 'עילי') {
+    appState.playerName = 'עילי';
   }
   if (!appState.speechCards || appState.speechCards.length === 0) {
     appState.speechCards = [...DEFAULT_SPEECH_CARDS];
@@ -457,7 +457,7 @@ function switchActiveChild(kid) {
   if (kid === 'lia') {
     arcadeAudio.speak('שלום ליה מתוקה! ברוכה הבאה לעולם הקסם של סטיץ׳, חד קרן, איפור והגן של ליה!', 'he-IL', 0.88);
   } else {
-    arcadeAudio.speak('שלום עילאי האלוף! מוכן להבקיע שערים?', 'he-IL', 0.9);
+    arcadeAudio.speak('שלום עילי האלוף! מוכן להבקיע שערים?', 'he-IL', 0.9);
   }
 }
 
@@ -536,7 +536,7 @@ function updateHeaderUI() {
   const activeCoins = getActiveCoins();
   const activeTrophies = getActiveTrophies();
   const activeAvatar = lia ? (appState.liaProfile.avatar || '🦄') : (appState.avatar || '🦁');
-  const activeName = lia ? 'לִיָּה' : 'עִילַאי';
+  const activeName = lia ? 'ליה' : 'עילי';
 
   document.getElementById('stat-coins').textContent = activeCoins;
   document.getElementById('stat-trophies').textContent = activeTrophies;
@@ -877,7 +877,7 @@ async function toggleSpeechRecording() {
       document.getElementById('sp-mic-label').textContent = 'הַקְלֵט שׁוּב';
       const fb = document.getElementById('sp-feedback-banner');
       fb.className = 'feedback-banner warning';
-      fb.innerHTML = `🔒 <strong>יש לאשר גישה למיקרופון!</strong><br>כדי שנוכל לבדוק את ההגייה של עילאי, יש לאשר הרשאת מיקרופון בדפדפן.`;
+      fb.innerHTML = `🔒 <strong>יש לאשר גישה למיקרופון!</strong><br>כדי שנוכל לבדוק את ההגייה של עילי, יש לאשר הרשאת מיקרופון בדפדפן.`;
       fb.classList.remove('hidden');
     }
   }
@@ -1012,7 +1012,7 @@ function nextSpeechCard() {
     appState.trophies += 1;
     saveState();
     updateHeaderUI();
-    alert('🏆 כל הכבוד עילאי! סיימת את אימון הדיבור של ש׳ ו-ס׳ כמו שדרן ליגת האלופות וזכית בגביע!');
+    alert('🏆 כל הכבוד עילי! סיימת את אימון הדיבור של ש׳ ו-ס׳ כמו שדרן ליגת האלופות וזכית בגביע!');
     switchView('home');
   } else {
     renderSpeechCard();
@@ -1124,7 +1124,7 @@ function renderHomeworkView() {
         appState.coins += 25;
         arcadeAudio.playGoalSuccess();
         confetti.burst(70);
-        arcadeAudio.speak(`כל הכבוד עילאי! סיימת ${hw.title}`);
+        arcadeAudio.speak(`כל הכבוד עילי! סיימת ${hw.title}`);
       } else {
         hw.done = false;
         appState.coins = Math.max(0, appState.coins - 25);
@@ -1348,7 +1348,7 @@ function nextDictationWord() {
     appState.trophies += 1;
     saveState();
     updateHeaderUI();
-    alert(`🏆 כל הכבוד עילאי! סיימת את אימון ההכתבה (${dictSession.correctCount}/${dictSession.words.length}) וזכית בגביע!`);
+    alert(`🏆 כל הכבוד עילי! סיימת את אימון ההכתבה (${dictSession.correctCount}/${dictSession.words.length}) וזכית בגביע!`);
     switchView('home');
   } else {
     renderDictationWord();
@@ -1482,12 +1482,12 @@ function renderCurrentQuestion() {
     gk.textContent = lia ? '🌈' : '🧤';
     gk.style.transform = 'translateX(0)';
   }
-  document.getElementById('commentator-text').textContent =
+    document.getElementById('commentator-text').textContent =
     lia
       ? '✨ "ליה וסטיץ׳ מוכנים לחידה הבאה!"'
       : q.isMulti
         ? '🎙️ "בחר את כל המספרים המתאימים!"'
-        : '🎙️ "עילאי מכוון לשער..."';
+        : '🎙️ "עילי מכוון לשער..."';
 
   const btnSpeak = document.getElementById('btn-speak-question');
   if (btnSpeak) {
@@ -1638,7 +1638,7 @@ function checkCurrentAnswer() {
       : `גווווול! +${earned} 🪙${streakMsg}`;
     document.getElementById('commentator-text').textContent = lia
       ? `🦄 "סטיץ׳ וחד-קרן מוחאים כפיים לליה!"`
-      : `🎙️ "שעררר אדיר של עילאי!"`;
+      : `🎙️ "שעררר אדיר של עילי!"`;
 
     updateHeaderUI();
     renderPenaltyTrack();
@@ -1710,7 +1710,7 @@ function finishMatch() {
 
   const sumTitle = document.getElementById('summary-title');
   if (sumTitle) {
-    sumTitle.textContent = lia ? 'כל הכבוד לִיָּה האלופה! 🦄👑' : 'כל הכבוד עִילַאי! 🏆⚽';
+    sumTitle.textContent = lia ? 'כל הכבוד ליה האלופה! 🦄👑' : 'כל הכבוד עילי! 🏆⚽';
   }
   document.getElementById('sum-correct').textContent = `${session.correctCount}/${session.totalQuestions}`;
   document.getElementById('sum-coins').textContent = `+${session.coinsEarned}`;
@@ -2018,7 +2018,7 @@ function renderParentsView() {
   spLogList.innerHTML = '';
 
   if (!appState.speechLogs || appState.speechLogs.length === 0) {
-    spLogList.innerHTML = `<div class="custom-q-item">עדיין אין הקלטות היום. כשעילאי יתרגל ב"אלוף הדיבור" זה יופיע כאן!</div>`;
+    spLogList.innerHTML = `<div class="custom-q-item">עדיין אין הקלטות היום. כשעילי יתרגל ב"אלוף הדיבור" זה יופיע כאן!</div>`;
   } else {
     appState.speechLogs.forEach((log) => {
       const el = document.createElement('div');
@@ -2362,7 +2362,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (statusBox) {
         if (cleaned && !isNoise) {
-          statusBox.textContent = '✅ הטקסט חולץ מהתמונה! לחצו על "פענח ועדכן לעילאי" לשמירה.';
+          statusBox.textContent = '✅ הטקסט חולץ מהתמונה! לחצו על "פענח ועדכן לעילי" לשמירה.';
         } else if (isNoise) {
           statusBox.innerHTML = '⚠️ לא זוהו מילים ברורות בעברית בתמונה (לוח כיתה / כתב יד). מומלץ להדביק את הטקסט או להזין מפתח Gemini AI בהגדרות לפענוח מושלם.';
         } else {
@@ -2431,7 +2431,7 @@ document.addEventListener('DOMContentLoaded', () => {
       arcadeAudio.playGoalSuccess();
       confetti.burst(70);
 
-      const msg = `✅ <strong>סונכרן בהצלחה!</strong> נמשכו ${data.totalWebtopItems || 6} משימות מ-Webtop עבור ${data.studentName || 'עילאי'}.<br><span style="font-size:0.85em;color:#34c759;">⏰ סנכרון אוטומטי מתוזמן לענן בכל יום בשעה 14:00.</span>`;
+      const msg = `✅ <strong>סונכרן בהצלחה!</strong> נמשכו ${data.totalWebtopItems || 6} משימות מ-Webtop עבור ${data.studentName || 'עילי'}.<br><span style="font-size:0.85em;color:#34c759;">⏰ סנכרון אוטומטי מתוזמן לענן בכל יום בשעה 14:00.</span>`;
       if (statusBox) statusBox.innerHTML = msg;
       const wtLabel = document.getElementById('hw-webtop-status-label');
       if (wtLabel) wtLabel.innerHTML = `✅ סונכרן: <strong>${data.lastSync || 'עכשיו'}</strong> (${data.totalWebtopItems || 6} משימות) | ⏰ כל יום ב-14:00`;
@@ -2565,7 +2565,7 @@ document.addEventListener('DOMContentLoaded', () => {
       arcadeAudio.playGoalSuccess();
       if (resBox) {
         resBox.classList.remove('hidden');
-        resBox.innerHTML = `✅ <strong>עודכן בהצלחה לעילאי!</strong> נוספו: ${res.addedHw} משימות, ${res.addedDict} מילים להכתבה, ו-${res.addedSched} עדכונים למערכת השעות.`;
+        resBox.innerHTML = `✅ <strong>עודכן בהצלחה לעילי!</strong> נוספו: ${res.addedHw} משימות, ${res.addedDict} מילים להכתבה, ו-${res.addedSched} עדכונים למערכת השעות.`;
       }
     });
   }
@@ -2578,7 +2578,7 @@ document.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => {
         parseSmartWhatsAppOrWebtopInput(sharedText);
         window.history.replaceState({}, document.title, window.location.pathname);
-        alert('📲 ההודעה מוואטסאפ / Webtop נקלטה ועודכנה באפליקציה של עילאי!');
+        alert('📲 ההודעה מוואטסאפ / Webtop נקלטה ועודכנה באפליקציה של עילי!');
       }, 900);
     }
   } catch (e) {}
@@ -2737,7 +2737,7 @@ document.addEventListener('DOMContentLoaded', () => {
     appState.homeworkList.push({
       id: 'hw_' + Date.now(),
       icon: '🌟',
-      subject: 'מטרה של עילאי',
+      subject: 'מטרה של עילי',
       title,
       done: false
     });
@@ -2896,7 +2896,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (parsed.length > 0) {
       appState.speechCards = parsed;
       saveState();
-      alert(`נשמרו ${parsed.length} כרטיסיות דיבור (ש׳ ו-ס׳) לעילאי! 🎙️`);
+      alert(`נשמרו ${parsed.length} כרטיסיות דיבור (ש׳ ו-ס׳) לעילי! 🎙️`);
     }
   });
 
@@ -2947,7 +2947,7 @@ document.addEventListener('DOMContentLoaded', () => {
       saveState();
       updateHeaderUI();
       arcadeAudio.playGoalSuccess();
-      alert(`✅ נשמרו ${parsed.length} מילים לאימון ההכתבה של עילאי! המילים סונכרנו גם לענן. 🎧`);
+      alert(`✅ נשמרו ${parsed.length} מילים לאימון ההכתבה של עילי! המילים סונכרנו גם לענן. 🎧`);
     }
   });
 
