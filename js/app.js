@@ -500,6 +500,52 @@ async function loadState() {
   renderTopicsGrid();
 }
 
+let cloudSyncDebounceTimer = null;
+let lastCloudSyncTimestamp = 0;
+let lastSyncedCloudPayloadString = '';
+const MIN_CLOUD_SYNC_INTERVAL_MS = 25000; // Minimum 25s between PUT requests to never exceed 1,000 daily limit!
+
+function pushStateToCloudThrottled(immediate = false) {
+  if (cloudSyncDebounceTimer) {
+    clearTimeout(cloudSyncDebounceTimer);
+    cloudSyncDebounceTimer = null;
+  }
+
+  const executePush = async () => {
+    try {
+      const cloudPayload = { ...appState };
+      delete cloudPayload.activeChild;
+      const payloadStr = JSON.stringify(cloudPayload);
+
+      // Skip network request entirely if data hasn't changed since last push!
+      if (payloadStr === lastSyncedCloudPayloadString) return;
+
+      const now = Date.now();
+      lastCloudSyncTimestamp = now;
+      lastSyncedCloudPayloadString = payloadStr;
+
+      await fetch(`${CLOUD_BACKEND_URL}/api/state`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: payloadStr
+      });
+    } catch (e) {
+      // Graceful offline/429 resilience - app continues locally without any disruption!
+    }
+  };
+
+  const now = Date.now();
+  const timeSinceLastSync = now - lastCloudSyncTimestamp;
+
+  if (immediate && timeSinceLastSync >= MIN_CLOUD_SYNC_INTERVAL_MS) {
+    executePush();
+  } else {
+    // Debounce to batch multiple actions (answering questions, coloring, etc.) into a single sync
+    const waitTime = Math.max(12000, MIN_CLOUD_SYNC_INTERVAL_MS - timeSinceLastSync);
+    cloudSyncDebounceTimer = setTimeout(executePush, waitTime);
+  }
+}
+
 function saveState() {
   try {
     appState.updatedAt = Date.now();
@@ -511,19 +557,23 @@ function saveState() {
     console.warn('Could not save state:', e);
   }
 
-  // Push to Cloudflare KV 24/7 Sync (strip activeChild from affecting other devices!)
-  try {
-    const cloudPayload = { ...appState };
-    delete cloudPayload.activeChild;
-    fetch(`${CLOUD_BACKEND_URL}/api/state`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(cloudPayload)
-    }).catch(() => {});
-  } catch (e) {}
+  // Push to Cloudflare KV with smart throttling & debouncing
+  pushStateToCloudThrottled(false);
 }
 
+// Push to cloud on page hide / tab close
+window.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') {
+    pushStateToCloudThrottled(true);
+  }
+});
+window.addEventListener('beforeunload', () => {
+  pushStateToCloudThrottled(true);
+});
+
+// Periodic Cloud Pull - only every 45 seconds and only when tab is active in foreground!
 setInterval(async () => {
+  if (document.hidden) return;
   try {
     const res = await fetch(`${CLOUD_BACKEND_URL}/api/state`, { cache: 'no-store' });
     if (!res.ok) return;
@@ -539,7 +589,7 @@ setInterval(async () => {
       if (document.getElementById('view-parents')?.classList.contains('active')) renderParentsView();
     }
   } catch (e) {}
-}, 8000);
+}, 45000);
 
 function getRankTitle(trophies, solved) {
   if (isLiaActive()) {
