@@ -118,8 +118,20 @@
           <div class="hero-play-circle">▶</div>
         </div>
 
-        <!-- ILAY'S 4 Core Daily Modules (2x2 Grid) -->
+        <!-- ILAY'S 4 Core Daily Modules (2x2 Grid) + DEDICATED GIFTED HUB HERO TILE -->
         <div class="bento-grid" id="ilay-bento-grid">
+          <!-- DEDICATED GIFTED PREP HUB TILE -->
+          <button type="button" class="bento-card bento-gifted" id="quick-open-gifted-hub" style="grid-column: 1 / -1; background: linear-gradient(135deg, #4338ca 0%, #7e22ce 100%); border: 2px solid #c084fc; color: #fff; box-shadow: 0 4px 16px rgba(168,85,247,0.3); padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; text-align: right; cursor: pointer;">
+            <div style="display:flex; align-items:center; gap: 12px;">
+              <div class="bento-icon-wrap" style="background: rgba(255,255,255,0.2); font-size: 1.8rem; width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center;">🧠</div>
+              <div>
+                <div style="font-size: 1.15rem; font-weight: 900; color: #fde047;">הכנה למבחן מחוננים 2025 🏆</div>
+                <div style="font-size: 0.82rem; color: #e9d5ff;">מרכז הכנה ייעודי לשלב א׳ ולשלב ב׳ • סימולציות וטכניקות חשיבה</div>
+              </div>
+            </div>
+            <span style="background: #facc15; color: #090d16; font-weight: 900; padding: 6px 12px; border-radius: 99px; font-size: 0.8rem; white-space: nowrap;">פתח הכנה ⬅️</span>
+          </button>
+
           <button type="button" class="bento-card bento-speech" id="quick-open-speech">
             <div class="bento-icon-wrap">🎙️</div>
             <div class="bento-title">תרגול ש׳ ו-ס׳</div>
@@ -1387,6 +1399,230 @@
                 <button type="submit" class="btn-primary-action" style="flex:1.5;background:#facc15;color:#090d16;font-weight:900;">שמור תקציר ⚽</button>
               </div>
             </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 18: DEDICATED GIFTED ACADEMY 2025 PREP HUB (מרכז הכנה ייעודי למבחן מחוננים) ==================== -->
+      <section id="view-gifted-hub" class="view-section">
+        <div class="screen-nav-bar">
+          <button type="button" class="btn-back" onclick="switchView('home')">‹ חזרה</button>
+          <span class="screen-title">🧠 אקדמיית המחוננים של עילי</span>
+          <button type="button" class="btn-chip" id="btn-gifted-speak-intro" style="background:#c084fc;color:#3b0764;font-weight:900;border:none;">🔊 הסבר למסלול</button>
+        </div>
+
+        <!-- Readiness Dashboard Card -->
+        <div class="surface-card" style="background:linear-gradient(135deg,#312e81 0%,#581c87 100%);border:2px solid #c084fc;color:#fff;margin-bottom:12px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="font-size:2.2rem;">🏆</span>
+              <div>
+                <div style="font-size:1.15rem;font-weight:900;color:#fde047;" id="gifted-readiness-title">מדד מוכנות למבחן המחוננים</div>
+                <div style="font-size:0.8rem;color:#e9d5ff;">כיתה ב׳ • שלב א׳ (בית ספרי) ושלב ב׳ (חיצוני)</div>
+              </div>
+            </div>
+            <div style="text-align:center;background:rgba(255,255,255,0.15);padding:6px 12px;border-radius:12px;">
+              <div style="font-size:1.35rem;font-weight:900;color:#facc15;" id="gifted-readiness-pct">0%</div>
+              <div style="font-size:0.68rem;color:#cbd5e1;">מוכנות</div>
+            </div>
+          </div>
+
+          <!-- Progress Bar -->
+          <div style="width:100%;height:8px;background:rgba(255,255,255,0.2);border-radius:99px;overflow:hidden;margin-bottom:10px;">
+            <div id="gifted-readiness-bar-fill" style="width:10%;height:100%;background:linear-gradient(90deg,#facc15,#00ff87);transition:width 0.4s ease;"></div>
+          </div>
+
+          <div style="display:flex;align-items:center;justify-content:space-between;font-size:0.78rem;color:#f3e8ff;">
+            <span id="gifted-mastered-topics-count">🌱 תורגלו 0 מתוך 9 נושאים</span>
+            <span id="gifted-stars-badge">⭐ 0 כוכבי הצטיינות</span>
+          </div>
+        </div>
+
+        <!-- 3 Main Dedicated Tabs: Stage A, Stage B, Thinking Toolbox -->
+        <div class="segmented-tabs" id="gifted-hub-main-tabs" style="margin-bottom:12px;">
+          <button type="button" class="cat-tab active" data-giftedtab="stage_a">🏫 שלב א׳ (בית ספר)</button>
+          <button type="button" class="cat-tab" data-giftedtab="stage_b">🏛️ שלב ב׳ (חיצוני)</button>
+          <button type="button" class="cat-tab" data-giftedtab="toolbox">💡 ארגז הכלים והחשיבה</button>
+        </div>
+
+        <!-- PANEL 1: STAGE A (SCHOOL SCREENING EXAM) -->
+        <div id="gifted-panel-stage-a" class="gifted-subpanel">
+          <!-- Full Stage A Simulation Card -->
+          <div class="surface-card" style="background:linear-gradient(135deg,#fefce8 0%,#fef08a 100%);border:2px solid #ca8a04;margin-bottom:12px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+              <div>
+                <span style="background:#ca8a04;color:#fff;font-weight:900;padding:2px 8px;border-radius:99px;font-size:0.72rem;">מבחן מלא • 8 שאלות</span>
+                <div style="font-size:1.15rem;font-weight:900;color:#713f12;margin-top:4px;">👑 סימולציית שלב א׳ מלאה (מכון נועם)</div>
+                <div style="font-size:0.82rem;color:#854d0e;margin-top:2px;">בעיות בחשבון, השלמת מספרים, אי-שוויונות, חידות בציורים והבנת הנקרא.</div>
+              </div>
+              <button type="button" class="btn-primary-action" id="btn-launch-sim-stage-a" style="background:#ca8a04;color:#fff;font-weight:900;white-space:nowrap;padding:10px 14px;">התחל מבחן ⏱️</button>
+            </div>
+          </div>
+
+          <div style="font-size:0.92rem;font-weight:900;color:#0f172a;margin-bottom:8px;">🎯 תחנות אימון ממוקדות לשלב א׳:</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <button type="button" class="surface-card gifted-station-btn" data-giftedtop="gifted_word_problems" style="margin:0;cursor:pointer;text-align:right;border:2px solid #22c55e;display:flex;align-items:center;justify-content:space-between;">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span style="font-size:1.6rem;">🧮</span>
+                <div>
+                  <div style="font-size:1rem;font-weight:900;color:#14532d;">בעיות מילוליות ויחסי כפולות</div>
+                  <div style="font-size:0.78rem;color:#475569;">חלוקה שווה, סך הכל, שאריות וכפולות ("פי 3")</div>
+                </div>
+              </div>
+              <span class="btn-chip" style="background:#22c55e;color:#fff;font-weight:900;">תרגל ⬅️</span>
+            </button>
+
+            <button type="button" class="surface-card gifted-station-btn" data-giftedtop="gifted_picture_riddles" style="margin:0;cursor:pointer;text-align:right;border:2px solid #3b82f6;display:flex;align-items:center;justify-content:space-between;">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span style="font-size:1.6rem;">🧩</span>
+                <div>
+                  <div style="font-size:1rem;font-weight:900;color:#1e3a8a;">חידות בציורים ומשוואות סמלים</div>
+                  <div style="font-size:0.78rem;color:#475569;">שמשות, פרסות, עוגנים ופעמונים (כמו עמודים 4–5 ב-PDF!)</div>
+                </div>
+              </div>
+              <span class="btn-chip" style="background:#3b82f6;color:#fff;font-weight:900;">תרגל ⬅️</span>
+            </button>
+
+            <button type="button" class="surface-card gifted-station-btn" data-giftedtop="math_missing" style="margin:0;cursor:pointer;text-align:right;border:2px solid #a855f7;display:flex;align-items:center;justify-content:space-between;">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span style="font-size:1.6rem;">❓</span>
+                <div>
+                  <div style="font-size:1rem;font-weight:900;color:#581c87;">השלמת מספרים ב-4 פעולות חשבון</div>
+                  <div style="font-size:0.78rem;color:#475569;">7 + ? = 40, ? − 14 = 27, 2 × ? = 26</div>
+                </div>
+              </div>
+              <span class="btn-chip" style="background:#a855f7;color:#fff;font-weight:900;">תרגל ⬅️</span>
+            </button>
+
+            <button type="button" class="surface-card gifted-station-btn" data-giftedtop="math_inequalities" style="margin:0;cursor:pointer;text-align:right;border:2px solid #f59e0b;display:flex;align-items:center;justify-content:space-between;">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span style="font-size:1.6rem;">⚖️</span>
+                <div>
+                  <div style="font-size:1rem;font-weight:900;color:#78350f;">אי-שוויונות ומספרים מתאימים</div>
+                  <div style="font-size:0.78rem;color:#475569;">8 × 5 > 8 × ?, ? ÷ 5 < 30 ÷ 5, 30 − 8 < 30 − ?</div>
+                </div>
+              </div>
+              <span class="btn-chip" style="background:#f59e0b;color:#fff;font-weight:900;">תרגל ⬅️</span>
+            </button>
+
+            <button type="button" class="surface-card gifted-station-btn" data-giftedtop="gifted_reading_comp" style="margin:0;cursor:pointer;text-align:right;border:2px solid #06b6d4;display:flex;align-items:center;justify-content:space-between;">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span style="font-size:1.6rem;">📖</span>
+                <div>
+                  <div style="font-size:1rem;font-weight:900;color:#164e63;">הבנת הנקרא: שינה ובריאות</div>
+                  <div style="font-size:0.78rem;color:#475569;">טקסט מידע מנוקד, הסקת מסקנות ומילים נרדפות ("שלווה")</div>
+                </div>
+              </div>
+              <span class="btn-chip" style="background:#06b6d4;color:#fff;font-weight:900;">תרגל ⬅️</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- PANEL 2: STAGE B (DISTRICT EXTERNAL EXAM) -->
+        <div id="gifted-panel-stage-b" class="gifted-subpanel hidden">
+          <!-- Full Stage B Simulation Card -->
+          <div class="surface-card" style="background:linear-gradient(135deg,#f3e8ff 0%,#e9d5ff 100%);border:2px solid #8b5cf6;margin-bottom:12px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+              <div>
+                <span style="background:#8b5cf6;color:#fff;font-weight:900;padding:2px 8px;border-radius:99px;font-size:0.72rem;">מבחן שלב ב׳ • 8 שאלות</span>
+                <div style="font-size:1.15rem;font-weight:900;color:#4c1d95;margin-top:4px;">🏆 סימולציית שלב ב׳ מתקדמת (קרני/סאלד)</div>
+                <div style="font-size:0.82rem;color:#5b21b6;margin-top:2px;">אנלוגיות מילים, השלמת משפטים, מספרים בצורות ומטריצות צורניות.</div>
+              </div>
+              <button type="button" class="btn-primary-action" id="btn-launch-sim-stage-b" style="background:#8b5cf6;color:#fff;font-weight:900;white-space:nowrap;padding:10px 14px;">התחל מבחן ⏱️</button>
+            </div>
+          </div>
+
+          <div style="font-size:0.92rem;font-weight:900;color:#0f172a;margin-bottom:8px;">🎯 תחנות אימון ממוקדות לשלב ב׳:</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <button type="button" class="surface-card gifted-station-btn" data-giftedtop="gifted_verbal_analogies" style="margin:0;cursor:pointer;text-align:right;border:2px solid #ec4899;display:flex;align-items:center;justify-content:space-between;">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span style="font-size:1.6rem;">🔄</span>
+                <div>
+                  <div style="font-size:1rem;font-weight:900;color:#831843;">יחסי מילים ואנלוגיות מילוליות</div>
+                  <div style="font-size:0.78rem;color:#475569;">לעוף:נחליאלי ➔ לרוץ:אריה | אפודה:בגד ➔ מברג:כלי עבודה</div>
+                </div>
+              </div>
+              <span class="btn-chip" style="background:#ec4899;color:#fff;font-weight:900;">תרגל ⬅️</span>
+            </button>
+
+            <button type="button" class="surface-card gifted-station-btn" data-giftedtop="gifted_sentence_completion" style="margin:0;cursor:pointer;text-align:right;border:2px solid #8b5cf6;display:flex;align-items:center;justify-content:space-between;">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span style="font-size:1.6rem;">✏️</span>
+                <div>
+                  <div style="font-size:1rem;font-weight:900;color:#4c1d95;">השלמת משפטים בהקשר לוגי</div>
+                  <div style="font-size:0.78rem;color:#475569;">"הצעתי את מיטתי", "סירבה לחלוק", בחירת המילה המדויקת</div>
+                </div>
+              </div>
+              <span class="btn-chip" style="background:#8b5cf6;color:#fff;font-weight:900;">תרגל ⬅️</span>
+            </button>
+
+            <button type="button" class="surface-card gifted-station-btn" data-giftedtop="gifted_numbers_shapes" style="margin:0;cursor:pointer;text-align:right;border:2px solid #3b82f6;display:flex;align-items:center;justify-content:space-between;">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span style="font-size:1.6rem;">🔢</span>
+                <div>
+                  <div style="font-size:1rem;font-weight:900;color:#1e3a8a;">מספרים בצורות ופירמידות</div>
+                  <div style="font-size:0.78rem;color:#475569;">מעגלים מחולקים ל-3 גזרות ומשולש חלוקה/פירמידה</div>
+                </div>
+              </div>
+              <span class="btn-chip" style="background:#3b82f6;color:#fff;font-weight:900;">תרגל ⬅️</span>
+            </button>
+
+            <button type="button" class="surface-card gifted-station-btn" data-giftedtop="gifted_shapes_matrix" style="margin:0;cursor:pointer;text-align:right;border:2px solid #10b981;display:flex;align-items:center;justify-content:space-between;">
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span style="font-size:1.6rem;">📐</span>
+                <div>
+                  <div style="font-size:1rem;font-weight:900;color:#064e3b;">חשיבה צורנית, מטריצות ושטיח</div>
+                  <div style="font-size:0.78rem;color:#475569;">אנלוגיות צורניות (עמ׳ 14), תנועה ברשת 3x3 (עמ׳ 15) וחתיכה חסרה (עמ׳ 16)</div>
+                </div>
+              </div>
+              <span class="btn-chip" style="background:#10b981;color:#fff;font-weight:900;">תרגל ⬅️</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- PANEL 3: THINKING TOOLBOX & STRATEGIES -->
+        <div id="gifted-panel-toolbox" class="gifted-subpanel hidden">
+          <div style="font-size:0.95rem;font-weight:900;color:#0f172a;margin-bottom:8px;">💡 ארגז הכלים של האלופים: איך לחשוב ולפתור בקלות?</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div class="surface-card" style="margin:0;border:2px solid #facc15;background:linear-gradient(135deg,#fffbeb,#fef3c7);">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+                <span style="font-size:1.05rem;font-weight:900;color:#92400e;">1. שיטת המשפט באנלוגיות מילים 🔄</span>
+                <button type="button" class="btn-chip" data-speak-tip="analog" style="background:#facc15;color:#090d16;font-weight:900;border:none;">🔊 הקרא</button>
+              </div>
+              <div style="font-size:0.86rem;color:#78350f;line-height:1.5;">
+                <strong>איך פותרים?</strong> תמיד בונים משפט קצר שמחבר את שתי המילים הראשונות! למשל: "מחט משמשת ל<strong>תפירה</strong>". עכשיו בודקים את האפשרויות ומחפשים מי משמש למה: "סכין משמשת ל<strong>חיתוך</strong>"!
+              </div>
+            </div>
+
+            <div class="surface-card" style="margin:0;border:2px solid #38bdf8;background:linear-gradient(135deg,#f0f9ff,#e0f2fe);">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+                <span style="font-size:1.05rem;font-weight:900;color:#075985;">2. סוד משוואות הסמלים והציורים 🧩</span>
+                <button type="button" class="btn-chip" data-speak-tip="symbols" style="background:#38bdf8;color:#0f172a;font-weight:900;border:none;">🔊 הקרא</button>
+              </div>
+              <div style="font-size:0.86rem;color:#0369a1;line-height:1.5;">
+                <strong>איך פותרים?</strong> תמיד מתחילים מהשורה שיש בה רק סמל אחד זהה! אם ☀️ + ☀️ = 10, אז שמש אחת היא 5. עכשיו מציבים את ה-5 בשורה הבאה ומוצאים בקלות את הסמל השני!
+              </div>
+            </div>
+
+            <div class="surface-card" style="margin:0;border:2px solid #a855f7;background:linear-gradient(135deg,#faf5ff,#f3e8ff);">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+                <span style="font-size:1.05rem;font-weight:900;color:#6b21a8;">3. זיהוי חוקיות צורנית וסדרות 📐</span>
+                <button type="button" class="btn-chip" data-speak-tip="shapes" style="background:#a855f7;color:#fff;font-weight:900;border:none;">🔊 הקרא</button>
+              </div>
+              <div style="font-size:0.86rem;color:#581c87;line-height:1.5;">
+                <strong>איך פותרים?</strong> בודקים 3 דברים: האם הצורה מסתובבת בכיוון השעון? האם מתווסף או יורד קו בכל שלב? והאם הצבע מתחלף משחור ללבן?
+              </div>
+            </div>
+
+            <div class="surface-card" style="margin:0;border:2px solid #10b981;background:linear-gradient(135deg,#ecfdf5,#d1fae5);">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+                <span style="font-size:1.05rem;font-weight:900;color:#065f46;">4. ניהול זמן וניחוש מושכל ⏱️</span>
+                <button type="button" class="btn-chip" data-speak-tip="time" style="background:#10b981;color:#fff;font-weight:900;border:none;">🔊 הקרא</button>
+              </div>
+              <div style="font-size:0.86rem;color:#047857;line-height:1.5;">
+                <strong>כלל זהב:</strong> במבחן אמריקאי לא מקבלים קנס על טעות! אם שאלה נראית קשה — פוסלים קודם תשובות שממש לא הגיוניות, בוחרים את הטובה ביותר וממשיכים קדימה בביטחון!
+              </div>
+            </div>
           </div>
         </div>
       </section>

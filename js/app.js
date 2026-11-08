@@ -799,6 +799,7 @@ function switchView(viewName) {
   if (viewName === 'coloring') initColoringStudio();
   if (viewName === 'dressup') initDressUpStudio();
   if (viewName === 'soccer') initSoccerHub();
+  if (viewName === 'gifted-hub' || viewName === 'gifted_hub') initGiftedHub();
   updateHeaderUI();
 }
 
@@ -5775,8 +5776,133 @@ function setupSoccerHubListeners() {
   }
 }
 
-// Global Banner Launchers for Soccer & Gifted Academy
+// ==================== VIEW 18: DEDICATED GIFTED ACADEMY 2025 PREP HUB CONTROLLER ====================
+
+let giftedHubState = {
+  activeTab: 'stage_a' // 'stage_a' | 'stage_b' | 'toolbox'
+};
+
+function initGiftedHub() {
+  renderGiftedReadinessDashboard();
+  renderGiftedHubTabs();
+  setupGiftedHubListeners();
+}
+
+function renderGiftedReadinessDashboard() {
+  const stats = getActiveTopicStats();
+  const giftedTopicIds = [
+    'gifted_stage_a', 'gifted_stage_b', 'gifted_picture_riddles', 'gifted_verbal_analogies',
+    'gifted_sentence_completion', 'gifted_word_problems', 'gifted_numbers_shapes', 'gifted_shapes_matrix', 'gifted_reading_comp'
+  ];
+
+  let masteredCount = 0;
+  let totalStars = 0;
+  giftedTopicIds.forEach(id => {
+    const st = stats[id];
+    if (st && st.correct >= 3) masteredCount++;
+    if (st && st.stars) totalStars += Math.min(3, st.stars);
+  });
+
+  const pct = Math.min(100, Math.round((masteredCount / giftedTopicIds.length) * 100));
+
+  const pctEl = document.getElementById('gifted-readiness-pct');
+  const barEl = document.getElementById('gifted-readiness-bar-fill');
+  const countEl = document.getElementById('gifted-mastered-topics-count');
+  const starsEl = document.getElementById('gifted-stars-badge');
+
+  if (pctEl) pctEl.textContent = `${pct}%`;
+  if (barEl) barEl.style.width = `${Math.max(8, pct)}%`;
+  if (countEl) countEl.textContent = `🎯 נשלטו ${masteredCount} מתוך 9 פרקי המבחן`;
+  if (starsEl) starsEl.textContent = `⭐ ${totalStars} כוכבי הצטיינות`;
+}
+
+function renderGiftedHubTabs() {
+  document.querySelectorAll('#gifted-hub-main-tabs .cat-tab').forEach(tab => {
+    tab.classList.toggle('active', tab.dataset.giftedtab === giftedHubState.activeTab);
+  });
+  document.querySelectorAll('.gifted-subpanel').forEach(p => {
+    p.classList.toggle('hidden', p.id !== `gifted-panel-${giftedHubState.activeTab.replace('_', '-')}`);
+  });
+}
+
+function setupGiftedHubListeners() {
+  // Tabs Navigation
+  document.querySelectorAll('#gifted-hub-main-tabs .cat-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      arcadeAudio.playClick();
+      giftedHubState.activeTab = tab.dataset.giftedtab;
+      renderGiftedHubTabs();
+    });
+  });
+
+  // Stage A Simulation Button
+  const btnSimA = document.getElementById('btn-launch-sim-stage-a');
+  if (btnSimA) {
+    btnSimA.addEventListener('click', () => {
+      arcadeAudio.playClick();
+      startMatch('gifted_stage_a', '👑 סימולציית שלב א׳ (מכון נועם)', false);
+    });
+  }
+
+  // Stage B Simulation Button
+  const btnSimB = document.getElementById('btn-launch-sim-stage-b');
+  if (btnSimB) {
+    btnSimB.addEventListener('click', () => {
+      arcadeAudio.playClick();
+      startMatch('gifted_stage_b', '🏆 סימולציית שלב ב׳ (קרני וסאלד)', false);
+    });
+  }
+
+  // Individual Station Practice Buttons
+  document.querySelectorAll('.gifted-station-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const topId = btn.dataset.giftedtop;
+      const topic = (typeof TOPICS !== 'undefined' ? TOPICS : []).find(t => t.id === topId);
+      arcadeAudio.playClick();
+      startMatch(topId, topic ? topic.title : 'תרגול ממוקד למחוננים', false);
+    });
+  });
+
+  // Speak Intro Audio Button
+  const btnIntro = document.getElementById('btn-gifted-speak-intro');
+  if (btnIntro) {
+    btnIntro.addEventListener('click', () => {
+      arcadeAudio.speak(
+        'ברוך הבא לאקדמיית המחוננים של עילי! כאן נתאמן יחד בצורה מדורגת ורגועה לשלב א ולשלב ב של מבחן המחוננים. תוכל לבחור סימולציה מלאה, או לתרגל פרק ספציפי כמו חידות בציורים ויחסי מילים. בהצלחה אלוף!',
+        'he-IL',
+        0.88
+      );
+    });
+  }
+
+  // Toolbox Strategy Tips Speak Buttons
+  const tips = {
+    analog: 'שיטת המשפט באנלוגיות מילים: תמיד תבנה משפט קצר שמחבר את שתי המילים הראשונות. למשל, מחט משמשת לתפירה, כמו שסכין משמשת לחיתוך. ואז תבחר את התשובה שמתאימה בדיוק לאותו משפט!',
+    symbols: 'סוד משוואות הסמלים: תמיד תתחיל מהשורה שיש בה סמל כפול! אם שמש ועוד שמש שווה עשר, אז שמש אחת היא חמש. תציב את חמש בשורה הבאה ותגלה בקלות את הסמל השני!',
+    shapes: 'זיהוי חוקיות בצורות: תבדוק שלושה דברים: האם הצורה מסתובבת בכיוון השעון? האם מתווסף או יורד קו? והאם הצבע משתנה משחור ללבן?',
+    time: 'כלל הזהב במבחן אמריקאי: אין קנס על טעות! אם שאלה קשה, תפסול תשובות שלא הגיוניות, תנחש ניחוש מושכל ותמשיך קדימה בביטחון!'
+  };
+
+  document.querySelectorAll('[data-speak-tip]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tipKey = btn.dataset.speakTip;
+      if (tips[tipKey]) {
+        arcadeAudio.speak(tips[tipKey], 'he-IL', 0.88);
+      }
+    });
+  });
+}
+
+// Global Banner & Quick Bento Tile Launchers
 document.addEventListener('DOMContentLoaded', () => {
+  const quickGiftedHubBtn = document.getElementById('quick-open-gifted-hub');
+  if (quickGiftedHubBtn) {
+    quickGiftedHubBtn.addEventListener('click', () => {
+      arcadeAudio.playClick();
+      switchView('gifted-hub');
+    });
+  }
+
   const socBanner = document.getElementById('soccer-home-banner');
   if (socBanner) {
     socBanner.addEventListener('click', () => {
@@ -5792,10 +5918,10 @@ document.addEventListener('DOMContentLoaded', () => {
       arcadeAudio.playClick();
       if (jump && jump.dataset.giftedjump) {
         const topId = jump.dataset.giftedjump;
-        const topic = TOPICS.find(t => t.id === topId);
+        const topic = (typeof TOPICS !== 'undefined' ? TOPICS : []).find(t => t.id === topId);
         startMatch(topId, topic ? topic.title : '🧠 מבחן מחוננים', false);
       } else {
-        startMatch('gifted_stage_a', '👑 מבחן מחוננים שלב א׳ (מכון נועם)', false);
+        switchView('gifted-hub');
       }
     });
   }
