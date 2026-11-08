@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
   <meta charset="UTF-8">
@@ -228,11 +228,44 @@
           <span class="fc27-banner-play" style="background:rgba(52,211,153,0.22);border-color:#6ee7b7;color:#fff;">למילון 🔊</span>
         </div>
 
+        <!-- SOCCER HUB: BEITAR JERUSALEM & REAL MADRID HIGHLIGHTS, FIXTURES & STANDINGS BANNER -->
+        <div class="fc27-home-banner" id="soccer-home-banner" style="background:linear-gradient(135deg,#18181b 0%,#1e3a8a 100%);border-color:#facc15;box-shadow:0 6px 18px rgba(250,204,21,0.22);margin-bottom:12px;">
+          <div class="fc27-banner-left">
+            <div class="fc27-logo-pill" style="background:#facc15;color:#090d16;box-shadow:0 0 12px rgba(250,204,21,0.6);font-size:0.75rem;">🦁 BTR<br>👑 RMA</div>
+            <div class="fc27-banner-text">
+              <h4 style="color:#fde047;">🏟️ אצטדיון האלופים: בית"ר ירושלים & ריאל מדריד (תקצירים, תוצאות וטבלאות חיות!)</h4>
+              <p style="color:#f1f5f9;">צפייה ישירה בתקצירי המשחקים האחרונים, לוח משחקים ותוצאות מלא, וטבלאות ליגת העל, LaLiga וליגת האלופות!</p>
+            </div>
+          </div>
+          <span class="fc27-banner-play" style="background:rgba(250,204,21,0.25);border-color:#fde047;color:#fff;">לאצטדיון ⚽</span>
+        </div>
+
+        <!-- GIFTED ACADEMY 2025 BANNER (NOAM & KARNI SCAFFOLDED PREPARATION) -->
+        <div class="fc27-home-banner" id="gifted-home-banner" style="background:linear-gradient(135deg,#4338ca 0%,#581c87 100%);border-color:#c084fc;box-shadow:0 6px 18px rgba(168,85,247,0.3);flex-direction:column;align-items:stretch;gap:10px;margin-bottom:14px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+            <div class="fc27-banner-left">
+              <div class="fc27-logo-pill" style="background:#c084fc;color:#3b0764;box-shadow:0 0 12px rgba(192,132,252,0.6);font-size:0.75rem;">GIFTED<br>2025 🧠</div>
+              <div class="fc27-banner-text">
+                <h4 style="color:#e9d5ff;">🧠 אקדמיית המחוננים של עילי: הכנה מדורגת לשלב א׳ ולשלב ב׳ (מכון נועם וסאלד)!</h4>
+                <p style="color:#f3e8ff;">סימולציות אמיתיות, חידות בציורים, אנלוגיות מילים, סדרות, חשיבה צורנית והבנת הנקרא עם טיפים פדגוגיים מפתחי מחשבה!</p>
+              </div>
+            </div>
+            <span class="fc27-banner-play" style="background:rgba(192,132,252,0.22);border-color:#d8b4fe;color:#fff;">למבחן 🏆</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;" id="gifted-quick-launch-grid">
+            <button type="button" class="btn-chip" data-giftedjump="gifted_stage_a" style="background:#facc15;color:#090d16;font-weight:900;border:none;padding:7px 5px;font-size:0.78rem;">👑 סימולציית שלב א׳ (מבחן בית ספר)</button>
+            <button type="button" class="btn-chip" data-giftedjump="gifted_stage_b" style="background:#a855f7;color:#ffffff;font-weight:900;border:none;padding:7px 5px;font-size:0.78rem;">🏆 סימולציית שלב ב׳ (מבחן חיצוני)</button>
+            <button type="button" class="btn-chip" data-giftedjump="gifted_picture_riddles" style="background:#38bdf8;color:#090d16;font-weight:900;border:none;padding:7px 5px;font-size:0.78rem;">🧩 חידות בציורים וסמלים (☀️, 🧲, ⚓)</button>
+            <button type="button" class="btn-chip" data-giftedjump="gifted_verbal_analogies" style="background:#34d399;color:#064e3b;font-weight:900;border:none;padding:7px 5px;font-size:0.78rem;">🔄 יחסי מילים (לעוף:נחליאלי, אפודה:בגד)</button>
+          </div>
+        </div>
+
         <!-- Practice Games Section -->
         <div class="section-bar">
           <h2 class="section-heading" id="practice-section-heading">תרגול לימודי</h2>
           <div class="segmented-tabs">
             <button type="button" class="cat-tab active" data-cat="all">הכל</button>
+            <button type="button" class="cat-tab" data-cat="gifted" style="font-weight:900;color:#9333ea;">מחוננים 🧠</button>
             <button type="button" class="cat-tab" data-cat="math">חשבון</button>
             <button type="button" class="cat-tab" data-cat="hebrew">שפה</button>
             <button type="button" class="cat-tab" data-cat="english">אנגלית 🇬🇧</button>
@@ -1242,6 +1275,122 @@
         </div>
       </section>
 
+      <!-- ==================== VIEW 17: SOCCER HUB: BEITAR & REAL MADRID (תקצירים, לוח משחקים וטבלאות) ==================== -->
+      <section id="view-soccer" class="view-section">
+        <div class="screen-nav-bar">
+          <button type="button" class="btn-back" onclick="switchView('home')">‹ חזרה</button>
+          <span class="screen-title">🏟️ אצטדיון האלופים: בית"ר & ריאל</span>
+          <button type="button" class="btn-chip" id="btn-soccer-refresh" style="background:#facc15;color:#090d16;font-weight:900;border:none;">🔄 רענן</button>
+        </div>
+
+        <!-- Team Selector Banner -->
+        <div class="surface-card" style="background:linear-gradient(135deg,#090d16 0%,#1e293b 100%);border:2px solid #facc15;color:#fff;margin-bottom:12px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="font-size:2rem;">🦁👑</span>
+              <div>
+                <div style="font-size:1.15rem;font-weight:900;color:#facc15;">מרכז הכדורגל של עילי</div>
+                <div style="font-size:0.8rem;color:#94a3b8;">בית"ר ירושלים (טדי) • ריאל מדריד (ברנבאו)</div>
+              </div>
+            </div>
+            <button type="button" class="btn-chip" id="btn-soccer-open-add" style="background:#0284c7;color:#fff;font-weight:800;border:none;padding:5px 9px;font-size:0.75rem;">+ הוסף תקציר</button>
+          </div>
+
+          <!-- 3 Main Tabs: Highlights, Fixtures/Results, Standings -->
+          <div class="segmented-tabs" id="soccer-hub-tabs" style="margin-bottom:0;">
+            <button type="button" class="cat-tab active" data-soccertab="highlights">🎥 תקצירי וידאו</button>
+            <button type="button" class="cat-tab" data-soccertab="fixtures">📅 לוח ותוצאות</button>
+            <button type="button" class="cat-tab" data-soccertab="standings">🏆 טבלאות ליגה</button>
+          </div>
+        </div>
+
+        <!-- TAB 1: HIGHLIGHTS & VIDEO PLAYER -->
+        <div id="soccer-panel-highlights" class="soccer-subpanel">
+          <!-- Active Video Player Frame -->
+          <div class="surface-card" style="background:#000;border:2px solid #38bdf8;padding:8px;border-radius:18px;margin-bottom:12px;">
+            <div id="soccer-video-embed-container" style="position:relative;width:100%;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px;background:#0f172a;">
+              <iframe id="soccer-video-iframe" src="https://www.youtube-nocookie.com/embed/5F_P5_Kx8tA" title="תקציר משחק" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;"></iframe>
+            </div>
+            <div style="padding:10px 4px 4px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+                <span id="soccer-player-badge" style="background:#facc15;color:#090d16;font-weight:900;padding:3px 8px;border-radius:99px;font-size:0.75rem;">🦁 בית"ר ירושלים</span>
+                <a id="soccer-player-yt-link" href="https://www.youtube.com" target="_blank" rel="noopener" style="font-size:0.75rem;color:#38bdf8;font-weight:800;text-decoration:none;">פתיחה ב-YouTube ↗️</a>
+              </div>
+              <div id="soccer-player-title" style="font-size:1.1rem;font-weight:900;color:#fff;margin-top:6px;">בית"ר ירושלים 3 - 2 מכבי תל אביב (טדי בטירוף!)</div>
+              <div id="soccer-player-desc" style="font-size:0.82rem;color:#94a3b8;margin-top:2px;">שערים של ירדן שועה, סילבה קאני ומרסלן מול 30,000 צהובים-שחורים בטדי!</div>
+            </div>
+          </div>
+
+          <!-- Team Filter (All / Beitar / Real) -->
+          <div style="display:flex;gap:6px;margin-bottom:10px;">
+            <button type="button" class="btn-chip active soccer-filter-btn" data-teamfilter="all" style="flex:1;">הכל ⚽</button>
+            <button type="button" class="btn-chip soccer-filter-btn" data-teamfilter="beitar" style="flex:1;">🦁 בית"ר ירושלים</button>
+            <button type="button" class="btn-chip soccer-filter-btn" data-teamfilter="real" style="flex:1;">👑 ריאל מדריד</button>
+          </div>
+
+          <!-- Video Highlights Cards Grid -->
+          <div id="soccer-highlights-grid" style="display:flex;flex-direction:column;gap:10px;"></div>
+        </div>
+
+        <!-- TAB 2: FIXTURES & RESULTS -->
+        <div id="soccer-panel-fixtures" class="soccer-subpanel hidden">
+          <div style="font-size:0.95rem;font-weight:900;color:#0f172a;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+            <span>✅ תוצאות המשחקים האחרונים</span>
+          </div>
+          <div id="soccer-results-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;"></div>
+
+          <div style="font-size:0.95rem;font-weight:900;color:#0f172a;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+            <span>📅 המשחקים הקרובים של עילי</span>
+          </div>
+          <div id="soccer-upcoming-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+        </div>
+
+        <!-- TAB 3: LIVE STANDINGS -->
+        <div id="soccer-panel-standings" class="soccer-subpanel hidden">
+          <!-- Standings Sub-Tabs (Ligat HaAl, LaLiga, Champions League) -->
+          <div class="segmented-tabs" id="soccer-standings-tabs" style="margin-bottom:12px;">
+            <button type="button" class="cat-tab active" data-table="ligat_haal">🇮🇱 ליגת העל</button>
+            <button type="button" class="cat-tab" data-table="laliga">🇪🇸 LaLiga</button>
+            <button type="button" class="cat-tab" data-table="ucl">⭐ ליגת האלופות</button>
+          </div>
+
+          <div id="soccer-table-container" class="surface-card" style="padding:10px;margin-bottom:12px;overflow-x:auto;"></div>
+        </div>
+
+        <!-- Add Custom Video Highlight Modal (For Parents or Kids) -->
+        <div id="modal-add-soccer-highlight" class="auth-gate-overlay hidden">
+          <div class="auth-gate-card" style="max-width:440px;">
+            <h3 style="margin-bottom:8px;color:#0f172a;">➕ הוספת תקציר משחק חדש</h3>
+            <p style="font-size:0.85rem;color:#64748b;margin-bottom:14px;">הדביקו קישור יוטיוב או תקציר רשמי של בית"ר או ריאל:</p>
+            <form id="form-add-soccer-highlight" style="display:flex;flex-direction:column;gap:10px;">
+              <div>
+                <label style="font-size:0.8rem;font-weight:800;color:#334155;">קבוצה:</label>
+                <select id="input-soc-team" class="settings-input" style="width:100%;padding:8px;">
+                  <option value="beitar">🦁 בית"ר ירושלים</option>
+                  <option value="real">👑 ריאל מדריד</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size:0.8rem;font-weight:800;color:#334155;">כותרת המשחק:</label>
+                <input type="text" id="input-soc-title" class="settings-input" placeholder="למשל: בית&quot;ר ירושלים 3 - 0 הפועל ירושלים" required style="width:100%;padding:8px;">
+              </div>
+              <div>
+                <label style="font-size:0.8rem;font-weight:800;color:#334155;">קישור יוטיוב (YouTube URL או ID):</label>
+                <input type="text" id="input-soc-url" class="settings-input" placeholder="https://www.youtube.com/watch?v=..." required style="width:100%;padding:8px;">
+              </div>
+              <div>
+                <label style="font-size:0.8rem;font-weight:800;color:#334155;">תיאור קצר ומבקיעים:</label>
+                <input type="text" id="input-soc-desc" class="settings-input" placeholder="צמד של שועה ושער ענק של עדי יונה!" style="width:100%;padding:8px;">
+              </div>
+              <div style="display:flex;gap:8px;margin-top:6px;">
+                <button type="button" class="btn-secondary-pill" id="btn-soc-modal-cancel" style="flex:1;">ביטול</button>
+                <button type="submit" class="btn-primary-action" style="flex:1.5;background:#facc15;color:#090d16;font-weight:900;">שמור תקציר ⚽</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
     </main>
 
     <!-- Fixed iOS Bottom Tab Bar -->
@@ -1277,10 +1426,10 @@
 
   </div>
 
-  <script src="js/sound.js?v=6.0"></script>
-  <script src="js/questions.js?v=6.0"></script>
-  <script src="js/cards_svg.js?v=6.0"></script>
-  <script src="js/app.js?v=6.0"></script>
+  <script src="js/sound.js?v=7.0"></script>
+  <script src="js/questions.js?v=7.0"></script>
+  <script src="js/cards_svg.js?v=7.0"></script>
+  <script src="js/app.js?v=7.0"></script>
 </body>
 </html>
 

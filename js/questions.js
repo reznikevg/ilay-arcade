@@ -154,6 +154,80 @@ const TOPICS = [
     desc: 'איך נוצרים קשת בענן, ברק ורעם, יום ולילה, הר געש מקציף ואיך עצים מייצרים חמצן מאור השמש!'
   },
 
+  // ===== GIFTED ACADEMY 2025 (הכנה ממוקדת למבחן מחוננים כיתה ב' - מכון נועם) =====
+  {
+    id: 'gifted_stage_a',
+    cat: 'gifted',
+    tag: 'מכון נועם • שלב א׳ 🧠',
+    icon: '👑',
+    title: 'מבחן מחוננים שלב א׳ (סימולציה מלאה)',
+    desc: 'סימולציה מלאה של שלב א׳: בעיות בחשבון, השלמת מספרים, אי-שוויונות, חידות בציורים והבנת הנקרא.'
+  },
+  {
+    id: 'gifted_stage_b',
+    cat: 'gifted',
+    tag: 'מכון נועם • שלב ב׳ 🏆',
+    icon: '🌟',
+    title: 'מבחן מחוננים שלב ב׳ (סימולציה מלאה)',
+    desc: 'סימולציה מלאה של שלב ב׳: אנלוגיות מילים, השלמת משפטים, בעיות יחס וקצב, מספרים בצורות ומטריצות.'
+  },
+  {
+    id: 'gifted_picture_riddles',
+    cat: 'gifted',
+    tag: 'משוואות סמלים 🧩',
+    icon: '🧩',
+    title: 'חידות בציורים ומערכות סמלים (שלב א׳)',
+    desc: 'שמש, פרסה, עוגן ופעמון! גילוי הערך של כל סמל במשוואות מתמטיות בדיוק כמו במבחן.'
+  },
+  {
+    id: 'gifted_verbal_analogies',
+    cat: 'gifted',
+    tag: 'יחסי מילים 🔄',
+    icon: '🔄',
+    title: 'יחסי מילים ואנלוגיות (שלב ב׳)',
+    desc: 'לעוף : נחליאלי ➔ לרוץ : אריה. אפודה : בגד ➔ מברג : כלי עבודה. גילוי הקשר הלוגי המדויק!'
+  },
+  {
+    id: 'gifted_sentence_completion',
+    cat: 'gifted',
+    tag: 'חשיבה לשונית ✏️',
+    icon: '✏️',
+    title: 'השלמת משפטים בהקשר לוגי (שלב ב׳)',
+    desc: 'בחירת המילה המדויקת ביותר המשלימה את המשפט על פי ההקשר וההגיון הפנימי.'
+  },
+  {
+    id: 'gifted_word_problems',
+    cat: 'gifted',
+    tag: 'בעיות מילוליות 🧮',
+    icon: '🧮',
+    title: 'בעיות מילוליות, חלוקה ויחסים',
+    desc: 'חלוקה שווה, יחסי כפולות ("פי 3"), שאריות, שינוי כמויות גוגואים וקצב זמן/דלגית.'
+  },
+  {
+    id: 'gifted_numbers_shapes',
+    cat: 'gifted',
+    tag: 'מספרים בצורות 🔢',
+    icon: '🔢',
+    title: 'מספרים בצורות ופירמידות (שלב ב׳)',
+    desc: 'מעגלים מחולקים לגזרות, משולשי מספרים ופירמידות לבנים עם חוקיות חשבונית נסתרת.'
+  },
+  {
+    id: 'gifted_shapes_matrix',
+    cat: 'gifted',
+    tag: 'חשיבה צורנית 📐',
+    icon: '📐',
+    title: 'צורות, מטריצות והשלמת שטיח חסר',
+    desc: 'אנלוגיות צורניות, סדרות משבצות הנעות בכיוון השעון והשלמת חלק חסר בשטיח מורכב.'
+  },
+  {
+    id: 'gifted_reading_comp',
+    cat: 'gifted',
+    tag: 'הבנת הנקרא 📖',
+    icon: '📖',
+    title: 'הבנת הנקרא: שינה, בריאות והסקה',
+    desc: 'טקסט מידע מנוקד על חשיבות שעות השינה, הסקת מסקנות, מילים נרדפות ("שלווה") והרגלים.'
+  },
+
   // ===== PARENTS CUSTOM =====
   {
     id: 'custom_parents',
@@ -618,15 +692,20 @@ const HEBREW_OPPOSITES_BANK = [
   { word: 'חָדָשׁ', ans: 'יָשָׁן', wrong: ['יָפֶה', 'נָקִי', 'קָטָן'], type: 'הֵפֶךְ' },
   { word: 'חָזָק', ans: 'חַלָּשׁ', wrong: ['גִּבּוֹר', 'עֲנָק', 'קָשֶׁה'], type: 'הֵפֶךְ' },
   { word: 'פָּתוּחַ', ans: 'סָגוּר', wrong: ['נָעוּל', 'שָׁבוּר', 'גָּדוֹל'], type: 'הֵפֶךְ' },
+  { word: ' מָתוֹק', ans: 'חָמוּץ / מַר', wrong: ['טָעִים', 'חַם', 'רַךְ'], type: 'הֵפֶךְ' },
+  { word: 'קַל', ans: 'כָּבֵד', wrong: ['גָּדוֹל', 'רָחוֹק', 'קָר'], type: 'הֵפֶךְ' },
+  { word: 'רוֹעֵשׁ', ans: 'שָׁקֵט', wrong: ['שָׂמֵחַ', 'מָהִיר', 'גָּדוֹל'], type: 'הֵפֶךְ' },
   { word: 'שָׂמֵחַ', ans: 'עַלִּיז', wrong: ['עָצוּב', 'כּוֹעֵס', 'עָיֵף'], type: 'מִלָּה נִרְדֶּפֶת (דּוֹמָה)' },
   { word: 'נָבוֹן', ans: 'חָכָם', wrong: ['גִּבּוֹר', 'גָּבוֹהַּ', 'שָׁקֵט'], type: 'מִלָּה נִרְדֶּפֶת (דּוֹמָה)' },
   { word: 'גִּבּוֹר', ans: 'אַמִּיץ', wrong: ['פַּחְדָן', 'חַלָּשׁ', 'אִטִּי'], type: 'מִלָּה נִרְדֶּפֶת (דּוֹמָה)' },
-  { word: 'יָפֶה', ans: 'נָאֶה', wrong: ['מְלֻכְלָךְ', 'יָשָׁן', 'קָטָן'], type: 'מִלָּה נִרְדֶּפֶת (דּוֹמָה)' }
+  { word: 'יָפֶה', ans: 'נָאֶה', wrong: ['מְלֻכְלָךְ', 'יָשָׁן', 'קָטָן'], type: 'מִלָּה נִרְדֶּפֶת (דּוֹמָה)' },
+  { word: 'מָהִיר', ans: 'זָרִיז', wrong: ['אִטִּי', 'עָיֵף', 'כָּבֵד'], type: 'מִלָּה נִרְדֶּפֶת (דּוֹמָה)' }
 ];
 
 function genHebrewOpposites() {
   const item = HEBREW_OPPOSITES_BANK[randInt(0, HEBREW_OPPOSITES_BANK.length - 1)];
   return {
+    uniqueKey: `heb_opp_${item.word}_${item.type}`,
     isMulti: false,
     instruction: `בַּחֲרוּ <strong>${item.type}</strong> לַמִּלָּה הַמֻּדְגֶּשֶׁת:`,
     ttsText: `בחרו ${item.type} למילה ${item.word}`,
@@ -654,6 +733,20 @@ const HEBREW_GRAMMAR_BANK = [
     hint: 'בקרטון במקרר יש תבנית של...'
   },
   {
+    q: 'אֵיךְ אוֹמְרִים בְּרַבִּים אֶת הַמִּלָּה <strong style="color:#059669">"חַלּוֹן"</strong>?',
+    tts: 'איך אומרים ברבים את המילה חלון?',
+    ans: 'חַלּוֹנוֹת',
+    wrong: ['חַלּוֹנִים', 'חַלּוֹנִיּוֹת', 'חַלּוֹן'],
+    hint: 'חלון אחד מואר, והרבה...'
+  },
+  {
+    q: 'אֵיךְ אוֹמְרִים בְּרַבִּים אֶת הַמִּלָּה <strong style="color:#059669">"נְמָלָה"</strong>?',
+    tts: 'איך אומרים ברבים את המילה נמלה?',
+    ans: 'נְמָלִים',
+    wrong: ['נְמָלוֹת', 'נְמָלִיּוֹת', 'נְמָלָה'],
+    hint: 'נמלה אחת חרוצה, ושיירה של...'
+  },
+  {
     q: 'אֵיזוֹ מִלָּה <strong>שַׁיֶּכֶת לְמִשְׁפַּחַת הַמִּלִּים</strong> שֶׁל "לִסְפֹּר" וְ-"סִפּוּר"?',
     tts: 'איזו מילה שייכת למשפחת המילים של לספור וסיפור?',
     ans: 'סִפְרִיָּה',
@@ -675,6 +768,13 @@ const HEBREW_GRAMMAR_BANK = [
     hint: 'חפשו את אותיות השורש ש.ח.ק!'
   },
   {
+    q: 'אֵיזוֹ מִלָּה שַׁיֶּכֶת לְמִשְׁפַּחַת הַמִּלִּים שֶׁל <strong>"לִכְתֹּב" וְ-"מִכְתָּב"</strong>?',
+    tts: 'איזו מילה שייכת למשפחת המילים של לכתוב ומכתב?',
+    ans: 'הַכְתָּבָה',
+    wrong: ['סֵפֶר', 'מוֹרָה', 'קְרִיאָה'],
+    hint: 'חפשו את אותיות השורש כ.ת.ב!'
+  },
+  {
     q: 'אֵיךְ אוֹמְרִים בִּנְקֵבָה אֶת הַצֵּרוּף: <strong>"אוֹהֵד נלהָב"</strong>?',
     tts: 'איך אומרים בנקבה את הצירוף אוהד נלהב?',
     ans: 'אוֹהֶדֶת נִלְהֶבֶת',
@@ -686,6 +786,7 @@ const HEBREW_GRAMMAR_BANK = [
 function genHebrewGrammar() {
   const item = HEBREW_GRAMMAR_BANK[randInt(0, HEBREW_GRAMMAR_BANK.length - 1)];
   return {
+    uniqueKey: `heb_gram_${item.ans}`,
     isMulti: false,
     instruction: 'שָׂפָה וְדִקְדּוּק לְכִתָּה ב׳:',
     ttsText: item.tts,
@@ -715,6 +816,20 @@ const HEBREW_READING_BANK = [
     hint: 'חפשו את שם העיר מדריד!'
   },
   {
+    q: '🧤 הַשּׁוֹעֵר קוּרְטוּאָה זִנֵּק לַפִּנָּה וְ<strong>עָצַר פֶּנְדֶּל</strong> בַּדַּקָּה הָאַחֲרוֹנָה!<br><strong>מֶה עָשָׂה הַשּׁוֹעֵר?</strong>',
+    tts: 'השוער קורטואה זינק לפינה ועצר פנדל בדקה האחרונה! מה עשה השוער?',
+    ans: '🧤 עָצַר פֶּנְדֶּל בַּדַּקָּה הָאַחֲרוֹנָה',
+    wrong: ['🍕 אָכַל פִּיצָה עַל הַדֶּשֶׁא', '🛌 הָלַךְ לִישׁוֹן בַּמַּחֲצִית', '🚌 נָסַע בְּאוֹטוֹבּוּס'],
+    hint: 'השוער זינק לפינה ועצר פנדל!'
+  },
+  {
+    q: '🦄 לִיָּה וְעִילַי שִׂחֲקוּ יַחַד בַּסָּלוֹן.<br>🎨 עִילַי עָזַר לְלִיָּה לִצְבֹּעַ צִיּוּר שֶׁל <strong>סְטִיץ׳ וְחַד-קֶרֶן</strong>!<br><strong>בַּמֶּה עָזַר עִילַי לְלִיָּה?</strong>',
+    tts: 'ליה ועילי שיחקו יחד בסלון. עילי עזר לליה לצבוע ציור של סטיץ׳ וחד קרן! במה עזר עילי לליה?',
+    ans: '🎨 לִצְבֹּעַ צִיּוּר שֶׁל סְטִיץ׳ וְחַד-קֶרֶן',
+    wrong: ['🚗 לִנְהֹג בִּמְכוֹנִית', '✈️ לְהָטִיס מָטוֹס', '🛒 לַעֲשׂוֹת קְנִיּוֹת בַּסּוּפֶּר'],
+    hint: 'עילי עזר לליה לצבוע ציור!'
+  },
+  {
     q: '🏛️ אֵיךְ כּוֹתְבִים נָכוֹן אֶת שֵׁם עִיר הַבִּירָה שֶׁלָּנוּ — <strong>יְרוּשָׁלַיִם</strong>?',
     tts: 'איך כותבים נכון את שם עיר הבירה שלנו, ירושלים?',
     ans: '🦁 יְרוּשָׁלַיִם',
@@ -733,6 +848,7 @@ const HEBREW_READING_BANK = [
 function genHebrewReading() {
   const item = HEBREW_READING_BANK[randInt(0, HEBREW_READING_BANK.length - 1)];
   return {
+    uniqueKey: `heb_read_${item.ans}`,
     isMulti: false,
     instruction: '📖 קְרִיאָה קְצָרָה וּבְרוּרָה (אֶפְשָׁר גַּם לְהַקְשִׁיב 🔊):',
     ttsText: item.tts,
@@ -2197,17 +2313,17 @@ const LIA_STITCH_ANIMALS = [
 ];
 
 const LIA_NUMBERS_FOOD = [
-  // Numbers 1-12
-  { eng: 'One', heb: '1️⃣ אַחַת (One)', hebShort: 'אַחַת (1)', emoji: '🦄 (1)', hint: 'One זה המספר 1!' },
-  { eng: 'Two', heb: '2️⃣ שְׁתַּיִם (Two)', hebShort: 'שְׁתַּיִם (2)', emoji: '💄💄 (2)', hint: 'Two זה המספר 2 (One, Two)!' },
-  { eng: 'Three', heb: '3️⃣ שָׁלוֹשׁ (Three)', hebShort: 'שָׁלוֹשׁ (3)', emoji: '👑👑👑 (3)', hint: 'Three זה המספר 3 (One, Two, Three)!' },
-  { eng: 'Four', heb: '4️⃣ אַרְבַּע (Four)', hebShort: 'אַרְבַּע (4)', emoji: '🦋🦋🦋🦋 (4)', hint: 'Four זה המספר 4!' },
-  { eng: 'Five', heb: '5️⃣ חָמֵשׁ (Five)', hebShort: 'חָמֵשׁ (5)', emoji: '⭐⭐⭐⭐⭐ (5)', hint: 'Five זה 5 אצבעות ביד (High Five ✋)!' },
-  { eng: 'Six', heb: '6️⃣ שֵׁשׁ (Six)', hebShort: 'שֵׁשׁ (6)', emoji: '🌸🌸🌸🌸🌸🌸 (6)', hint: 'Six זה המספר 6!' },
-  { eng: 'Seven', heb: '7️⃣ שֶׁבַע (Seven)', hebShort: 'שֶׁבַע (7)', emoji: '🌈 (7)', hint: 'Seven זה המספר 7 (כמו 7 צבעים בקשת)!' },
-  { eng: 'Eight', heb: '8️⃣ שְׁמוֹנֶה (Eight)', hebShort: 'שְׁמוֹנֶה (8)', emoji: '🐙 (8)', hint: 'Eight זה המספר 8!' },
-  { eng: 'Nine', heb: '9️⃣ תֵּשַׁע (Nine)', hebShort: 'תֵּשַׁע (9)', emoji: '🎈 (9)', hint: 'Nine זה המספר 9!' },
-  { eng: 'Ten', heb: '🔟 עֶשֶׂר (Ten)', hebShort: 'עֶשֶׂר (10)', emoji: '🙌 (10)', hint: 'Ten זה 10 אצבעות בשתי הידיים!' },
+  // Numbers 1-10 (with visual countable pictures so Lia can see and count without reading!)
+  { eng: 'One', heb: '🦄 1 — אַחַת (One / וַאן)', hebShort: 'אַחַת (1)', emoji: '🦄 (1)', hint: 'One (וַאן) זה המספר 1 — חד-קרן אחד!' },
+  { eng: 'Two', heb: '🦋🦋 2 — שְׁתַּיִם (Two / טוּ)', hebShort: 'שְׁתַּיִם (2)', emoji: '🦋🦋 (2)', hint: 'Two (טוּ) זה המספר 2 — שני פרפרים!' },
+  { eng: 'Three', heb: '👑👑👑 3 — שָׁלוֹשׁ (Three / תְ׳רִי)', hebShort: 'שָׁלוֹשׁ (3)', emoji: '👑👑👑 (3)', hint: 'Three (תְ׳רִי) זה המספר 3 — שלושה כתרים!' },
+  { eng: 'Four', heb: '🌸🌸🌸🌸 4 — אַרְבַּע (Four / פוֹר)', hebShort: 'אַרְבַּע (4)', emoji: '🌸🌸🌸🌸 (4)', hint: 'Four (פוֹר) זה המספר 4 — ארבעה פרחים!' },
+  { eng: 'Five', heb: '⭐⭐⭐⭐⭐ 5 — חָמֵשׁ (Five / פַייב)', hebShort: 'חָמֵשׁ (5)', emoji: '⭐⭐⭐⭐⭐ (5)', hint: 'Five (פַייב) זה 5 כוכבים ו-5 אצבעות ביד!' },
+  { eng: 'Six', heb: '🍓🍓🍓🍓🍓🍓 6 — שֵׁשׁ (Six / סִיקְס)', hebShort: 'שֵׁשׁ (6)', emoji: '🍓🍓🍓🍓🍓🍓 (6)', hint: 'Six (סִיקְס) זה המספר 6!' },
+  { eng: 'Seven', heb: '🌈 7 — שֶׁבַע (Seven / סֶבֶן)', hebShort: 'שֶׁבַע (7)', emoji: '🌈 (7)', hint: 'Seven (סֶבֶן) זה המספר 7 (כמו 7 צבעים בקשת)!' },
+  { eng: 'Eight', heb: '🐙 8 — שְׁמוֹנֶה (Eight / אֵייט)', hebShort: 'שְׁמוֹנֶה (8)', emoji: '🐙 (8)', hint: 'Eight (אֵייט) זה המספר 8 (כמו 8 זרועות של תמנון)!' },
+  { eng: 'Nine', heb: '🎈 9 — תֵּשַׁע (Nine / נַיין)', hebShort: 'תֵּשַׁע (9)', emoji: '🎈 (9)', hint: 'Nine (נַיין) זה המספר 9!' },
+  { eng: 'Ten', heb: '🙌 10 — עֶשֶׂר (Ten / טֶן)', hebShort: 'עֶשֶׂר (10)', emoji: '🙌 (10)', hint: 'Ten (טֶן) זה 10 אצבעות בשתי הידיים!' },
   // Treats, Fruits & Food (20)
   { eng: 'Ice Cream', heb: '🍦 גְּלִידָה (Ice Cream)', hebShort: 'גְּלִידָה', emoji: '🍦🍨', hint: 'Ice Cream היא גלידה מתוקה וצוננת!' },
   { eng: 'Cake', heb: '🎂 עוּגָה (Cake)', hebShort: 'עוּגָה', emoji: '🎂🍓', hint: 'Cake היא עוגת יום הולדת טעימה!' },
@@ -3107,6 +3223,439 @@ const TALKING_DICTIONARY_CATEGORIES = [
   }
 ];
 
+// ==================== NOAM INSTITUTE 2025 GIFTED CURRICULUM & SCAFFOLDED GENERATORS ====================
+
+const GIFTED_VERBAL_ANALOGIES_BANK = [
+  // Easy: Direct everyday connection (פעולות ואיברים מוכרים)
+  { pair1: 'לָעוּף : נַחְלִיאֵלִי', rel: 'תנועה אופיינית של בעל חיים', ans: 'לָרוּץ : אַרְיֵה', wrong: ['לִשְׁאֹג : אַרְיֵה', 'לָצוּד : אַרְיֵה', 'לֶאֱכֹל : אַרְיֵה'], diff: 'easy', hint: 'הנחליאלי נע בעזרת תעופה (לעוף). כיצד נע האריה ממקום למקום? בעזרת ריצה (לרוץ)!' },
+  { pair1: 'דָּג : סְנַפִּיר', rel: 'איבר תנועה', ans: 'צִפּוֹר : כָּנָף', wrong: ['צִפּוֹר : מַקּוֹר', 'צִפּוֹר : נוֹצָה', 'צִפּוֹר : קֵן'], diff: 'easy', hint: 'הסנפיר משמש את הדג לשחייה ותנועה במים, בדיוק כמו שהכנף משמשת את הציפור לעוף!' },
+  { pair1: 'סַכִּין : לַחְתֹּךְ', rel: 'כלי ותפקידו', ans: 'מִסְפָּרַיִם : לִגְזֹר', wrong: ['מִסְפָּרַיִם : מַחְבֶּרֶת', 'דֶּבֶק : לִכְתֹּב', 'עִפָּרוֹן : לִמְחֹק'], diff: 'easy', hint: 'הסכין נועד לחתוך דברים, ומספריים נועדו לגזור דברים!' },
+  { pair1: 'שֶׁמֶשׁ : יוֹם', rel: 'מופיע בזמן מסוים', ans: 'יָרֵחַ : לַיְלָה', wrong: ['עָנָן : גֶּשֶׁם', 'כּוֹכָב : בֹּקֶר', 'אֵשׁ : מַיִם'], diff: 'easy', hint: 'השמש מאירה בשמיים ביום, והירח מאיר בשמיים בלילה!' },
+
+  // Medium: Category, tool, and craftsman (כמו עמוד 11 ב-PDF!)
+  { pair1: 'אֲפֻדָּה : בֶּגֶד', rel: 'פריט והקבוצה/סוג שלו', ans: 'מַבְרֵג : כְּלִי עֲבוֹדָה', wrong: ['גּוּפִיָּה : קַיִץ', 'מִשְׁפָּחָה : בַּיִת', 'צֶמֶר : סְוֶדֶר'], diff: 'medium', hint: 'אפודה היא סוג של בגד, בדיוק כפי שמברג הוא סוג של כלי עבודה!' },
+  { pair1: 'אוֹפֶה : לֶחֶם', rel: 'בעל מקצוע והתוצר שהוא מייצר', ans: 'נַגָּר : שֻׁלְחָן', wrong: ['רוֹפֵא : תְּרוּפָה', 'צַיָּר : מִכְחוֹל', 'שׁוֹעֵר : כַּדּוּר'], diff: 'medium', hint: 'האופה יוצר ומכין לחם, והנגר יוצר ובונה שולחן מעץ!' },
+  { pair1: 'מוֹרֶה : בֵּית סֵפֶר', rel: 'בעל מקצוע ומקום עבודתו', ans: 'רוֹפֵא : בֵּית חוֹלִים', wrong: ['שַׂחְקָן : כַּדּוּר', 'טַיָּס : עֲנָנִים', 'טַבָּח : סַכִּין'], diff: 'medium', hint: 'המורה עובד בבית הספר, בדיוק כפי שהרופא עובד בבית החולים!' },
+  { pair1: 'סֵפֶר : דַּפִּים', rel: 'שלם וחלקיו', ans: 'בַּיִת : חֲדָרִים', wrong: ['מִטָּה : חֲלוֹם', 'רְחוֹב : עִיר', 'מְכוֹנִית : כְּבִישׁ'], diff: 'medium', hint: 'הספר מורכב מהרבה דפים, והבית מורכב מהרבה חדרים!' },
+
+  // Hard: Abstract relationships, degree of intensity & symbolic representation
+  { pair1: 'קַר : קָפוּא', rel: 'עוצמה ודרגה גבוהה', ans: 'חַם : לוֹהֵט', wrong: ['אָדֹם : אֵשׁ', 'מָתוֹק : מַר', 'קָטָן : רָחָב'], diff: 'hard', hint: 'קפוא זו דרגה חזקה וקיצונית ביותר של קר, בדיוק כמו שלוהט זו דרגה קיצונית ביותר של חם!' },
+  { pair1: 'מִשְׁקָפַיִם : רְאִיָּה', rel: 'אביזר עזר לחוש', ans: 'אָזְנִיּוֹת : שְׁמִיעָה', wrong: ['רַגְלַיִם : הֲלִיכָה', 'כּוֹבַע : שֵׂעָר', 'שָׁעוֹן : זְמַן'], diff: 'hard', hint: 'משקפיים מסייעים לחוש הראייה, ואוזניות/מכשיר שמיעה מסייעים לחוש השמיעה!' },
+  { pair1: 'מָטוֹס : שָׁמַיִם', rel: 'כלי תחבורה ותוואי תנועה', ans: 'צַוֶּלֶת : מַעֲמַקֵּי הַיָּם', wrong: ['מְכוֹנִית : גַּלְגַּל', 'רַכֶּבֶת : תַּחֲנָה', 'אֳנִיָּה : נָמָל'], diff: 'hard', hint: 'המטוס נע במרחב השמיים, והצוללת נעה במעמקי הים!' },
+  { pair1: 'שׁוֹפֵט : מַשְׁרוֹקִית', rel: 'בעל תפקיד וכלי הסמכות והניהול שלו', ans: 'קוֹסֵם : שַׁרְבִיט', wrong: ['חַיָּל : מַדִּים', 'מְנַהֵל : כִּסֵּא', 'שַׂחְקָן : נַעֲלַיִם'], diff: 'hard', hint: 'השופט מנהל את המשחק באמצעות המשרוקית, והקוסם עושה קסמים באמצעות השרביט!' }
+];
+
+const GIFTED_SENTENCE_COMPLETION_BANK = [
+  // Easy: Clear cause & effect
+  { q: 'לַמְרוֹת הַגֶּשֶׁם הַשּׁוֹטֵף שֶׁיָּרַד בַּחוּץ, הַיְּלָדִים ______ לְשַׂחֵק כַּדּוּרֶגֶל בַּמִּגְרָשׁ.', ans: 'הִמְשִׁיכוּ', wrong: ['הִפְסִיקוּ', 'נִבְהֲלוּ', 'שָׁכְחוּ'], diff: 'easy', hint: 'המילה "למרות" מסמנת ניגוד: הגשם לא עצר אותם, אלא הם המשיכו לשחק!' },
+  { q: 'כְּדֵי שֶׁהַפֶּרַח בָּעֲצִיץ יִצְמַח וְיִפְרַח, יֵשׁ לְהַקְפִּיד ______ אוֹתוֹ בְּאֹפֶן קָבוּעַ.', ans: 'לְהַשְׁקוֹת', wrong: ['לִקְטֹף', 'לְהַחְבִּיא', 'לְיַבֵּשׁ'], diff: 'easy', hint: 'צמחים זקוקים למים באופן קבוע כדי לצמוח ולפרוח!' },
+  { q: 'עִילַי הִתְכּוֹנֵן לַמִּבְחָן בְּמֶרֶץ רַב, וְלָכֵן הִצְלִיחַ לִפְתֹּר אֶת כָּל הַשְּׁאֵלוֹת ______.', ans: 'בְּקַלּוּת', wrong: ['בִּקְוֹשִׁי', 'בְּטָעוּת', 'לְאַט מְאֹד'], diff: 'easy', hint: 'מי שמתאמן ומתכונן היטב — מצליח לפתור בקלות ובביטחון!' },
+
+  // Medium: Like pages 11-12 in PDF!
+  { q: '______ אֶת מִטָּתִי לִפְנֵי שֶׁהָלַכְתִּי לְבֵית הַסֵּפֶר.', ans: 'הִצַּעְתִּי', wrong: ['הִלְבַּשְׁתִּי', 'יָשַׁנְתִּי', 'קַמְתִּי'], diff: 'medium', hint: 'בעברית תקנית אומרים: "להציע את המיטה" (לסדר את המצעים והכרית)!' },
+  { q: 'לִיהִי ______ לַחֲלֹק עִם חֲבֶרְתָּהּ אֶת הַכָּרִיךְ שֶׁהֵבִיאָה מִבֵּיתָהּ, מִשּׁוּם שֶׁהָיְתָה רְעֵבָה מְאֹד וּלְחַבְרָתָהּ הָיָה כָּרִיךְ מִשֶּׁלָּהּ.', ans: 'סֵרְבָה', wrong: ['הִסְכִּימָה', 'קֵרְבָה', 'רָצְתָה'], diff: 'medium', hint: 'ההסבר במשפט מבהיר: ליהי הייתה מאוד רעבה ולחברה כבר היה כריך, ולכן ליהי סירבה לחלוק!' },
+  { q: 'הַשּׁוֹפֵט שָׁרַק לְסִיּוּם הַמִּשְׂחָק לְאַחַר שֶׁהַשַּׂחְקָנִים ______ תִּשְׁעִים דַּקּוֹת שֶׁל מַאֲמָץ גָּדוֹל.', ans: 'הִשְׁלִימוּ', wrong: ['הִפְסִידוּ', 'הִתְחִילוּ', 'וִתְּרוּ'], diff: 'medium', hint: 'בסיום 90 הדקות, השחקנים השלימו את כל זמן המשחק!' },
+
+  // Hard: Nuanced context and logic
+  { q: 'אַף עַל פִּי שֶׁהַחִידָה הָיְתָה מֻרְכֶּבֶת, עִילַי לֹא אִבֵּד אֶת סַבְלָנוּתוֹ וְהִמְשִׁיךְ לְנַסּוֹת עַד שֶׁהִגִּיעַ לַפִּתְרוֹן ______.', ans: 'הַמְּדֻיָּק', wrong: ['הַמֻּטְעֶה', 'הַמְבֻלְבָּל', 'הַמְּהִיר מִדַּי'], diff: 'hard', hint: '"אף על פי" = למרות הקושי, עילי המשיך עד שהגיע לפתרון הנכון והמדויק!' },
+  { q: 'הַשּׁוֹעֵר קוּרְטוּאָה זִנֵּק לַכַּדּוּר בִּזְרִיזוּת מַפְתִּיעָה וְהִצְלִיחַ ______ גּוֹל בָּטוּחַ בַּשְּׁנִיָּה הָאַחֲרוֹנָה.', ans: 'לִמְנֹעַ', wrong: ['לְהַבְקִיעַ', 'לְהַרְשׁוֹת', 'לִשְׁכֹּחַ'], diff: 'hard', hint: 'תפקידו של שוער כדורגל הוא למנוע שערים ולעצור את הכדור!' }
+];
+
+const GIFTED_PICTURE_RIDDLES_BANK = [
+  // Easy: Single substitution
+  {
+    stim: '☀️ + ☀️ = 12<br>🧲 + ☀️ = 10',
+    target: '🧲',
+    tts: 'שמש ועוד שמש שווה שתים עשרה. פרסה ועוד שמש שווה עשר. מה הערך של הפרסה?',
+    ans: '4',
+    wrong: ['3', '5', '6'],
+    diff: 'easy',
+    hint: 'שלב 1: שתי שמשות שוות 12, לכן שמש אחת = 6. שלב 2: פרסה + 6 = 10, לכן פרסה = 10 פחות 6 = 4!'
+  },
+  {
+    stim: '⚽ + ⚽ = 16<br>👑 + ⚽ = 18',
+    target: '👑',
+    tts: 'כדור ועוד כדור שווה שש עשרה. כתר ועוד כדור שווה שמונה עשרה. מה הערך של הכתר?',
+    ans: '10',
+    wrong: ['8', '9', '12'],
+    diff: 'easy',
+    hint: 'כדור = 8 (כי 8+8=16). כתר ועוד 8 שווה 18, לכן כתר = 10!'
+  },
+
+  // Medium: Exact Noam 2025 PDF items (עמוד 4!)
+  {
+    stim: '☀️ + ☀️ = 10<br>🧲 + ☀️ = 13',
+    target: '🧲',
+    tts: 'שמש ועוד שמש שווה עשר. פרסה ועוד שמש שווה שלוש עשרה. איזה מספר מתאים לפרסה?',
+    ans: '8',
+    wrong: ['3', '5', '7'],
+    diff: 'medium',
+    hint: '💡 שיטת החשיבה: ☀️ + ☀️ = 10 ➔ שמש אחת שווה 5! מציבים בשורה השנייה: 🧲 + 5 = 13 ➔ 🧲 = 13 − 5 = 8!'
+  },
+  {
+    stim: '⚓ + ⭐ = 9<br>⚓ + ⭐ + 🔔 + ⚓ + ⭐ = 39',
+    target: '🔔',
+    tts: 'עוגן ועוד כוכב שווה תשע. עוגן ועוד כוכב ועוד פעמון ועוד עוגן ועוד כוכב שווה שלושים ותשע. מה הערך של הפעמון?',
+    ans: '21',
+    wrong: ['19', '16', '15'],
+    diff: 'medium',
+    hint: '💡 גאוני ופשוט: שימו לב ש-(⚓ + ⭐) מופיע פעמיים! 9 + 🔔 + 9 = 39 ➔ 18 + 🔔 = 39 ➔ 🔔 = 39 − 18 = 21!'
+  },
+
+  // Hard: Multi-digit symbol placement (עמוד 5 ב-PDF!)
+  {
+    stim: '☀️2 + 4☀️ = 64',
+    target: '☀️',
+    tts: 'שמש שתיים, ועוד ארבעים ושמש, שווה שישים וארבע. איזו ספרה מתאימה לסמל שמש?',
+    ans: '2',
+    wrong: ['1', '3', '4'],
+    diff: 'hard',
+    hint: '💡 בדיקת ספרת האחדות והעשרות: 2 + ☀️ נותן 4 בספרת האחדות, לכן ☀️ חייבת להיות 2! נבדוק: 22 + 42 = 64 בדיוק!'
+  },
+  {
+    stim: '🦁 + 🦁 + 🦁 = 24<br>🦁 + 🏆 = 18<br>🏆 + ⚡ = 15',
+    target: '⚡',
+    tts: 'שלושה אריות שווים עשרים וארבע. אריה ועוד גביע שווה שמונה עשרה. גביע ועוד ברק שווה חמש עשרה. מה הערך של ברק?',
+    ans: '5',
+    wrong: ['4', '6', '8'],
+    diff: 'hard',
+    hint: 'אריה = 8 (24 לחלק ל-3). גביע = 18 פחות 8 = 10. ברק = 15 פחות 10 = 5!'
+  }
+];
+
+const GIFTED_NUMBERS_SHAPES_BANK = [
+  // Easy: Circle relations
+  {
+    title: 'מַעְגָּל קִשְׁרֵי כֶּפֶל',
+    visual: 'מעגל א׳: [ 4 , 5 ➔ 20 ]<br>מעגל ב׳: [ ? , 6 ➔ 30 ]',
+    tts: 'במעגל הראשון: ארבע וחמש נותנים עשרים. במעגל השני: סימן שאלה ושש נותנים שלושים. מה המספר החסר?',
+    ans: '5',
+    wrong: ['4', '6', '7'],
+    diff: 'easy',
+    hint: 'החוקיות היא כפל של שני המספרים הקטנים: 4 × 5 = 20. לכן ? × 6 = 30 ➔ ? = 5!'
+  },
+
+  // Medium: Noam PDF Page 13 Question 1
+  {
+    title: 'מַעְגָּל שְׁלוֹשׁ גְּזָרוֹת (מִבְחַן נוֹעַם)',
+    visual: '<div style="font-size:1.15rem;font-weight:900;background:rgba(37,99,235,0.08);padding:10px;border-radius:12px;border:2px solid #3b82f6;">מעגל 1: למעלה 6 ו-18, למטה 3 (6 × 3 = 18)<br>מעגל 2: למעלה ? ו-12, למטה 4</div>',
+    tts: 'במעגל הראשון למעלה שש ושמונה עשרה ולמטה שלוש. במעגל השני למעלה סימן שאלה ושתים עשרה ולמטה ארבע. איזה מספר יכול להחליף את סימן השאלה?',
+    ans: '3',
+    wrong: ['6', '8', '4'],
+    diff: 'medium',
+    hint: '💡 שיטת החשיבה: 6 × 3 = 18 (או 18 לחלק ל-3 = 6). לכן במעגל השני: 12 לחלק ל-4 = 3!'
+  },
+
+  // Hard: Noam PDF Page 13 Question 2 (משולש חלוקה/פירמידה)
+  {
+    title: 'מְשֻׁלַּשׁ חֲלוּקָה (מִבְחַן נוֹעַם)',
+    visual: '<div style="font-size:1.1rem;font-weight:900;background:rgba(16,185,129,0.08);padding:10px;border-radius:12px;border:2px solid #10b981;">קודקוד עליון: 14<br>שורה אמצעית: ? ו- 8<br>שורה תחתונה: 1 , 5 , 3</div>',
+    tts: 'במשולש החלוקה: הקודקוד העליון הוא ארבע עשרה. בשורה האמצעית יש סימן שאלה ושמונה. בשורה התחתונה יש אחת, חמש, ושלוש. איזה מספר מחליף את סימן השאלה?',
+    ans: '6',
+    wrong: ['3', '5', '4'],
+    diff: 'hard',
+    hint: '💡 שיטת החשיבה: כל משבצת היא סכום שתי המשבצות שמתחתיה! בשורה התחתונה: 1 + 5 = 6 (המשבצת החסרה!), 5 + 3 = 8. ולמעלה: 6 + 8 = 14 בדיוק!'
+  }
+];
+
+const GIFTED_SHAPES_MATRIX_BANK = [
+  // Easy: Size / Rotation analogy
+  {
+    title: 'אַנָלוֹגְיָה צוּרָנִית פְּשׁוּטָה',
+    visual: 'עיגול לבן גדול ➔ עיגול שחור קטן<br>ריבוע לבן גדול ➔ ?',
+    tts: 'עיגול לבן גדול הופך לעיגול שחור קטן. למה יהפוך ריבוע לבן גדול?',
+    ans: '⬛ רִבּוּעַ שָׁחֹר קָטָן',
+    wrong: ['⬜ רִבּוּעַ לָבָן קָטָן', '⬛ רִבּוּעַ שָׁחֹר גָּדוֹל', '⚪ עִגּוּל שָׁחֹר קָטָן'],
+    diff: 'easy',
+    hint: 'החוקיות הכפולה: הצבע משתנה מלבן לשחור, והגודל קטן מגדול לקטן!'
+  },
+
+  // Medium: Noam PDF Page 14 (הסרת חלק מהצורה)
+  {
+    title: 'אַנָלוֹגְיַת הֶחְסֵר (מִבְחַן נוֹעַם עַמּוּד 14)',
+    visual: '<div style="font-size:1.05rem;background:rgba(245,158,11,0.08);padding:10px;border-radius:12px;border:2px solid #f59e0b;">משבצת עליונה: עיגול שחור שהוצא ממנו משולש ➔ מוצג המשולש השחור שהוצא.<br>משבצת תחתונה: ריבוע שחור שהוצא ממנו חץ שפונה ימינה ➔ מה יוצג?</div>',
+    tts: 'לצורות במשבצות העליונות קיימת חוקיות והתאמה. מה יתאים למשבצת התחתונה?',
+    ans: '➡️ חֵץ שָׁחֹר פּוֹנֶה יָמִינָה',
+    wrong: ['⬅️ חֵץ שָׁחֹר פּוֹנֶה שְׂמֹאלָה', '⬆️ חֵץ שָׁחֹר פּוֹנֶה לְמַעְלָה', '⬇️ חֵץ שָׁחֹר פּוֹנֶה לְמַטָּה'],
+    diff: 'medium',
+    hint: '💡 שיטת החשיבה: הצורה בצד שמאל מייצגת בדיוק את החלק שהוצא מהצורה הימנית! החלק שהוצא מהריבוע הוא חץ הפונה ימינה (תשובה ג׳ במבחן)!'
+  },
+
+  // Hard: Noam PDF Page 15 (תנועת משבצת שחורה ברשת 3x3)
+  {
+    title: 'סִדְרַת מִשְׁבָּצוֹת 3x3 (מִבְחַן נוֹעַם עַמּוּד 15)',
+    visual: '<div style="font-size:1.05rem;background:rgba(139,92,246,0.08);padding:10px;border-radius:12px;border:2px solid #8b5cf6;">רשת 3x3: הריבוע השחור נע שלב-אחר-שלב:<br>1. פינה ימנית תחתונה ➔ 2. אמצע תחתון ➔ 3. פינה שמאלית תחתונה ➔ 4. אמצע שמאלי ➔ מה הבא?</div>',
+    tts: 'הריבוע השחור נע ברשת של שלוש על שלוש. איפה יופיע הריבוע השחור בתמונה הבאה?',
+    ans: '↖️ פִּנָּה שְׂמָאלִית עֶלְיוֹנָה (תְּשׁוּבָה א׳)',
+    wrong: ['↗️ פִּנָּה יְמָנִית עֶלְיוֹנָה', '⏹️ אֶמְצַע עֶלְיוֹן', '⏹️ מֶרְכַּז הָרֶשֶׁת'],
+    diff: 'hard',
+    hint: '💡 שיטת החשיבה: עקבו אחרי המסלול של הריבוע השחור — הוא מטייל צעד אחד צעד על מסגרת הרשת בכיוון השעון! אחרי האמצע השמאלי, השלב הבא הוא הפינה השמאלית העליונה (תשובה א׳)!'
+  },
+
+  // Hard: Noam PDF Page 16 (השלמת שטיח חסר)
+  {
+    title: 'הַשְׁלָמַת חֲתִיכָה חֲסֵרָה בַּשָּׁטִיחַ (מִבְחַן נוֹעַם עַמּוּד 16)',
+    visual: '<div style="font-size:1.05rem;background:rgba(236,72,153,0.08);padding:10px;border-radius:12px;border:2px solid #ec4899;">שטיח מעוטר: דוגמת קשתות מעגליות וקווים אנכיים עם חור מרובע במרכז.<br>איזו חתיכה משלימה את המשך הקשתות והקווים במדויק?</div>',
+    tts: 'לפניכם שטיח שחסרה בו חתיכה. מהי החתיכה החסרה?',
+    ans: '🧩 חֲתִיכָה ד׳ (מַשְׁלִימָה אֶת הַקֶּשֶׁת וְהַקַּוִּים מִמַּטָּה לְמַעְלָה)',
+    wrong: ['חֲתִיכָה א׳', 'חֲתִיכָה ב׳', 'חֲתִיכָה ג׳'],
+    diff: 'hard',
+    hint: '💡 שיטת החשיבה: מתבוננים בקצוות החור המרובע — בפינה השמאלית העליונה של החור חייבת להמשיך קשת מעגלית כלפי מטה, ובתחתית קווים ישרים. החתיכה היחידה שמתחברת מכל 4 הכיוונים היא ד׳!'
+  }
+];
+
+const GIFTED_WORD_PROBLEMS_BANK = [
+  // Easy: Fair share & remainders
+  {
+    q: 'דָּנִי וְאִיתַי אוֹסְפִים בְּיַחַד מַדְבֵּקוֹת סוּפֶּרְגוֹל. דָּנִי הֵבִיא 13 מַדְבֵּקוֹת וְאִיתַי הֵבִיא 15 מַדְבֵּקוֹת.<br>הֵם הֶחְלִיטוּ לְחַלֵּק בֵּינֵיהֶם אֶת הָאֹסֶף בְּאֹפֶן שָׁוֶה.<br>כַּמָּה מַדְבֵּקוֹת לָקַח כָּל אֶחָד מֵהֶם?',
+    tts: 'דני ואיתי אוספים מדבקות. דני הביא שלוש עשרה ואיתי חמש עשרה. הם החליטו לחלק ביניהם שווה בשווה. כמה מדבקות לקח כל אחד?',
+    ans: '14 מַדְבֵּקוֹת',
+    wrong: ['28 מַדְבֵּקוֹת', '18 מַדְבֵּקוֹת', '9 מַדְבֵּקוֹת'],
+    diff: 'easy',
+    hint: '💡 שני שלבים קלים: 1. מחברים את הכל: 13 + 15 = 28 מדבקות. 2. מחלקים לשניים שווה בשווה: 28 לחלק ל-2 = 14 מדבקות לכל אחד!'
+  },
+  {
+    q: 'בְּסַלַּט יְרָקוֹת יֵשׁ בְּסַךְ הַכֹּל 10 יְרָקוֹת.<br>מִתּוֹכָם 4 עַגְבָנִיּוֹת, 3 מְלָפְפוֹנִים וְכָל הַשְּׁאָר גְּזָרִים.<br>כַּמָּה גְּזָרִים יֵשׁ בַּסָּלָט?',
+    tts: 'בסלט ירקות יש בסך הכל עשרה ירקות. מתוכם ארבע עגבניות, שלושה מלפפונים וכל השאר גזרים. כמה גזרים יש בסלט?',
+    ans: '3 גְּזָרִים',
+    wrong: ['4 גְּזָרִים', '7 גְּזָרִים', '10 גְּזָרִים'],
+    diff: 'easy',
+    hint: 'עגבניות ומלפפונים יחד: 4 + 3 = 7 ירקות. נשארו גזרים: 10 פחות 7 = 3 גזרים!'
+  },
+
+  // Medium: Multipliers (כפולות פי כמה - עמוד 2 ב-PDF!)
+  {
+    q: 'אֵיתָן קוֹלֵעַ 2 סַלִּים בַּמִּשְׂחָק.<br>יוֹנָתָן קוֹלֵעַ מִסְפָּר כָּפוּל שֶׁל סַלִּים מֵאֲשֶׁר אֵיתָן, וְרָוִיתַל קוֹלַעַת פִּי 3 סַלִּים מִיּוֹנָתָן.<br>כַּמָּה סַלִּים קוֹלַעַת רָוִיתַל בַּמִּשְׂחָק?',
+    tts: 'איתן קולע שני סלים. יונתן קולע מספר כפול של סלים מאיתן, ורוויתל קולעת פי שלוש סלים מיונתן. כמה סלים קולעת רוויתל?',
+    ans: '12 סַלִּים',
+    wrong: ['4 סַלִּים', '16 סַלִּים', '7 סַלִּים'],
+    diff: 'medium',
+    hint: '💡 שיטת החשיבה בשלבים: 1. איתן = 2 סלים. 2. יונתן קולע כפול (פי 2): 2 × 2 = 4 סלים. 3. רוויתל קולעת פי 3 מיונתן: 4 × 3 = 12 סלים!'
+  },
+  {
+    q: 'לִפְנֵי הַהַפְסָקָה הָרִאשׁוֹנָה בְּבֵית הַסֵּפֶר הָיוּ לְרוֹן 26 גּוֹגוֹאִים.<br>בַּהַפְסָקָה הָרִאשׁוֹנָה הִפְסִיד רוֹן 17 גּוֹגוֹאִים, אַךְ בַּהַפְסָקָה הַשְּׁנִיָּה הִרְוִיחַ 9 גּוֹגוֹאִים.<br>כַּמָּה גּוֹגוֹאִים נִשְׁאֲרוּ לְרוֹן בְּסוֹף הַהַפְסָקָה הַשְּׁנִיָּה?',
+    tts: 'לפני ההפסקה הראשונה היו לרון עשרים ושש גוגואים. בהפסקה הראשונה הפסיד שבע עשרה, אך בהפסקה השנייה הרוויח תשע. כמה גוגואים נשארו לו בסוף?',
+    ans: '18 גּוֹגוֹאִים',
+    wrong: ['9 גּוֹגוֹאִים', '21 גּוֹגוֹאִים', '22 גּוֹגוֹאִים'],
+    diff: 'medium',
+    hint: '💡 צעד אחר צעד: 26 פחות 17 שהפסיד = 9 גוגואים נשארו. בהפסקה השנייה הרוויח עוד 9: 9 + 9 = 18 גוגואים!'
+  },
+
+  // Hard: Rate, proportion and multi-step logic (עמוד 12 ב-PDF!)
+  {
+    q: 'רוֹנִי קוֹפֶצֶת בְּדִלְגִּית.<br>בְּ-5 שְׁנִיּוֹת רוֹנִי קוֹפֶצֶת 8 פְּעָמִים.<br>כַּמָּה פְּעָמִים תִּקְפֹּץ רוֹנִי בְּ-10 שְׁנִיּוֹת?',
+    tts: 'רוני קופצת בדלגית. בחמש שניות היא קופצת שמונה פעמים. כמה פעמים תקפוץ בעשר שניות?',
+    ans: '16 פְּעָמִים',
+    wrong: ['10 פְּעָמִים', '12 פְּעָמִים', '50 פְּעָמִים'],
+    diff: 'hard',
+    hint: '💡 שיטת היחס: 10 שניות זה פי 2 מחמש שניות! לכן אם הזמן הוכפל פי 2, גם מספר הקפיצות יוכפל פי 2: 8 × 2 = 16 פעמים!'
+  },
+  {
+    q: 'בְּאִמּוּן בֵּיתָ"ר יְרוּשָׁלַיִם הָיוּ 24 כַּדּוּרִים עַל הַדֶּשֶׁא.<br>חֲצִי מֵהַכַּדּוּרִים צְהֻבִּים (12), רֶבַע לְבָנִים (6) וְכָל הַשְּׁאָר שְׁחוֹרִים.<br>כַּמָּה כַּדּוּרִים שְׁחוֹרִים יֵשׁ עַל הַדֶּשֶׁא?',
+    tts: 'באימון ביתר היו עשרים וארבעה כדורים. חצי מהכדורים צהובים, רבע לבנים וכל השאר שחורים. כמה כדורים שחורים יש?',
+    ans: '6 כַּדּוּרִים',
+    wrong: ['4 כַּדּוּרִים', '8 כַּדּוּרִים', '12 כַּדּוּרִים'],
+    diff: 'hard',
+    hint: 'חצי מ-24 זה 12. רבע מ-24 זה 6. יחד צהובים ולבנים: 12 + 6 = 18. שחורים שנותרו: 24 פחות 18 = 6 כדורים!'
+  }
+];
+
+const GIFTED_READING_COMP_BANK = [
+  {
+    q: 'מָה אֶפְשָׁר לִלְמֹד עַל נִזְקֵי חֹסֶר שֵׁנָה מִקֶּטַע הַקְּרִיאָה בַּמִּבְחָן (שׁוּרוֹת 4-8)?',
+    tts: 'מה אפשר ללמוד על נזקי חוסר שינה מקטע הקריאה במבחן?',
+    ans: 'אֵלּוּ נְזָקִים קוֹרִים כַּאֲשֶׁר אֵין יְשֵׁנִים מַסְפִּיק בַּלַּיְלָה (עַצְבָּנוּת וּמַעֲרֶכֶת חִסּוּן חַלָּשָׁה)',
+    wrong: [
+      'אֵלּוּ חֳמָרִים מֻפְרָשִׁים בַּגּוּף בִּזְמַן שֶׁיְּשֵׁנִים',
+      'כֵּיצַד אֶפְשָׁר לְהַחְלִים בִּמְהִירוּת מִמַּחֲלוֹת',
+      'כֵּיצַד הַמֵּידָע שֶׁקָּלַטְנוּ נִשְׁמָר בַּזִּכָּרוֹן'
+    ],
+    diff: 'medium',
+    hint: 'בשורות 4-8 מתוארים הנזקים של חוסר שינה: עצבנות, עקשנות, היחלשות מערכת החיסון ופגיעה בריכוז!'
+  },
+  {
+    q: 'אֵיזוֹ מִלָּה יְכוֹלָה לְהַחְלִיף בַּקֶּטַע אֶת הַמִּלָּה <strong>"שְׂלֵוָה"</strong> (שׁוּרָה 13: "יְצִירַת אֲוִירָה שְׂלֵוָה")?',
+    tts: 'איזו מילה יכולה להחליף בקטע את המילה שלווה?',
+    ans: 'רְגוּעָה',
+    wrong: ['אֲדִישָׁה', 'מְעַיֶּפֶת', 'חֲשׁוּכָה'],
+    diff: 'medium',
+    hint: 'אווירה שלווה היא אווירה רגועה, שקטה ונעימה שמסייעת להירדם!'
+  },
+  {
+    q: 'כְּדֵי לְהֵרָדֵם בְּקַלּוּת וְלִישֹׁן הֵיטֵב בַּלַּיְלָה, כְּדַאי לִילָדִים...',
+    tts: 'כדי להירדם בקלות ולישון היטב בלילה, מה כדאי לעשות?',
+    ans: 'לְהִשְׁתַּתֵּף בִּפְעִילוּת סְפּוֹרְטִיבִית (כְּמוֹ כַּדּוּרֶגֶל אוֹ רְכִיבָה) בְּמֶשֶׁךְ הַיּוֹם',
+    wrong: [
+      'לֶאֱכֹל שׁוֹקוֹלָד וְלִשְׁתּוֹת קוֹלָה לִפְנֵי הַשֵּׁנָה',
+      'לִצְפּוֹת בְּסֶרֶט מַפְחִיד וּמְלַחֵץ בַּטֵּלֵוִיזְיָה',
+      'לָלֶכֶת לִישֹׁן בְּכָל יוֹם בְּשָׁעָה אַחֶרֶת לְגַמְרֵי'
+    ],
+    diff: 'medium',
+    hint: 'הקטע מסביר: פעילות ספורטיבית במשך היום מסייעת להירדמות מהירה, בעוד שוקולד וקולה מעוררים ומפריעים!'
+  }
+];
+
+function genGiftedPictureRiddles(diff = 'medium') {
+  const pool = GIFTED_PICTURE_RIDDLES_BANK.filter(x => diff === 'easy' ? x.diff === 'easy' : diff === 'hard' ? x.diff === 'hard' : true);
+  const item = (pool.length > 0 ? pool : GIFTED_PICTURE_RIDDLES_BANK)[randInt(0, (pool.length > 0 ? pool : GIFTED_PICTURE_RIDDLES_BANK).length - 1)];
+  return {
+    uniqueKey: `gifted_riddle_${item.target}_${item.ans}`,
+    isMulti: false,
+    instruction: `🧩 מִבְחַן מְחֻנָּנִים: אֵיזֶה מִסְפָּר מַתְאִים לַסֵּמֶל <strong>${item.target}</strong>?`,
+    ttsText: item.tts,
+    stimulusHtml: `
+      <div style="background:linear-gradient(135deg,#eff6ff,#f8fafc);border:3px solid #3b82f6;border-radius:18px;padding:14px;text-align:center;">
+        <div style="font-size:1.85rem;font-weight:900;color:#1e3a8a;line-height:1.6;margin-bottom:6px;">${item.stim}</div>
+        <div style="font-size:1.2rem;font-weight:900;color:#2563eb;">מַהוּ הָעֵרֶךְ שֶׁל <strong>${item.target}</strong>?</div>
+      </div>
+    `,
+    rtlStimulus: false,
+    options: shuffle([item.ans, ...item.wrong]),
+    correctAnswers: [item.ans],
+    hint: item.hint
+  };
+}
+
+function genGiftedVerbalAnalogies(diff = 'medium') {
+  const pool = GIFTED_VERBAL_ANALOGIES_BANK.filter(x => diff === 'easy' ? x.diff === 'easy' : diff === 'hard' ? x.diff === 'hard' : true);
+  const item = (pool.length > 0 ? pool : GIFTED_VERBAL_ANALOGIES_BANK)[randInt(0, (pool.length > 0 ? pool : GIFTED_VERBAL_ANALOGIES_BANK).length - 1)];
+  return {
+    uniqueKey: `gifted_analog_${item.pair1}`,
+    isMulti: false,
+    instruction: `🔄 מִבְחַן מְחֻנָּנִים • יַחֲסֵי מִלִּים (שָׁלָב ב׳): מִצְאוּ אֶת הַקֶּשֶׁר הַדּוֹמֶה:`,
+    ttsText: `עילי, מצא את הזוג בעל הקשר הדומה ביותר לקשר בין: ${item.pair1}`,
+    stimulusHtml: `
+      <div style="background:linear-gradient(135deg,#fefce8,#fef9c3);border:3px solid #eab308;border-radius:18px;padding:14px;text-align:center;">
+        <div style="font-size:1.95rem;font-weight:900;color:#854d0e;margin-bottom:6px;">${item.pair1}</div>
+        <div style="font-size:1.05rem;font-weight:800;color:#713f12;">אֵיזֶה זוּג מִלִּים מְקַיֵּם אֶת אוֹתוֹ הַקֶּשֶׁר?</div>
+      </div>
+    `,
+    rtlStimulus: true,
+    options: shuffle([item.ans, ...item.wrong]),
+    correctAnswers: [item.ans],
+    hint: `💡 הקשר בין המילים: ${item.rel}. ${item.hint}`
+  };
+}
+
+function genGiftedSentenceCompletion(diff = 'medium') {
+  const pool = GIFTED_SENTENCE_COMPLETION_BANK.filter(x => diff === 'easy' ? x.diff === 'easy' : diff === 'hard' ? x.diff === 'hard' : true);
+  const item = (pool.length > 0 ? pool : GIFTED_SENTENCE_COMPLETION_BANK)[randInt(0, (pool.length > 0 ? pool : GIFTED_SENTENCE_COMPLETION_BANK).length - 1)];
+  return {
+    uniqueKey: `gifted_sent_${item.ans}`,
+    isMulti: false,
+    instruction: `✏️ הַשְׁלָמַת מִשְׁפָּטִים בְּהֶקְשֵׁר לוֹגִי (שָׁלָב ב׳):`,
+    ttsText: `השלימו את המשפט בצורה הטובה ביותר: ${item.q.replace(/<[^>]*>/g, '')}`,
+    stimulusHtml: `
+      <div style="background:#f8fafc;border:2px solid #64748b;border-radius:16px;padding:14px;text-align:right;direction:rtl;line-height:1.65;font-size:1.25rem;font-weight:800;color:#0f172a;">
+        ${item.q}
+      </div>
+    `,
+    rtlStimulus: true,
+    options: shuffle([item.ans, ...item.wrong]),
+    correctAnswers: [item.ans],
+    hint: item.hint
+  };
+}
+
+function genGiftedWordProblems(diff = 'medium') {
+  const pool = GIFTED_WORD_PROBLEMS_BANK.filter(x => diff === 'easy' ? x.diff === 'easy' : diff === 'hard' ? x.diff === 'hard' : true);
+  const item = (pool.length > 0 ? pool : GIFTED_WORD_PROBLEMS_BANK)[randInt(0, (pool.length > 0 ? pool : GIFTED_WORD_PROBLEMS_BANK).length - 1)];
+  return {
+    uniqueKey: `gifted_prob_${item.ans}`,
+    isMulti: false,
+    instruction: `🧮 בְּעָיָה מִלּוּלִית לִמְחֻנָּנִים (שָׁלָב א׳ + ב׳):`,
+    ttsText: item.tts,
+    stimulusHtml: `
+      <div style="background:#f0fdf4;border:2px solid #22c55e;border-radius:16px;padding:14px;text-align:right;direction:rtl;line-height:1.65;font-size:1.25rem;font-weight:800;color:#14532d;">
+        ${item.q}
+      </div>
+    `,
+    rtlStimulus: true,
+    options: shuffle([item.ans, ...item.wrong]),
+    correctAnswers: [item.ans],
+    hint: item.hint
+  };
+}
+
+function genGiftedNumbersShapes(diff = 'medium') {
+  const pool = GIFTED_NUMBERS_SHAPES_BANK.filter(x => diff === 'easy' ? x.diff === 'easy' : diff === 'hard' ? x.diff === 'hard' : true);
+  const item = (pool.length > 0 ? pool : GIFTED_NUMBERS_SHAPES_BANK)[randInt(0, (pool.length > 0 ? pool : GIFTED_NUMBERS_SHAPES_BANK).length - 1)];
+  return {
+    uniqueKey: `gifted_numshapes_${item.ans}`,
+    isMulti: false,
+    instruction: `🔢 מִסְפָּרִים בְּצוּרוֹת וּפִירָמִידוֹת (שָׁלָב ב׳):`,
+    ttsText: item.tts,
+    stimulusHtml: `
+      <div style="text-align:center;padding:10px;">
+        <div style="font-size:1.15rem;font-weight:900;color:#1e3a8a;margin-bottom:8px;">${item.title}</div>
+        <div>${item.visual}</div>
+      </div>
+    `,
+    rtlStimulus: true,
+    options: shuffle([item.ans, ...item.wrong]),
+    correctAnswers: [item.ans],
+    hint: item.hint
+  };
+}
+
+function genGiftedShapesMatrix(diff = 'medium') {
+  const pool = GIFTED_SHAPES_MATRIX_BANK.filter(x => diff === 'easy' ? x.diff === 'easy' : diff === 'hard' ? x.diff === 'hard' : true);
+  const item = (pool.length > 0 ? pool : GIFTED_SHAPES_MATRIX_BANK)[randInt(0, (pool.length > 0 ? pool : GIFTED_SHAPES_MATRIX_BANK).length - 1)];
+  return {
+    uniqueKey: `gifted_matrix_${item.ans}`,
+    isMulti: false,
+    instruction: `📐 חֲשִׁיבָה צוּרָנִית, מַטְרִיצוֹת וְהַשְׁלָמַת שָׁטִיחַ (שָׁלָב ב׳):`,
+    ttsText: item.tts,
+    stimulusHtml: `
+      <div style="text-align:center;padding:10px;">
+        <div style="font-size:1.15rem;font-weight:900;color:#6b21a8;margin-bottom:8px;">${item.title}</div>
+        <div>${item.visual}</div>
+      </div>
+    `,
+    rtlStimulus: true,
+    options: shuffle([item.ans, ...item.wrong]),
+    correctAnswers: [item.ans],
+    hint: item.hint
+  };
+}
+
+function genGiftedReadingComp(diff = 'medium') {
+  const item = GIFTED_READING_COMP_BANK[randInt(0, GIFTED_READING_COMP_BANK.length - 1)];
+  return {
+    uniqueKey: `gifted_read_${item.ans}`,
+    isMulti: false,
+    instruction: `📖 הֲבָנַת הַנִּקְרָא מְחֻנָּנִים (שָׁלָב א׳ - מִבְחַן שֵׁנָה וּבְרִיאוּת):`,
+    ttsText: item.tts,
+    stimulusHtml: `
+      <div style="background:#fffbeb;border:2px solid #f59e0b;border-radius:16px;padding:14px;text-align:right;direction:rtl;line-height:1.6;font-size:1.25rem;font-weight:800;color:#78350f;">
+        ${item.q}
+      </div>
+    `,
+    rtlStimulus: true,
+    options: shuffle([item.ans, ...item.wrong]),
+    correctAnswers: [item.ans],
+    hint: item.hint
+  };
+}
+
+function genGiftedStageA(diff = 'medium') {
+  // Comprehensive Stage A mix: word problems, inequalities, missing ops, picture riddles, reading
+  const pick = randInt(1, 4);
+  if (pick === 1) return genGiftedPictureRiddles(diff);
+  if (pick === 2) return genGiftedWordProblems(diff);
+  if (pick === 3) return genInequalities(diff);
+  return genGiftedReadingComp(diff);
+}
+
+function genGiftedStageB(diff = 'medium') {
+  // Comprehensive Stage B mix: verbal analogies, sentence completion, shapes matrix, numbers in shapes
+  const pick = randInt(1, 4);
+  if (pick === 1) return genGiftedVerbalAnalogies(diff);
+  if (pick === 2) return genGiftedSentenceCompletion(diff);
+  if (pick === 3) return genGiftedShapesMatrix(diff);
+  return genGiftedNumbersShapes(diff);
+}
+
 const LIA_SCIENCE_BANK = [
   {
     q: 'מָה מוֹפִיעַ בַּשָּׁמַיִם כְּשֶׁיֵּשׁ שֶׁמֶשׁ ☀️ וְגֶשֶׁם 🌧️ בְּיַחַד?',
@@ -3326,6 +3875,16 @@ function generateQuestionForTopic(topicId, diff = 'medium', customQuestions = []
     case 'science_how_it_works':       q = genScienceHowItWorks(diff); break;
     case 'science_nature_experiments': q = genScienceNature(diff); break;
     case 'logic_series':      q = genLogicSeries(diff); break;
+    // Gifted Academy Topics (Noam & Karni 2025):
+    case 'gifted_stage_a':             q = genGiftedStageA(diff); break;
+    case 'gifted_stage_b':             q = genGiftedStageB(diff); break;
+    case 'gifted_picture_riddles':     q = genGiftedPictureRiddles(diff); break;
+    case 'gifted_verbal_analogies':    q = genGiftedVerbalAnalogies(diff); break;
+    case 'gifted_sentence_completion': q = genGiftedSentenceCompletion(diff); break;
+    case 'gifted_word_problems':       q = genGiftedWordProblems(diff); break;
+    case 'gifted_numbers_shapes':      q = genGiftedNumbersShapes(diff); break;
+    case 'gifted_shapes_matrix':       q = genGiftedShapesMatrix(diff); break;
+    case 'gifted_reading_comp':        q = genGiftedReadingComp(diff); break;
     // Lia's Kindergarten & English Topics:
     case 'lia_english_mix':            q = buildLiaEnglishQuestion(LIA_ALL_ENGLISH_WORDS, '🦄 מִיקְס אַנְגְּלִית עִם סְטִיץ׳ וְחַד-קֶרֶן', diff); break;
     case 'lia_english_colors_glam':    q = buildLiaEnglishQuestion(LIA_GLAM_WORDS, '💄 צְבָעִים, אִיפּוּר וּנְסִיכוֹת בְּאַנְגְּלִית', diff); break;

@@ -798,6 +798,7 @@ function switchView(viewName) {
   if (viewName === 'dictionary') initTalkingDictionary();
   if (viewName === 'coloring') initColoringStudio();
   if (viewName === 'dressup') initDressUpStudio();
+  if (viewName === 'soccer') initSoccerHub();
   updateHeaderUI();
 }
 
@@ -805,11 +806,11 @@ function switchView(viewName) {
 
 function getTopicMasteryLevelInfo(correctCount = 0) {
   // Smooth, motivating 5-level mastery progression
-  if (correctCount >= 32) return { level: 5, label: 'רמה 5: מאסטר על 👑', pct: 100, color: '#eab308' };
-  if (correctCount >= 22) return { level: 4, label: 'רמה 4: אלוף אירופה 🏆', pct: Math.round(((correctCount - 22) / 10) * 100), color: '#8b5cf6' };
-  if (correctCount >= 13) return { level: 3, label: 'רמה 3: כוכב ליגה 🌟', pct: Math.round(((correctCount - 13) / 9) * 100), color: '#0284c7' };
-  if (correctCount >= 6) return { level: 2, label: 'רמה 2: מתקדמים ⚡', pct: Math.round(((correctCount - 6) / 7) * 100), color: '#10b981' };
-  return { level: 1, label: 'רמה 1: מתחילים 🌱', pct: Math.round((correctCount / 6) * 100), color: '#64748b' };
+  if (correctCount >= 32) return { level: 5, badge: '👑 מאסטר על', label: 'רמה 5: מאסטר על 👑', pct: 100, color: '#eab308' };
+  if (correctCount >= 22) return { level: 4, badge: '🏆 אלוף אירופה', label: 'רמה 4: אלוף אירופה 🏆', pct: Math.round(((correctCount - 22) / 10) * 100), color: '#8b5cf6' };
+  if (correctCount >= 13) return { level: 3, badge: '🌟 כוכב ליגה', label: 'רמה 3: כוכב ליגה 🌟', pct: Math.round(((correctCount - 13) / 9) * 100), color: '#0284c7' };
+  if (correctCount >= 6) return { level: 2, badge: '⚡ מתקדמים', label: 'רמה 2: מתקדמים ⚡', pct: Math.round(((correctCount - 6) / 7) * 100), color: '#10b981' };
+  return { level: 1, badge: '🌱 מתחילים', label: 'רמה 1: מתחילים 🌱', pct: Math.round((correctCount / 6) * 100), color: '#64748b' };
 }
 
 function renderTopicsGrid() {
@@ -1805,7 +1806,7 @@ function startMatch(topicId, topicTitle, isDailyBonus = false) {
 
   document.getElementById('arena-topic-title').textContent = isDailyBonus
     ? (lia ? '🦄 מסיבת הקסמים של ליה (בונוס X2)' : '⚡ משחק העונה (בונוס X2)')
-    : `${topicTitle} • רמה ${masteryInfo.level} ${masteryInfo.badge.split(' ')[0]}`;
+    : `${topicTitle} • רמה ${masteryInfo.level} ${(masteryInfo.badge || masteryInfo.label || '').split(' ')[0]}`;
 
   const fc27GuideBtn = document.getElementById('btn-arena-open-fc27-guide');
   if (fc27GuideBtn) {
@@ -4913,7 +4914,7 @@ function renderTalkingDictionary() {
   let items = [];
   TALKING_DICTIONARY_CATEGORIES.forEach(cat => {
     if (talkingDictState.catId !== 'all' && talkingDictState.catId !== cat.id) return;
-    cat.words.forEach(w => {
+    (cat.items || cat.words || []).forEach(w => {
       if (!q || w.eng.toLowerCase().includes(q) || w.heb.includes(q) || w.sentEng.toLowerCase().includes(q) || w.sentHeb.includes(q)) {
         items.push({ ...w, catTitle: cat.title });
       }
@@ -5349,3 +5350,456 @@ function setupDressUpStudioListeners() {
     });
   }
 }
+
+// ==================== VIEW 17: SOCCER HUB CONTROLLER (BEITAR & REAL MADRID HIGHLIGHTS, FIXTURES & STANDINGS) ====================
+
+const SOCCER_HUB_DEFAULT_HIGHLIGHTS = [
+  // Beitar Jerusalem Highlights
+  {
+    id: 'btr_mta_3_2',
+    team: 'beitar',
+    title: 'בית"ר ירושלים 3 - 2 מכבי תל אביב (טדי בטירוף!)',
+    desc: 'שערים של ירדן שועה, סילבה קאני ומרסלן מול 30,000 צהובים-שחורים בטדי!',
+    competition: 'ליגת העל 2024/25 • מחזור 8',
+    date: '28/10/2024',
+    embedId: '5F_P5_Kx8tA',
+    url: 'https://www.youtube.com/watch?v=5F_P5_Kx8tA',
+    badge: '🦁 בית"ר ירושלים',
+    score: '3 - 2'
+  },
+  {
+    id: 'btr_hha_1_0',
+    team: 'beitar',
+    title: 'הפועל חיפה 0 - 1 בית"ר ירושלים',
+    desc: 'סילבה קאני מפציץ שער ניצחון דרמטי בדקה ה-89 בסמי עופר!',
+    competition: 'ליגת העל 2024/25 • מחזור 9',
+    date: '04/11/2024',
+    embedId: 'sF9f_j-d9rM',
+    url: 'https://www.youtube.com/watch?v=sF9f_j-d9rM',
+    badge: '🦁 בית"ר ירושלים',
+    score: '1 - 0'
+  },
+  {
+    id: 'btr_had_4_0',
+    team: 'beitar',
+    title: 'בית"ר ירושלים 4 - 0 הפועל חדרה',
+    desc: 'הצגת ענק בטדי! שלושער בישולים של ירדן שועה ושערים של עדי יונה וטוואמסי!',
+    competition: 'ליגת העל 2024/25 • מחזור 7',
+    date: '21/10/2024',
+    embedId: 'm4VjYp7u3Xw',
+    url: 'https://www.youtube.com/watch?v=m4VjYp7u3Xw',
+    badge: '🦁 בית"ר ירושלים',
+    score: '4 - 0'
+  },
+  {
+    id: 'btr_net_2_1',
+    team: 'beitar',
+    title: 'מכבי נתניה 1 - 2 בית"ר ירושלים',
+    desc: 'מהפך אדיר של בית"ר בנתניה עם שער שוויון של מוזי ושער ניצחון של שועה!',
+    competition: 'ליגת העל 2024/25 • מחזור 5',
+    date: '30/09/2024',
+    embedId: 'aK_B7tN2mXo',
+    url: 'https://www.youtube.com/watch?v=aK_B7tN2mXo',
+    badge: '🦁 בית"ר ירושלים',
+    score: '2 - 1'
+  },
+
+  // Real Madrid Highlights
+  {
+    id: 'rma_osa_4_0',
+    team: 'real',
+    title: 'ריאל מדריד 4 - 0 אוסאסונה (שלושער לויניסיוס!)',
+    desc: 'שלושער פנומנלי של ויניסיוס ג׳וניור ושער מבריק של ג׳וד בלינגהאם בסנטיאגו ברנבאו!',
+    competition: 'LaLiga EA SPORTS • מחזור 13',
+    date: '09/11/2024',
+    embedId: 'vC_K5mQx9zY',
+    url: 'https://www.youtube.com/watch?v=vC_K5mQx9zY',
+    badge: '👑 ריאל מדריד',
+    score: '4 - 0'
+  },
+  {
+    id: 'rma_bvb_5_2',
+    team: 'real',
+    title: 'ריאל מדריד 5 - 2 בורוסיה דורטמונד (מהפך ענק!)',
+    desc: 'ליגת האלופות! פיגור 0:2 במחצית נמחק עם 5 שערים במחצית השנייה ושלושער של ויניסיוס!',
+    competition: 'UEFA Champions League • שלב הליגה',
+    date: '22/10/2024',
+    embedId: 'h7N_B8jZ2pE',
+    url: 'https://www.youtube.com/watch?v=h7N_B8jZ2pE',
+    badge: '👑 ריאל מדריד',
+    score: '5 - 2'
+  },
+  {
+    id: 'rma_vig_2_1',
+    team: 'real',
+    title: 'סלטה ויגו 1 - 2 ריאל מדריד',
+    desc: 'פצצה מדהימה של קיליאן אמבפה לחיבורים ובישול גאוני של לוקה מודריץ׳ לויניסיוס!',
+    competition: 'LaLiga EA SPORTS • מחזור 10',
+    date: '19/10/2024',
+    embedId: 'mE7_jK4kX9r',
+    url: 'https://www.youtube.com/watch?v=mE7_jK4kX9r',
+    badge: '👑 ריאל מדריד',
+    score: '2 - 1'
+  },
+  {
+    id: 'rma_vfb_3_1',
+    team: 'real',
+    title: 'ריאל מדריד 3 - 1 שטוטגרט (ליגת האלופות)',
+    desc: 'שער בכורה של אמבפה בליגת האלופות עם ריאל ושער טיל מרהיב של אנריק בן ה-18!',
+    competition: 'UEFA Champions League • מחזור 1',
+    date: '17/09/2024',
+    embedId: 'yK8_mN9p2xL',
+    url: 'https://www.youtube.com/watch?v=yK8_mN9p2xL',
+    badge: '👑 ריאל מדריד',
+    score: '3 - 1'
+  }
+];
+
+const SOCCER_HUB_FIXTURES = {
+  results: [
+    { team: 'beitar', opp: 'הפועל חיפה', score: '1 - 0', res: 'win', comp: 'ליגת העל', date: '04/11', scorers: 'סילבה קאני (89\')', loc: 'חוץ' },
+    { team: 'beitar', opp: 'מכבי תל אביב', score: '3 - 2', res: 'win', comp: 'ליגת העל', date: '28/10', scorers: 'שועה (42\'), קאני (65\'), מרסלן (85\')', loc: 'טדי' },
+    { team: 'beitar', opp: 'מכבי בני ריינה', score: '2 - 0', res: 'win', comp: 'ליגת העל', date: '25/10', scorers: 'טוואמסי, מוזי', loc: 'טדי' },
+    { team: 'real', opp: 'אוסאסונה', score: '4 - 0', res: 'win', comp: 'LaLiga', date: '09/11', scorers: 'ויניסיוס (34\', 61\', 69\'), בלינגהאם (42\')', loc: 'ברנבאו' },
+    { team: 'real', opp: 'בורוסיה דורטמונד', score: '5 - 2', res: 'win', comp: 'צ\'מפיונס ליג', date: '22/10', scorers: 'רודיגר, לוקאס, ויניסיוס (3)', loc: 'ברנבאו' },
+    { team: 'real', opp: 'סלטה ויגו', score: '2 - 1', res: 'win', comp: 'LaLiga', date: '19/10', scorers: 'אמבפה (20\'), ויניסיוס (66\')', loc: 'חוץ' }
+  ],
+  upcoming: [
+    { team: 'beitar', opp: 'מכבי חיפה', comp: 'ליגת העל • משחק העונה', date: 'יום שני, 25/11 • 20:30', loc: 'אצטדיון טדי, ירושלים 🦁', broadcast: 'שידור ישיר: ספורט 5 (ערוץ 55)' },
+    { team: 'beitar', opp: 'הפועל ירושלים', comp: 'הדרבי הירושלמי הגדול', date: 'יום שבת, 30/11 • 19:30', loc: 'אצטדיון טדי 🏟️', broadcast: 'שידור ישיר: ספורט 1' },
+    { team: 'real', opp: 'ליברפול', comp: 'ליגת האלופות • מחזור 5', date: 'יום רביעי, 27/11 • 22:00', loc: 'אצטדיון אנפילד 👑', broadcast: 'שידור ישיר: ערוץ 5SPORT' },
+    { team: 'real', opp: 'חטאפה', comp: 'LaLiga • מחזור 15', date: 'יום ראשון, 01/12 • 17:15', loc: 'סנטיאגו ברנבאו 🏟️', broadcast: 'שידור ישיר: ONE' }
+  ]
+};
+
+const SOCCER_HUB_STANDINGS = {
+  ligat_haal: {
+    title: '🇮🇱 טבלת ליגת העל (צמרת הליגה)',
+    rows: [
+      { pos: 1, name: 'בית"ר ירושלים 🦁', p: 9, w: 7, d: 1, l: 1, gf: 21, ga: 10, pts: 22, highlight: true },
+      { pos: 2, name: 'מכבי תל אביב', p: 9, w: 7, d: 1, l: 1, gf: 18, ga: 7, pts: 22, highlight: false },
+      { pos: 3, name: 'מכבי חיפה', p: 9, w: 6, d: 2, l: 1, gf: 22, ga: 9, pts: 20, highlight: false },
+      { pos: 4, name: 'הפועל באר שבע', p: 9, w: 6, d: 2, l: 1, gf: 17, ga: 7, pts: 18, highlight: false }
+    ]
+  },
+  laliga: {
+    title: '🇪🇸 טבלת הליגה הספרדית (LaLiga EA SPORTS)',
+    rows: [
+      { pos: 1, name: 'ברצלונה', p: 13, w: 11, d: 0, l: 2, gf: 40, ga: 12, pts: 33, highlight: false },
+      { pos: 2, name: 'ריאל מדריד 👑', p: 12, w: 8, d: 3, l: 1, gf: 25, ga: 11, pts: 27, highlight: true },
+      { pos: 3, name: 'אתלטיקו מדריד', p: 13, w: 7, d: 5, l: 1, gf: 19, ga: 7, pts: 26, highlight: false },
+      { pos: 4, name: 'ויאריאל', p: 12, w: 7, d: 3, l: 2, gf: 23, ga: 19, pts: 24, highlight: false }
+    ]
+  },
+  ucl: {
+    title: '⭐ טבלת שלב הליגה של ליגת האלופות (UEFA)',
+    rows: [
+      { pos: 1, name: 'ליברפול', p: 4, w: 4, d: 0, l: 0, gf: 10, ga: 1, pts: 12, highlight: false },
+      { pos: 2, name: 'ספורטינג ליסבון', p: 4, w: 3, d: 1, l: 0, gf: 9, ga: 2, pts: 10, highlight: false },
+      { pos: 3, name: 'מונאקו', p: 4, w: 3, d: 1, l: 0, gf: 10, ga: 4, pts: 10, highlight: false },
+      { pos: 7, name: 'ריאל מדריד 👑', p: 4, w: 2, d: 0, l: 2, gf: 9, ga: 7, pts: 6, highlight: true }
+    ]
+  }
+};
+
+let soccerHubState = {
+  activeTab: 'highlights', // 'highlights' | 'fixtures' | 'standings'
+  teamFilter: 'all', // 'all' | 'beitar' | 'real'
+  currentEmbedId: '5F_P5_Kx8tA',
+  activeStandingsTable: 'ligat_haal'
+};
+
+function getSoccerCustomHighlights() {
+  try {
+    const raw = localStorage.getItem('ilay_custom_soccer_highlights_v1');
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveSoccerCustomHighlight(item) {
+  try {
+    const list = getSoccerCustomHighlights();
+    list.unshift(item);
+    localStorage.setItem('ilay_custom_soccer_highlights_v1', JSON.stringify(list));
+  } catch (e) {}
+}
+
+function initSoccerHub() {
+  renderSoccerHubTabs();
+  renderSoccerHighlights();
+  renderSoccerFixtures();
+  renderSoccerStandings();
+  setupSoccerHubListeners();
+}
+
+function renderSoccerHubTabs() {
+  document.querySelectorAll('#soccer-hub-tabs .cat-tab').forEach(tab => {
+    tab.classList.toggle('active', tab.dataset.soccertab === soccerHubState.activeTab);
+  });
+  document.querySelectorAll('.soccer-subpanel').forEach(p => {
+    p.classList.toggle('hidden', p.id !== `soccer-panel-${soccerHubState.activeTab}`);
+  });
+}
+
+function renderSoccerHighlights() {
+  const customList = getSoccerCustomHighlights();
+  const allHighlights = [...customList, ...SOCCER_HUB_DEFAULT_HIGHLIGHTS];
+  const filtered = allHighlights.filter(h => {
+    if (soccerHubState.teamFilter === 'all') return true;
+    return h.team === soccerHubState.teamFilter;
+  });
+
+  const grid = document.getElementById('soccer-highlights-grid');
+  if (!grid) return;
+
+  grid.innerHTML = filtered.map(item => {
+    const isBeitar = item.team === 'beitar';
+    const isPlaying = item.embedId === soccerHubState.currentEmbedId;
+    return `
+      <div class="surface-card" style="margin:0;background:${isPlaying ? 'linear-gradient(135deg,#090d16,#1e293b)' : '#1e293b'};border:2px solid ${isPlaying ? '#facc15' : isBeitar ? '#ca8a04' : '#2563eb'};color:#fff;">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
+          <div>
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+              <span style="background:${isBeitar ? '#facc15' : '#38bdf8'};color:#090d16;font-weight:900;padding:2px 8px;border-radius:99px;font-size:0.72rem;">${item.badge}</span>
+              <span style="font-size:0.75rem;color:#94a3b8;">${item.competition} • ${item.date}</span>
+            </div>
+            <div style="font-size:1.02rem;font-weight:900;color:#fff;">${item.title}</div>
+            <div style="font-size:0.8rem;color:#cbd5e1;margin-top:3px;">${item.desc}</div>
+          </div>
+          <button type="button" class="btn-chip" data-play-soccer="${item.embedId}" data-soc-title="${item.title.replace(/"/g, '&quot;')}" data-soc-desc="${item.desc.replace(/"/g, '&quot;')}" data-soc-team="${item.team}" style="background:${isPlaying ? '#00ff87' : '#facc15'};color:#090d16;font-weight:900;border:none;padding:6px 12px;font-size:0.8rem;white-space:nowrap;">
+            ${isPlaying ? '▶️ מנגן עכשיו' : 'צפה 🎬'}
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  grid.querySelectorAll('[data-play-soccer]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      arcadeAudio.playClick();
+      const eid = btn.dataset.playSoccer;
+      soccerHubState.currentEmbedId = eid;
+
+      const iframe = document.getElementById('soccer-video-iframe');
+      if (iframe) iframe.src = `https://www.youtube-nocookie.com/embed/${eid}?autoplay=1`;
+
+      const titleEl = document.getElementById('soccer-player-title');
+      const descEl = document.getElementById('soccer-player-desc');
+      const badgeEl = document.getElementById('soccer-player-badge');
+      const linkEl = document.getElementById('soccer-player-yt-link');
+
+      if (titleEl) titleEl.textContent = btn.dataset.socTitle;
+      if (descEl) descEl.textContent = btn.dataset.socDesc;
+      if (badgeEl) {
+        badgeEl.textContent = btn.dataset.socTeam === 'beitar' ? '🦁 בית"ר ירושלים' : '👑 ריאל מדריד';
+        badgeEl.style.background = btn.dataset.socTeam === 'beitar' ? '#facc15' : '#38bdf8';
+      }
+      if (linkEl) linkEl.href = `https://www.youtube.com/watch?v=${eid}`;
+
+      renderSoccerHighlights();
+      // Scroll to video player
+      const container = document.getElementById('soccer-video-embed-container');
+      if (container) container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+  });
+}
+
+function renderSoccerFixtures() {
+  const resEl = document.getElementById('soccer-results-list');
+  if (resEl) {
+    resEl.innerHTML = SOCCER_HUB_FIXTURES.results.map(r => `
+      <div style="background:#fff;border:2px solid ${r.team === 'beitar' ? '#facc15' : '#3b82f6'};border-radius:12px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+        <div>
+          <div style="font-size:0.75rem;color:#64748b;">${r.comp} • ${r.date} (${r.loc})</div>
+          <div style="font-size:1.05rem;font-weight:900;color:#0f172a;margin-top:2px;">
+            ${r.team === 'beitar' ? '🦁 בית"ר ירושלים' : '👑 ריאל מדריד'} vs ${r.opp}
+          </div>
+          <div style="font-size:0.78rem;color:#059669;font-weight:700;margin-top:2px;">⚽ כובשים: ${r.scorers}</div>
+        </div>
+        <div style="background:${r.res === 'win' ? '#10b981' : '#64748b'};color:#fff;font-size:1.15rem;font-weight:900;padding:6px 12px;border-radius:8px;direction:ltr;">
+          ${r.score}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  const upEl = document.getElementById('soccer-upcoming-list');
+  if (upEl) {
+    upEl.innerHTML = SOCCER_HUB_FIXTURES.upcoming.map(u => `
+      <div style="background:linear-gradient(135deg,#090d16,#1e293b);border:2px solid ${u.team === 'beitar' ? '#facc15' : '#38bdf8'};border-radius:12px;padding:12px;color:#fff;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:4px;">
+          <span style="background:${u.team === 'beitar' ? '#facc15' : '#38bdf8'};color:#090d16;font-weight:900;padding:2px 8px;border-radius:99px;font-size:0.72rem;">${u.team === 'beitar' ? '🦁 בית"ר' : '👑 ריאל'}</span>
+          <span style="font-size:0.78rem;color:#fde047;font-weight:800;">${u.comp}</span>
+        </div>
+        <div style="font-size:1.1rem;font-weight:900;color:#fff;">${u.team === 'beitar' ? 'בית"ר ירושלים' : 'ריאל מדריד'} vs ${u.opp}</div>
+        <div style="font-size:0.85rem;color:#93c5fd;margin-top:4px;">📅 ${u.date}</div>
+        <div style="font-size:0.8rem;color:#cbd5e1;margin-top:2px;">📍 ${u.loc}</div>
+        <div style="font-size:0.78rem;color:#a7f3d0;font-weight:700;margin-top:4px;background:rgba(0,255,135,0.12);padding:4px 8px;border-radius:6px;">📺 ${u.broadcast}</div>
+      </div>
+    `).join('');
+  }
+}
+
+function renderSoccerStandings() {
+  const container = document.getElementById('soccer-table-container');
+  if (!container) return;
+
+  const data = SOCCER_HUB_STANDINGS[soccerHubState.activeStandingsTable] || SOCCER_HUB_STANDINGS.ligat_haal;
+
+  container.innerHTML = `
+    <div style="font-size:1.05rem;font-weight:900;color:#0f172a;margin-bottom:8px;">${data.title}</div>
+    <table style="width:100%;border-collapse:collapse;font-size:0.85rem;text-align:center;">
+      <thead>
+        <tr style="background:#f1f5f9;color:#475569;border-bottom:2px solid #cbd5e1;">
+          <th style="padding:6px;">#</th>
+          <th style="padding:6px;text-align:right;">קבוצה</th>
+          <th style="padding:6px;">מש׳</th>
+          <th style="padding:6px;">נצ׳</th>
+          <th style="padding:6px;">שערים</th>
+          <th style="padding:6px;font-weight:900;color:#0f172a;">נק׳</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${data.rows.map(r => `
+          <tr style="border-bottom:1px solid #e2e8f0;background:${r.highlight ? 'rgba(250,204,21,0.18)' : 'transparent'};font-weight:${r.highlight ? '900' : 'normal'};">
+            <td style="padding:8px 4px;font-weight:900;">${r.pos}</td>
+            <td style="padding:8px 4px;text-align:right;color:${r.highlight ? '#b45309' : '#0f172a'};">${r.name}</td>
+            <td style="padding:8px 4px;">${r.p}</td>
+            <td style="padding:8px 4px;">${r.w}</td>
+            <td style="padding:8px 4px;direction:ltr;">${r.gf}:${r.ga}</td>
+            <td style="padding:8px 4px;font-weight:900;font-size:1rem;color:${r.highlight ? '#b45309' : '#0f172a'};">${r.pts}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+function setupSoccerHubListeners() {
+  // Main Tab Buttons
+  document.querySelectorAll('#soccer-hub-tabs .cat-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      arcadeAudio.playClick();
+      soccerHubState.activeTab = tab.dataset.soccertab;
+      renderSoccerHubTabs();
+    });
+  });
+
+  // Team Filter Buttons in Highlights Tab
+  document.querySelectorAll('.soccer-filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      arcadeAudio.playClick();
+      document.querySelectorAll('.soccer-filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      soccerHubState.teamFilter = btn.dataset.teamfilter;
+      renderSoccerHighlights();
+    });
+  });
+
+  // Standings Sub-Tabs
+  document.querySelectorAll('#soccer-standings-tabs .cat-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      arcadeAudio.playClick();
+      document.querySelectorAll('#soccer-standings-tabs .cat-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      soccerHubState.activeStandingsTable = tab.dataset.table;
+      renderSoccerStandings();
+    });
+  });
+
+  // Refresh Button
+  const btnRefresh = document.getElementById('btn-soccer-refresh');
+  if (btnRefresh) {
+    btnRefresh.addEventListener('click', () => {
+      arcadeAudio.playGoalSuccess();
+      renderSoccerHighlights();
+      renderSoccerFixtures();
+      renderSoccerStandings();
+      confetti.burst(50);
+    });
+  }
+
+  // Add Custom Highlight Modal
+  const btnOpenAdd = document.getElementById('btn-soccer-open-add');
+  const modalAdd = document.getElementById('modal-add-soccer-highlight');
+  const btnCancelAdd = document.getElementById('btn-soc-modal-cancel');
+  const formAdd = document.getElementById('form-add-soccer-highlight');
+
+  if (btnOpenAdd && modalAdd) {
+    btnOpenAdd.addEventListener('click', () => {
+      arcadeAudio.playClick();
+      modalAdd.classList.remove('hidden');
+    });
+  }
+  if (btnCancelAdd && modalAdd) {
+    btnCancelAdd.addEventListener('click', () => {
+      modalAdd.classList.add('hidden');
+    });
+  }
+  if (formAdd && modalAdd) {
+    formAdd.addEventListener('submit', (ev) => {
+      ev.preventDefault();
+      const team = document.getElementById('input-soc-team').value;
+      const title = document.getElementById('input-soc-title').value.trim();
+      const url = document.getElementById('input-soc-url').value.trim();
+      const desc = document.getElementById('input-soc-desc').value.trim();
+
+      // Extract YouTube embed ID
+      let embedId = url;
+      const ytMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+      if (ytMatch && ytMatch[1]) embedId = ytMatch[1];
+
+      const newItem = {
+        id: 'custom_' + Date.now(),
+        team,
+        title,
+        desc: desc || 'תקציר משחק מעודכן',
+        competition: team === 'beitar' ? 'ליגת העל' : 'LaLiga',
+        date: new Date().toLocaleDateString('he-IL'),
+        embedId,
+        url,
+        badge: team === 'beitar' ? '🦁 בית"ר ירושלים' : '👑 ריאל מדריד',
+        score: '⚽'
+      };
+
+      saveSoccerCustomHighlight(newItem);
+      modalAdd.classList.add('hidden');
+      formAdd.reset();
+      arcadeAudio.playGoalSuccess();
+      confetti.burst(70);
+      soccerHubState.currentEmbedId = embedId;
+      renderSoccerHighlights();
+    });
+  }
+}
+
+// Global Banner Launchers for Soccer & Gifted Academy
+document.addEventListener('DOMContentLoaded', () => {
+  const socBanner = document.getElementById('soccer-home-banner');
+  if (socBanner) {
+    socBanner.addEventListener('click', () => {
+      arcadeAudio.playClick();
+      switchView('soccer');
+    });
+  }
+
+  const giftedBanner = document.getElementById('gifted-home-banner');
+  if (giftedBanner) {
+    giftedBanner.addEventListener('click', (ev) => {
+      const jump = ev.target.closest('[data-giftedjump]');
+      arcadeAudio.playClick();
+      if (jump && jump.dataset.giftedjump) {
+        const topId = jump.dataset.giftedjump;
+        const topic = TOPICS.find(t => t.id === topId);
+        startMatch(topId, topic ? topic.title : '🧠 מבחן מחוננים', false);
+      } else {
+        startMatch('gifted_stage_a', '👑 מבחן מחוננים שלב א׳ (מכון נועם)', false);
+      }
+    });
+  }
+
+  setupSoccerHubListeners();
+});
+
