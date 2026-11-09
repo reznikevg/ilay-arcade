@@ -524,11 +524,17 @@ function pushStateToCloudThrottled(immediate = false) {
       lastCloudSyncTimestamp = now;
       lastSyncedCloudPayloadString = payloadStr;
 
-      await fetch(`${CLOUD_BACKEND_URL}/api/state`, {
+      const res = await fetch(`${CLOUD_BACKEND_URL}/api/state`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: payloadStr
       });
+
+      if (res && res.status === 429) {
+        console.warn('Cloudflare KV daily PUT quota (1,000) reached. Backing off cloud sync for 10 minutes; app continues smoothly with localStorage.');
+        lastCloudSyncTimestamp = Date.now() + 600000; // 10 minute backoff
+        return;
+      }
     } catch (e) {
       // Graceful offline/429 resilience - app continues locally without any disruption!
     }

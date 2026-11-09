@@ -776,6 +776,27 @@ const LIA_COLORING_PAGES = [
       { id: 'z3', num: 3, nameHeb: 'כדור גלידת אוכמניות (מספר 3)', nameEng: 'Blueberry Scoop', targetColor: 'blue', path: '<ellipse cx="150" cy="102" rx="52" ry="24" data-zone="z3"/><text x="150" y="107" text-anchor="middle" font-size="14" font-weight="900" fill="#1e293b" pointer-events="none">3</text>' },
       { id: 'z4', num: 4, nameHeb: 'גביע הוופל המשולש (מספר 4)', nameEng: 'Waffle Cone', targetColor: 'yellow', path: '<polygon points="104,118 196,118 150,204" data-zone="z4"/><text x="150" y="158" text-anchor="middle" font-size="15" font-weight="900" fill="#1e293b" pointer-events="none">4</text>' }
     ]
+  },
+  {
+    id: 'stitch_aloha',
+    title: '🌺 סטיץ׳ הקטן בהוואי',
+    zones: [
+      { id: 'z1', num: 1, nameHeb: 'האוזניים של סטיץ׳ (מספר 1)', nameEng: 'Stitch Ears', targetColor: 'pink', path: '<path d="M70 70 Q30 50 45 100 Q65 95 75 80 Z" data-zone="z1"/><path d="M230 70 Q270 50 255 100 Q235 95 225 80 Z" data-zone="z1"/><text x="55" y="78" text-anchor="middle" font-size="13" font-weight="900" fill="#1e293b" pointer-events="none">1</text>' },
+      { id: 'z2', num: 2, nameHeb: 'הפנים והגוף של סטיץ׳ (מספר 2)', nameEng: 'Stitch Body', targetColor: 'blue', path: '<ellipse cx="150" cy="95" rx="55" ry="45" data-zone="z2"/><circle cx="130" cy="90" r="12" fill="#0f172a" pointer-events="none"/><circle cx="170" cy="90" r="12" fill="#0f172a" pointer-events="none"/><ellipse cx="150" cy="104" rx="14" ry="9" fill="#1e1b4b" pointer-events="none"/><text x="150" y="72" text-anchor="middle" font-size="15" font-weight="900" fill="#1e293b" pointer-events="none">2</text>' },
+      { id: 'z3', num: 3, nameHeb: 'פרח ההיביסקוס (מספר 3)', nameEng: 'Aloha Flower', targetColor: 'red', path: '<circle cx="95" cy="50" r="18" data-zone="z3"/><circle cx="95" cy="50" r="6" fill="#facc15" pointer-events="none"/><text x="95" y="55" text-anchor="middle" font-size="12" font-weight="900" fill="#1e293b" pointer-events="none">3</text>' },
+      { id: 'z4', num: 4, nameHeb: 'השמש הטרופית הזורחת (מספר 4)', nameEng: 'Golden Sun', targetColor: 'yellow', path: '<circle cx="240" cy="40" r="24" data-zone="z4"/><text x="240" y="45" text-anchor="middle" font-size="14" font-weight="900" fill="#1e293b" pointer-events="none">4</text>' },
+      { id: 'z5', num: 5, nameHeb: 'חוף הים והחול הזהוב (מספר 5)', nameEng: 'Golden Beach', targetColor: 'orange', path: '<rect x="15" y="170" width="270" height="40" rx="12" data-zone="z5"/><text x="150" y="195" text-anchor="middle" font-size="14" font-weight="900" fill="#1e293b" pointer-events="none">5</text>' }
+    ]
+  },
+  {
+    id: 'magic_mermaid',
+    title: '🧜‍♀️ בת הים הקסומה בים',
+    zones: [
+      { id: 'z1', num: 1, nameHeb: 'זנב הדג המנצנץ (מספר 1)', nameEng: 'Mermaid Tail', targetColor: 'purple', path: '<path d="M125 120 Q110 170 85 195 Q145 190 145 160 Q155 190 205 195 Q175 165 165 120 Z" data-zone="z1"/><text x="145" y="155" text-anchor="middle" font-size="15" font-weight="900" fill="#1e293b" pointer-events="none">1</text>' },
+      { id: 'z2', num: 2, nameHeb: 'השיער הארוך של בת הים (מספר 2)', nameEng: 'Long Pink Hair', targetColor: 'pink', path: '<path d="M115 50 Q80 80 85 135 Q105 120 115 90 Z" data-zone="z2"/><path d="M175 50 Q210 80 205 135 Q185 120 175 90 Z" data-zone="z2"/><text x="100" y="95" text-anchor="middle" font-size="13" font-weight="900" fill="#1e293b" pointer-events="none">2</text>' },
+      { id: 'z3', num: 3, nameHeb: 'כוכב הים (מספר 3)', nameEng: 'Sea Star', targetColor: 'yellow', path: '<polygon points="50,45 56,62 74,62 59,73 65,90 50,79 35,90 41,73 26,62 44,62" data-zone="z3"/><text x="50" y="70" text-anchor="middle" font-size="11" font-weight="900" fill="#1e293b" pointer-events="none">3</text>' },
+      { id: 'z4', num: 4, nameHeb: 'בועות המים בים (מספר 4)', nameEng: 'Ocean Bubbles', targetColor: 'blue', path: '<circle cx="220" cy="55" r="14" data-zone="z4"/><circle cx="235" cy="85" r="18" data-zone="z4"/><circle cx="245" cy="125" r="12" data-zone="z4"/><text x="235" y="90" text-anchor="middle" font-size="13" font-weight="900" fill="#1e293b" pointer-events="none">4</text>' }
+    ]
   }
 ];
 
@@ -836,6 +857,13 @@ const LIA_DRESSUP_MISSIONS = [
     promptEng: 'Pink Bow and Bag',
     season: 'school',
     target: { hat: 'bow', top: 'kinder', shoe: 'sneakers', acc: 'backpack' }
+  },
+  {
+    title: '⚽ משימה 5: הולכים לעודד במגרש כדורגל של עילי!',
+    promptHeb: 'היום יש משחק כדורגל חשוב של עילי! בואי נלביש נעלי ספורט נוחות, כובע ותיק גב!',
+    promptEng: 'Sport Sneakers and Backpack',
+    season: 'school',
+    target: { hat: 'sunhat', top: 'tshirt', shoe: 'sneakers', acc: 'backpack' }
   }
 ];
 
