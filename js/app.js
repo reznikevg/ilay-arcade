@@ -177,6 +177,13 @@ const DEFAULT_SCHEDULE = {
 const STORAGE_KEY = 'ilay_arcade_save_v3';
 const AUTH_SESSION_KEY = 'ilay_family_auth_ok_v1';
 
+function getStorageKey() {
+  if (typeof window !== 'undefined' && (window.FORCE_KID_PROFILE === 'lia' || getInitialDeviceChild() === 'lia')) {
+    return 'lia_magic_state_v2';
+  }
+  return 'ilay_arcade_state_v2';
+}
+
 let appState = {
   coins: 60,
   trophies: 1,
@@ -445,8 +452,12 @@ const CLOUD_BACKEND_URL = 'https://ilay-backend.reznikevg.workers.dev';
 
 async function loadState() {
   const localKid = getInitialDeviceChild();
+  const currentKey = getStorageKey();
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    let raw = localStorage.getItem(currentKey);
+    if (!raw) {
+      raw = localStorage.getItem(STORAGE_KEY);
+    }
     if (raw) {
       const parsed = JSON.parse(raw);
       appState = { ...appState, ...parsed };
@@ -463,8 +474,15 @@ async function loadState() {
     if (res.ok) {
       const remote = await res.json();
       if (remote && typeof remote === 'object') {
-        appState = mergeCloudStateSafely(appState, remote);
+        let childRemote = remote;
+        if (localKid === 'lia' && remote.lia) {
+          childRemote = { ...remote, liaProfile: remote.lia };
+        } else if (localKid === 'ilay' && remote.ilay) {
+          childRemote = { ...remote, ...remote.ilay };
+        }
+        appState = mergeCloudStateSafely(appState, childRemote);
         appState.activeChild = localKid;
+        localStorage.setItem(currentKey, JSON.stringify(appState));
         localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
       }
     }
@@ -513,10 +531,40 @@ function pushStateToCloudThrottled(immediate = false) {
 
   const executePush = async () => {
     try {
-      const cloudPayload = { ...appState };
-      delete cloudPayload.activeChild;
-      const payloadStr = JSON.stringify(cloudPayload);
+      // 1. Fetch current remote state to protect the other child's namespace
+      let remote = {};
+      try {
+        const getRes = await fetch(`${CLOUD_BACKEND_URL}/api/state`, { cache: 'no-store' });
+        if (getRes.ok) remote = (await getRes.json()) || {};
+      } catch (e) {}
 
+      if (isLiaActive()) {
+        const liaData = {
+          coins: appState.liaProfile.coins,
+          trophies: appState.liaProfile.trophies,
+          bestStreak: appState.liaProfile.bestStreak,
+          avatar: appState.liaProfile.avatar,
+          theme: appState.liaProfile.theme,
+          unlockedStickers: appState.liaProfile.unlockedStickers,
+          topicStats: appState.liaProfile.topicStats,
+          kinderStars: appState.liaProfile.kinderStars,
+          seenQuestionKeys: appState.liaProfile.seenQuestionKeys,
+          coloringSaved: appState.liaProfile.coloringSaved,
+          dressUpOutfit: appState.liaProfile.dressUpOutfit,
+          updatedAt: Date.now()
+        };
+        remote.lia = liaData;
+        remote.liaProfile = liaData; // Keep legacy field synchronized
+      } else {
+        const ilayData = { ...appState };
+        delete ilayData.liaProfile;
+        delete ilayData.activeChild;
+        remote.ilay = ilayData;
+        Object.assign(remote, ilayData); // Keep top-level keys synchronized
+        remote.updatedAt = Date.now();
+      }
+
+      const payloadStr = JSON.stringify(remote);
       // Skip network request entirely if data hasn't changed since last push!
       if (payloadStr === lastSyncedCloudPayloadString) return;
 
@@ -553,11 +601,13 @@ function pushStateToCloudThrottled(immediate = false) {
 }
 
 function saveState() {
+  const currentKey = getStorageKey();
   try {
     appState.updatedAt = Date.now();
     if (appState.activeChild === 'lia' || appState.activeChild === 'ilay') {
       localStorage.setItem(DEVICE_KID_STORAGE_KEY, appState.activeChild);
     }
+    localStorage.setItem(currentKey, JSON.stringify(appState));
     localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
   } catch (e) {
     console.warn('Could not save state:', e);
@@ -631,8 +681,18 @@ function applyTeamTheme(team) {
 }
 
 function switchActiveChild(kid) {
-  ensureLiaProfile();
   const targetKid = kid === 'lia' ? 'lia' : 'ilay';
+  // If we are on index.html and user requested lia -> navigate to separate lia.html!
+  if (targetKid === 'lia' && typeof window !== 'undefined' && !window.location.pathname.endsWith('lia.html') && window.FORCE_KID_PROFILE !== 'lia') {
+    window.location.href = 'lia.html';
+    return;
+  }
+  // If we are on lia.html and user requested ilay -> navigate to separate index.html!
+  if (targetKid === 'ilay' && typeof window !== 'undefined' && (window.location.pathname.endsWith('lia.html') || window.FORCE_KID_PROFILE === 'lia')) {
+    window.location.href = 'index.html';
+    return;
+  }
+  ensureLiaProfile();
   appState.activeChild = targetKid;
   try {
     localStorage.setItem(DEVICE_KID_STORAGE_KEY, targetKid);
@@ -640,6 +700,7 @@ function switchActiveChild(kid) {
   appState.selectedCategory = 'all';
   document.querySelectorAll('.cat-tab').forEach(t => t.classList.toggle('active', t.dataset.cat === 'all'));
   try {
+    localStorage.setItem(getStorageKey(), JSON.stringify(appState));
     localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
   } catch (e) {}
   updateHeaderUI();
@@ -776,56 +837,67 @@ function updateHeaderUI() {
 
   let totalSolved = 0;
   Object.values(getActiveTopicStats()).forEach(s => { totalSolved += (s.solved || 0); });
-  document.getElementById('player-rank-display').textContent = getRankTitle(activeTrophies, totalSolved);
+  const rankEl = document.getElementById('player-rank-display');
+  if (rankEl) rankEl.textContent = getRankTitle(activeTrophies, totalSolved);
 
   // Shop badge
   const shopNotif = document.getElementById('shop-notif');
-  if (activeCoins >= 50 && getActiveStickers().length < getActiveCatalog().length) {
-    shopNotif.classList.remove('hidden');
-  } else {
-    shopNotif.classList.add('hidden');
+  if (shopNotif) {
+    if (activeCoins >= 50 && getActiveStickers().length < getActiveCatalog().length) {
+      shopNotif.classList.remove('hidden');
+    } else {
+      shopNotif.classList.add('hidden');
+    }
   }
 
   // Homework badge & quick tile summary
   const pendingHw = (appState.homeworkList || []).filter(h => !h.done).length;
   const hwNotif = document.getElementById('hw-notif');
   if (!lia && pendingHw > 0) {
-    hwNotif.textContent = pendingHw;
-    hwNotif.classList.remove('hidden');
-    document.getElementById('quick-hw-summary').textContent = `${pendingHw} משימות להיום`;
-  } else {
-    hwNotif.classList.add('hidden');
-    if (document.getElementById('quick-hw-summary')) {
-      document.getElementById('quick-hw-summary').textContent = `הכל בוצע! 🏆`;
+    if (hwNotif) {
+      hwNotif.textContent = pendingHw;
+      hwNotif.classList.remove('hidden');
     }
+    const quickHw = document.getElementById('quick-hw-summary');
+    if (quickHw) quickHw.textContent = `${pendingHw} משימות להיום`;
+  } else {
+    if (hwNotif) hwNotif.classList.add('hidden');
+    const quickHw = document.getElementById('quick-hw-summary');
+    if (quickHw) quickHw.textContent = `הכל בוצע! 🏆`;
   }
 
   // Speech studio daily status
   const todayStr = new Date().toLocaleDateString('he-IL');
-  const todayLogs = (appState.speechLogs || []).filter(l => l.date.startsWith(todayStr));
+  const todayLogs = (appState.speechLogs || []).filter(l => l.date && l.date.startsWith(todayStr));
   const speechNotif = document.getElementById('speech-notif');
   if (!lia && todayLogs.length < 3) {
-    speechNotif.classList.remove('hidden');
-    document.getElementById('quick-speech-summary').textContent = `תורגלו ${todayLogs.length}/5 היום`;
+    if (speechNotif) speechNotif.classList.remove('hidden');
+    const quickSpeech = document.getElementById('quick-speech-summary');
+    if (quickSpeech) quickSpeech.textContent = `תורגלו ${todayLogs.length}/5 היום`;
   } else {
-    speechNotif.classList.add('hidden');
-    if (document.getElementById('quick-speech-summary')) {
-      document.getElementById('quick-speech-summary').textContent = `אלוף השדרנים! 🏆`;
-    }
+    if (speechNotif) speechNotif.classList.add('hidden');
+    const quickSpeech = document.getElementById('quick-speech-summary');
+    if (quickSpeech) quickSpeech.textContent = `אלוף השדרנים! 🏆`;
   }
 
   // Today schedule quick summary
   const todayIdx = new Date().getDay();
   const todayData = (appState.schedule && appState.schedule[todayIdx]) || { after: [] };
-  if (todayData.after && todayData.after.length > 0) {
-    const firstAfter = todayData.after[0];
-    document.getElementById('quick-sched-summary').textContent = `היום: ${firstAfter.icon} ${firstAfter.title}`;
-  } else {
-    document.getElementById('quick-sched-summary').textContent = 'מערכת שעות וחוגים';
+  const quickSched = document.getElementById('quick-sched-summary');
+  if (quickSched) {
+    if (todayData.after && todayData.after.length > 0) {
+      const firstAfter = todayData.after[0];
+      quickSched.textContent = `היום: ${firstAfter.icon} ${firstAfter.title}`;
+    } else {
+      quickSched.textContent = 'מערכת שעות וחוגים';
+    }
   }
 
   // Dictation quick summary
-  document.getElementById('quick-dict-summary').textContent = `${appState.dictationWords.length} מילים מוכנות`;
+  const quickDict = document.getElementById('quick-dict-summary');
+  if (quickDict) {
+    quickDict.textContent = `${(appState.dictationWords || []).length} מילים מוכנות`;
+  }
 }
 
 // ==================== VIEW NAVIGATION ====================
@@ -2611,6 +2683,11 @@ function parseSmartWhatsAppOrWebtopInput(rawText) {
 function checkAuthGate() {
   const gate = document.getElementById('auth-gate-overlay');
   if (!gate) return;
+  // Lia's app has NO lock gate! A 5-year-old enters directly into her magical world
+  if (window.FORCE_KID_PROFILE === 'lia' || isLiaActive() || (typeof window !== 'undefined' && window.location.pathname.endsWith('lia.html'))) {
+    gate.classList.add('hidden');
+    return;
+  }
   const savedAuth = localStorage.getItem(AUTH_SESSION_KEY);
   if (savedAuth) {
     gate.classList.add('hidden');
@@ -2844,26 +2921,33 @@ document.addEventListener('DOMContentLoaded', () => {
   updateHeaderUI();
   renderTopicsGrid();
 
+  const on = (id, evt, handler) => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener(evt, handler);
+  };
+
   // Family Security Gate: PIN Login
-  document.getElementById('form-family-pin').addEventListener('submit', (e) => {
+  on('form-family-pin', 'submit', (e) => {
     e.preventDefault();
-    const entered = document.getElementById('family-pin-input').value.trim();
+    const entered = document.getElementById('family-pin-input')?.value?.trim() || '';
     const targetPin = String(appState.familyPin || '1936').trim();
     const allowedEmails = (appState.allowedEmails || []).map(em => em.toLowerCase());
 
     if (entered === targetPin || (allowedEmails.length > 0 && allowedEmails.includes(entered.toLowerCase()))) {
-      document.getElementById('auth-error-msg').classList.add('hidden');
+      document.getElementById('auth-error-msg')?.classList.add('hidden');
       unlockFamilyApp('בן משפחה מורשה 🦁👑');
     } else {
       const errEl = document.getElementById('auth-error-msg');
-      errEl.textContent = 'קוד שגוי! הכניסה למשפחה בלבד 🔒';
-      errEl.classList.remove('hidden');
+      if (errEl) {
+        errEl.textContent = 'קוד שגוי! הכניסה למשפחה בלבד 🔒';
+        errEl.classList.remove('hidden');
+      }
       arcadeAudio.playMiss();
     }
   });
 
   // Google SSO Button Fallback / Trigger
-  document.getElementById('btn-google-sso').addEventListener('click', () => {
+  on('btn-google-sso', 'click', () => {
     if (appState.googleClientId && window.google && window.google.accounts) {
       window.google.accounts.id.prompt();
     } else {
@@ -2879,8 +2963,10 @@ document.addEventListener('DOMContentLoaded', () => {
         unlockFamilyApp(`${cleanEmail} (Google ✅)`);
       } else {
         const errEl = document.getElementById('auth-error-msg');
-        errEl.textContent = `הכתובת ${cleanEmail} אינה ברשימת המורשים!`;
-        errEl.classList.remove('hidden');
+        if (errEl) {
+          errEl.textContent = `הכתובת ${cleanEmail} אינה ברשימת המורשים!`;
+          errEl.classList.remove('hidden');
+        }
         arcadeAudio.playMiss();
       }
     }
@@ -3345,19 +3431,19 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // 4 Big Home Visual Tiles (Ilay)
-  document.getElementById('quick-open-speech').addEventListener('click', () => {
+  on('quick-open-speech', 'click', () => {
     arcadeAudio.playClick();
     switchView('speech');
   });
-  document.getElementById('quick-open-schedule').addEventListener('click', () => {
+  on('quick-open-schedule', 'click', () => {
     arcadeAudio.playClick();
     switchView('schedule');
   });
-  document.getElementById('quick-open-hw').addEventListener('click', () => {
+  on('quick-open-hw', 'click', () => {
     arcadeAudio.playClick();
     switchView('homework');
   });
-  document.getElementById('quick-open-dict').addEventListener('click', () => {
+  on('quick-open-dict', 'click', () => {
     arcadeAudio.playClick();
     switchView('dictation');
   });
@@ -3415,19 +3501,19 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Speech Studio Listeners
-  document.getElementById('btn-leave-speech').addEventListener('click', () => switchView('home'));
-  document.getElementById('btn-sp-model-listen').addEventListener('click', () => {
+  on('btn-leave-speech', 'click', () => switchView('home'));
+  on('btn-sp-model-listen', 'click', () => {
     const card = speechSession.cards[speechSession.index];
     if (card) arcadeAudio.speak(card.phrase, 'he-IL', 0.82);
   });
-  document.getElementById('btn-sp-record').addEventListener('click', toggleSpeechRecording);
-  document.getElementById('btn-sp-play-self').addEventListener('click', () => {
+  on('btn-sp-record', 'click', toggleSpeechRecording);
+  on('btn-sp-play-self', 'click', () => {
     if (speechSession.lastAudioUrl) {
       const audio = new Audio(speechSession.lastAudioUrl);
       audio.play();
     }
   });
-  document.getElementById('btn-sp-next').addEventListener('click', nextSpeechCard);
+  on('btn-sp-next', 'click', nextSpeechCard);
 
   // Schedule Day Tabs & Kid Quick-Add
   document.querySelectorAll('#day-tabs-bar .day-tab').forEach(tab => {
@@ -3437,7 +3523,7 @@ document.addEventListener('DOMContentLoaded', () => {
       renderScheduleView();
     });
   });
-  document.getElementById('btn-speak-day').addEventListener('click', speakCurrentDaySchedule);
+  on('btn-speak-day', 'click', speakCurrentDaySchedule);
 
   document.querySelectorAll('.kid-quick-add-bar .kqa-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -3454,10 +3540,10 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Kid Self-Add Homework/Goal
-  document.getElementById('form-kid-add-hw').addEventListener('submit', (e) => {
+  on('form-kid-add-hw', 'submit', (e) => {
     e.preventDefault();
     const inp = document.getElementById('kid-hw-input');
-    const title = inp.value.trim();
+    const title = inp?.value?.trim();
     if (!title) return;
     appState.homeworkList.push({
       id: 'hw_' + Date.now(),
@@ -3466,7 +3552,7 @@ document.addEventListener('DOMContentLoaded', () => {
       title,
       done: false
     });
-    inp.value = '';
+    if (inp) inp.value = '';
     saveState();
     arcadeAudio.playGoalSuccess();
     renderHomeworkView();
@@ -3474,7 +3560,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Dictation Listeners
-  document.getElementById('btn-leave-dictation').addEventListener('click', () => switchView('home'));
+  on('btn-leave-dictation', 'click', () => switchView('home'));
   const btnOpenDictEd = document.getElementById('btn-open-dict-editor');
   if (btnOpenDictEd) {
     btnOpenDictEd.addEventListener('click', () => {
@@ -3488,35 +3574,39 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 200);
     });
   }
-  document.getElementById('btn-dict-speak').addEventListener('click', () => {
+  on('btn-dict-speak', 'click', () => {
     const item = dictSession.words[dictSession.index];
     if (item) arcadeAudio.speak(item.word, 'he-IL', 0.9);
   });
-  document.getElementById('btn-dict-speak-slow').addEventListener('click', () => {
+  on('btn-dict-speak-slow', 'click', () => {
     const item = dictSession.words[dictSession.index];
     if (item) arcadeAudio.speak(item.word, 'he-IL', 0.55);
   });
-  document.getElementById('btn-dict-peek').addEventListener('click', () => {
-    document.getElementById('dict-peek-box').classList.toggle('hidden');
+  on('btn-dict-peek', 'click', () => {
+    document.getElementById('dict-peek-box')?.classList.toggle('hidden');
   });
-  document.getElementById('dict-user-input').addEventListener('input', updateDictationSlots);
-  document.getElementById('btn-dict-backspace').addEventListener('click', () => {
+  on('dict-user-input', 'input', updateDictationSlots);
+  on('btn-dict-backspace', 'click', () => {
     const inp = document.getElementById('dict-user-input');
-    inp.value = inp.value.slice(0, -1);
-    updateDictationSlots();
+    if (inp) {
+      inp.value = inp.value.slice(0, -1);
+      updateDictationSlots();
+    }
   });
-  document.getElementById('btn-dict-check').addEventListener('click', checkDictationWord);
-  document.getElementById('btn-dict-next').addEventListener('click', nextDictationWord);
+  on('btn-dict-check', 'click', checkDictationWord);
+  on('btn-dict-next', 'click', nextDictationWord);
 
   // Sound toggle
   const soundBtn = document.getElementById('btn-sound-toggle');
-  soundBtn.addEventListener('click', () => {
-    arcadeAudio.enabled = !arcadeAudio.enabled;
-    soundBtn.textContent = arcadeAudio.enabled ? '🔊' : '🔇';
-  });
+  if (soundBtn) {
+    soundBtn.addEventListener('click', () => {
+      arcadeAudio.enabled = !arcadeAudio.enabled;
+      soundBtn.textContent = arcadeAudio.enabled ? '🔊' : '🔇';
+    });
+  }
 
   // Profile button -> opens sticker album
-  document.getElementById('btn-profile').addEventListener('click', () => {
+  on('btn-profile', 'click', () => {
     arcadeAudio.playClick();
     switchView('shop');
   });
@@ -3540,7 +3630,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Daily challenge button
-  document.getElementById('btn-daily-match').addEventListener('click', () => {
+  on('btn-daily-match', 'click', () => {
     arcadeAudio.playClick();
     if (isLiaActive()) {
       startMatch('lia_daily_mix', '🦄 מסיבת הקסמים של ליה וסטיץ׳ ✨', true);
@@ -3632,37 +3722,37 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Arena controls
-  document.getElementById('btn-leave-arena').addEventListener('click', () => switchView('home'));
-  document.getElementById('btn-speak-question').addEventListener('click', () => {
+  on('btn-leave-arena', 'click', () => switchView('home'));
+  on('btn-speak-question', 'click', () => {
     const q = session.questions[session.currentIndex];
     if (!q) return;
     speakQuestionPrompt(q);
   });
-  document.getElementById('btn-hint').addEventListener('click', () => {
+  on('btn-hint', 'click', () => {
     arcadeAudio.playClick();
-    document.getElementById('hint-box').classList.toggle('hidden');
+    document.getElementById('hint-box')?.classList.toggle('hidden');
   });
-  document.getElementById('btn-check-answer').addEventListener('click', checkCurrentAnswer);
-  document.getElementById('btn-next-question').addEventListener('click', nextQuestion);
+  on('btn-check-answer', 'click', checkCurrentAnswer);
+  on('btn-next-question', 'click', nextQuestion);
 
   // Summary buttons
   const btnMysteryChest = document.getElementById('btn-open-mystery-chest');
   if (btnMysteryChest) {
     btnMysteryChest.addEventListener('click', openSummaryMysteryChest);
   }
-  document.getElementById('btn-play-again').addEventListener('click', () => {
+  on('btn-play-again', 'click', () => {
     startMatch(session.topicId, session.topicTitle, session.isDailyBonus);
   });
-  document.getElementById('btn-summary-shop').addEventListener('click', () => switchView('shop'));
-  document.getElementById('btn-summary-home').addEventListener('click', () => switchView('home'));
+  on('btn-summary-shop', 'click', () => switchView('shop'));
+  on('btn-summary-home', 'click', () => switchView('home'));
 
   // Shop pack button
-  document.getElementById('btn-buy-pack').addEventListener('click', buyMysteryPack);
+  on('btn-buy-pack', 'click', buyMysteryPack);
 
   // Parents: Speech Therapy form
-  document.getElementById('form-save-speech').addEventListener('submit', (e) => {
+  on('form-save-speech', 'submit', (e) => {
     e.preventDefault();
-    const raw = document.getElementById('speech-words-textarea').value;
+    const raw = document.getElementById('speech-words-textarea')?.value || '';
     const lines = raw.split('\n').map(s => s.trim()).filter(Boolean);
     const parsed = lines.map(line => {
       const parts = line.split('-');
@@ -3680,38 +3770,40 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Parents: Schedule form
-  document.getElementById('sched-day-select').addEventListener('change', renderParentsView);
-  document.getElementById('form-add-schedule').addEventListener('submit', (e) => {
+  on('sched-day-select', 'change', renderParentsView);
+  on('form-add-schedule', 'submit', (e) => {
     e.preventDefault();
-    const day = Number(document.getElementById('sched-day-select').value);
-    const part = document.getElementById('sched-part-select').value;
-    const [icon, title] = document.getElementById('sched-preset-select').value.split('|');
-    const time = document.getElementById('sched-time-input').value.trim();
+    const day = Number(document.getElementById('sched-day-select')?.value || 0);
+    const part = document.getElementById('sched-part-select')?.value || 'after';
+    const [icon, title] = (document.getElementById('sched-preset-select')?.value || '|').split('|');
+    const time = document.getElementById('sched-time-input')?.value?.trim() || '';
 
     if (!appState.schedule[day]) appState.schedule[day] = { school: [], after: [] };
     appState.schedule[day][part].push({ icon, title, time });
     saveState();
-    document.getElementById('sched-time-input').value = '';
+    const timeInp = document.getElementById('sched-time-input');
+    if (timeInp) timeInp.value = '';
     renderParentsView();
     updateHeaderUI();
   });
 
   // Parents: Homework form
-  document.getElementById('form-add-hw').addEventListener('submit', (e) => {
+  on('form-add-hw', 'submit', (e) => {
     e.preventDefault();
-    const [icon, subject] = document.getElementById('hw-subject').value.split('|');
-    const title = document.getElementById('hw-title').value.trim();
+    const [icon, subject] = (document.getElementById('hw-subject')?.value || '|').split('|');
+    const title = document.getElementById('hw-title')?.value?.trim() || '';
     appState.homeworkList.push({ id: 'hw_' + Date.now(), icon, subject, title, done: false });
     saveState();
-    document.getElementById('hw-title').value = '';
+    const titleInp = document.getElementById('hw-title');
+    if (titleInp) titleInp.value = '';
     renderParentsView();
     updateHeaderUI();
   });
 
   // Parents: Dictation words form
-  document.getElementById('form-save-dictation').addEventListener('submit', (e) => {
+  on('form-save-dictation', 'submit', (e) => {
     e.preventDefault();
-    const raw = document.getElementById('dict-words-textarea').value;
+    const raw = document.getElementById('dict-words-textarea')?.value || '';
     const lines = raw.split(/\n|,/).map(s => s.trim()).filter(Boolean);
     const parsed = lines.map(line => {
       const parts = line.split('-');
@@ -3744,14 +3836,14 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Reset progress button
-  document.getElementById('btn-reset-progress').addEventListener('click', () => {
+  on('btn-reset-progress', 'click', () => {
     if (confirm('האם לאפס את כל הנתונים והנקודות?')) {
       localStorage.removeItem(STORAGE_KEY);
       location.reload();
     }
   });
 
-  // Setup Lia's Studios, Ilay's FC 27 Studio, Science Lab & Talking Dictionary
+  // Setup Lia's Studios, Ilay's FC 27 Studio, Science Lab, Talking Dictionary, Soccer Hub & Gifted Academy
   setupMakeupStudioListeners();
   setupKinderStudioListeners();
   setupFC27StudioListeners();
@@ -3759,6 +3851,8 @@ document.addEventListener('DOMContentLoaded', () => {
   setupTalkingDictionaryListeners();
   setupColoringStudioListeners();
   setupDressUpStudioListeners();
+  setupSoccerHubListeners();
+  setupGiftedHubListeners();
 });
 
 // ==================== VIEW 10: LIA'S GLAM & MAKEUP STUDIO CONTROLLER ====================

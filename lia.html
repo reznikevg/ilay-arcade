@@ -9,49 +9,17 @@
   <meta name="apple-mobile-web-app-title" content="עילי">
   <meta name="theme-color" content="#ffffff">
   <link rel="manifest" href="manifest.json">
-  <title>עילי וליה - למידה ומשחקים</title>
+  <title>גן הקסמים של ליה 🦄✨ | סטיץ׳, נסיכות ולמידה לגן חובה</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Rubik:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css?v=6.0">
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
-<body class="theme-beitar">
+<body class="theme-unicorn lia-app">
 
-  <!-- ==================== LOCK SCREEN (FAMILY PIN / GOOGLE SSO) ==================== -->
-  <div class="auth-gate-overlay" id="auth-gate-overlay">
-    <div class="auth-gate-card">
-      <div class="auth-logo-circle">🦁🦄</div>
-      <h2>האפליקציה של עילי וליה</h2>
-      <p>הזינו קוד משפחתי כדי להיכנס</p>
-
-      <form id="form-family-pin" class="pin-login-form">
-        <input
-          type="tel"
-          id="family-pin-input"
-          class="pin-input"
-          placeholder="1936"
-          inputmode="numeric"
-          maxlength="8"
-          autocomplete="off"
-          required
-        />
-        <button type="submit" class="btn-primary-large">כניסה</button>
-      </form>
-
-      <div class="auth-divider"><span>או כניסת הורים</span></div>
-
-      <div class="google-sso-box" id="google-sso-box">
-        <div id="g-signin-btn-container"></div>
-        <button type="button" class="google-custom-btn" id="btn-google-sso">
-          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="" width="18" height="18">
-          <span>התחברות עם Google</span>
-        </button>
-      </div>
-
-      <div class="auth-error hidden" id="auth-error-msg">קוד שגוי, נסה שוב</div>
-    </div>
-  </div>
+  <!-- ==================== LOCK SCREEN (DISABLED FOR LIA) ==================== -->
+  <div class="auth-gate-overlay hidden" id="auth-gate-overlay" style="display:none !important;"></div>
 
   <canvas id="confetti-canvas"></canvas>
 
@@ -61,112 +29,65 @@
     <!-- Sticky iOS-Style Top Bar -->
     <header class="app-header">
       <div class="header-user" id="btn-profile">
-        <div class="avatar-circle" id="current-avatar">🦁</div>
+        <div class="avatar-circle" id="current-avatar">🦄</div>
         <div class="user-meta">
-          <span class="user-name" id="player-name-display">עילי</span>
-          <span class="user-sub" id="player-rank-display">כיתה ב׳</span>
+          <span class="user-name" id="player-name-display">לִיָּה הַנְּסִיכָה 👑</span>
+          <span class="user-sub" id="player-rank-display">גן חובה • בת 5</span>
         </div>
       </div>
 
       <div class="header-actions">
         <div class="team-pill-toggle" id="team-switcher">
-          <button type="button" class="team-btn active" data-team="beitar" id="btn-team-beitar">בית"ר</button>
-          <button type="button" class="team-btn" data-team="real" id="btn-team-real">ריאל</button>
-          <button type="button" class="team-btn hidden" data-team="unicorn" id="btn-team-unicorn">🦄 חד-קרן</button>
-          <button type="button" class="team-btn hidden" data-team="stitch" id="btn-team-stitch">💙 סטיץ׳</button>
+          <button type="button" class="team-btn active" data-team="unicorn" id="btn-team-unicorn">🦄 חד-קרן</button>
+          <button type="button" class="team-btn" data-team="stitch" id="btn-team-stitch">💙 סטיץ׳</button>
+          <button type="button" class="team-btn hidden" data-team="beitar" id="btn-team-beitar">בית"ר</button>
+          <button type="button" class="team-btn hidden" data-team="real" id="btn-team-real">ריאל</button>
         </div>
 
         <div class="score-chip">
           <span>🪙</span>
-          <span id="stat-coins">0</span>
+          <span id="stat-coins">60</span>
         </div>
         <div class="score-chip trophy-chip">
-          <span>🏆</span>
-          <span id="stat-trophies">0</span>
+          <span>⭐</span>
+          <span id="stat-trophies">1</span>
         </div>
         <div class="hidden" id="streak-pill"><span id="stat-streak">0</span></div>
 
         <button type="button" class="icon-circle-btn" id="btn-sound-toggle" aria-label="צליל">🔊</button>
-        <button type="button" class="icon-circle-btn nav-btn" data-view="parents" id="nav-parents" aria-label="הגדרות הורים">⚙️</button>
+        <button type="button" class="icon-circle-btn nav-btn hidden" data-view="parents" id="nav-parents" aria-label="הגדרות הורים">⚙️</button>
       </div>
     </header>
 
-    <!-- Kid Profile Switcher Bar (Ilay & Lia) -->
+    <!-- Kid Profile Switcher Bar (Ilay & Lia Separated Apps) -->
     <div class="kid-switcher-bar" id="kid-switcher-bar">
-      <button type="button" class="kid-switch-btn active" data-kid="ilay" id="btn-kid-ilay">
-        <span class="kid-switch-emoji">👦⚽</span>
-        <span class="kid-switch-text"><strong>עילי</strong> <small>(כיתה ב׳)</small></span>
-      </button>
-      <button type="button" class="kid-switch-btn" data-kid="lia" id="btn-kid-lia">
+      <button type="button" class="kid-switch-btn active" data-kid="lia" id="btn-kid-lia">
         <span class="kid-switch-emoji">👧🦄</span>
-        <span class="kid-switch-text"><strong>ליה</strong> <small>(גן חובה • בת 5)</small></span>
+        <span class="kid-switch-text"><strong>גן הקסמים של ליה</strong> <small>(גן חובה • בת 5)</small></span>
       </button>
+      <a href="index.html" class="kid-switch-btn" data-kid="ilay" id="btn-kid-ilay" style="text-decoration:none;">
+        <span class="kid-switch-emoji">👦⚽</span>
+        <span class="kid-switch-text"><strong>לארקייד של עילי</strong> <small>(כיתה ב׳ ➔)</small></span>
+      </a>
     </div>
 
     <!-- Scrollable Viewport -->
     <main class="main-container">
 
-      <!-- ==================== VIEW 1: HOME ==================== -->
+      <!-- ==================== VIEW 1: HOME (LIA'S MAGICAL GARDEN) ==================== -->
       <section id="view-home" class="view-section active">
         <!-- Daily Overview Card -->
-        <div class="hero-card" id="btn-daily-match">
+        <div class="hero-card" id="btn-daily-match" style="background:linear-gradient(135deg, #ec4899, #8b5cf6);">
           <div class="hero-card-info">
-            <span class="hero-tag" id="hero-tag-text">אתגר יומי • בונוס כפול</span>
-            <h3 id="hero-title-text">משחק האלופים המהיר</h3>
-            <p id="hero-desc-text">8 שאלות בחשבון ושפה על גביע יומי</p>
+            <span class="hero-tag" id="hero-tag-text">הרפתקת קסם • גן חובה 🦄</span>
+            <h3 id="hero-title-text">הגן המתוק של ליה וסטיץ׳</h3>
+            <p id="hero-desc-text">חיות, צבעים, צלילים וקסמים בלי צורך לקרוא!</p>
           </div>
           <div class="hero-play-circle">▶</div>
         </div>
 
-        <!-- ILAY'S 4 Core Daily Modules (2x2 Grid) -->
-        <div class="bento-grid" id="ilay-bento-grid">
-          <button type="button" class="bento-card bento-speech" id="quick-open-speech">
-            <div class="bento-icon-wrap">🎙️</div>
-            <div class="bento-title">תרגול ש׳ ו-ס׳</div>
-            <div class="bento-sub" id="quick-speech-summary">קלינאית תקשורת</div>
-          </button>
-
-          <button type="button" class="bento-card bento-hw" id="quick-open-hw">
-            <div class="bento-icon-wrap">✅</div>
-            <div class="bento-title">שיעורי בית</div>
-            <div class="bento-sub" id="quick-hw-summary">משימות להיום</div>
-          </button>
-
-          <button type="button" class="bento-card bento-dict" id="quick-open-dict">
-            <div class="bento-icon-wrap">🎧</div>
-            <div class="bento-title">הכתבה</div>
-            <div class="bento-sub" id="quick-dict-summary">שמיעה וכתיבה</div>
-          </button>
-
-          <button type="button" class="bento-card bento-sched" id="quick-open-schedule">
-            <div class="bento-icon-wrap">📅</div>
-            <div class="bento-title">היום שלי</div>
-            <div class="bento-sub" id="quick-sched-summary">מערכת וחוגים</div>
-          </button>
-        </div>
-
-        <!-- EA SPORTS FC 27 English Academy Banner (Ilay) - Direct 4-Mode Hub -->
-        <div class="fc27-home-banner" id="fc27-home-banner" style="flex-direction:column;align-items:stretch;gap:10px;">
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
-            <div class="fc27-banner-left">
-              <div class="fc27-logo-pill">EA SPORTS<br>FC™ 27</div>
-              <div class="fc27-banner-text">
-                <h4>🎮 אקדמיית פיפא FC 27 של עילי: מסכים, איך להתחיל משחק, שדרן וסרטונים!</h4>
-                <p>בחר מה בא לך לראות ולשמוע עכשיו — כל מסך, כל כפתור בשלט וכל משפט של השדרן עם דוגמאות!</p>
-              </div>
-            </div>
-            <span class="fc27-banner-play">פתח הכל ⚽</span>
-          </div>
-          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;" id="fc27-home-quick-modes">
-            <button type="button" class="btn-chip" data-fc27jump="howto" style="background:#00ff87;color:#090d16;font-weight:900;border:none;padding:8px 6px;font-size:0.8rem;">▶️ איך מתחילים משחק (צעד-אחר-צעד)</button>
-            <button type="button" class="btn-chip" data-fc27jump="screens" style="background:#38bdf8;color:#090d16;font-weight:900;border:none;padding:8px 6px;font-size:0.8rem;">🖥️ מה אומר כל מסך בפיפא (6 מסכים)</button>
-            <button type="button" class="btn-chip" data-fc27jump="commentator" style="background:#fbbf24;color:#090d16;font-weight:900;border:none;padding:8px 6px;font-size:0.8rem;">🎙️ מה השדרן אומר + דוגמאות</button>
-            <button type="button" class="btn-chip" data-fc27jump="videos" style="background:#f43f5e;color:#ffffff;font-weight:900;border:none;padding:8px 6px;font-size:0.8rem;">🎬 5 סרטוני הדרכה ושלט</button>
-          </div>
-        </div>
-
         <!-- LIA'S 6 Core Daily Modules (Makeup, Coloring+Learning, Dress-Up+Learning, Kindergarten Teacher, English, Prep) -->
-        <div class="bento-grid hidden" id="lia-bento-grid">
+        <div class="bento-grid" id="lia-bento-grid">
           <button type="button" class="bento-card bento-makeup" id="quick-open-makeup">
             <div class="bento-icon-wrap">💄</div>
             <div class="bento-title">סטודיו האיפור של ליה</div>
@@ -1244,33 +1165,33 @@
 
     </main>
 
-    <!-- Fixed iOS Bottom Tab Bar -->
+    <!-- Fixed iOS Bottom Tab Bar (Lia Dedicated) -->
     <nav class="bottom-nav">
       <button type="button" class="nav-btn active" data-view="home" id="nav-home">
         <span class="btn-icon">🏠</span>
-        <span class="btn-text">בית</span>
+        <span class="btn-text">הגן שלי</span>
       </button>
-      <button type="button" class="nav-btn" data-view="speech" id="nav-speech">
-        <span class="btn-icon" id="nav-2-icon">🎙️</span>
-        <span class="btn-text" id="nav-2-text">הגייה</span>
+      <button type="button" class="nav-btn" data-view="makeup" id="nav-speech">
+        <span class="btn-icon" id="nav-2-icon">💄</span>
+        <span class="btn-text" id="nav-2-text">איפור</span>
         <span class="shop-badge hidden" id="speech-notif">!</span>
       </button>
-      <button type="button" class="nav-btn" data-view="homework" id="nav-homework">
-        <span class="btn-icon" id="nav-3-icon">✅</span>
-        <span class="btn-text" id="nav-3-text">משימות</span>
+      <button type="button" class="nav-btn" data-view="coloring" id="nav-homework">
+        <span class="btn-icon" id="nav-3-icon">🎨</span>
+        <span class="btn-text" id="nav-3-text">צביעה</span>
         <span class="shop-badge hidden" id="hw-notif">0</span>
       </button>
-      <button type="button" class="nav-btn" data-view="dictation" id="nav-dictation">
-        <span class="btn-icon" id="nav-4-icon">🎧</span>
-        <span class="btn-text" id="nav-4-text">הכתבה</span>
+      <button type="button" class="nav-btn" data-view="dressup" id="nav-dictation">
+        <span class="btn-icon" id="nav-4-icon">👗</span>
+        <span class="btn-text" id="nav-4-text">הלבשות</span>
       </button>
-      <button type="button" class="nav-btn" data-view="schedule" id="nav-schedule">
-        <span class="btn-icon">📅</span>
-        <span class="btn-text">מערכת</span>
+      <button type="button" class="nav-btn" data-view="kinder" id="nav-schedule">
+        <span class="btn-icon">👩‍🏫</span>
+        <span class="btn-text">הגננת</span>
       </button>
       <button type="button" class="nav-btn" data-view="shop" id="nav-shop">
-        <span class="btn-icon">🏆</span>
-        <span class="btn-text">אלבום</span>
+        <span class="btn-icon">🌟</span>
+        <span class="btn-text">מדבקות</span>
         <span class="shop-badge hidden" id="shop-notif">!</span>
       </button>
     </nav>
