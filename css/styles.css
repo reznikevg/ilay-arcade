@@ -307,6 +307,37 @@ html, body {
   cursor: pointer;
 }
 
+.cloud-sync-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+  padding: 4px 8px;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.cloud-sync-chip.syncing {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
+  animation: pulseCloud 1.2s infinite ease-in-out;
+}
+.cloud-sync-chip.error {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #b91c1c;
+}
+@keyframes pulseCloud {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(0.96); }
+}
+
 /* ==================== MAIN CONTAINER ==================== */
 .main-container {
   flex: 1;

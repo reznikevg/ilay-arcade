@@ -521,7 +521,24 @@ async function loadState() {
 let cloudSyncDebounceTimer = null;
 let lastCloudSyncTimestamp = 0;
 let lastSyncedCloudPayloadString = '';
-const MIN_CLOUD_SYNC_INTERVAL_MS = 25000; // Minimum 25s between PUT requests to never exceed 1,000 daily limit!
+const CLOUD_SYNC_DEBOUNCE_MS = 2500; // Fast 2.5s batching for responsive cloud saves
+
+function setCloudSyncStatus(status, text) {
+  const chips = document.querySelectorAll('.cloud-sync-chip');
+  chips.forEach(chip => {
+    chip.classList.remove('syncing', 'error');
+    if (status === 'syncing') chip.classList.add('syncing');
+    if (status === 'error') chip.classList.add('error');
+    const txtEl = chip.querySelector('.cloud-text');
+    if (txtEl) txtEl.textContent = text;
+    const iconEl = chip.querySelector('.cloud-icon');
+    if (iconEl) {
+      if (status === 'syncing') iconEl.textContent = '🔄';
+      else if (status === 'error') iconEl.textContent = '⚠️';
+      else iconEl.textContent = '☁️';
+    }
+  });
+}
 
 function pushStateToCloudThrottled(immediate = false) {
   if (cloudSyncDebounceTimer) {
@@ -530,6 +547,7 @@ function pushStateToCloudThrottled(immediate = false) {
   }
 
   const executePush = async () => {
+    setCloudSyncStatus('syncing', 'שומר בענן...');
     try {
       // 1. Fetch current remote state to protect the other child's namespace
       let remote = {};
@@ -566,41 +584,42 @@ function pushStateToCloudThrottled(immediate = false) {
 
       const payloadStr = JSON.stringify(remote);
       // Skip network request entirely if data hasn't changed since last push!
-      if (payloadStr === lastSyncedCloudPayloadString) return;
+      if (payloadStr === lastSyncedCloudPayloadString) {
+        setCloudSyncStatus('synced', 'ענן מעודכן');
+        return;
+      }
 
-      const now = Date.now();
-      lastCloudSyncTimestamp = now;
+      lastCloudSyncTimestamp = Date.now();
       lastSyncedCloudPayloadString = payloadStr;
 
       const res = await fetch(`${CLOUD_BACKEND_URL}/api/state`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: payloadStr
+        body: payloadStr,
+        keepalive: true
       });
 
-      if (res && res.status === 429) {
-        console.warn('Cloudflare KV daily PUT quota (1,000) reached. Backing off cloud sync for 10 minutes; app continues smoothly with localStorage.');
-        lastCloudSyncTimestamp = Date.now() + 600000; // 10 minute backoff
-        return;
+      if (res && res.ok) {
+        setCloudSyncStatus('synced', 'ענן מעודכן');
+      } else if (res && res.status === 429) {
+        console.warn('Cloudflare KV daily PUT quota reached. App continues smoothly with local storage.');
+        setCloudSyncStatus('synced', 'שמור במכשיר');
+      } else {
+        setCloudSyncStatus('error', 'שגיאת ענן');
       }
     } catch (e) {
-      // Graceful offline/429 resilience - app continues locally without any disruption!
+      setCloudSyncStatus('error', 'שמור במכשיר');
     }
   };
 
-  const now = Date.now();
-  const timeSinceLastSync = now - lastCloudSyncTimestamp;
-
-  if (immediate && timeSinceLastSync >= MIN_CLOUD_SYNC_INTERVAL_MS) {
+  if (immediate) {
     executePush();
   } else {
-    // Debounce to batch multiple actions (answering questions, coloring, etc.) into a single sync
-    const waitTime = Math.max(12000, MIN_CLOUD_SYNC_INTERVAL_MS - timeSinceLastSync);
-    cloudSyncDebounceTimer = setTimeout(executePush, waitTime);
+    cloudSyncDebounceTimer = setTimeout(executePush, CLOUD_SYNC_DEBOUNCE_MS);
   }
 }
 
-function saveState() {
+function saveState(immediate = false) {
   const currentKey = getStorageKey();
   try {
     appState.updatedAt = Date.now();
@@ -613,39 +632,60 @@ function saveState() {
     console.warn('Could not save state:', e);
   }
 
-  // Push to Cloudflare KV with smart throttling & debouncing
-  pushStateToCloudThrottled(false);
+  // Push to Cloudflare KV (instant if immediate, or 2.5s debounced)
+  pushStateToCloudThrottled(immediate);
 }
 
-// Push to cloud on page hide / tab close
-window.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'hidden') {
-    pushStateToCloudThrottled(true);
-  }
-});
-window.addEventListener('beforeunload', () => {
-  pushStateToCloudThrottled(true);
-});
-
-// Periodic Cloud Pull - only every 45 seconds and only when tab is active in foreground!
-setInterval(async () => {
-  if (document.hidden) return;
+// Live Pull from Cloudflare KV
+async function pullLatestCloudState() {
   try {
     const res = await fetch(`${CLOUD_BACKEND_URL}/api/state`, { cache: 'no-store' });
     if (!res.ok) return;
     const remote = await res.json();
     if (remote && remote.updatedAt && (!appState.updatedAt || remote.updatedAt > appState.updatedAt)) {
-      const lockedChild = appState.activeChild;
-      appState = mergeCloudStateSafely(appState, remote);
-      appState.activeChild = lockedChild;
+      const localKid = getInitialDeviceChild();
+      const currentKey = getStorageKey();
+      let childRemote = remote;
+      if (localKid === 'lia' && remote.lia) {
+        childRemote = { ...remote, liaProfile: remote.lia };
+      } else if (localKid === 'ilay' && remote.ilay) {
+        childRemote = { ...remote, ...remote.ilay };
+      }
+      appState = mergeCloudStateSafely(appState, childRemote);
+      appState.activeChild = localKid;
+      localStorage.setItem(currentKey, JSON.stringify(appState));
       localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
       updateHeaderUI();
       if (document.getElementById('view-schedule')?.classList.contains('active')) renderScheduleView();
       if (document.getElementById('view-homework')?.classList.contains('active')) renderHomeworkView();
       if (document.getElementById('view-parents')?.classList.contains('active')) renderParentsView();
+      if (document.getElementById('view-home')?.classList.contains('active')) renderTopicsGrid();
+      setCloudSyncStatus('synced', 'ענן מעודכן');
     }
   } catch (e) {}
-}, 45000);
+}
+
+// Sync to cloud on page hide, pull from cloud on return
+window.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') {
+    pushStateToCloudThrottled(true);
+  } else if (document.visibilityState === 'visible') {
+    pullLatestCloudState();
+  }
+});
+window.addEventListener('beforeunload', () => {
+  pushStateToCloudThrottled(true);
+});
+window.addEventListener('focus', () => {
+  pullLatestCloudState();
+});
+
+// Periodic Cloud Pull - every 30 seconds when tab is active in foreground
+setInterval(() => {
+  if (!document.hidden) {
+    pullLatestCloudState();
+  }
+}, 30000);
 
 function getRankTitle(trophies, solved) {
   if (isLiaActive()) {
@@ -2387,7 +2427,7 @@ function finishMatch() {
   if (ratio >= 0.65) {
     addActiveTrophies(session.isDailyBonus ? 2 : 1);
   }
-  saveState();
+  saveState(true);
   updateHeaderUI();
 
   const sumTitle = document.getElementById('summary-title');
@@ -2445,7 +2485,7 @@ function openSummaryMysteryChest() {
     msg = `🎉 מצאת בתיבה: ${prizeTitle}! קיבלת +${bonusCoins} 🪙 מטבעות בונוס!`;
   }
 
-  saveState();
+  saveState(true);
   updateHeaderUI();
   document.getElementById('sum-coins').textContent = `+${session.coinsEarned}`;
   arcadeAudio.playGoalSuccess();
@@ -2566,7 +2606,7 @@ function buyMysteryPack() {
     stickers.push(chosen.id);
     arcadeAudio.playUnlock();
     confetti.burst(110);
-    saveState();
+    saveState(true);
     updateHeaderUI();
     renderShopView();
     openFutCardModal(chosen, true);
@@ -2574,7 +2614,7 @@ function buyMysteryPack() {
     addActiveTrophies(1);
     arcadeAudio.playUnlock();
     confetti.burst(110);
-    saveState();
+    saveState(true);
     updateHeaderUI();
     renderShopView();
     arcadeAudio.speak('וואו! השלמת את כל האלבום וקיבלת גביע זהב!', 'he-IL', 0.9);
@@ -3397,7 +3437,7 @@ document.addEventListener('DOMContentLoaded', () => {
         status: 'נשמר בענן ☁️'
       });
       inp.value = '';
-      saveState();
+      saveState(true);
       renderParentsView();
       arcadeAudio.playGoalSuccess();
       alert('🚀 הבקשה נשלחה ונשמרה בענן! בפעם הבאה שתכתוב לי בשיחה "תבצע את הבקשות" (או דרך לינק הוואטסאפ/שיחה), אבנה ואעדכן את זה מיד!');
@@ -3415,7 +3455,7 @@ document.addEventListener('DOMContentLoaded', () => {
       appState.googleClientId = document.getElementById('sec-google-client-id').value.trim();
       const gemEl = document.getElementById('sec-gemini-key');
       if (gemEl) appState.geminiApiKey = gemEl.value.trim();
-      saveState();
+      saveState(true);
       renderParentsView();
       initGoogleSSO();
       alert('🔐 ההגדרות נשמרו בהצלחה!');
@@ -3605,6 +3645,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Cloud sync manual trigger button
+  on('cloud-sync-btn', 'click', () => {
+    arcadeAudio.playClick();
+    saveState(true);
+  });
+
   // Profile button -> opens sticker album
   on('btn-profile', 'click', () => {
     arcadeAudio.playClick();
@@ -3764,7 +3810,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (parsed.length > 0) {
       appState.speechCards = parsed;
-      saveState();
+      saveState(true);
       alert(`נשמרו ${parsed.length} כרטיסיות דיבור (ש׳ ו-ס׳) לעילי! 🎙️`);
     }
   });
@@ -3780,7 +3826,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!appState.schedule[day]) appState.schedule[day] = { school: [], after: [] };
     appState.schedule[day][part].push({ icon, title, time });
-    saveState();
+    saveState(true);
     const timeInp = document.getElementById('sched-time-input');
     if (timeInp) timeInp.value = '';
     renderParentsView();
@@ -3793,7 +3839,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const [icon, subject] = (document.getElementById('hw-subject')?.value || '|').split('|');
     const title = document.getElementById('hw-title')?.value?.trim() || '';
     appState.homeworkList.push({ id: 'hw_' + Date.now(), icon, subject, title, done: false });
-    saveState();
+    saveState(true);
     const titleInp = document.getElementById('hw-title');
     if (titleInp) titleInp.value = '';
     renderParentsView();
@@ -3815,7 +3861,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (parsed.length > 0) {
       appState.dictationWords = parsed;
-      saveState();
+      saveState(true);
       updateHeaderUI();
       arcadeAudio.playGoalSuccess();
       alert(`✅ נשמרו ${parsed.length} מילים לאימון ההכתבה של עילי! המילים סונכרנו גם לענן. 🎧`);
@@ -3827,7 +3873,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnTomorrow) {
     btnTomorrow.addEventListener('click', () => {
       appState.dictationWords = [...DEFAULT_DICTATION_WORDS];
-      saveState();
+      saveState(true);
       updateHeaderUI();
       renderParentsView();
       arcadeAudio.playGoalSuccess();
