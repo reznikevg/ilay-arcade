@@ -77,6 +77,34 @@ class ArcadeAudio {
     this.playTone(1174.66, 'triangle', 0.35, 0.2, 0.25);
   }
 
+  playLevelUp() {
+    // Spectacular Champions Fanfare (C5 -> E5 -> G5 -> C6 -> E6 -> G6)
+    this.playTone(523.25, 'triangle', 0.1, 0, 0.22);     // C5
+    this.playTone(659.25, 'triangle', 0.1, 0.08, 0.22);  // E5
+    this.playTone(783.99, 'triangle', 0.1, 0.16, 0.24);  // G5
+    this.playTone(1046.50, 'sine', 0.14, 0.24, 0.26);   // C6
+    this.playTone(1318.51, 'sine', 0.18, 0.34, 0.28);   // E6
+    this.playTone(1567.98, 'sine', 0.45, 0.46, 0.32);   // G6
+  }
+
+  playCombo(streak = 1) {
+    // Dynamic rising musical pitch based on Ilay's current streak!
+    const pitches = [523.25, 587.33, 659.25, 698.46, 783.99, 880.00, 987.77, 1046.50, 1174.66, 1318.51];
+    const freq = pitches[Math.min(pitches.length - 1, Math.max(0, streak - 1))];
+    this.playTone(freq, 'triangle', 0.14, 0, 0.22);
+    if (streak >= 3) {
+      this.playTone(freq * 1.5, 'sine', 0.2, 0.07, 0.2);
+    }
+  }
+
+  playMagicSparkle() {
+    // Lia's magical fairy sparkle chime
+    this.playTone(880, 'sine', 0.08, 0, 0.18);
+    this.playTone(1174.66, 'sine', 0.09, 0.06, 0.2);
+    this.playTone(1479.98, 'sine', 0.11, 0.12, 0.22);
+    this.playTone(1760.00, 'sine', 0.25, 0.18, 0.25);
+  }
+
   numberToHebrewWords(num) {
     const n = parseInt(num, 10);
     if (isNaN(n)) return '';

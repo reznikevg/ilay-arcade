@@ -757,25 +757,47 @@ html, body {
   padding: 13px 16px;
   border-radius: var(--radius-md);
   background: var(--surface-subtle);
-  border: 1.5px solid var(--border);
-  font-size: 1.1rem;
+  border: 2px solid var(--border);
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.04);
+  font-size: 1.15rem;
   font-weight: 700;
   cursor: pointer;
+  transition: all 0.14s cubic-bezier(0.34, 1.56, 0.64, 1);
+  user-select: none;
+}
+.option-row:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
 }
 .option-row.selected {
   background: #eff6ff;
   border-color: #2563eb;
   color: #1d4ed8;
+  box-shadow: 0 3px 0 #1d4ed8;
+  transform: translateY(-1px);
 }
 .option-row.correct {
-  background: var(--success) !important;
-  border-color: var(--success) !important;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  border-color: #047857 !important;
   color: #fff !important;
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.5), 0 3px 0 #065f46 !important;
+  animation: popCorrect 0.35s ease;
 }
 .option-row.wrong {
-  background: var(--danger-soft) !important;
-  border-color: var(--danger) !important;
-  color: var(--danger) !important;
+  background: #fef2f2 !important;
+  border-color: #ef4444 !important;
+  color: #b91c1c !important;
+  animation: shakeWrong 0.4s ease;
+}
+@keyframes popCorrect {
+  0% { transform: scale(0.96); }
+  50% { transform: scale(1.04); }
+  100% { transform: scale(1); }
+}
+@keyframes shakeWrong {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
 }
 
 .card-footer-bar {
@@ -1969,6 +1991,172 @@ body.theme-stitch .arena-visual-banner {
 }
 .opt-speak-mini:hover {
   background: rgba(15, 23, 42, 0.14);
+}
+
+/* ==================== ARENA ADAPTIVE LEVEL LIVE BAR & STREAK METER ==================== */
+.arena-level-live-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: #ffffff;
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+
+.level-indicator-shield {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #fef9c3, #fef08a);
+  border: 1.5px solid #eab308;
+  color: #854d0e;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: -0.2px;
+  transition: all 0.3s ease;
+}
+.level-indicator-shield.level-3 {
+  background: linear-gradient(135deg, #ffedd5, #fed7aa);
+  border-color: #f97316;
+  color: #9a3412;
+  box-shadow: 0 0 10px rgba(249, 115, 22, 0.3);
+}
+.level-indicator-shield.level-4 {
+  background: linear-gradient(135deg, #f3e8ff, #e9d5ff);
+  border-color: #a855f7;
+  color: #6b21a8;
+  box-shadow: 0 0 12px rgba(168, 85, 247, 0.35);
+}
+.level-indicator-shield.level-5 {
+  background: linear-gradient(135deg, #fef08a, #facc15, #f59e0b);
+  border-color: #b45309;
+  color: #451a03;
+  box-shadow: 0 0 16px rgba(234, 179, 8, 0.6);
+  animation: pulseGold 1.5s infinite ease-in-out;
+}
+
+@keyframes pulseGold {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 12px rgba(234, 179, 8, 0.5); }
+  50% { transform: scale(1.04); box-shadow: 0 0 22px rgba(234, 179, 8, 0.85); }
+}
+
+.level-streak-meter {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  max-width: 170px;
+  justify-content: flex-end;
+}
+.streak-count {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #dc2626;
+  white-space: nowrap;
+}
+.streak-bar-bg {
+  flex: 1;
+  height: 8px;
+  background: #f1f5f9;
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+}
+.streak-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #f59e0b, #ef4444);
+  border-radius: 999px;
+  transition: width 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ==================== DYNAMIC LEVEL-UP TOAST BANNER ==================== */
+.level-up-toast {
+  position: fixed;
+  top: 18%;
+  left: 50%;
+  transform: translateX(-50%) scale(1);
+  z-index: 9999;
+  width: 90%;
+  max-width: 380px;
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 60%, #1e1b4b 100%);
+  border: 3px solid #facc15;
+  border-radius: 22px;
+  padding: 18px 20px;
+  text-align: center;
+  color: #ffffff;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(250, 204, 21, 0.6);
+  animation: toastPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none;
+}
+.level-up-stars {
+  font-size: 1.5rem;
+  margin-bottom: 4px;
+}
+.level-up-title {
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: #facc15;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+  margin-bottom: 4px;
+}
+.level-up-sub {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #e0e7ff;
+}
+@keyframes toastPop {
+  0% { opacity: 0; transform: translate(-50%, -20px) scale(0.85); }
+  100% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+}
+
+/* ==================== 5-LEVEL CHAMPIONS DIFFICULTY SELECTOR ==================== */
+.champions-level-selector {
+  margin-bottom: 12px;
+}
+.level-selector-title {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: var(--text-secondary);
+  display: block;
+  margin-bottom: 6px;
+}
+.champions-level-pills {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+.champions-level-pills::-webkit-scrollbar {
+  display: none;
+}
+.champions-level-pills .pill-opt {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.champions-level-pills .pill-opt.active {
+  background: #090d16;
+  border-color: #facc15;
+  color: #facc15;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 /* ==================== VIEW 10: LIA'S GLAM & MAKEUP STUDIO ==================== */

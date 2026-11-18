@@ -366,11 +366,33 @@
 
         <div class="arena-visual-banner" id="arena-visual-banner">
           <div class="arena-stage-row">
-            <div class="arena-keeper" id="goalkeeper">🧤</div>
+            <div class="arena-keeper" id="goalkeeper">🦄</div>
             <div class="penalty-dots-row" id="penalty-balls-track"></div>
-            <div class="arena-ball" id="soccer-ball-shot">⚽</div>
+            <div class="arena-ball" id="soccer-ball-shot">✨</div>
           </div>
-          <div class="arena-commentary" id="commentator-text">מוכנים? בואו נתחיל!</div>
+          <div class="arena-commentary" id="commentator-text">מוכנה ליה? בואי נתחיל!</div>
+        </div>
+
+        <!-- Live Adaptive Level & Streak Shield Bar -->
+        <div class="arena-level-live-bar" id="arena-level-live-bar">
+          <div class="level-indicator-shield" id="arena-level-shield">
+            <span class="level-shield-icon" id="arena-level-icon">🦄</span>
+            <span class="level-shield-text" id="arena-level-text">גן חובה • כוכבת קסם</span>
+          </div>
+          <div class="level-streak-meter" id="arena-streak-meter">
+            <span class="streak-fire">💖</span>
+            <span class="streak-count" id="arena-streak-count">כוכבים: 0</span>
+            <div class="streak-bar-bg"><div class="streak-bar-fill" id="arena-streak-fill" style="width: 0%;"></div></div>
+          </div>
+        </div>
+
+        <!-- Dynamic WOW Level Up Flash Overlay Banner -->
+        <div class="level-up-toast hidden" id="level-up-toast">
+          <div class="level-up-toast-content">
+            <div class="level-up-stars">🦄 ✨ 👑</div>
+            <div class="level-up-title" id="level-up-title">איזו אלופה ליה!</div>
+            <div class="level-up-sub" id="level-up-sub">+15 מטבעות קסם 🪙 • הצלחת רצף מדהים!</div>
+          </div>
         </div>
 
         <button type="button" id="btn-arena-open-fc27-guide" class="btn-primary-large hidden" style="margin-bottom:10px;background:linear-gradient(135deg,#00ff87,#10b981);color:#090d16;font-weight:900;border:none;">

@@ -444,7 +444,99 @@ function genInequalities(diff) {
   }
 }
 
-function genAddSub(diff) {
+function genAddSub(diff = 'medium') {
+  if (diff === 'stage_b') {
+    // Level 5: Order of operations with multiplication & division + addition/subtraction!
+    const subType = randInt(1, 3);
+    if (subType === 1) {
+      const a = randInt(3, 8);
+      const b = randInt(3, 7);
+      const c = randInt(10, 35);
+      const isAdd = Math.random() > 0.5;
+      const ans = isAdd ? (a * b) + c : Math.max(2, (a * b) - c);
+      const op = isAdd ? '+' : '−';
+      return {
+        isMulti: false,
+        instruction: '🧮 סֵדֶר פְּעֻלּוֹת חֶשְׁבּוֹן (רָמָה 5 • מֹחַ עַל):',
+        ttsText: `חשבו לפי סדר פעולות חשבון: ${a} כפול ${b} ${isAdd ? 'ועוד' : 'פחות'} ${c}`,
+        stimulusHtml: `<span>${a}</span> <span>×</span> <span>${b}</span> <span>${op}</span> <span>${c}</span> <span>=</span> <span class="mystery-box">?</span>`,
+        rtlStimulus: false,
+        options: makeNumericOptions(ans, 4, 2),
+        correctAnswers: [String(ans)],
+        hint: `כלל ברזל בחשבון: קודם כל כופלים (${a} × ${b} = ${a * b}), ורק אחר כך מבצעים ${op === '+' ? 'חיבור' : 'חיסור'}!`
+      };
+    } else if (subType === 2) {
+      const total = randInt(50, 95);
+      const a = randInt(3, 7);
+      const b = randInt(3, 6);
+      const mult = a * b;
+      const ans = total - mult;
+      return {
+        isMulti: false,
+        instruction: '🧮 סֵדֶר פְּעֻלּוֹת חֶשְׁבּוֹן (רָמָה 5 • מֹחַ עַל):',
+        ttsText: `חשבו: ${total} פחות ${a} כפול ${b}`,
+        stimulusHtml: `<span>${total}</span> <span>−</span> <span>${a}</span> <span>×</span> <span>${b}</span> <span>=</span> <span class="mystery-box">?</span>`,
+        rtlStimulus: false,
+        options: makeNumericOptions(ans, 4, 3),
+        correctAnswers: [String(ans)],
+        hint: `זהירות! לא מחסרים קודם! קודם מחשבים ${a} × ${b} = ${mult}, ואז ${total} − ${mult} = ${ans}.`
+      };
+    } else {
+      const a = randInt(4, 9);
+      const b = randInt(4, 8);
+      const c = randInt(2, 6);
+      const d = randInt(2, 5);
+      const ans = (a * b) + (c * d);
+      return {
+        isMulti: false,
+        instruction: '👑 כֶּפֶל כָּפוּל וְסֵדֶר פְּעֻלּוֹת (רָמָה 5):',
+        ttsText: `חשבו: בסוגריים ${a} כפול ${b}, ועוד בסוגריים ${c} כפול ${d}`,
+        stimulusHtml: `<span>(${a} × ${b})</span> <span>+</span> <span>(${c} × ${d})</span> <span>=</span> <span class="mystery-box">?</span>`,
+        rtlStimulus: false,
+        options: makeNumericOptions(ans, 4, 4),
+        correctAnswers: [String(ans)],
+        hint: `מחשבים כל סוגריים בנפרד: ${a * b} + ${c * d} = ${ans}!`
+      };
+    }
+  }
+
+  if (diff === 'stage_a') {
+    // Level 4: 3-term calculations with parentheses or 3 steps within 100!
+    const isParentheses = Math.random() > 0.4;
+    if (isParentheses) {
+      const a = randInt(60, 95);
+      const b = randInt(12, 28);
+      const c = randInt(10, 25);
+      const inner = b + c;
+      const ans = a - inner;
+      return {
+        isMulti: false,
+        instruction: '🎯 חֶשְׁבּוֹן עִם סוֹגְרַיִם (רָמָה 4 • מְחֻנָּנִים שָׁלָב א׳):',
+        ttsText: `חשבו את התרגיל עם הסוגריים: ${a} פחות בסוגריים ${b} ועוד ${c}`,
+        stimulusHtml: `<span>${a}</span> <span>−</span> <span>(</span><span>${b}</span> <span>+</span> <span>${c}</span><span>)</span> <span>=</span> <span class="mystery-box">?</span>`,
+        rtlStimulus: false,
+        options: makeNumericOptions(ans, 4, 2),
+        correctAnswers: [String(ans)],
+        hint: `תמיד מתחילים ממה שבתוך הסוגריים: ${b} + ${c} = ${inner}. עכשיו נשאר ${a} − ${inner} = ${ans}.`
+      };
+    } else {
+      const a = randInt(25, 60);
+      const b = randInt(15, 35);
+      const c = randInt(10, 30);
+      const ans = a + b - c;
+      return {
+        isMulti: false,
+        instruction: '⚡ תַּרְגִּיל בִּשְׁלֹשָׁה שְׁלָבִים (רָמָה 4):',
+        ttsText: `חשבו: ${a} ועוד ${b} פחות ${c}`,
+        stimulusHtml: `<span>${a}</span> <span>+</span> <span>${b}</span> <span>−</span> <span>${c}</span> <span>=</span> <span class="mystery-box">?</span>`,
+        rtlStimulus: false,
+        options: makeNumericOptions(ans, 4, 2),
+        correctAnswers: [String(ans)],
+        hint: `נפתור משמאל לימין: קודם ${a} + ${b} = ${a + b}, ואז נפחית ${c} ונקבל ${ans}!`
+      };
+    }
+  }
+
   const isAdd = Math.random() > 0.45;
   let a, b, ans;
   if (diff === 'easy') {
@@ -454,15 +546,16 @@ function genAddSub(diff) {
     a = randInt(22, 68);
     b = randInt(12, 35);
   } else {
-    a = randInt(48, 95);
-    b = randInt(25, 65);
+    // diff === 'hard' (Level 3)
+    a = randInt(48, 98);
+    b = randInt(28, 75);
   }
 
   if (isAdd) {
     ans = a + b;
     return {
       isMulti: false,
-      instruction: 'פִּתְרוּ אֶת תַּרְגִּיל הַחִבּוּר:',
+      instruction: diff === 'hard' ? '🔥 חִבּוּר מֵעַל 100 לִמְנַצְּחִים (רָמָה 3):' : 'פִּתְרוּ אֶת תַּרְגִּיל הַחִבּוּר:',
       ttsText: `כמה זה ${a} ועוד ${b}?`,
       stimulusHtml: `<span>${a}</span> <span>+</span> <span>${b}</span> <span>=</span> <span class="mystery-box">?</span>`,
       rtlStimulus: false,
@@ -475,7 +568,7 @@ function genAddSub(diff) {
     ans = a - b;
     return {
       isMulti: false,
-      instruction: 'פִּתְרוּ אֶת תַּרְגִּיל הַחִסּוּר:',
+      instruction: diff === 'hard' ? '🔥 חִסּוּר עִם פְּרִיטָה (רָמָה 3):' : 'פִּתְרוּ אֶת תַּרְגִּיל הַחִסּוּר:',
       ttsText: `כמה זה ${a} פחות ${b}?`,
       stimulusHtml: `<span>${a}</span> <span>−</span> <span>${b}</span> <span>=</span> <span class="mystery-box">?</span>`,
       rtlStimulus: false,
@@ -486,8 +579,62 @@ function genAddSub(diff) {
   }
 }
 
-function genMissingNumber(diff) {
-  const max = diff === 'easy' ? 20 : diff === 'medium' ? 50 : 90;
+function genMissingNumber(diff = 'medium') {
+  if (diff === 'stage_b') {
+    // Level 5: Compound missing number with multiplication or balanced equations!
+    if (Math.random() > 0.5) {
+      const multA = randInt(3, 8);
+      const missing = randInt(2, 9);
+      const add = randInt(4, 15);
+      const result = (multA * missing) + add;
+      return {
+        isMulti: false,
+        instruction: '👑 מִצְאוּ אֶת הַמִּסְפָּר הֶחָסֵר בִּמְשׁוּאָה (רָמָה 5 • מֹחַ עַל):',
+        ttsText: `${multA} כפול איזה מספר, ועוד ${add}, שווה ${result}?`,
+        stimulusHtml: `<span>${multA} × </span><span class="mystery-box">?</span><span> + ${add} = ${result}</span>`,
+        rtlStimulus: false,
+        options: makeNumericOptions(missing, 4, 1),
+        correctAnswers: [String(missing)],
+        hint: `נפתור אחורה: קודם נחסר ${result} − ${add} = ${multA * missing}. עכשיו נשאל: ${multA} כפול מה שווה ${multA * missing}? התשובה היא ${missing}!`
+      };
+    } else {
+      const leftA = randInt(20, 50);
+      const missing = randInt(5, 25);
+      const rightA = randInt(60, 95);
+      const rightB = randInt(10, 25);
+      const target = rightA - rightB;
+      const leftKnown = target - missing;
+      return {
+        isMulti: false,
+        instruction: '👑 אִזּוּן מַאזְנַיִם מִשְּׁנֵי הַצְּדָדִים (רָמָה 5):',
+        ttsText: `השלימו את המספר החסר כדי ששני הצדדים יהיו שווים: ${leftKnown} ועוד סימן שאלה, שווה ${rightA} פחות ${rightB}`,
+        stimulusHtml: `<span>${leftKnown} + </span><span class="mystery-box">?</span><span> = ${rightA} − ${rightB}</span>`,
+        rtlStimulus: false,
+        options: makeNumericOptions(missing, 4, 2),
+        correctAnswers: [String(missing)],
+        hint: `קודם נחשב את צד ימין: ${rightA} − ${rightB} = ${target}. עכשיו נשאל: כמה צריך להוסיף ל-${leftKnown} כדי להגיע ל-${target}? בדיוק ${missing}!`
+      };
+    }
+  }
+
+  if (diff === 'stage_a') {
+    // Level 4: Missing factor in multiplication or larger balances
+    const a = randInt(2, 6);
+    const missing = randInt(3, 9);
+    const prod = a * missing;
+    return {
+      isMulti: false,
+      instruction: '🏆 מִצְאוּ אֶת הַכּוֹפֵל הֶחָסֵר (רָמָה 4 • מְחֻנָּנִים שָׁלָב א׳):',
+      ttsText: `${a} כפול איזה מספר שווה ${prod}?`,
+      stimulusHtml: `<span>${a}</span> <span>×</span> <span class="mystery-box">?</span> <span>=</span> <span>${prod}</span>`,
+      rtlStimulus: false,
+      options: makeNumericOptions(missing, 4, 1),
+      correctAnswers: [String(missing)],
+      hint: `כמה פעמים ${a} נכנס בתוך ${prod}? נחלק ${prod} ב-${a} ונקבל ${missing}.`
+    };
+  }
+
+  const max = diff === 'easy' ? 20 : diff === 'medium' ? 50 : 98;
   const subType = randInt(1, 3);
 
   if (subType === 1) {
@@ -621,7 +768,118 @@ function genMultIntro(diff) {
   }
 }
 
-function genWordProblems() {
+function genWordProblems(diff = 'medium') {
+  if (diff === 'stage_b') {
+    // Level 5 (Gifted Stage B / Olympiad): Algebraic puzzles, age problems, ratio problems!
+    const templatesB = [
+      () => {
+        const ilayAge = randInt(7, 10);
+        const mult = randInt(3, 4);
+        const dadAge = ilayAge * mult;
+        const total = ilayAge + dadAge;
+        return {
+          text: `👑 סְכוּם הַגִּילָאִים שֶׁל עִילַי וְאָבִיו הוּא <strong>${total}</strong> שָׁנִים. הָאָב גָּדוֹל מֵעִילַי <strong>פִּי ${mult}</strong>. בֶּן כַּמָּה עִילַי?`,
+          tts: `סכום הגילאים של עילי ואביו הוא ${total} שנים. האב גדול מעילי פי ${mult}. בן כמה עילי?`,
+          ans: ilayAge,
+          hint: `נחלק את הסכום הכולל (${total}) ל-${mult + 1} חלקים שווים (חלק אחד לעילי ועוד ${mult} חלקים לאבא). ${total} לחלק ל-${mult + 1} שווה ${ilayAge}!`
+        };
+      },
+      () => {
+        const eitan = randInt(6, 14);
+        const mult = randInt(3, 4);
+        const ilay = eitan * mult;
+        const diffCards = ilay - eitan;
+        return {
+          text: `👑 לְעִילַי יֵשׁ <strong>פִּי ${mult}</strong> יוֹתֵר קַלְפֵי סוּפֶּרְגוֹל מֵאֲשֶׁר לְאֵיתָן. יָדוּעַ שֶׁלְּעִילַי יֵשׁ <strong>${diffCards}</strong> קְלָפִים יוֹתֵר מִלְּאֵיתָן. כַּמָּה קְלָפִים יֵשׁ לְעִילַי?`,
+          tts: `לעילי יש פי ${mult} יותר קלפי סופרגול מאשר לאיתן. ידוע שלעילי יש ${diffCards} קלפים יותר מאשר לאיתן. כמה קלפים יש לעילי?`,
+          ans: ilay,
+          hint: `ההפרש (${diffCards}) שווה ל-${mult - 1} חלקים. לכן חלק אחד שווה ${diffCards / (mult - 1)}, ולעילי יש ${mult} חלקים כאלה, כלומר ${ilay} קלפים!`
+        };
+      },
+      () => {
+        const ballWeight = randInt(4, 9);
+        const totalRight = ballWeight * 3;
+        return {
+          text: `👑 בְּמֹאזְנַיִם מְאֻזָּנִים, בְּצַד אֶחָד יֵשׁ <strong>3 כַּדּוּרֵי רֶגֶל שָׁוִים ⚽⚽⚽</strong>, וּבַצַּד הַשֵּׁנִי יֵשׁ מִשְׁקֹלֶת שֶׁל <strong>${totalRight} קִילוֹגְרָם ⚖️</strong>. כַּמָּה שׁוֹקֵל כַּדּוּר רֶגֶל אֶחָד?`,
+          tts: `במאזניים מאוזנים, בצד אחד יש 3 כדורי רגל שווים, ובצד השני משקולת של ${totalRight} קילוגרם. כמה שוקל כדור רגל אחד?`,
+          ans: ballWeight,
+          hint: `מאחר ושלושת הכדורים שוקלים יחד ${totalRight}, נחלק: ${totalRight} לחלק ל-3 = ${ballWeight} קילוגרם!`
+        };
+      }
+    ];
+    const item = templatesB[randInt(0, templatesB.length - 1)]();
+    return {
+      isMulti: false,
+      instruction: '👑 חֲשִׁיבָה מַתֶמָטִית מִתְקַדֶּמֶת (רָמָה 5 • מֹחַ עַל):',
+      ttsText: item.tts,
+      stimulusHtml: `<span>${item.text}</span>`,
+      rtlStimulus: true,
+      options: makeNumericOptions(item.ans, 4, 1),
+      correctAnswers: [String(item.ans)],
+      hint: item.hint
+    };
+  }
+
+  if (diff === 'stage_a') {
+    // Level 4 (Gifted Stage A): 2-step problems with ratio "פי כמה" and total!
+    const templatesA = [
+      () => {
+        const goalsA = randInt(4, 9);
+        const mult = randInt(2, 3);
+        const goalsB = goalsA * mult;
+        const total = goalsA + goalsB;
+        return {
+          text: `🏆 בְּאִצְטַדְיוֹן טֶדִי, בֵּיתָ"ר יְרוּשָׁלַיִם הִבְקִיעָה <strong>${goalsA}</strong> שְׁעָרִים בַּחִמּוּם, וּבַמִּשְׂחָק עַצְמוֹ הִבְקִיעָה <strong>פִּי ${mult}</strong> יוֹתֵר שְׁעָרִים! כַּמָּה שְׁעָרִים הִבְקִיעָה בֵּיתָ"ר <strong>בְּסַךְ הַכֹּל (בַּחִמּוּם וּבַמִּשְׂחָק גַּם יַחַד)</strong>?`,
+          tts: `בטדי ביתר הבקיעה ${goalsA} שערים בחימום, ובמשחק עצמו פי ${mult} יותר. כמה שערים הבקיעה ביתר בסך הכל בחימום ובמשחק גם יחד?`,
+          ans: total,
+          hint: `קודם נחשב כמה שערים הובקעו במשחק: ${goalsA} כפול ${mult} = ${goalsB}. עכשיו נחבר עם החימום: ${goalsA} + ${goalsB} = ${total}!`
+        };
+      },
+      () => {
+        const costBall = randInt(20, 45);
+        const costShirt = randInt(35, 55);
+        const paid = 100;
+        const total = costBall + costShirt;
+        const change = paid - total;
+        return {
+          text: `🏆 עִילַי קָנָה בַּחֲנוּת הָאוֹהֲדִים שֶׁל רֵיאָל מַדְרִיד כַּדּוּר בְּ-<strong>${costBall} ₪</strong> וְצָעִיף בְּ-<strong>${costShirt} ₪</strong>. הוּא שִׁלֵּם בִּשְׁטָר שֶׁל <strong>${paid} ₪</strong>. כַּמָּה עֹדֶף קִבֵּל?`,
+          tts: `עילי קנה בחנות האוהדים של ריאל מדריד כדור ב-${costBall} שקלים וצעיף ב-${costShirt} שקלים. הוא שילם בשטר של ${paid} שקלים. כמה עודף קיבל?`,
+          ans: change,
+          hint: `קודם נחבר כמה עלתה כל הקנייה: ${costBall} + ${costShirt} = ${total} ₪. כעת נפחית מ-100: 100 − ${total} = ${change} ₪ עודף!`
+        };
+      }
+    ];
+    const item = templatesA[randInt(0, templatesA.length - 1)]();
+    return {
+      isMulti: false,
+      instruction: '🏆 בְּעָיָה מִלּוּלִית בִּשְׁנֵי שְׁלָבִים (רָמָה 4 • מְחֻנָּנִים שָׁלָב א׳):',
+      ttsText: item.tts,
+      stimulusHtml: `<span>${item.text}</span>`,
+      rtlStimulus: true,
+      options: makeNumericOptions(item.ans, 4, 2),
+      correctAnswers: [String(item.ans)],
+      hint: item.hint
+    };
+  }
+
+  if (diff === 'hard') {
+    // Level 3 (Champions Challenge): 2-step addition & subtraction
+    const a = randInt(35, 65);
+    const gaveAway = randInt(12, 25);
+    const bought = randInt(15, 30);
+    const ans = a - gaveAway + bought;
+    return {
+      isMulti: false,
+      instruction: '🔥 אֶתְגַּר אַלּוּפִים בִּשְׁנֵי שְׁלָבִים (רָמָה 3):',
+      ttsText: `לעילי היו ${a} קלפי כדורגל. הוא נתן לחבר ${gaveAway} קלפים, ואז קיבל מאבא עוד ${bought} קלפים חדשים. כמה קלפים יש לעילי עכשיו?`,
+      stimulusHtml: `<span>לְעִילַי הָיוּ <strong>${a}</strong> קַלְפֵי כַּדּוּרֶגֶל. הוּא נָתַן לְחָבֵר <strong>${gaveAway}</strong> קְלָפִים, וְאָז קִבֵּל מֵאַבָּא עוֹד <strong>${bought}</strong> קְלָפִים חֲדָשִׁים. כַּמָּה קְלָפִים יֵשׁ לְעִילַי עַכְשָׁו?</span>`,
+      rtlStimulus: true,
+      options: makeNumericOptions(ans, 4, 2),
+      correctAnswers: [String(ans)],
+      hint: `שלב א': נחסר את הקלפים שנתן: ${a} − ${gaveAway} = ${a - gaveAway}. שלב ב': נוסיף את החדשים: ${a - gaveAway} + ${bought} = ${ans}!`
+    };
+  }
+
   // Stories featuring Beitar Jerusalem (Teddy Stadium) & Real Madrid (Bernabeu, Mbappé, Vinicius, Bellingham, Yarden Shua)
   const templates = [
     () => {
@@ -683,6 +941,26 @@ function genWordProblems() {
   };
 }
 
+const HEBREW_ANALOGIES_BANK = [
+  { pair1: 'דָּג : יָם', ans: 'צִפּוֹר : אֲוִיר', wrong: ['סוּס : יַעַר', 'חָתוּל : שֻׁלְחָן', 'עֵץ : אֲדָמָה'], rel: 'דג חי ושוחה בים, כמו שציפור עפה באוויר' },
+  { pair1: 'צַיָּר : מִכְחוֹל', ans: 'נַגָּר : פַּטִּישׁ', wrong: ['רוֹפֵא : תְּרוּפָה', 'תַּלְמִיד : בֵּית סֵפֶר', 'נַהָג : כְּבִישׁ'], rel: 'צייר משתמש במכחול ככלי עבודה, כמו שנגר משתמש בפטיש' },
+  { pair1: 'סְפִינָה : קַבַּרְנִיט', ans: 'מָטוֹס : טַיָּס', wrong: ['רַכֶּבֶת : פַּסִּים', 'מְכוֹנִית : דֶּלֶק', 'אוֹפַנַּיִם : קַסְדָּה'], rel: 'קברניט משיט ומפקד על ספינה, כמו שטייס מטיס מטוס' },
+  { pair1: 'מַחַט : תְּפִירָה', ans: 'מִסְפָּרַיִם : גְּזִירָה', wrong: ['סַכִּין : צַלַּחַת', 'עִפָּרוֹן : מָחָק', 'דֶּבֶק : שֻׁלְחָן'], rel: 'מחט משמשת לפעולת התפירה, כמו שמספריים משמשות לגזירה' },
+  { pair1: 'סֵפֶר : דַּף', ans: 'חוֹמָה : לְבֵנָה', wrong: ['בַּיִת : חַלּוֹן', 'עֵץ : פְּרִי', 'מְכוֹנִית : כְּבִישׁ'], rel: 'ספר מורכב מהרבה דפים, כמו שחומה בנויה מהרבה לבנים' },
+  { pair1: 'מַדְחֹם : חֹם', ans: 'מֹאזְנַיִם : מִשְׁקָל', wrong: ['שָׁעוֹן : קִיר', 'סַרְגֵּל : עִפָּרוֹן', 'מַצְפֵּן : דֶּרֶךְ'], rel: 'מדחום מודד חום, כמו שמאזניים מודדות משקל' },
+  { pair1: 'שֶׁמֶשׁ : יוֹם', ans: 'יָרֵחַ : לַיְלָה', wrong: ['כּוֹכָב : שָׁמַיִם', 'עָנָן : גֶּשֶׁם', 'רוּחַ : חֹרֶף'], rel: 'השמש מאירה ביום, כמו שהירח מאיר בלילה' }
+];
+
+const HEBREW_ADVANCED_VOCAB_BANK = [
+  { word: 'קוֹדֵר', ans: 'בָּהִיר / עַלִּיז', wrong: ['חָזָק', 'עָמוֹק', 'מָהִיר'], type: 'הֵפֶךְ', hint: 'קודר פירושו אפל, ענני או עצוב.' },
+  { word: 'נוֹעָז', ans: 'פַּחְדָן / הַסְסָן', wrong: ['גִּבּוֹר', 'נָבוֹן', 'חָזָק'], type: 'הֵפֶךְ', hint: 'נועז פירושו אמיץ ומלא תעוזה.' },
+  { word: 'שׁוֹפֵעַ', ans: 'דַּל / מֻעָט', wrong: ['עָשִׁיר', 'מָלֵא', 'נָקִי'], type: 'הֵפֶךְ', hint: 'שופע פירושו מלא וגדוש בהרבה דברים.' },
+  { word: 'עִקֵּשׁ', ans: 'וַתְרָן / גָּמִישׁ', wrong: ['חָזָק', 'קָשֶׁה', 'כּוֹעֵס'], type: 'הֵפֶךְ', hint: 'עיקש פירושו עקשן שאינו מוותר.' },
+  { word: 'טָמַן יָדוֹ בַּצַּלַּחַת', ans: 'הִתְעַצֵּל וְלֹא עָשָׂה דָּבָר', wrong: ['אָכַל בְּתֵאָבוֹן', 'הֵדִיחַ כֵּלִים', 'רָחַץ יָדַיִם'], type: 'בֵּאוּר נִיב (פֵּרוּשׁ)', hint: 'מי שטומן ידו בצלחת לא מושיט יד לעזור!' },
+  { word: 'נָפַל לְיָדָיו כִּפְרִי בָּשֵׁל', ans: 'הִשִּׂיג מַשֶּׁהוּ בְּקַלּוּת לְלֹא מַאֲמָץ', wrong: ['קָטַף פֵּרוֹת בַּפַּרְדֵּס', 'הִפְסִיד בַּמִּשְׂחָק', 'עָבַד קָשֶׁה מְאוֹד'], type: 'בֵּאוּר נִיב (פֵּרוּשׁ)', hint: 'פרי בשל נופל בקלות רבה מעצמו ישר לידיים.' },
+  { word: 'אֶבֶן שׁוֹאֶבֶת', ans: 'דָּבָר הַמּוֹשֵׁךְ אֵלָיו הַרְבֵּה אֲנָשִׁים', wrong: ['סֶלַע כָּבֵד בַּנַּחַל', 'בּוֹר מַיִם עָמֹק', 'קִיר לְבֵנִים חָזָק'], type: 'בֵּאוּר נִיב (פֵּרוּשׁ)', hint: 'כמו מגנט שמושך אליו דברים, אבן שואבת מושכת קהל רב.' }
+];
+
 const HEBREW_OPPOSITES_BANK = [
   { word: 'גָּבוֹהַּ', ans: 'נָמוּךְ', wrong: ['אָרֹךְ', 'חָזָק', 'מָהִיר'], type: 'הֵפֶךְ' },
   { word: 'מָהִיר', ans: 'אִטִּי', wrong: ['זָרִיז', 'עָצוּב', 'קָרוֹב'], type: 'הֵפֶךְ' },
@@ -702,7 +980,44 @@ const HEBREW_OPPOSITES_BANK = [
   { word: 'מָהִיר', ans: 'זָרִיז', wrong: ['אִטִּי', 'עָיֵף', 'כָּבֵד'], type: 'מִלָּה נִרְדֶּפֶת (דּוֹמָה)' }
 ];
 
-function genHebrewOpposites() {
+function genHebrewOpposites(diff = 'medium') {
+  if (diff === 'stage_b') {
+    // Level 5: Verbal analogies!
+    const item = HEBREW_ANALOGIES_BANK[randInt(0, HEBREW_ANALOGIES_BANK.length - 1)];
+    return {
+      uniqueKey: `heb_analog_${item.pair1}`,
+      isMulti: false,
+      instruction: '👑 יַחֲסֵי מִלִּים וַאֲנָלוֹגְיוֹת (רָמָה 5 • מֹחַ עַל):',
+      ttsText: `מצאו את הזוג בעל הקשר הדומה ביותר ל: ${item.pair1}`,
+      stimulusHtml: `
+        <div style="background:linear-gradient(135deg,#fefce8,#fef9c3);border:2.5px solid #eab308;border-radius:16px;padding:12px;text-align:center;">
+          <div style="font-size:1.85rem;font-weight:900;color:#854d0e;margin-bottom:4px;">${item.pair1}</div>
+          <div style="font-size:1.02rem;font-weight:800;color:#713f12;">אֵיזֶה זוּג מִלִּים מְקַיֵּם אֶת אוֹתוֹ הַקֶּשֶׁר?</div>
+        </div>
+      `,
+      rtlStimulus: true,
+      options: shuffle([item.ans, ...item.wrong]),
+      correctAnswers: [item.ans],
+      hint: `הקשר בין המילים הראשונות: ${item.rel}.`
+    };
+  }
+
+  if (diff === 'stage_a' || diff === 'hard') {
+    // Level 3 & 4: Advanced idioms & proverbs / rich vocabulary
+    const item = HEBREW_ADVANCED_VOCAB_BANK[randInt(0, HEBREW_ADVANCED_VOCAB_BANK.length - 1)];
+    return {
+      uniqueKey: `heb_adv_opp_${item.word}`,
+      isMulti: false,
+      instruction: `🏆 אוֹצַר מִלִּים, נִיבִים וּבִטּוּיִים (רָמָה ${diff === 'stage_a' ? 4 : 3}):`,
+      ttsText: `מהו הפירוש או ההפך של: ${item.word}`,
+      stimulusHtml: `<span>מַהוּ הַ${item.type} שֶׁל: <strong style="color:#d97706;font-size:1.25rem;">"${item.word}"</strong>?</span>`,
+      rtlStimulus: true,
+      options: shuffle([item.ans, ...item.wrong]),
+      correctAnswers: [item.ans],
+      hint: item.hint
+    };
+  }
+
   const item = HEBREW_OPPOSITES_BANK[randInt(0, HEBREW_OPPOSITES_BANK.length - 1)];
   return {
     uniqueKey: `heb_opp_${item.word}_${item.type}`,
@@ -716,6 +1031,44 @@ function genHebrewOpposites() {
     hint: `חשבו על המשמעות של המילה "${item.word}" במשפט.`
   };
 }
+
+const HEBREW_GRAMMAR_ADVANCED_BANK = [
+  {
+    q: 'מַהוּ שֵׁם הַתֹּאַר הַנָּכוֹן לַמִּלָּה <strong style="color:#059669">"כּוֹסוֹת"</strong>?',
+    tts: 'מהו שם התואר הנכון למילה כוסות?',
+    ans: 'כּוֹסוֹת יָפוֹת (נְקֵבָה)',
+    wrong: ['כּוֹסוֹת יָפִים (זָכָר)', 'כּוֹס יָפוֹת', 'כּוֹס יָפִים'],
+    hint: 'זהירות ממלכודת! המילה כוס היא בנקבה (כוס אחת יפה), ולכן ברבים אומרים: כוסות יפות!'
+  },
+  {
+    q: 'מַהוּ שֵׁם הַתֹּאַר הַנָּכוֹן לַמִּלָּה <strong style="color:#059669">"שֻׁלְחָנוֹת"</strong>?',
+    tts: 'מהו שם התואר הנכון למילה שולחנות?',
+    ans: 'שֻׁלְחָנוֹת כְּבֵדִים (זָכָר)',
+    wrong: ['שֻׁלְחָנוֹת כְּבֵדוֹת (נְקֵבָה)', 'שֻׁלְחָן כְּבֵדוֹת', 'שֻׁלְחָנִים כְּבֵדִים'],
+    hint: 'למרות שהסיומת היא ״וֹת״, שולחן הוא ממין זכר (שולחן כבד), ולכן: שולחנות כבדים!'
+  },
+  {
+    q: 'מַהוּ שֵׁם הַתֹּאַר הַנָּכוֹן לַמִּלָּה <strong style="color:#059669">"צְמָתִים"</strong>?',
+    tts: 'מהו שם התואר הנכון למילה צמתים?',
+    ans: 'צְמָתִים סוֹאֲנִים (זָכָר)',
+    wrong: ['צְמָתִים סוֹאֲנוֹת (נְקֵבָה)', 'צֹמֶת סוֹאֲנִים', 'צְמָתוֹת סוֹאֲנוֹת'],
+    hint: 'המילה צומת היא בזכר (צומת סואן ומרומזר), ולכן ברבים: צמתים סואנים!'
+  },
+  {
+    q: 'מַהוּ שֵׁם הַתֹּאַר הַנָּכוֹן לַמִּלָּה <strong style="color:#059669">"לֵילוֹת"</strong>?',
+    tts: 'מהו שם התואר הנכון למילה לילות?',
+    ans: 'לֵילוֹת קָרִים (זָכָר)',
+    wrong: ['לֵילוֹת קָרוֹת (נְקֵבָה)', 'לַיְלָה קָרוֹת', 'לֵילִים קָרִים'],
+    hint: 'לילה הוא ממין זכר (לילה קר), ולכן: לילות קרים!'
+  },
+  {
+    q: 'בַּחֲרוּ אֶת מִלַּת הַקִּשּׁוּר הַמַּתְאִימָה: "הַשַּׂחְקָנִים עָלוּ לַמִּגְרָשׁ וְנִצְּחוּ, ______ שֶׁהַיָּרִיב הָיָה חָזָק מְאוֹד."',
+    tts: 'בחרו את מילת הקישור המתאימה: השחקנים עלו למגרש וניצחו... שהיריב היה חזק מאוד.',
+    ans: 'אַף עַל פִּי',
+    wrong: ['בִּגְלַל', 'לָכֵן', 'כְּדֵי'],
+    hint: 'יש כאן ניגוד והפתעה! למרות שהיריב היה חזק, הם ניצחו -> אף על פי ש...!'
+  }
+];
 
 const HEBREW_GRAMMAR_BANK = [
   {
@@ -783,12 +1136,13 @@ const HEBREW_GRAMMAR_BANK = [
   }
 ];
 
-function genHebrewGrammar() {
-  const item = HEBREW_GRAMMAR_BANK[randInt(0, HEBREW_GRAMMAR_BANK.length - 1)];
+function genHebrewGrammar(diff = 'medium') {
+  const pool = (diff === 'hard' || diff === 'stage_a' || diff === 'stage_b') ? HEBREW_GRAMMAR_ADVANCED_BANK : HEBREW_GRAMMAR_BANK;
+  const item = pool[randInt(0, pool.length - 1)];
   return {
     uniqueKey: `heb_gram_${item.ans}`,
     isMulti: false,
-    instruction: 'שָׂפָה וְדִקְדּוּק לְכִתָּה ב׳:',
+    instruction: `שָׂפָה, דִּקְדּוּק וְיוֹצְאֵי דֹּפֶן (רָמָה ${diff === 'stage_b' ? 5 : diff === 'stage_a' ? 4 : diff === 'hard' ? 3 : 2}):`,
     ttsText: item.tts,
     stimulusHtml: `<span>${item.q}</span>`,
     rtlStimulus: true,
@@ -798,7 +1152,29 @@ function genHebrewGrammar() {
   };
 }
 
-
+const HEBREW_READING_ADVANCED_BANK = [
+  {
+    q: '🌧️ רוֹנִי נִכְנַס לַבַּיִת עִם מַגָּפַיִם רְטֻבִּים, מְעִיל מְטַפְטֵף וּמִטְרִיָּה סְגוּרָה בְּיָדוֹ.<br><strong>מָה נִתָּן לָדַעַת בְּוַדָּאוּת מִתּוֹךְ הַקֶּטַע?</strong>',
+    tts: 'רוני נכנס לבית עם מגפיים רטובים, מעיל מטפטף ומטריה סגורה בידו. מה ניתן לדעת בוודאות מתוך הקטע?',
+    ans: '🌧️ בַּחוּץ יָרַד גֶּשֶׁם כְּשֶׁרוֹנִי הָלַךְ',
+    wrong: ['☀️ בַּחוּץ הָיָה שָׁרָב כָּבֵד', '🏖️ רוֹנִי חָזַר מִשְּׂחִיָּה בַּיָּם', '🎂 רוֹנִי חָגַג יוֹם הֻלֶּדֶת'],
+    hint: 'מגפיים רטובים, מעיל מטפטף ומטרייה מעידים בוודאות שירד גשם בחוץ!'
+  },
+  {
+    q: '⚽ הַמְּאַמֵּן אָמַר לְעִילַי: <strong>"אַתָּה בּוֹר סוֹד שֶׁאֵינוֹ מְאַבֵּד טִפָּה!"</strong><br><strong>לְמָה הִתְכַּוֵּן הַמְּאַמֵּן בְּמַחְמָאָה זוֹ?</strong>',
+    tts: 'המאמן אמר לעילי: אתה בור סוד שאינו מאבד טיפה! למה התכוון המאמן במחמאה זו?',
+    ans: '🧠 שֶׁיֵּשׁ לְעִילַי זִכָּרוֹן מְצֻיָּן וְהוּא זוֹכֵר אֶת כָּל הַהוֹרָאוֹת',
+    wrong: ['💧 שֶׁעִילַי שׁוֹתֶה הַרְבֵּה מַיִם בַּחִמּוּם', '🏊 שֶׁעִילַי שׂוֹחֶה בַּבְּרֵכָה הָעֲמֻקָּה', '🏃‍♂️ שֶׁעִילַי רָץ מָהִיר מִכֻּלָּם'],
+    hint: '"בור סוד שאינו מאבד טיפה" הוא ביטוי חז"ל המתאר אדם בעל זיכרון יוצא דופן שאינו שוכח דבר.'
+  },
+  {
+    q: '🦅 הַנֶּשֶׁר דּוֹאֶה בַּשָּׁמַיִם בְּגֹבַהּ רַב. הוּא פּוֹרֵשׂ אֶת כְּנָפָיו הָרְחָבוֹת וְנִשָּׂא עַל גַּבֵּי זִרְמֵי אֲוִיר חַמִּים לְלֹא מַאֲמָץ.<br><strong>בִּזְכוּת מָה מַצְלִיחַ הַנֶּשֶׁר לִדְאוֹת לְלֹא מַאֲמָץ?</strong>',
+    tts: 'הנשר דואה בשמיים בגובה רב. הוא פורש את כנפיו הרחבות ונישא על גבי זרמי אוויר חמים ללא מאמץ. בזכות מה מצליח הנשר לדאות?',
+    ans: '🌬️ בִּזְכוּת כְּנָפָיו הָרְחָבוֹת וְזִרְמֵי הָאֲוִיר הַחַמִּים',
+    wrong: ['⚡ בִּזְכוּת מְנוֹעַ סִילוֹן חָזָק', '🌿 בִּזְכוּת עֲלֵי הָעֵצִים הַגְּבֹהִים', '🪨 בִּזְכוּת סְלָעִים מְחֻדָּדִים'],
+    hint: 'בטקסט כתוב במפורש: פורש כנפיו הרחבות ונישא על גבי זרמי אוויר חמים.'
+  }
+];
 
 const HEBREW_READING_BANK = [
   {
@@ -845,12 +1221,13 @@ const HEBREW_READING_BANK = [
   }
 ];
 
-function genHebrewReading() {
-  const item = HEBREW_READING_BANK[randInt(0, HEBREW_READING_BANK.length - 1)];
+function genHebrewReading(diff = 'medium') {
+  const pool = (diff === 'hard' || diff === 'stage_a' || diff === 'stage_b') ? HEBREW_READING_ADVANCED_BANK : HEBREW_READING_BANK;
+  const item = pool[randInt(0, pool.length - 1)];
   return {
     uniqueKey: `heb_read_${item.ans}`,
     isMulti: false,
-    instruction: '📖 קְרִיאָה קְצָרָה וּבְרוּרָה (אֶפְשָׁר גַּם לְהַקְשִׁיב 🔊):',
+    instruction: `📖 הֲבָנַת הַנִּקְרָא וְהֶסֵּק (רָמָה ${diff === 'stage_b' ? 5 : diff === 'stage_a' ? 4 : diff === 'hard' ? 3 : 2}):`,
     ttsText: item.tts,
     stimulusHtml: `<div style="line-height:1.65;font-size:1.35rem;">${item.q}</div>`,
     rtlStimulus: true,
@@ -2198,7 +2575,106 @@ function genEnglish() {
   return genEnglishStarter();
 }
 
-function genLogicSeries(diff) {
+function genLogicSeries(diff = 'medium') {
+  if (diff === 'stage_b') {
+    const giftedModes = randInt(1, 3);
+    if (giftedModes === 1) {
+      // Fibonacci
+      const fibStart = randInt(1, 3);
+      let a = fibStart, b = fibStart === 1 ? 2 : randInt(2, 4);
+      const seq = [a, b];
+      for (let i = 0; i < 4; i++) {
+        const next = a + b;
+        seq.push(next);
+        a = b;
+        b = next;
+      }
+      const ans = a + b;
+      return {
+        isMulti: false,
+        instruction: '👑 סִדְרַת פִיבּוֹנָאצִ׳י • אוֹלִימְפִּיאָדָה וּמְחֻנָּנִים:',
+        ttsText: `עילי, מצא את החוקיות: כל מספר הוא חיבור של שני המספרים שלפניו! מה המספר הבא בסדרה?`,
+        stimulusHtml: `<span>${seq.join(' , ')} , </span> <span class="mystery-box">?</span>`,
+        rtlStimulus: false,
+        options: makeNumericOptions(ans, 4, 2),
+        correctAnswers: [String(ans)],
+        hint: `💡 חוקיות פיבונאצ׳י: כל איבר שווה לסכום שני האיברים שלפניו (${a} + ${b} = ${ans})!`
+      };
+    } else if (giftedModes === 2) {
+      // Geometric Perimeter & Area
+      const side = randInt(3, 9);
+      const isArea = randInt(0, 1) === 1;
+      if (isArea) {
+        const ans = side * side;
+        return {
+          isMulti: false,
+          instruction: '📐 הַנְדָּסָה וְשִׂיאֵי חֲשִׁיבָה • שֶׁטַח רִבּוּעַ:',
+          ttsText: `מהו שטח ריבוע שאורך כל צלע שלו הוא ${side} סנטימטר?`,
+          stimulusHtml: `<span>רִבּוּעַ שֶׁאֹרֶךְ כָּל צֶלַע שֶׁלּוֹ ${side} ס״מ 🟩 — מַהוּ שִׁטְחוֹ בְּסמ״ר?</span>`,
+          rtlStimulus: true,
+          options: makeNumericOptions(ans, 4, 3),
+          correctAnswers: [String(ans)],
+          hint: `💡 שטח ריבוע מחושב על ידי צלע כפול צלע: ${side} × ${side} = ${ans} סמ״ר!`
+        };
+      } else {
+        const width = randInt(3, 8);
+        const length = randInt(width + 2, width + 6);
+        const ans = (width + length) * 2;
+        return {
+          isMulti: false,
+          instruction: '📐 הַנְדָּסָה וְשִׂיאֵי חֲשִׁיבָה • הֶקֵּף מַלְבֵּן:',
+          ttsText: `מהו היקף מלבן שרוחבו ${width} סנטימטר ואורכו ${length} סנטימטר?`,
+          stimulusHtml: `<span>מַלְבֵּן שֶׁרָחְבּוֹ ${width} ס״מ וְאׇרְכּוֹ ${length} ס״מ ▭ — מַהוּ הֶקֵּפוֹ?</span>`,
+          rtlStimulus: true,
+          options: makeNumericOptions(ans, 4, 2),
+          correctAnswers: [String(ans)],
+          hint: `💡 היקף הוא סכום כל 4 הצלעות: (${width} + ${length}) × 2 = ${ans} ס״מ!`
+        };
+      }
+    } else {
+      // Multiplicative jumping series
+      const mult = randInt(2, 3);
+      const start = randInt(1, 4);
+      const s1 = start, s2 = s1 * mult, s3 = s2 * mult, s4 = s3 * mult;
+      const ans = s4 * mult;
+      return {
+        isMulti: false,
+        instruction: '⚡ סִדְרָה כֶּפֶל גֵּאוֹמֶטְרִית • שָׁלָב ב׳:',
+        ttsText: `השלימו את הסדרה המכפילה: ${s1}, ${s2}, ${s3}, ${s4}, ומה המספר הבא?`,
+        stimulusHtml: `<span>${s1} , ${s2} , ${s3} , ${s4} , </span> <span class="mystery-box">?</span>`,
+        rtlStimulus: false,
+        options: makeNumericOptions(ans, 4, mult * 2),
+        correctAnswers: [String(ans)],
+        hint: `💡 בכל שלב כופלים ב- ${mult}! לכן: ${s4} × ${mult} = ${ans}!`
+      };
+    }
+  }
+
+  if (diff === 'stage_a' || diff === 'hard') {
+    const isAlternating = randInt(0, 1) === 1;
+    if (isAlternating) {
+      const up = randInt(3, 6);
+      const down = randInt(1, up - 1);
+      const start = randInt(4, 15);
+      const n1 = start;
+      const n2 = n1 + up;
+      const n3 = n2 - down;
+      const n4 = n3 + up;
+      const n5 = n4 - down;
+      const ans = n5 + up;
+      return {
+        isMulti: false,
+        instruction: '🏆 סִדְרָה מְשֻׁלֶּבֶת עִם שְׁתֵּי חֻקִּיּוֹת (מְחֻנָּנִים שָׁלָב א׳):',
+        ttsText: `מצא את שתי הפעולות: עולים ואז יורדים! מה המספר הבא?`,
+        stimulusHtml: `<span>${n1} , ${n2} , ${n3} , ${n4} , ${n5} , </span> <span class="mystery-box">?</span>`,
+        rtlStimulus: false,
+        options: makeNumericOptions(ans, 4, 1),
+        correctAnswers: [String(ans)],
+        hint: `💡 שים לב לשתי החוקיות: פעם אחת מוסיפים +${up}, ובפעם שאחריה מחסירים -${down}!`
+      };
+    }
+  }
+
   const mode = randInt(1, 2);
   if (mode === 1) {
     const step = diff === 'easy' ? randInt(2, 5) : randInt(3, 10);
@@ -3254,7 +3730,26 @@ const GIFTED_VERBAL_ANALOGIES_BANK = [
   { pair1: 'סִירָה : מָשׁוֹט', rel: 'כלי תחבורה ואמצעי ההנעה שלו', ans: 'אוֹפַנַּיִם : דַּוְשׁוֹת', wrong: ['רַכֶּבֶת : פַּסִּים', 'מְכוֹנִית : כְּבִישׁ', 'מָטוֹס : כְּנָפַיִם'], diff: 'medium', hint: 'הסירה נעה קדימה בעזרת משוטים, והאופניים נעים קדימה בעזרת דוושות (פדלים)!' },
   { pair1: 'מַצְפֵּן : כִּוּוּן', rel: 'מכשיר מדידה והמדד שהוא מראה', ans: 'מַדְחֹם : טֶמְפֶּרָטוּרָה', wrong: ['שָׁעוֹן : מְחוֹג', 'מַשְׁקָל : כָּבֵד', 'מַד מֶטֶר : קַו'], diff: 'hard', hint: 'המצפן מודד ומראה כיוון, ומדחום מודד ומראה טמפרטורה (חום)!' },
   { pair1: 'שֶׁקֶט : צְעָקָה', rel: 'ניגוד מוחלט בעוצמת קול', ans: 'לַחַשׁ : צְעָקָה', wrong: ['דִּבּוּר : קוֹל', 'מַנְגִּינָה : שִׁיר', 'רַעַשׁ : שָׁעוֹן'], diff: 'hard', hint: 'לחש (לחישה שקטה מאוד) הוא הניגוד של צעקה (קול רם מאוד)!' },
-  { pair1: 'קְלִפָּה : תַּפּוּחַ', rel: 'מעטפת חיצונית המגנה על הפנים', ans: 'שִׁרְיוֹן : צָב', wrong: ['נוֹצָה : כָּנָף', 'פַּרְוָה : זָנָב', 'עוֹר : שֵׂעָר'], diff: 'hard', hint: 'הקליפה מגנה על הפרי מבחוץ, והשריון מגן על גופו של הצב מבחוץ!' }
+  { pair1: 'קְלִפָּה : תַּפּוּחַ', rel: 'מעטפת חיצונית המגנה על הפנים', ans: 'שִׁרְיוֹן : צָב', wrong: ['נוֹצָה : כָּנָף', 'פַּרְוָה : זָנָב', 'עוֹר : שֵׂעָר'], diff: 'hard', hint: 'הקליפה מגנה על הפרי מבחוץ, והשריון מגן על גופו של הצב מבחוץ!' },
+
+  // New Authentic Israeli Gifted Exam Analogies (קרני, ראמ״ה ומכון נועם):
+  { pair1: 'חַקְלָאי : מַחֲרֵשָׁה', rel: 'בעל מקצוע וכלי עבודתו', ans: 'נַגָּר : מַסּוֹר', wrong: ['רוֹפֵא : תַּחְבֹּשֶׁת', 'חַיָּל : טַנְק', 'שַׂחְקָן : כַּדּוּר'], diff: 'easy', hint: 'החקלאי עובד בשדה בעזרת מחרשה, בדיוק כפי שהנגר עובד בעץ בעזרת מסור!' },
+  { pair1: 'גַּלְגַּל : מְכוֹנִית', rel: 'חלק חיוני משלם', ans: 'כָּנָף : מָטוֹס', wrong: ['דֶּלֶת : חַלּוֹן', 'מָנוֹעַ : דֶּלֶק', 'הֶגֶה : כְּבִישׁ'], diff: 'easy', hint: 'הגלגל הוא חלק מהמכונית שמאפשר לה לנסוע, והכנף היא חלק מהמטוס שמאפשר לו לעוף!' },
+  { pair1: 'דְּבוֹרָה : כַּוֶּרֶת', rel: 'בעל חיים ומשכנו/ביתו', ans: 'צִפּוֹר : קֵן', wrong: ['נְמָלָה : גַּרְגִּיר', 'אַרְיֵה : שָׂדֶה', 'דָּג : דַּיָּג'], diff: 'easy', hint: 'הדבורה גרה ומייצרת דבש בכוורת, והציפור בונה וגרה בקן!' },
+  { pair1: 'סוּס : אֻרְוָה', rel: 'בעל חיים ומקום מגוריו', ans: 'אַרְיֵה : מְעָרָה', wrong: ['כֶּלֶב : חָצֵר', 'חָתוּל : עֵץ', 'פָּרָה : חָלָב'], diff: 'easy', hint: 'מקום מגוריו של הסוס הוא האורווה, ומקום מושבו של האריה הוא המערה (המאורה)!' },
+  { pair1: 'שׂוֹחֵחַ : סִפֵּר', rel: 'פעולת דיבור והעברת מידע', ans: 'הִקְשִׁיב : שָׁמַע', wrong: ['הָלַךְ : רָץ', 'קָרָא : כָּתַב', 'יָשַׁן : חָלַם'], diff: 'medium', hint: 'לשוחח ולספר אלו פעולות של דיבור, בדיוק כפי שלהקשיב ולשמוע אלו פעולות של האזנה!' },
+  { pair1: 'חָלָב : גְּבִינָה', rel: 'חומר גלם והמוצר שמייצרים ממנו', ans: 'עֲנָבִים : יַיִן', wrong: ['תַּפּוּחַ : עֵץ', 'לֶחֶם : חִטָּה', 'מַיִם : כּוֹס'], diff: 'medium', hint: 'מחלב מכינים ומייצרים גבינה, ומענבים מייצרים יין ומיץ ענבים!' },
+  { pair1: 'חִטָּה : קֶמַח', rel: 'חומר גלם והתוצר שטוחנים ממנו', ans: 'זֵיתִים : שֶׁמֶן', wrong: ['פֶּרַח : שָׂדֶה', 'עֵץ : יַעַר', 'בָּצֵק : לֶחֶם'], diff: 'medium', hint: 'מחיטה טוחנים קמח, ומזיתים סוחטים ומפיקים שמן זית!' },
+  { pair1: 'עֵט : כְּתִיבָה', rel: 'כלי והמטרה לשמה נועד', ans: 'מִשְׁקֶפֶת : צְפִיָּה', wrong: ['סֵפֶר : קְרִיאָה', 'דַּף : מַחְבֶּרֶת', 'יָד : תְּנוּעָה'], diff: 'medium', hint: 'העט נועד כדי לכתוב בו, והמשקפת נועדה כדי לצפות ולהביט למרחק!' },
+  { pair1: 'רָעָב : אֲכִילָה', rel: 'תחושת צורך והפעולה שמשביעה אותה', ans: 'צָמָא : שְׁתִיָּה', wrong: ['עֲיֵפוּת : רִיצָה', 'קֹר : גֶּשֶׁם', 'חֹם : שֶׁמֶשׁ'], diff: 'medium', hint: 'רעב מביא לאכילה כדי לשבוע, וצמא מביא לשתייה כדי לרוות!' },
+  { pair1: 'מַאזְנַיִם : מִשְׁקָל', rel: 'מכשיר מדידה והתכונה שהוא מודד', ans: 'סַרְגֵּל : אֹרֶךְ', wrong: ['שָׁעוֹן : מְחוֹג', 'מַדְחֹם : גּוּף', 'מִשְׁקָפַיִם : עֵינַיִם'], diff: 'medium', hint: 'המאזניים מודדים משקל, והסרגל מודד אורך ומרחק!' },
+  { pair1: 'שׁוּעָל : עָרוּם', rel: 'בעל חיים והתכונה הסמלית המיוחסת לו', ans: 'נְמָלָה : חֲרוּצָה', wrong: ['אַרְנָב : מָהִיר', 'צָב : יָרֹק', 'כֶּלֶב : זָנָב'], diff: 'medium', hint: 'במשלים ובספרות השועל מסמל עורמה, והנמלה מסמלת חריצות ועמל!' },
+  { pair1: 'טִפְטוּף : מַבּוּל', rel: 'דרגת עוצמה (חלש מול חזק ביותר)', ans: 'רוּחַ קַלָּה : סוּפָה', wrong: ['גֶּשֶׁם : מַיִם', 'קֹר : שֶׁלֶג', 'עָנָן : שָׁמַיִם'], diff: 'hard', hint: 'טפטוף זה גשם קל מאוד ומבול זה גשם עז, בדיוק כמו שרוח קלה היא משב עדין וסופה היא רוח עזה ביותר!' },
+  { pair1: 'שְׁקִיעָה : עֶרֶב', rel: 'אירוע טבע והזמן שבו הוא מתרחש', ans: 'זְרִיחָה : בֹּקֶר', wrong: ['לַיְלָה : יָרֵחַ', 'צָהֳרַיִם : שֶׁמֶשׁ', 'סְתָו : עָלִים'], diff: 'hard', hint: 'שקיעת השמש מתרחשת בשעות הערב, וזריחת השמש מתרחשת בשעות הבוקר!' },
+  { pair1: 'סִירָה : נָמָל', rel: 'כלי תחבורה ומקום החנייה והעגינה שלו', ans: 'מָטוֹס : שְׂדֵה תְּעוּפָה', wrong: ['מְכוֹנִית : גַּלְגַּל', 'רַכֶּבֶת : קַטָּר', 'אוֹפַנַּיִם : כְּבִישׁ'], diff: 'hard', hint: 'הסירה עוגנת וחלק מפעילותה בנמל, והמטוס ממריא ונוחת בשדה התעופה!' },
+  { pair1: 'מַחַט : לִתְפֹּר', rel: 'כלי עבודה והפעולה שנעשית בעזרתו', ans: 'מַבְרֵג : לְהַבְרִיג', wrong: ['חוּט : בֶּגֶד', 'מַסְמֵר : קִיר', 'פַטִּישׁ : כָּבֵד'], diff: 'hard', hint: 'במחט משתמשים כדי לתפור, ובמברג משתמשים כדי להבריג ברגים!' },
+  { pair1: 'נַעַל : שְׂרוֹךְ', rel: 'פריט לבוש ואמצעי ההידוק והסגירה שלו', ans: 'חֻלְצָה : כַּפְתּוֹר', wrong: ['מִכְנָסַיִם : כִּיס', 'גֶּרֶב : כַּף רֶגֶל', 'כּוֹבַע : שֵׂעָר'], diff: 'hard', hint: 'השרוך משמש לסגירה והידוק הנעל, והכפתור משמש לרכיסה וסגירה של החולצה!' },
+  { pair1: 'יַעַר : עֵצִים', rel: 'קבוצה גדולה והפריט שמרכיב אותה', ans: 'סִפְרִיָּה : סְפָרִים', wrong: ['בֵּית סֵפֶר : שִׁעוּר', 'עִיר : כְּבִישׁ', 'גַּן : פְּרָחִים'], diff: 'hard', hint: 'היער מורכב מהמון עצים, והספרייה מורכבת מהמון ספרים!' }
 ];
 
 const GIFTED_SENTENCE_COMPLETION_BANK = [
@@ -3280,7 +3775,19 @@ const GIFTED_SENTENCE_COMPLETION_BANK = [
   { q: 'בִּמְקוֹם לִכְעֹס כַּאֲשֶׁר חֲבֵרוֹ שָׁבַר בְּטָעוּת אֶת הַצַּעֲצוּעַ, דָּנִיֵּאל גִּלָּה ______ וְסָלַח לוֹ.', ans: 'הֲבָנָה', wrong: ['קַנְאָה', 'בֶּהָלָה', 'אַכְזָבָה'], diff: 'medium', hint: 'כאשר מבינים שמשהו קרה בטעות וסולחים — מגלים הבנה ורוחב לב!' },
   { q: 'הַכַּלְבְלַב הַקָּטָן כִּשְׂכֵּשׂ בִּזְנָבוֹ בְּהִתְלַהֲבוּת מִשּׁוּם שֶׁהָיָה ______ לִרְאוֹת אֶת בְּנֵי הַמִּשְׁפָּחָה שָׁבִים הַבַּיְתָה.', ans: 'שָׂמֵחַ מְאֹד', wrong: ['עָצוּב', 'רָגוּז', 'מְבֻלְבָּל'], diff: 'medium', hint: 'כשכלב מכשכש בזנב בהתלהבות הוא שמח ומאושר!' },
   { q: 'כְּדֵי לִזְכּוֹת בִּמְקוֹם הָרִאשׁוֹן בַּגְּבִיעַ, עַל הַשַּׂחְקָנִים לְהַפְגִּין לֹא רַק כֹּשֶׁר גּוּפָנִי גָּבוֹהַּ, אֶלָּא גַּם ______ קְבוּצָתִי מְצֻיָּן.', ans: 'שִׁתּוּף פְּעֻלָּה', wrong: ['רִחוּק', 'וִתּוּר', 'עַקְשָׁנוּת'], diff: 'hard', hint: 'בכדורגל מנצחים ביחד כקבוצה בזכות שיתוף פעולה ומסירות הדדיות!' },
-  { q: 'קַרְקָעִית הַיָּם בָּאֲזוֹר הַזֶּה עֲמֻקָּה מְאֹד, וּלְפִיכָךְ קַרְנֵי הַשֶּׁמֶשׁ ______ לְהַגִּיעַ אֵלֶיהָ.', ans: 'אֵינָן מַצְלִיחוֹת', wrong: ['מַהֲרוֹת', 'מַמְשִׁיכוֹת', 'אוֹהֲבוֹת'], diff: 'hard', hint: 'במעמקי הים החשוכים אור השמש אינו מצליח לחדור בגלל עומק המים!' }
+  { q: 'קַרְקָעִית הַיָּם בָּאֲזוֹר הַזֶּה עֲמֻקָּה מְאֹד, וּלְפִיכָךְ קַרְנֵי הַשֶּׁמֶשׁ ______ לְהַגִּיעַ אֵלֶיהָ.', ans: 'אֵינָן מַצְלִיחוֹת', wrong: ['מַהֲרוֹת', 'מַמְשִׁיכוֹת', 'אוֹהֲבוֹת'], diff: 'hard', hint: 'במעמקי הים החשוכים אור השמש אינו מצליח לחדור בגלל עומק המים!' },
+
+  // New Authentic Conjunction & Logic Completions:
+  { q: 'כַּאֲשֶׁר הַשֶּׁמֶשׁ שׁוֹקַעַת, הַשָּׁמַיִם נִצְבָּעִים בִּצְבָעִים מַרְהִיבִים, וְאַט אַט מַתְחִיל לִהְיוֹת ______ בַּחוּץ.', ans: 'חָשׁוּךְ', wrong: ['לוֹהֵט', 'בָּהִיר', 'רוֹעֵשׁ'], diff: 'easy', hint: 'לאחר שקיעת השמש השמיים מחשיכים ומתחיל להיות חשוך!' },
+  { q: 'הַכַּדּוּר הִתְגַּלְגֵּל בִּמְהִירוּת עַל הַדֶּשֶׁא, עַד שֶׁנֶּעֱצַר רַק כַּאֲשֶׁר ______ בַּקּוֹרָה.', ans: 'פָּגַע', wrong: ['עָבַר', 'נֶעֱלַם', 'הִתְעוֹפֵף'], diff: 'easy', hint: 'הכדור המשיך להתגלגל עד שפגע בקורת השער ונעצר!' },
+  { q: 'הַשַּׂחְקָן לֹא הִצְלִיחַ לִבְעֹט לַשַּׁעַר מִשּׁוּם שֶׁהַמָּגֵן שֶׁל הַקְּבוּצָה הַיְּרִיבָה ______ אֶת הַכַּדּוּר.', ans: 'חָסַם', wrong: ['הִבְקִיעַ', 'מָסַר', 'בִּקֵּשׁ'], diff: 'easy', hint: 'תפקידו של מגן בכדורגל הוא לחסום את הכדור ולמנוע בעיטה לשער!' },
+  { q: 'מֵאַחַר שֶׁהַמֶּזֶג אֲוִיר הָיָה נוֹחַ וְנָעִים, יָצְאוּ הַיְּלָדִים לְטִיּוּל בַּיַּעַר ______ לְהִשָּׁאֵר בַּבַּיִת.', ans: 'בִּמְקוֹם', wrong: ['כְּדֵי', 'מִפְּנֵי שֶׁ', 'לַמְרוֹת'], diff: 'medium', hint: '"במקום" מציין בחירה חלופית: במקום להישאר בבית, הם יצאו לטייל בטבע!' },
+  { q: 'הַנְּמָלִים עָמְלוּ כָּל עֲוֹנַת הַקַּיִץ בְּחָרִיצוּת, וּלְפִיכָךְ בַּחֹרֶף הָיָה לָהֶן ______ מָזוֹן בַּקֵּן.', ans: 'בְּשֶׁפַע', wrong: ['בִּקְוֹשִׁי', 'מְעַט מְאֹד', 'בְּטָעוּת'], diff: 'medium', hint: '"לפיכך" = לכן, כתוצאה מכך! מכיוון שעמלו בקיץ, בחורף היה להן שפע רב של מזון!' },
+  { q: 'הַסּוּס דָּהַר בְּכָל כֹּחוֹ, וְאַף עַל פִּי כֵן ______ לַתַּחֲנָה בְּאִחוּר קַל.', ans: 'הִגִּיעַ', wrong: ['הִקְדִּים', 'עָצַר', 'וִתֵּר'], diff: 'medium', hint: '"אף על פי כן" = למרות הדהירה המהירה, הוא הגיע באיחור קל!' },
+  { q: 'עִילַי יָדַע שֶׁהַדֶּרֶךְ לְהַצְלָחָה דּוֹרֶשֶׁת הַתְמָדָה, וְלָכֵן לֹא חָשַׁב לְרֶגַע ______ עַל הַמַּטָּרָה.', ans: 'לְוַתֵּר', wrong: ['לְהִלָּחֵם', 'לִשְׂמֹחַ', 'לַעֲבֹד'], diff: 'medium', hint: 'מי שמתמיד ומאמין בעצמו אינו חושב לרגע לוותר על המטרה!' },
+  { q: 'הַסּוֹפֵר הִקְפִּיד לִבְחֹר מִלִּים מְדֻיָּקוֹת כְּדֵי שֶׁהַקּוֹרְאִים יָבִינוּ אֶת הַסִּפּוּר _____.', ans: 'בְּבֵרוּר', wrong: ['בִּקְוֹשִׁי', 'בִּמְהִירוּת מֻגְזֶמֶת', 'בִּבְהָלָה'], diff: 'hard', hint: 'מילים מדויקות מאפשרות לקוראים להבין את הרעיון בבירור ובבהירות!' },
+  { q: 'כְּדֵי לִמְנֹעַ תְּאוּנוֹת דְּרָכִים, הַנַּהָגִים חַיָּבִים ______ לְתַמְרוּרֵי הַתְּנוּעָה בַּכְּבִישׁ.', ans: 'לְהִשָּׁמֵעַ', wrong: ['לְהִתְנַגֵּד', 'לְהִתְעַלֵּם', 'לְהַבִּיט מֵרָחוֹק'], diff: 'hard', hint: 'חובה להישמע ולציית לתמרורים ולרמזורים למען הבטיחות!' },
+  { q: 'בְּנִגּוּד לַעֲצֵי הַיַּעַר שֶׁהִשִּׁילוּ אֶת עֲלֵיהֶם בַּסְּתָו, עֵץ הָאֳרָן נִשְׁאַר ______ לְאֹרֶךְ כָּל עֲוֹנוֹת הַשָּׁנָה.', ans: 'יָרֹק', wrong: ['עָרֹם', 'קָפוּא', 'צָהֹב'], diff: 'hard', hint: '"בניגוד ל..." = עץ האורן הוא עץ ירוק-עד, ולכן הוא נשאר ירוק גם בסתיו ובחורף!' }
 ];
 
 const GIFTED_PICTURE_RIDDLES_BANK = [
@@ -3342,6 +3849,79 @@ const GIFTED_PICTURE_RIDDLES_BANK = [
     wrong: ['4', '6', '8'],
     diff: 'hard',
     hint: 'אריה = 8 (24 לחלק ל-3). גביע = 18 פחות 8 = 10. ברק = 15 פחות 10 = 5!'
+  },
+  // Additional Authentic 2nd Grade Gifted Picture Riddles:
+  {
+    stim: '⚽ + ⚽ + ⚽ = 21<br>🏆 + ⚽ = 15',
+    target: '🏆',
+    tts: 'שלושה כדורים שווים עשרים ואחת. גביע ועוד כדור שווה חמש עשרה. מה הערך של הגביע?',
+    ans: '8',
+    wrong: ['7', '9', '6'],
+    diff: 'easy',
+    hint: '💡 שלב 1: 3 כדורים שווים 21, לכן כדור אחד = 7 (כי 7×3=21). שלב 2: גביע + 7 = 15, לכן גביע = 15 פחות 7 = 8!'
+  },
+  {
+    stim: '🍎 + 🍎 = 16<br>🍌 + 🍎 = 13<br>🍌 + 🍇 = 9',
+    target: '🍇',
+    tts: 'שני תפוחים שווים שש עשרה. בננה ועוד תפוח שווה שלוש עשרה. בננה ועוד ענבים שווה תשע. מה ערך הענבים?',
+    ans: '4',
+    wrong: ['5', '3', '6'],
+    diff: 'medium',
+    hint: 'תפוח = 8 (16 ÷ 2). בננה = 13 פחות 8 = 5. ענבים = 9 פחות 5 = 4!'
+  },
+  {
+    stim: '🚗 + 🚗 = 18<br>🚗 + ✈️ = 17',
+    target: '✈️',
+    tts: 'שתי מכוניות שוות שמונה עשרה. מכונית ועוד מטוס שווה שבע עשרה. מה ערך המטוס?',
+    ans: '8',
+    wrong: ['9', '7', '10'],
+    diff: 'easy',
+    hint: 'מכונית אחת = 9 (18 ÷ 2). מטוס = 17 פחות 9 = 8!'
+  },
+  {
+    stim: '🎈 + 🎈 + 🎈 = 30<br>🎈 + 🎁 = 25',
+    target: '🎁',
+    tts: 'שלושה בלונים שווים שלושים. בלון ועוד מתנה שווה עשרים וחמש. מה ערך המתנה?',
+    ans: '15',
+    wrong: ['10', '12', '20'],
+    diff: 'easy',
+    hint: 'בלון אחד = 10 (30 ÷ 3). מתנה = 25 פחות 10 = 15!'
+  },
+  {
+    stim: '🚲 + 🚲 = 14<br>🚲 + 🛵 = 19<br>🛵 − 🛴 = 7',
+    target: '🛴',
+    tts: 'שני אופניים שווים ארבע עשרה. אופניים ועוד קטנוע שווה תשע עשרה. קטנוע פחות קורקינט שווה שבע. מה ערך הקורקינט?',
+    ans: '5',
+    wrong: ['6', '4', '8'],
+    diff: 'medium',
+    hint: 'אופניים = 7. קטנוע = 19 פחות 7 = 12. קורקינט = 12 פחות 7 = 5!'
+  },
+  {
+    stim: '💎 + 💎 = 20<br>💎 − 🗝️ = 4',
+    target: '🗝️',
+    tts: 'שני יהלומים שווים עשרים. יהלום פחות מפתח שווה ארבע. מה ערך המפתח?',
+    ans: '6',
+    wrong: ['5', '7', '8'],
+    diff: 'easy',
+    hint: 'יהלום אחד = 10 (20 ÷ 2). 10 פחות מה שווה 4? מפתח = 6!'
+  },
+  {
+    stim: '🚀 + 🚀 = 16<br>🚀 × 🛸 = 24',
+    target: '🛸',
+    tts: 'שתי חלליות שוות שש עשרה. חללית כפול צלחת מעופפת שווה עשרים וארבע. מה ערך הצלחת המעופפת?',
+    ans: '3',
+    wrong: ['2', '4', '8'],
+    diff: 'medium',
+    hint: 'חללית = 8 (16 ÷ 2). 8 כפול מה שווה 24? צלחת מעופפת = 3!'
+  },
+  {
+    stim: '⭐ + ⭐ = 10<br>⭐ + 🌙 + ⭐ = 17',
+    target: '🌙',
+    tts: 'שני כוכבים שווים עשר. כוכב ועוד ירח ועוד כוכב שווה שבע עשרה. מה ערך הירח?',
+    ans: '7',
+    wrong: ['5', '8', '6'],
+    diff: 'easy',
+    hint: 'שני כוכבים יחד שווים 10. לכן 10 + ירח = 17 ➔ ירח = 17 פחות 10 = 7!'
   }
 ];
 
@@ -3557,6 +4137,72 @@ const GIFTED_WORD_PROBLEMS_BANK = [
     wrong: ['4 כַּדּוּרִים', '8 כַּדּוּרִים', '12 כַּדּוּרִים'],
     diff: 'hard',
     hint: 'חצי מ-24 זה 12. רבע מ-24 זה 6. יחד צהובים ולבנים: 12 + 6 = 18. שחורים שנותרו: 24 פחות 18 = 6 כדורים!'
+  },
+
+  // New Authentic 2nd Grade Gifted Word Problems:
+  {
+    q: 'עִילַי עוֹמֵד בַּתּוֹר לִקְנוֹת כַּרְטִיסִים לַמִּשְׂחָק.<br>לְפָנָיו בַּתּוֹר עוֹמְדִים 6 יְלָדִים, וּמֵאַחֲרָיו עוֹמְדִים 8 יְלָדִים.<br>כַּמָּה יְלָדִים יֵשׁ בְּסַךְ הַכֹּל בַּתּוֹר?',
+    tts: 'עילאי עומד בתור לכרטיסים. לפניו עומדים שישה ילדים ומאחוריו שמונה ילדים. כמה ילדים יש בסך הכל בתור?',
+    ans: '15 יְלָדִים',
+    wrong: ['14 יְלָדִים', '16 יְלָדִים', '13 יְלָדִים'],
+    diff: 'easy',
+    hint: '💡 שיטת החשיבה: 6 ילדים לפניו + עילאי בעצמו (1) + 8 ילדים מאחוריו = 6 + 1 + 8 = 15 ילדים בסך הכל!'
+  },
+  {
+    q: 'אַבָּא גָּדוֹל מֵעִילַי בְּ-28 שָׁנִים.<br>הַיּוֹם עִילַי בֶּן 8 שָׁנִים.<br>בֶּן כַּמָּה יִהְיֶה אַבָּא כַּאֲשֶׁר עִילַי יִהְיֶה בֶּן 12 שָׁנִים?',
+    tts: 'אבא גדול מעילאי בעשרים ושמונה שנים. היום עילאי בן שמונה. בן כמה יהיה אבא כשעילאי יהיה בן שתים עשרה?',
+    ans: '40 שָׁנִים',
+    wrong: ['36 שָׁנִים', '48 שָׁנִים', '44 שָׁנִים'],
+    diff: 'medium',
+    hint: '💡 חוק הגילאים: ההפרש נשאר תמיד 28 שנים! כשעילאי בן 12: 12 + 28 = 40 שנים!'
+  },
+  {
+    q: 'בְּקֻפְסָה יֵשׁ 18 גּוּלוֹת.<br>חֲצִי מֵהֶן כְּחֻלּוֹת (9), שְׁלִישׁ מֵהֶן אֲדֻמּוֹת (6) וְכָל הַשְּׁאָר יְרֻקּוֹת.<br>כַּמָּה גּוּלוֹת יְרֻקּוֹת יֵשׁ בַּקֻּפְסָה?',
+    tts: 'בקופסה יש שמונה עשרה גולות. חצי כחולות, שליש אדומות והשאר ירוקות. כמה גולות ירוקות יש?',
+    ans: '3 גּוּלוֹת',
+    wrong: ['4 גּוּלוֹת', '2 גּוּלוֹת', '6 גּוּלוֹת'],
+    diff: 'medium',
+    hint: 'חצי מ-18 = 9 גולות. שליש מ-18 = 6 גולות (כי 6×3=18). יחד: 9 + 6 = 15. ירוקות: 18 פחות 15 = 3 גולות!'
+  },
+  {
+    q: 'לְנוֹעָה יֵשׁ 22 סֻכָּרִיּוֹת.<br>הִיא חִלְּקָה אוֹתָן שָׁוֶה בְּשָׁוֶה בֵּין 4 חֲבֵרוֹת, וְאֶת הַסֻּכָּרִיּוֹת שֶׁנִּשְׁאֲרוּ שָׁמְרָה לְעַצְמָהּ.<br>כַּמָּה סֻכָּרִיּוֹת שָׁמְרָה נוֹעָה לְעַצְמָהּ?',
+    tts: 'לנועה יש עשרים ושתיים סוכריות. היא חילקה אותן שווה בשווה בין ארבע חברות, ואת מה שנשאר שמרה לעצמה. כמה סוכריות שמרה לעצמה?',
+    ans: '2 סֻכָּרִיּוֹת',
+    wrong: ['5 סֻכָּרִיּוֹת', '4 סֻכָּרִיּוֹת', '1 סֻכָּרִיָּה'],
+    diff: 'medium',
+    hint: '💡 חלוקה עם שארית: 4 חברות מקבלות 5 סוכריות כל אחת (4 × 5 = 20 סוכריות). נשארו לנועה 22 פחות 20 = 2 סוכריות!'
+  },
+  {
+    q: 'מִשְׂחַק כַּדּוּרֶגֶל הִתְחִיל בְּשָׁעָה 16:30.<br>הַמִּשְׂחָק עִם הַהַפְסָקָה נִמְשַׁךְ שָׁעָה וָחֵצִי (90 דַּקּוֹת).<br>בְּאֵיזוֹ שָׁעָה הִסְתַּיֵּם הַמִּשְׂחָק?',
+    tts: 'משחק כדורגל התחיל בשעה ארבע וחצי אחר הצהריים ונמשך שעה וחצי. באיזו שעה הסתיים המשחק?',
+    ans: '18:00 (שֵׁשׁ בָּעֶרֶב)',
+    wrong: ['17:30', '18:30', '17:00'],
+    diff: 'medium',
+    hint: '16:30 ועוד שעה שלמה = 17:30. ועוד חצי שעה (30 דקות) = 18:00 בדיוק!'
+  },
+  {
+    q: 'אִם הַיּוֹם יוֹם שְׁלִישִׁי, אֵיזֶה יוֹם בַּשָּׁבוּעַ יִהְיֶה בְּעוֹד 9 יָמִים?',
+    tts: 'אם היום יום שלישי, איזה יום בשבוע יהיה בעוד תשעה ימים?',
+    ans: 'יוֹם חֲמִישִׁי',
+    wrong: ['יוֹם שִׁשִּׁי', 'יוֹם רְבִיעִי', 'יוֹם שַׁבָּת'],
+    diff: 'hard',
+    hint: '💡 שיטת השבוע (7 ימים): בעוד 7 ימים יהיה שוב יום שלישי! נותרו עוד יומיים (9 פחות 7 = 2): שלישי ➔ רביעי ➔ חמישי!'
+  },
+  {
+    q: 'בְּמַדָּף בַּחֶדֶר יֵשׁ 30 סְפָרִים.<br>מִסְפַּר סִפְרֵי הַסִּפּוּרִים כָּפוּל (פִּי 2) מִמִּסְפַּר סִפְרֵי הַמַּדָּע.<br>כַּמָּה סִפְרֵי מַדָּע יֵשׁ בַּמַּדָּף?',
+    tts: 'במדף יש שלושים ספרים. מספר ספרי הסיפורים כפול ממספר ספרי המדע. כמה ספרי מדע יש במדף?',
+    ans: '10 סְפָרִים',
+    wrong: ['15 סְפָרִים', '20 סְפָרִים', '5 סְפָרִים'],
+    diff: 'hard',
+    hint: '💡 שיטת החלקים: ספרי מדע = חלק 1, ספרי סיפורים = 2 חלקים. יחד יש 3 חלקים שווים! 30 לחלק ל-3 = 10 ספרי מדע (וספרי סיפורים = 20)!'
+  },
+  {
+    q: 'בְּבִנְיַן מְגוּרִים גָּבוֹהַּ יֵשׁ 36 מַדְרֵגוֹת בֵּין קוֹמָה 1 לְקוֹמָה 4 (סַךְ הַכֹּל 3 קוֹמוֹת עֲלִיָּה).<br>כַּמָּה מַדְרֵגוֹת יֵשׁ בֵּין כָּל קוֹמָה לַקּוֹמָה שֶׁמֵּעָלֶיהָ?',
+    tts: 'בבניין יש שלושים ושש מדרגות בין קומה אחת לקומה ארבע. כמה מדרגות יש בין כל קומה לקומה שמעליה?',
+    ans: '12 מַדְרֵגוֹת',
+    wrong: ['9 מַדְרֵגוֹת', '10 מַדְרֵגוֹת', '18 מַדְרֵגוֹת'],
+    diff: 'hard',
+    hint: '💡 שים לב: בין קומה 1 ל-4 יש בדיוק 3 מעברי קומות (1 ל-2, 2 ל-3, 3 ל-4). לכן נחלק: 36 לחלק ל-3 = 12 מדרגות בכל קומה!'
   }
 ];
 
@@ -3616,6 +4262,51 @@ const GIFTED_READING_COMP_BANK = [
     ],
     diff: 'hard',
     hint: '💡 הסקה לוגית מדעית: מכיוון שאין בירח רוח, גשם או נחלים, אין שום דבר שיזיז את גרגירי האבק — לכן העקבות נשמרות לנצח!'
+  },
+  // Additional Authentic 2nd Grade Gifted Reading Passages:
+  {
+    q: 'קֶטַע מֵידָע: "הַזִּקִּית הִיא לְטָאָה מְיֻחֶדֶת בְּמִינָהּ. עוֹרָהּ מְכִיל תָּאֵי צֶבַע הַמְּאַפְשְׁרִים לָהּ לְשַׁנּוֹת אֶת גְּוָנֶיהָ כְּדֵי לְהִסְתַּוּוֹת בֵּין עַנְפֵי הָעֵץ וְהֶעָלִים, וְגַם כְּדֵי לְהַבִּיעַ אֶת מַצַּב רוּחָהּ."<br>לְפִי הַקֶּטַע, מַדּוּעַ מְשַׁנָּה הַזִּקִּית אֶת צִבְעֵי עוֹרָהּ?',
+    tts: 'לפי קטע המידע, מדוע משנה הזיקית את צבעי עורה?',
+    ans: 'כְּדֵי לְהִסְתַּוּוֹת בַּטֶּבַע וְגַם כְּדֵי לְבַטֵּא אֶת רִגְשׁוֹתֶיהָ וּמַצַּב רוּחָהּ',
+    wrong: [
+      'רַק כְּדֵי לְהִתְחַמֵּם מִקַּרְנֵי הַשֶּׁמֶשׁ',
+      'כְּדֵי לְהַפְחִיד אֶת כָּל חַיּוֹת הַיַּעַר',
+      'מִשּׁוּם שֶׁהִיא נִרְטֶבֶת מֵהַגֶּשֶׁם'
+    ],
+    diff: 'easy',
+    hint: 'הקטע מציין בפירוש שתי מטרות: 1. להסתוות (להתחבא) בסביבה, 2. להביע את מצב רוחה!'
+  },
+  {
+    q: 'בְּמִשְׁפַּט מִקֶּטַע הַזִּקִּית: "עוֹרָהּ מְאַפְשֵׁר לָהּ <strong>לְהִסְתַּוּוֹת</strong>". מַהִי הַמַּשְׁמָעוּת שֶׁל הַמִּלָּה לְהִסְתַּוּוֹת?',
+    tts: 'מהי המשמעות של המילה להסתוות?',
+    ans: 'לְהִטָּמַע בַּסְּבִיבָה וּלְהַסְתִּיר אֶת עַצְמָהּ מֵאוֹיְבִים',
+    wrong: [
+      'לָרוּץ בִּמְהִירוּת עֲצוּמָה',
+      'לִישֹׁן שְׁנַת חֹרֶף עֲמֻקָּה',
+      'לְטַפֵּס לְרֹאשׁ הָעֵץ'
+    ],
+    diff: 'medium',
+    hint: 'הסוואה פירושה התמזגות עם צבעי הסביבה (כמו ענפים ועלים) כדי שלא יבחינו בה!'
+  },
+  {
+    q: 'קֶטַע מֵידָע: "הַנְּמָלָה הִיא חֶרֶק חָרוּץ וְחָזָק מְאֹד. נְמָלָה בּוֹדֶדֶת מְסֻגֶּלֶת לָשֵׂאת עַל גַּבָּהּ מַשָּׂא הַכָּבֵד עַד פִּי 30 מִמִּשְׁקַל גּוּפָהּ שֶׁלָּהּ!"<br>אִם נְמָלָה שׁוֹקֶלֶת 2 גְּרָם, אֵיזֶה מַשָּׂא הִיא מְסֻגֶּלֶת לָשֵׂאת עַל גַּבָּהּ?',
+    tts: 'נמלה שוקלת שני גרם ויכולה לשאת פי שלושים ממשקל גופה. איזה משא היא מסוגלת לשאת?',
+    ans: '60 גְּרָם',
+    wrong: ['32 גְּרָם', '15 גְּרָם', '20 גְּרָם'],
+    diff: 'medium',
+    hint: '💡 שילוב הבנת הנקרא וחשבון: 2 גרם × פי 30 = 60 גרם!'
+  },
+  {
+    q: 'קֶטַע מֵידָע: "לִקְרַאת הַחֹרֶף, צִפּוֹרִים רַבּוֹת נוֹדְדוֹת מֵאֵירוֹפָּה הַקָּרָה לְאַפְרִיקָה הַחַמָּה. בְּמַהֲלַךְ מַסָּעָן הֵן עוֹבְרוֹת בִּשְׁמֵי יִשְׂרָאֵל. הַצִּפּוֹרִים עָפוֹת בְּמִבְנֶה שֶׁל הָאוֹת V כְּדֵי לַחְסֹךְ בְּאֶנֶרְגִּיָּה וּלְהַקְלֵל עַל הַתְּעוּפָה."<br>מַדּוּעַ עָפוֹת הַצִּפּוֹרִים בְּמִבְנֶה מְשֻׁתָּף שֶׁל הָאוֹת V?',
+    tts: 'מדוע עפות הציפורים הנודדות במבנה של האות וי?',
+    ans: 'כְּדֵי לְהַפְחִית אֶת הִתְנַגְּדוּת הָרוּחַ וְלַחְסֹךְ בְּכֹחַ וּבְאֶנֶרְגִּיָּה בַּמַּסָּע הָאָרֹךְ',
+    wrong: [
+      'כְּדֵי שֶׁחַקְלָאִים יוּכְלוּ לִסְפֹּר אוֹתָן מֵהַקַּרְקַע',
+      'מִשּׁוּם שֶׁהֵן אֵינָן יוֹדְעוֹת אֶת הַדֶּרֶךְ לְאַפְרִיקָה',
+      'כְּדֵי לִמְשֹׁךְ אֲלֵיהֶן צִפּוֹרִים אֲחֵרוֹת'
+    ],
+    diff: 'hard',
+    hint: 'המבנה המשולש (V) מאפשר לציפורים לרכוב על זרמי האוויר שמייצרות הציפורים המובילות, וכך לחסוך מאמץ רב!'
   }
 ];
 
@@ -3763,21 +4454,24 @@ function genGiftedReadingComp(diff = 'medium') {
 }
 
 function genGiftedStageA(diff = 'medium') {
-  // Comprehensive Stage A mix: word problems, inequalities, missing ops, picture riddles, reading
-  const pick = randInt(1, 4);
+  // Comprehensive Stage A mix: word problems, inequalities, missing ops, picture riddles, reading, grammar
+  const pick = randInt(1, 6);
   if (pick === 1) return genGiftedPictureRiddles(diff);
   if (pick === 2) return genGiftedWordProblems(diff);
   if (pick === 3) return genInequalities(diff);
+  if (pick === 4) return genMissingNumber(diff);
+  if (pick === 5) return genHebrewGrammar(diff);
   return genGiftedReadingComp(diff);
 }
 
 function genGiftedStageB(diff = 'medium') {
-  // Comprehensive Stage B mix: verbal analogies, sentence completion, shapes matrix, numbers in shapes
-  const pick = randInt(1, 4);
+  // Comprehensive Stage B mix: verbal analogies, sentence completion, shapes matrix, numbers in shapes, logic series
+  const pick = randInt(1, 5);
   if (pick === 1) return genGiftedVerbalAnalogies(diff);
   if (pick === 2) return genGiftedSentenceCompletion(diff);
   if (pick === 3) return genGiftedShapesMatrix(diff);
-  return genGiftedNumbersShapes(diff);
+  if (pick === 4) return genGiftedNumbersShapes(diff);
+  return genLogicSeries(diff);
 }
 
 const LIA_SCIENCE_BANK = [
@@ -3987,9 +4681,9 @@ function generateQuestionForTopic(topicId, diff = 'medium', customQuestions = []
     case 'math_place_value':  q = genPlaceValue(diff); break;
     case 'math_mult_intro':   q = genMultIntro(diff); break;
     case 'math_word_problems':q = genWordProblems(diff); break;
-    case 'hebrew_opposites':  q = genHebrewOpposites(); break;
-    case 'hebrew_grammar':    q = genHebrewGrammar(); break;
-    case 'hebrew_reading':    q = genHebrewReading(); break;
+    case 'hebrew_opposites':  q = genHebrewOpposites(diff); break;
+    case 'hebrew_grammar':    q = genHebrewGrammar(diff); break;
+    case 'hebrew_reading':    q = genHebrewReading(diff); break;
     case 'english_fc27':             q = genEnglishFC27(diff); break;
     case 'english_fc27_commentator': q = genEnglishFC27Commentator(diff); break;
     case 'english_abc':              q = genEnglishABC(); break;

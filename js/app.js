@@ -541,6 +541,32 @@ function setCloudSyncStatus(status, text) {
 }
 
 function pushStateToCloudThrottled(immediate = false) {
+  // 1. Never send remote PUT requests from local test runner, e2e, or local development
+  if (typeof window !== 'undefined' && (
+    window.location.hostname === 'localhost' ||
+    window.location.hostname === '127.0.0.1' ||
+    window.location.protocol === 'file:'
+  )) {
+    setCloudSyncStatus('synced', 'שמור מקומית');
+    return;
+  }
+
+  // 2. Arena match batching: during active question play, keep state local.
+  // When match finishes or user leaves arena, immediate push sends the consolidated state!
+  if (session && session.isActive && !immediate) {
+    return;
+  }
+
+  // 3. Rate-limit protection for Cloudflare KV Free Tier (1,000 PUTs/day limit)
+  // Ensure at least 25 seconds cooldown between non-immediate automated syncs
+  const PUSH_COOLDOWN_MS = 25000;
+  if (!immediate && (Date.now() - lastCloudSyncTimestamp < PUSH_COOLDOWN_MS)) {
+    if (cloudSyncDebounceTimer) clearTimeout(cloudSyncDebounceTimer);
+    const waitTime = Math.max(1000, PUSH_COOLDOWN_MS - (Date.now() - lastCloudSyncTimestamp));
+    cloudSyncDebounceTimer = setTimeout(() => pushStateToCloudThrottled(false), waitTime);
+    return;
+  }
+
   if (cloudSyncDebounceTimer) {
     clearTimeout(cloudSyncDebounceTimer);
     cloudSyncDebounceTimer = null;
@@ -602,6 +628,7 @@ function pushStateToCloudThrottled(immediate = false) {
       if (res && res.ok) {
         setCloudSyncStatus('synced', 'ענן מעודכן');
       } else if (res && res.status === 429) {
+        lastCloudSyncTimestamp = Date.now() + 300000; // 5-minute cooldown on 429
         console.warn('Cloudflare KV daily PUT quota reached. App continues smoothly with local storage.');
         setCloudSyncStatus('synced', 'שמור במכשיר');
       } else {
@@ -1893,6 +1920,84 @@ function recordSeenQuestionKey(key) {
   }
 }
 
+const LEVEL_CONFIG = {
+  1: { id: 'easy', name: 'רמה 1 • חימום 🌱', shieldClass: 'level-1' },
+  2: { id: 'medium', name: 'רמה 2 • כיתה ב׳ מתקדמים ⚡', shieldClass: 'level-2' },
+  3: { id: 'hard', name: 'רמה 3 • אתגר אלופים 🔥', shieldClass: 'level-3' },
+  4: { id: 'stage_a', name: 'רמה 4 • מחוננים שלב א׳ 🏆', shieldClass: 'level-4' },
+  5: { id: 'stage_b', name: 'רמה 5 • מוח על ואולימפיאדה 👑', shieldClass: 'level-5' }
+};
+
+function diffToLevel(diff) {
+  if (diff === 'stage_b') return 5;
+  if (diff === 'stage_a') return 4;
+  if (diff === 'hard') return 3;
+  if (diff === 'medium') return 2;
+  return 1;
+}
+
+function levelToDiff(lvl) {
+  const clamped = Math.max(1, Math.min(5, lvl || 1));
+  return LEVEL_CONFIG[clamped].id;
+}
+
+function updateArenaLevelUI() {
+  const shield = document.getElementById('arena-level-shield');
+  const text = document.getElementById('arena-level-text');
+  const streakCount = document.getElementById('arena-streak-count');
+  const streakFill = document.getElementById('arena-streak-fill');
+  const lia = isLiaActive();
+
+  const lvl = session.currentLevel || 1;
+  const cfg = LEVEL_CONFIG[lvl] || LEVEL_CONFIG[1];
+
+  if (shield) {
+    shield.textContent = lvl;
+    shield.className = `level-indicator-shield ${cfg.shieldClass}`;
+  }
+  if (text) {
+    text.textContent = lia ? `רמה ${lvl} 🌟` : cfg.name;
+  }
+  if (streakCount) {
+    streakCount.textContent = `${Math.min(2, session.streakInLevel || 0)}/2`;
+  }
+  if (streakFill) {
+    const pct = Math.min(100, ((session.streakInLevel || 0) / 2) * 100);
+    streakFill.style.width = `${pct}%`;
+  }
+}
+
+function triggerInMatchLevelUp(newLevel) {
+  arcadeAudio.playLevelUp();
+  confetti.burst(110);
+  addActiveCoins(5);
+  updateHeaderUI();
+  updateArenaLevelUI();
+
+  const toast = document.getElementById('level-up-toast');
+  if (toast) {
+    const lvlInfo = LEVEL_CONFIG[newLevel] || LEVEL_CONFIG[5];
+    toast.innerHTML = `
+      <div class="toast-badge">👑 עֲלִיַּת רָמָה!</div>
+      <div class="toast-title">${lvlInfo.name}</div>
+      <div class="toast-desc">כל הכבוד עילי! 2 תשובות נכונות ברצף — הרמה עולה עכשיו! +5 🪙</div>
+    `;
+    toast.classList.add('show');
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 2800);
+  }
+}
+
+function regenerateUpcomingQuestionsForLevel(newLevel) {
+  const targetDiff = levelToDiff(newLevel);
+  for (let i = session.currentIndex + 1; i < session.questions.length; i++) {
+    const newQ = generateQuestionForTopic(session.topicId, targetDiff, appState.customQuestions);
+    newQ.progressiveStage = newLevel;
+    session.questions[i] = newQ;
+  }
+}
+
 function startMatch(topicId, topicTitle, isDailyBonus = false) {
   clearInterval(session.timerInterval);
   const lia = isLiaActive();
@@ -1904,11 +2009,17 @@ function startMatch(topicId, topicTitle, isDailyBonus = false) {
   const topicStat = statsObj[topicId] || { solved: 0, correct: 0, stars: 0 };
   const masteryInfo = getTopicMasteryLevelInfo(topicStat.correct || 0);
 
+  const startingDiff = appState.difficulty || 'medium';
+  const startLvl = diffToLevel(startingDiff);
+
   session = {
     topicId,
     topicTitle,
     isDailyBonus,
     masteryLevel: masteryInfo.level,
+    currentLevel: startLvl,
+    streakInLevel: 0,
+    isActive: true,
     questions: [],
     currentIndex: 0,
     totalQuestions: count,
@@ -1929,18 +2040,15 @@ function startMatch(topicId, topicTitle, isDailyBonus = false) {
   const persistentSeen = getActiveSeenQuestionKeys();
 
   for (let i = 0; i < count; i++) {
-    // Gentle, non-frustrating difficulty progression based on actual Mastery Level (1..5):
-    let progressiveDiff = 'easy';
+    let progressiveDiff = 'medium';
     if (lia) {
-      // For Lia (age 5): keep it warm, foundational, and easy in Levels 1-3, gently medium in Levels 4-5
       progressiveDiff = masteryInfo.level <= 3 ? 'easy' : (i < 3 ? 'easy' : 'medium');
-    } else if (appState.difficulty === 'easy') {
-      progressiveDiff = i < 5 ? 'easy' : 'medium';
-    } else if (appState.difficulty === 'hard' || masteryInfo.level >= 4) {
-      progressiveDiff = i < 2 ? 'easy' : i < 5 ? 'medium' : 'hard';
     } else {
-      // Default gradual curve for Ilay (Levels 1-3): easy warm-up -> medium progression (no sudden hard spikes!)
-      progressiveDiff = masteryInfo.level <= 1 ? (i < 5 ? 'easy' : 'medium') : (i < 3 ? 'easy' : 'medium');
+      if (i === 0 && startLvl > 1) {
+        progressiveDiff = levelToDiff(startLvl - 1); // Gentle warmup on 1st question
+      } else {
+        progressiveDiff = levelToDiff(startLvl);
+      }
     }
 
     let q = null;
@@ -1968,7 +2076,7 @@ function startMatch(topicId, topicTitle, isDailyBonus = false) {
     sessionSeenKeys.add(key);
     recordSeenQuestionKey(key);
 
-    q.progressiveStage = progressiveDiff === 'easy' ? 1 : progressiveDiff === 'medium' ? 2 : 3;
+    q.progressiveStage = progressiveDiff === 'easy' ? 1 : progressiveDiff === 'medium' ? 2 : progressiveDiff === 'hard' ? 3 : progressiveDiff === 'stage_a' ? 4 : 5;
     session.questions.push(q);
   }
   saveState();
@@ -2066,6 +2174,7 @@ function renderCurrentQuestion() {
   session.attemptsOnCurrent = 1;
   session.selectedOptions.clear();
   session.answeredCurrent = false;
+  updateArenaLevelUI();
 
   document.getElementById('q-current-num').textContent = session.currentIndex + 1;
   document.getElementById('q-total-num').textContent = session.totalQuestions;
@@ -2250,6 +2359,7 @@ function checkCurrentAnswer() {
     session.answeredCurrent = true;
     session.correctCount++;
     session.currentStreak++;
+    session.streakInLevel = (session.streakInLevel || 0) + 1;
     if (session.currentStreak > session.maxSessionStreak) {
       session.maxSessionStreak = session.currentStreak;
     }
@@ -2257,8 +2367,26 @@ function checkCurrentAnswer() {
       appState.bestStreak = session.currentStreak;
     }
 
+    // Sound effects: Combo pitch scaling for Ilay, enchanted sparkle for Lia
+    if (lia) {
+      arcadeAudio.playMagicSparkle();
+    } else {
+      arcadeAudio.playCombo(session.currentStreak);
+    }
+
+    // Dynamic In-Match Level Up: 2 in a row escalates difficulty in real-time!
+    let inMatchLevelUp = false;
+    if (!lia && session.streakInLevel >= 2 && session.currentLevel < 5) {
+      session.currentLevel++;
+      session.streakInLevel = 0;
+      inMatchLevelUp = true;
+      triggerInMatchLevelUp(session.currentLevel);
+      regenerateUpcomingQuestionsForLevel(session.currentLevel);
+    }
+    updateArenaLevelUI();
+
     const stage = q.progressiveStage || 1;
-    const stageBonus = stage === 3 ? 5 : stage === 2 ? 2 : 0;
+    const stageBonus = stage >= 4 ? 8 : stage === 3 ? 5 : stage === 2 ? 2 : 0;
     const baseReward = session.attemptsOnCurrent === 1 ? 10 : 8;
     const streakBonus = session.currentStreak >= 3 ? 5 : 0;
     const mult = session.isDailyBonus ? 2 : 1;
@@ -2287,12 +2415,14 @@ function checkCurrentAnswer() {
     });
 
     arcadeAudio.playGoalSuccess();
-    confetti.burst(stage === 3 ? 95 : 65);
+    confetti.burst(stage >= 4 ? 120 : stage === 3 ? 95 : 65);
     if (ball) ball.classList.add('shoot-anim');
     if (gk) gk.classList.add('dive-right');
 
     const streakMsg = session.currentStreak >= 3 ? ` 🔥 רצף ${session.currentStreak}!` : '';
-    const levelUpMsg = newLevelInfo.level > prevLevel ? ` 🎉 עלית ל-${newLevelInfo.label}!` : '';
+    const levelUpMsg = inMatchLevelUp
+      ? ` 👑 רמה ${session.currentLevel}!`
+      : (newLevelInfo.level > prevLevel ? ` 🎉 עלית ל-${newLevelInfo.label}!` : '');
     fb.className = 'feedback-banner success';
     fb.textContent = lia
       ? `כל הכבוד ליה אלופה! +${earned} 🪙${streakMsg}${levelUpMsg}`
@@ -2358,6 +2488,8 @@ function checkCurrentAnswer() {
     // FOR ILAY: Attempt 1 gives spoken Hebrew hint + crosses out the wrong option so Attempt 2 is fair and educational!
     arcadeAudio.playMiss();
     session.currentStreak = 0;
+    session.streakInLevel = 0;
+    updateArenaLevelUI();
     updateHeaderUI();
 
     if (session.attemptsOnCurrent === 1) {
@@ -2418,6 +2550,7 @@ function nextQuestion() {
 }
 
 function finishMatch() {
+  session.isActive = false;
   clearInterval(session.timerInterval);
   arcadeAudio.playWhistleVictory();
   confetti.burst(130);
@@ -3747,7 +3880,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Difficulty & Mode Selectors
+  const initialDiff = appState.difficulty || 'medium';
   document.querySelectorAll('#difficulty-selector .pill-opt').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.diff === initialDiff);
     btn.addEventListener('click', () => {
       arcadeAudio.playClick();
       document.querySelectorAll('#difficulty-selector .pill-opt').forEach(b => b.classList.remove('active'));
@@ -3757,7 +3892,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  const initialMode = appState.gameMode || 'standard';
   document.querySelectorAll('#gamemode-selector .pill-opt').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.mode === initialMode);
     btn.addEventListener('click', () => {
       arcadeAudio.playClick();
       document.querySelectorAll('#gamemode-selector .pill-opt').forEach(b => b.classList.remove('active'));
@@ -3768,7 +3905,11 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Arena controls
-  on('btn-leave-arena', 'click', () => switchView('home'));
+  on('btn-leave-arena', 'click', () => {
+    session.isActive = false;
+    saveState(true);
+    switchView('home');
+  });
   on('btn-speak-question', 'click', () => {
     const q = session.questions[session.currentIndex];
     if (!q) return;
