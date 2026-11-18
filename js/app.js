@@ -208,6 +208,7 @@ let appState = {
   devRequests: [], // [{ id, date, text, status }]
   activeChild: 'ilay', // 'ilay' | 'lia' (100% device-local so Ilay & Lia can play simultaneously on separate devices!)
   seenQuestionKeys: [],
+  soccerRewards: { goalsScored: 0, fastGoals: 0, smartMatchesPlayed: 0 },
   liaProfile: {
     coins: 60,
     trophies: 1,
@@ -280,7 +281,12 @@ function mergeTopicStatsMap(a = {}, b = {}) {
     merged[k] = {
       solved,
       correct,
-      stars: Math.min(3, Math.floor(correct / 5))
+      stars: Math.min(3, Math.floor(correct / 5)),
+      totalTimeMs: Math.max(sa.totalTimeMs || 0, sb.totalTimeMs || 0),
+      timedCount: Math.max(sa.timedCount || 0, sb.timedCount || 0),
+      recentHistory: (sa.recentHistory && sa.recentHistory.length >= (sb.recentHistory?.length || 0))
+        ? sa.recentHistory
+        : (sb.recentHistory || [])
     };
   });
   return merged;
@@ -347,6 +353,11 @@ function mergeCloudStateSafely(local, remote) {
     unlockedStickers: mergedIlayStickers,
     topicStats: mergeTopicStatsMap(local.topicStats, remote.topicStats),
     seenQuestionKeys: mergeUniqueArray(local.seenQuestionKeys, remote.seenQuestionKeys, 180),
+    soccerRewards: {
+      goalsScored: Math.max(local.soccerRewards?.goalsScored || 0, remote.soccerRewards?.goalsScored || 0),
+      fastGoals: Math.max(local.soccerRewards?.fastGoals || 0, remote.soccerRewards?.fastGoals || 0),
+      smartMatchesPlayed: Math.max(local.soccerRewards?.smartMatchesPlayed || 0, remote.soccerRewards?.smartMatchesPlayed || 0)
+    },
     avatar: lockedLocalChild === 'ilay' ? (local.avatar || remote.avatar || 's1') : (remote.avatar || local.avatar || 's1'),
     teamTheme: lockedLocalChild === 'ilay' ? (local.teamTheme || remote.teamTheme || 'beitar') : (remote.teamTheme || local.teamTheme || 'beitar'),
     speechLogs: mergedSpeechLogs,
@@ -1941,8 +1952,93 @@ function levelToDiff(lvl) {
   return LEVEL_CONFIG[clamped].id;
 }
 
+const SMART_MIX_TOPICS = [
+  { id: 'gifted_picture_riddles', name: 'משוואות סמלים 🧩', targetSec: 18 },
+  { id: 'gifted_verbal_analogies', name: 'אנלוגיות מילים 🔄', targetSec: 15 },
+  { id: 'gifted_sentence_completion', name: 'השלמת משפטים ✏️', targetSec: 16 },
+  { id: 'gifted_word_problems', name: 'בעיות מילוליות 🧮', targetSec: 25 },
+  { id: 'gifted_numbers_shapes', name: 'מספרים בצורות 🔢', targetSec: 20 },
+  { id: 'gifted_shapes_matrix', name: 'חשיבה צורנית 📐', targetSec: 20 },
+  { id: 'gifted_reading_comp', name: 'הבנת הנקרא 📖', targetSec: 28 },
+  { id: 'math_inequalities', name: 'אי-שוויונות ⚖️', targetSec: 15 },
+  { id: 'math_missing', name: 'מספר חסר ❓', targetSec: 14 },
+  { id: 'logic_series', name: 'סדרות ולוגיקה ⚡', targetSec: 18 },
+  { id: 'hebrew_grammar', name: 'שפה ודקדוק 📝', targetSec: 14 }
+];
+
+const SOCCER_UNLOCKABLES = [
+  { id: 'ball_classic', icon: '⚽', name: 'כדור האימונים', reqGoals: 0, desc: 'הכדור הקלאסי להתחלת העונה' },
+  { id: 'boots_beitar', icon: '👟', name: 'נעלי הזהב של בית"ר', reqGoals: 5, desc: 'נפתחות אחרי 5 שערים באימון!' },
+  { id: 'gloves_courtois', icon: '🧤', name: 'כפפות השוער של קורטואה', reqGoals: 12, desc: 'נפתחות אחרי 12 שערים!' },
+  { id: 'ball_ucl', icon: '🌟', name: 'כדור ליגת האלופות הכסוף', reqGoals: 20, desc: 'נפתח אחרי 20 שערים!' },
+  { id: 'jersey_10', icon: '👕', name: 'חולצת מספר 10 המלכותית', reqGoals: 30, desc: 'לשחקן שמבקיע 30 שערים!' },
+  { id: 'trophy_brain', icon: '🏆', name: 'גביע מונדיאל המוחות', reqGoals: 50, desc: 'הפרס היוקרתי ביותר באצטדיון!' }
+];
+
+function computeTopicNeedScore(topicObj) {
+  const statsObj = getActiveTopicStats();
+  const st = statsObj[topicObj.id] || { solved: 0, correct: 0, totalTimeMs: 0, timedCount: 0, recentHistory: [] };
+  const solved = st.solved || 0;
+  let accuracyPct = 100;
+
+  if (Array.isArray(st.recentHistory) && st.recentHistory.length >= 2) {
+    const recOk = st.recentHistory.filter(h => h.ok).length;
+    accuracyPct = Math.round((recOk / st.recentHistory.length) * 100);
+  } else if (solved > 0) {
+    accuracyPct = Math.round(((st.correct || 0) / solved) * 100);
+  }
+
+  const avgSec = (st.timedCount || 0) > 0 ? Math.round((st.totalTimeMs || 0) / st.timedCount / 1000) : 0;
+
+  let needScore = 10;
+  let reason = 'שולט היטב';
+
+  if (solved < 2) {
+    needScore = 65;
+    reason = 'טרם תורגל מספיק';
+  } else {
+    if (accuracyPct < 70) {
+      needScore += 50;
+      reason = `דיוק ${accuracyPct}% (דרוש חיזוק)`;
+    } else if (accuracyPct < 85) {
+      needScore += 25;
+      reason = `דיוק ${accuracyPct}% (בדרך לשליטה)`;
+    }
+    if (avgSec > topicObj.targetSec * 1.35) {
+      needScore += 30;
+      reason = avgSec > 0 ? `איטי יחסית (${avgSec} שנ׳)` : reason;
+    } else if (avgSec > topicObj.targetSec) {
+      needScore += 12;
+    }
+  }
+
+  return { ...topicObj, solved, accuracyPct, avgSec, needScore, reason };
+}
+
+function pickSmartAdaptiveTopicsForMatch(count = 10) {
+  const scored = SMART_MIX_TOPICS.map(computeTopicNeedScore).sort((a, b) => b.needScore - a.needScore);
+  const weakPool = scored.slice(0, 5); // Top 5 topics needing improvement or speed
+  const strongPool = scored.slice(5);  // Fun confidence-building topics
+
+  const plan = [];
+  for (let i = 0; i < count; i++) {
+    // 60% focus on weaknesses/untested, 40% strengths/variety
+    const useWeak = (i % 5 !== 1 && i % 5 !== 3);
+    const pool = (useWeak && weakPool.length > 0) ? weakPool : (strongPool.length > 0 ? strongPool : scored);
+    let candidate = pool[Math.floor(Math.random() * pool.length)];
+    // Avoid 2 identical topics in a row so every question feels fresh!
+    if (plan.length > 0 && candidate.id === plan[plan.length - 1] && pool.length > 1) {
+      const others = pool.filter(p => p.id !== plan[plan.length - 1]);
+      candidate = others[Math.floor(Math.random() * others.length)];
+    }
+    plan.push(candidate.id);
+  }
+  return plan;
+}
+
 function updateArenaLevelUI() {
   const shield = document.getElementById('arena-level-shield');
+  const iconEl = document.getElementById('arena-level-icon');
   const text = document.getElementById('arena-level-text');
   const streakCount = document.getElementById('arena-streak-count');
   const streakFill = document.getElementById('arena-streak-fill');
@@ -1952,14 +2048,16 @@ function updateArenaLevelUI() {
   const cfg = LEVEL_CONFIG[lvl] || LEVEL_CONFIG[1];
 
   if (shield) {
-    shield.textContent = lvl;
     shield.className = `level-indicator-shield ${cfg.shieldClass}`;
+  }
+  if (iconEl) {
+    iconEl.textContent = lvl === 5 ? '👑' : lvl === 4 ? '🏆' : lvl === 3 ? '🔥' : lvl === 2 ? '⚡' : '🌱';
   }
   if (text) {
     text.textContent = lia ? `רמה ${lvl} 🌟` : cfg.name;
   }
   if (streakCount) {
-    streakCount.textContent = `${Math.min(2, session.streakInLevel || 0)}/2`;
+    streakCount.textContent = `רצף: ${Math.min(2, session.streakInLevel || 0)}/2`;
   }
   if (streakFill) {
     const pct = Math.min(100, ((session.streakInLevel || 0) / 2) * 100);
@@ -1975,16 +2073,17 @@ function triggerInMatchLevelUp(newLevel) {
   updateArenaLevelUI();
 
   const toast = document.getElementById('level-up-toast');
+  const titleEl = document.getElementById('level-up-title');
+  const subEl = document.getElementById('level-up-sub');
   if (toast) {
     const lvlInfo = LEVEL_CONFIG[newLevel] || LEVEL_CONFIG[5];
-    toast.innerHTML = `
-      <div class="toast-badge">👑 עֲלִיַּת רָמָה!</div>
-      <div class="toast-title">${lvlInfo.name}</div>
-      <div class="toast-desc">כל הכבוד עילי! 2 תשובות נכונות ברצף — הרמה עולה עכשיו! +5 🪙</div>
-    `;
+    if (titleEl) titleEl.textContent = `👑 עֲלִיַּת רָמָה! ${lvlInfo.name}`;
+    if (subEl) subEl.textContent = `כל הכבוד עילי! 2 תשובות נכונות ברצף — הרמה עולה עכשיו! +5 🪙`;
+    toast.classList.remove('hidden');
     toast.classList.add('show');
     setTimeout(() => {
       toast.classList.remove('show');
+      toast.classList.add('hidden');
     }, 2800);
   }
 }
@@ -1992,7 +2091,10 @@ function triggerInMatchLevelUp(newLevel) {
 function regenerateUpcomingQuestionsForLevel(newLevel) {
   const targetDiff = levelToDiff(newLevel);
   for (let i = session.currentIndex + 1; i < session.questions.length; i++) {
-    const newQ = generateQuestionForTopic(session.topicId, targetDiff, appState.customQuestions);
+    const qTopic = session.questions[i]?.topicId || session.topicId;
+    const effectiveTopic = qTopic === 'smart_adaptive_mix' ? 'gifted_stage_a' : qTopic;
+    const newQ = generateQuestionForTopic(effectiveTopic, targetDiff, appState.customQuestions);
+    newQ.topicId = effectiveTopic;
     newQ.progressiveStage = newLevel;
     session.questions[i] = newQ;
   }
@@ -2000,10 +2102,12 @@ function regenerateUpcomingQuestionsForLevel(newLevel) {
 
 function startMatch(topicId, topicTitle, isDailyBonus = false) {
   clearInterval(session.timerInterval);
+  clearInterval(session.questionTimerInterval);
   const lia = isLiaActive();
 
-  // Keep games short, fun, and zero-fatigue (6 questions for Lia age 5, 8-10 for Ilay)
-  const count = appState.gameMode === 'penalty' ? 5 : appState.gameMode === 'arcade' ? 15 : (lia ? 6 : (isDailyBonus ? 8 : 8));
+  const isSmartMix = topicId === 'smart_adaptive_mix';
+  // Keep games short, fun, and zero-fatigue (6 for Lia, 10 for Smart Mix, 8 for regular)
+  const count = isSmartMix ? 10 : (appState.gameMode === 'penalty' ? 5 : appState.gameMode === 'arcade' ? 15 : (lia ? 6 : 8));
 
   const statsObj = getActiveTopicStats();
   const topicStat = statsObj[topicId] || { solved: 0, correct: 0, stars: 0 };
@@ -2031,6 +2135,10 @@ function startMatch(topicId, topicTitle, isDailyBonus = false) {
     selectedOptions: new Set(),
     answeredCurrent: false,
     timerInterval: null,
+    questionTimerInterval: null,
+    questionStartTime: Date.now(),
+    matchTimingsMs: [],
+    fastGoalsThisMatch: 0,
     secondsLeft: 60,
     penaltyHistory: [],
     chestOpened: false
@@ -2038,8 +2146,10 @@ function startMatch(topicId, topicTitle, isDailyBonus = false) {
 
   const sessionSeenKeys = new Set();
   const persistentSeen = getActiveSeenQuestionKeys();
+  const smartPlan = isSmartMix ? pickSmartAdaptiveTopicsForMatch(count) : null;
 
   for (let i = 0; i < count; i++) {
+    const qTopicId = smartPlan ? smartPlan[i] : topicId;
     let progressiveDiff = 'medium';
     if (lia) {
       progressiveDiff = masteryInfo.level <= 3 ? 'easy' : (i < 3 ? 'easy' : 'medium');
@@ -2054,7 +2164,7 @@ function startMatch(topicId, topicTitle, isDailyBonus = false) {
     let q = null;
     let key = '';
     for (let attempt = 0; attempt < 45; attempt++) {
-      const candidate = generateQuestionForTopic(topicId, progressiveDiff, appState.customQuestions);
+      const candidate = generateQuestionForTopic(qTopicId, progressiveDiff, appState.customQuestions);
       const candKey = String(candidate.uniqueKey || candidate.englishSpeechWord || candidate.stimulusHtml || Math.random());
       const notInSession = !sessionSeenKeys.has(candKey);
       const notInPersistent = attempt > 24 || !persistentSeen.includes(candKey);
@@ -2069,10 +2179,11 @@ function startMatch(topicId, topicTitle, isDailyBonus = false) {
       }
     }
     if (!q) {
-      q = generateQuestionForTopic(topicId, progressiveDiff, appState.customQuestions);
+      q = generateQuestionForTopic(qTopicId, progressiveDiff, appState.customQuestions);
       key = String(q.uniqueKey || Math.random());
     }
 
+    q.topicId = qTopicId;
     sessionSeenKeys.add(key);
     recordSeenQuestionKey(key);
 
@@ -2175,6 +2286,35 @@ function renderCurrentQuestion() {
   session.selectedOptions.clear();
   session.answeredCurrent = false;
   updateArenaLevelUI();
+
+  // Start non-stressful Pace Timer for Ilay
+  clearInterval(session.questionTimerInterval);
+  session.questionStartTime = Date.now();
+  const paceEl = document.getElementById('arena-pace-badge');
+  if (paceEl) {
+    if (lia) {
+      paceEl.classList.add('hidden');
+    } else {
+      paceEl.classList.remove('hidden');
+      const topicMeta = SMART_MIX_TOPICS.find(t => t.id === q.topicId);
+      const targetSec = topicMeta ? topicMeta.targetSec : 18;
+      const updatePace = () => {
+        const sec = Math.floor((Date.now() - session.questionStartTime) / 1000);
+        paceEl.textContent = `⏱️ ${sec} שנ׳`;
+        if (sec <= targetSec) {
+          paceEl.style.background = 'rgba(16,185,129,0.16)';
+          paceEl.style.color = '#047857';
+          paceEl.style.borderColor = '#34d399';
+        } else {
+          paceEl.style.background = 'rgba(245,158,11,0.16)';
+          paceEl.style.color = '#b45309';
+          paceEl.style.borderColor = '#fbbf24';
+        }
+      };
+      updatePace();
+      session.questionTimerInterval = setInterval(updatePace, 1000);
+    }
+  }
 
   document.getElementById('q-current-num').textContent = session.currentIndex + 1;
   document.getElementById('q-total-num').textContent = session.totalQuestions;
@@ -2356,6 +2496,7 @@ function checkCurrentAnswer() {
   const gk = document.getElementById('goalkeeper');
 
   if (isExactMatch) {
+    clearInterval(session.questionTimerInterval);
     session.answeredCurrent = true;
     session.correctCount++;
     session.currentStreak++;
@@ -2365,6 +2506,18 @@ function checkCurrentAnswer() {
     }
     if (!lia && session.currentStreak > appState.bestStreak) {
       appState.bestStreak = session.currentStreak;
+    }
+
+    const elapsedMs = Math.max(1000, Date.now() - (session.questionStartTime || Date.now()));
+    const elapsedSec = Math.round(elapsedMs / 1000);
+    if (!Array.isArray(session.matchTimingsMs)) session.matchTimingsMs = [];
+    session.matchTimingsMs.push(elapsedMs);
+
+    const topicMeta = SMART_MIX_TOPICS.find(t => t.id === q.topicId);
+    const targetSec = topicMeta ? topicMeta.targetSec : 18;
+    const isFastGoal = !lia && session.attemptsOnCurrent === 1 && elapsedSec <= targetSec;
+    if (isFastGoal) {
+      session.fastGoalsThisMatch = (session.fastGoalsThisMatch || 0) + 1;
     }
 
     // Sound effects: Combo pitch scaling for Ilay, enchanted sparkle for Lia
@@ -2389,20 +2542,34 @@ function checkCurrentAnswer() {
     const stageBonus = stage >= 4 ? 8 : stage === 3 ? 5 : stage === 2 ? 2 : 0;
     const baseReward = session.attemptsOnCurrent === 1 ? 10 : 8;
     const streakBonus = session.currentStreak >= 3 ? 5 : 0;
+    const fastBonus = isFastGoal ? 5 : 0;
     const mult = session.isDailyBonus ? 2 : 1;
-    const earned = (baseReward + streakBonus + stageBonus) * mult;
+    const earned = (baseReward + streakBonus + stageBonus + fastBonus) * mult;
 
     session.coinsEarned += earned;
     addActiveCoins(earned);
     session.penaltyHistory[session.currentIndex] = 'scored';
 
+    if (!lia) {
+      if (!appState.soccerRewards) appState.soccerRewards = { goalsScored: 0, fastGoals: 0, smartMatchesPlayed: 0 };
+      appState.soccerRewards.goalsScored = (appState.soccerRewards.goalsScored || 0) + 1;
+      if (isFastGoal) {
+        appState.soccerRewards.fastGoals = (appState.soccerRewards.fastGoals || 0) + 1;
+      }
+    }
+
     const statsObj = getActiveTopicStats();
     const prevCorrect = (statsObj[q.topicId] && statsObj[q.topicId].correct) || 0;
     const prevLevel = getTopicMasteryLevelInfo(prevCorrect).level;
-    const tStat = statsObj[q.topicId] || { solved: 0, correct: 0, stars: 0 };
+    const tStat = statsObj[q.topicId] || { solved: 0, correct: 0, stars: 0, totalTimeMs: 0, timedCount: 0, recentHistory: [] };
     tStat.solved++;
     tStat.correct++;
     tStat.stars = Math.min(3, Math.floor(tStat.correct / 5));
+    tStat.totalTimeMs = (tStat.totalTimeMs || 0) + elapsedMs;
+    tStat.timedCount = (tStat.timedCount || 0) + 1;
+    if (!Array.isArray(tStat.recentHistory)) tStat.recentHistory = [];
+    tStat.recentHistory.push({ ok: true, ms: elapsedMs });
+    if (tStat.recentHistory.length > 12) tStat.recentHistory.shift();
     statsObj[q.topicId] = tStat;
     const newLevelInfo = getTopicMasteryLevelInfo(tStat.correct);
     saveState();
@@ -2419,6 +2586,7 @@ function checkCurrentAnswer() {
     if (ball) ball.classList.add('shoot-anim');
     if (gk) gk.classList.add('dive-right');
 
+    const fastMsg = isFastGoal ? ` ⚡ שער בזק (${elapsedSec} שנ׳)!` : '';
     const streakMsg = session.currentStreak >= 3 ? ` 🔥 רצף ${session.currentStreak}!` : '';
     const levelUpMsg = inMatchLevelUp
       ? ` 👑 רמה ${session.currentLevel}!`
@@ -2426,10 +2594,12 @@ function checkCurrentAnswer() {
     fb.className = 'feedback-banner success';
     fb.textContent = lia
       ? `כל הכבוד ליה אלופה! +${earned} 🪙${streakMsg}${levelUpMsg}`
-      : `גווווול! +${earned} 🪙${streakMsg}${levelUpMsg}`;
+      : `גווווול! +${earned} 🪙${fastMsg}${streakMsg}${levelUpMsg}`;
     document.getElementById('commentator-text').textContent = lia
       ? `🦄 "סטיץ׳ וחד-קרן מוחאים כפיים לליה!"`
-      : `🎙️ "שעררר אדיר של עילי!"`;
+      : isFastGoal
+        ? `⚡ "בעיטת טיל של עילי לחיבורים תוך ${elapsedSec} שניות!"`
+        : `🎙️ "שעררר אדיר של עילי!"`;
 
     // Speak praise / English reinforcement
     if (newLevelInfo.level > prevLevel) {
@@ -2509,12 +2679,22 @@ function checkCurrentAnswer() {
         setTimeout(() => arcadeAudio.speak(`רמז והסבר: ${q.hint}`, 'he-IL', 0.88), 200);
       }
     } else {
+      clearInterval(session.questionTimerInterval);
       session.answeredCurrent = true;
       session.penaltyHistory[session.currentIndex] = 'missed';
 
+      const elapsedMs = Math.max(1000, Date.now() - (session.questionStartTime || Date.now()));
+      if (!Array.isArray(session.matchTimingsMs)) session.matchTimingsMs = [];
+      session.matchTimingsMs.push(elapsedMs);
+
       const statsObj = getActiveTopicStats();
-      const tStat = statsObj[q.topicId] || { solved: 0, correct: 0, stars: 0 };
+      const tStat = statsObj[q.topicId] || { solved: 0, correct: 0, stars: 0, totalTimeMs: 0, timedCount: 0, recentHistory: [] };
       tStat.solved++;
+      tStat.totalTimeMs = (tStat.totalTimeMs || 0) + elapsedMs;
+      tStat.timedCount = (tStat.timedCount || 0) + 1;
+      if (!Array.isArray(tStat.recentHistory)) tStat.recentHistory = [];
+      tStat.recentHistory.push({ ok: false, ms: elapsedMs });
+      if (tStat.recentHistory.length > 12) tStat.recentHistory.shift();
       statsObj[q.topicId] = tStat;
       saveState();
 
@@ -2552,9 +2732,15 @@ function nextQuestion() {
 function finishMatch() {
   session.isActive = false;
   clearInterval(session.timerInterval);
+  clearInterval(session.questionTimerInterval);
   arcadeAudio.playWhistleVictory();
   confetti.burst(130);
   const lia = isLiaActive();
+
+  if (!lia && session.topicId === 'smart_adaptive_mix') {
+    if (!appState.soccerRewards) appState.soccerRewards = { goalsScored: 0, fastGoals: 0, smartMatchesPlayed: 0 };
+    appState.soccerRewards.smartMatchesPlayed = (appState.soccerRewards.smartMatchesPlayed || 0) + 1;
+  }
 
   const ratio = session.correctCount / session.totalQuestions;
   if (ratio >= 0.65) {
@@ -2570,6 +2756,46 @@ function finishMatch() {
   document.getElementById('sum-correct').textContent = `${session.correctCount}/${session.totalQuestions}`;
   document.getElementById('sum-coins').textContent = `+${session.coinsEarned}`;
   document.getElementById('sum-streak').textContent = session.maxSessionStreak;
+
+  // Render Soccer Locker Room & Speed Metrics for Ilay
+  const lockerEl = document.getElementById('summary-soccer-locker');
+  if (lockerEl) {
+    if (lia) {
+      lockerEl.classList.add('hidden');
+    } else {
+      lockerEl.classList.remove('hidden');
+      const timings = session.matchTimingsMs || [];
+      const avgMatchSec = timings.length > 0 ? Math.round(timings.reduce((a, b) => a + b, 0) / timings.length / 1000) : 0;
+      const goals = (appState.soccerRewards && appState.soccerRewards.goalsScored) || 0;
+      const fastGoals = session.fastGoalsThisMatch || 0;
+
+      const unlocked = SOCCER_UNLOCKABLES.filter(u => goals >= u.reqGoals);
+      const nextUnlock = SOCCER_UNLOCKABLES.find(u => goals < u.reqGoals);
+      const prevReq = unlocked.length > 0 ? unlocked[unlocked.length - 1].reqGoals : 0;
+      const nextPct = nextUnlock ? Math.min(100, Math.round(((goals - prevReq) / (nextUnlock.reqGoals - prevReq)) * 100)) : 100;
+
+      const gearIcons = unlocked.map(u => `<span title="${u.name}" style="font-size:1.35rem;background:rgba(255,255,255,0.1);padding:3px 7px;border-radius:10px;">${u.icon}</span>`).join(' ');
+
+      lockerEl.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <span style="font-weight:900;color:#38bdf8;font-size:0.95rem;">🏟️ חדר ההלבשה ומהירות בעיטה</span>
+          <span style="background:rgba(16,185,129,0.2);color:#34d399;padding:2px 8px;border-radius:99px;font-size:0.78rem;font-weight:900;">⚡ ממוצע: ${avgMatchSec} שנ׳ לשאלה</span>
+        </div>
+        <div style="font-size:0.84rem;color:#e2e8f0;margin-bottom:8px;">
+          ⚽ סה״כ שערים בקריירה: <strong>${goals}</strong> &nbsp;|&nbsp; ⚡ שערי בזק במשחק: <strong>${fastGoals}</strong>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">${gearIcons}</div>
+        ${nextUnlock ? `
+          <div style="font-size:0.8rem;color:#fde047;font-weight:800;margin-bottom:4px;">
+            🎁 הפרס הבא: ${nextUnlock.icon} ${nextUnlock.name} (עוד ${nextUnlock.reqGoals - goals} שערים!)
+          </div>
+          <div style="width:100%;height:7px;background:rgba(255,255,255,0.15);border-radius:99px;overflow:hidden;">
+            <div style="width:${Math.max(8, nextPct)}%;height:100%;background:linear-gradient(90deg,#facc15,#00ff87);"></div>
+          </div>
+        ` : `<div style="font-size:0.84rem;color:#00ff87;font-weight:900;">👑 פתחת את כל ציוד הכדורגל באצטדיון!</div>`}
+      `;
+    }
+  }
 
   session.chestOpened = false;
   const btnChest = document.getElementById('btn-open-mystery-chest');
@@ -3907,6 +4133,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Arena controls
   on('btn-leave-arena', 'click', () => {
     session.isActive = false;
+    clearInterval(session.timerInterval);
+    clearInterval(session.questionTimerInterval);
     saveState(true);
     switchView('home');
   });
@@ -6119,10 +6347,45 @@ let giftedHubState = {
   activeTab: 'stage_a' // 'stage_a' | 'stage_b' | 'toolbox'
 };
 
+let giftedHubListenersBound = false;
+
 function initGiftedHub() {
   renderGiftedReadinessDashboard();
+  renderGiftedCoachAnalytics();
   renderGiftedHubTabs();
-  setupGiftedHubListeners();
+  if (!giftedHubListenersBound) {
+    setupGiftedHubListeners();
+    giftedHubListenersBound = true;
+  }
+}
+
+function renderGiftedCoachAnalytics() {
+  const container = document.getElementById('gifted-coach-analytics-body');
+  if (!container) return;
+
+  const scored = SMART_MIX_TOPICS.map(computeTopicNeedScore).sort((a, b) => b.needScore - a.needScore);
+  const weakAreas = scored.filter(x => x.needScore >= 25).slice(0, 3);
+  const strongAreas = scored.filter(x => x.solved >= 2 && x.accuracyPct >= 80).slice(0, 3);
+  const goals = (appState.soccerRewards && appState.soccerRewards.goalsScored) || 0;
+  const fastGoals = (appState.soccerRewards && appState.soccerRewards.fastGoals) || 0;
+
+  let html = '';
+  if (weakAreas.length > 0) {
+    html += `<div style="margin-bottom:8px;"><strong style="color:#b45309;">🎯 המלצת המאמן החכם (דגש במשחק הבא):</strong><br>`;
+    html += weakAreas.map(w => `• <strong>${w.name}</strong> — <span style="color:#64748b;">${w.reason}</span>`).join('<br>');
+    html += `</div>`;
+  } else {
+    html += `<div style="margin-bottom:8px;"><strong style="color:#047857;">🌟 מצוין! כל תחומי המבחן מאוזנים היטב!</strong></div>`;
+  }
+
+  if (strongAreas.length > 0) {
+    html += `<div style="margin-bottom:8px;"><strong style="color:#15803d;">🟢 חוזקות בולטות:</strong> `;
+    html += strongAreas.map(s => `${s.name} (${s.accuracyPct}%${s.avgSec > 0 ? `, ${s.avgSec} שנ׳` : ''})`).join(' • ');
+    html += `</div>`;
+  }
+
+  html += `<div style="background:#e2e8f0;padding:6px 10px;border-radius:10px;font-weight:800;color:#0f172a;">⚽ שערים בקריירה: ${goals} &nbsp;|&nbsp; ⚡ שערי בזק: ${fastGoals}</div>`;
+  container.innerHTML = html;
 }
 
 function renderGiftedReadinessDashboard() {
@@ -6171,6 +6434,15 @@ function setupGiftedHubListeners() {
       renderGiftedHubTabs();
     });
   });
+
+  // Smart Adaptive Mix Button
+  const btnSmartMix = document.getElementById('btn-launch-smart-mix-hub');
+  if (btnSmartMix) {
+    btnSmartMix.addEventListener('click', () => {
+      arcadeAudio.playClick();
+      startMatch('smart_adaptive_mix', '⚽ ליגת האלופים החכמה (מגוון + לומד)', false);
+    });
+  }
 
   // Stage A Simulation Button
   const btnSimA = document.getElementById('btn-launch-sim-stage-a');
@@ -6256,7 +6528,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (jump && jump.dataset.giftedjump) {
         const topId = jump.dataset.giftedjump;
         const topic = (typeof TOPICS !== 'undefined' ? TOPICS : []).find(t => t.id === topId);
-        startMatch(topId, topic ? topic.title : '🧠 מבחן מחוננים', false);
+        const title = topId === 'smart_adaptive_mix' ? '⚽ ליגת האלופים החכמה' : (topic ? topic.title : '🧠 מבחן מחוננים');
+        startMatch(topId, title, false);
       } else {
         switchView('gifted-hub');
       }

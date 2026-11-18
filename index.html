@@ -232,6 +232,11 @@
             </div>
             <span class="fc27-banner-play" style="background:#ca8a04;border-color:#fef08a;color:#fff;font-weight:900;padding:8px 14px;font-size:0.95rem;box-shadow:0 4px 12px rgba(0,0,0,0.3);">התחל מבחן 🏆</span>
           </div>
+          <div style="margin-bottom:8px;">
+            <button type="button" class="btn-primary-large" data-giftedjump="smart_adaptive_mix" style="width:100%;background:linear-gradient(135deg,#00ff87 0%,#10b981 100%);color:#064e3b;font-weight:900;font-size:1.05rem;padding:12px 14px;border:none;border-radius:14px;box-shadow:0 4px 16px rgba(16,185,129,0.45);display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;">
+              <span>⚽🔥 משחק הליגה החכם: כל סוגי השאלות + מד מהירות ופרסי כדורגל!</span>
+            </button>
+          </div>
           <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;" id="gifted-quick-launch-grid">
             <button type="button" class="btn-chip" data-giftedjump="gifted_stage_a" style="background:#facc15;color:#090d16;font-weight:900;border:none;padding:8px 6px;font-size:0.82rem;">👑 סימולציית שלב א׳ (מבחן בית ספר)</button>
             <button type="button" class="btn-chip" data-giftedjump="gifted_stage_b" style="background:#c084fc;color:#3b0764;font-weight:900;border:none;padding:8px 6px;font-size:0.82rem;">🏆 סימולציית שלב ב׳ (מבחן חיצוני)</button>
@@ -501,12 +506,13 @@
           <div class="arena-commentary" id="commentator-text">מוכנים? בואו נתחיל!</div>
         </div>
 
-        <!-- Live Adaptive Level & Streak Shield Bar -->
+        <!-- Live Adaptive Level, Pace & Streak Shield Bar -->
         <div class="arena-level-live-bar" id="arena-level-live-bar">
           <div class="level-indicator-shield" id="arena-level-shield">
             <span class="level-shield-icon" id="arena-level-icon">⚡</span>
             <span class="level-shield-text" id="arena-level-text">רמה 2 • מתקדמים</span>
           </div>
+          <div class="pace-badge" id="arena-pace-badge" style="background:rgba(16,185,129,0.16);color:#047857;border:1.5px solid #34d399;padding:3px 9px;border-radius:99px;font-weight:900;font-size:0.78rem;white-space:nowrap;">⏱️ 0 שנ׳</div>
           <div class="level-streak-meter" id="arena-streak-meter">
             <span class="streak-fire">🔥</span>
             <span class="streak-count" id="arena-streak-count">רצף: 0</span>
@@ -570,6 +576,9 @@
               <span class="metric-lbl">רצף</span>
             </div>
           </div>
+
+          <!-- Soccer Locker Room Rewards & Speed Feedback -->
+          <div id="summary-soccer-locker" style="margin:12px 0;padding:12px;border-radius:16px;background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);border:2px solid #38bdf8;color:#fff;text-align:right;"></div>
 
           <!-- Mystery Reward Chest -->
           <div class="mystery-chest-box" id="summary-chest-box" style="margin: 12px 0; padding: 12px; border-radius: 16px; background: linear-gradient(135deg, #fef9c3, #fde047); border: 2px solid #eab308;">
@@ -1466,6 +1475,23 @@
             <span id="gifted-mastered-topics-count">🌱 תורגלו 0 מתוך 9 נושאים</span>
             <span id="gifted-stars-badge">⭐ 0 כוכבי הצטיינות</span>
           </div>
+        </div>
+
+        <!-- SMART ADAPTIVE MIX & COACH ANALYTICS -->
+        <div class="surface-card" style="background:linear-gradient(135deg,#064e3b 0%,#065f46 100%);border:2px solid #34d399;color:#fff;margin-bottom:12px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+            <div>
+              <span style="background:#00ff87;color:#064e3b;font-weight:900;padding:2px 8px;border-radius:99px;font-size:0.72rem;">מומלץ ביותר 🧠⚽</span>
+              <div style="font-size:1.12rem;font-weight:900;color:#fff;margin-top:4px;">⚽ משחק הליגה החכם (מגוון + לומד)</div>
+              <div style="font-size:0.8rem;color:#d1fae5;margin-top:2px;">10 שאלות מגוונות מכל הסוגים, מזהה אוטומטית מה כדאי לשפר ומודד זמן!</div>
+            </div>
+            <button type="button" class="btn-primary-action" id="btn-launch-smart-mix-hub" style="background:#facc15;color:#090d16;font-weight:900;white-space:nowrap;padding:10px 14px;border:none;">שחק עכשיו ⚡</button>
+          </div>
+        </div>
+
+        <div class="surface-card" id="gifted-coach-analytics" style="background:#f8fafc;border:2px solid #cbd5e1;margin-bottom:12px;">
+          <div style="font-size:0.95rem;font-weight:900;color:#0f172a;margin-bottom:6px;">📊 דוח המאמן החכם: חוזקות, מהירות ושיפור</div>
+          <div id="gifted-coach-analytics-body" style="font-size:0.84rem;color:#334155;line-height:1.5;">טוען נתוני ביצועים...</div>
         </div>
 
         <!-- 3 Main Dedicated Tabs: Stage A, Stage B, Thinking Toolbox -->
