@@ -3969,7 +3969,7 @@ const GIFTED_NUMBERS_SHAPES_BANK = [
   // Hard: Noam PDF Page 13 Question 2 (משולש חלוקה/פירמידה)
   {
     title: 'מְשֻׁלַּשׁ חֲלוּקָה (מִבְחַן נוֹעַם)',
-    visual: '<div style="font-size:1.1rem;font-weight:900;background:rgba(16,185,129,0.08);padding:10px;border-radius:12px;border:2px solid #10b981;">קודקוד עליון: 14<br>שורה אמצעית: ? ו- 8<br>שורה תחתונה: 1 , 5 , 3</div>',
+    visual: `<div style="display:flex;justify-content:center;padding:8px;"><svg viewBox="0 0 220 120" width="210" height="115"><rect x="85" y="6" width="50" height="32" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="2"/><text x="110" y="28" font-size="16" font-weight="bold" text-anchor="middle" fill="#92400e">14</text><rect x="55" y="42" width="50" height="32" rx="6" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/><text x="80" y="64" font-size="18" font-weight="bold" text-anchor="middle" fill="#0369a1">?</text><rect x="115" y="42" width="50" height="32" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/><text x="140" y="64" font-size="16" font-weight="bold" text-anchor="middle" fill="#15803d">8</text><rect x="25" y="78" width="50" height="32" rx="6" fill="#f1f5f9" stroke="#64748b" stroke-width="2"/><text x="50" y="100" font-size="16" font-weight="bold" text-anchor="middle" fill="#0f172a">1</text><rect x="85" y="78" width="50" height="32" rx="6" fill="#f1f5f9" stroke="#64748b" stroke-width="2"/><text x="110" y="100" font-size="16" font-weight="bold" text-anchor="middle" fill="#0f172a">5</text><rect x="145" y="78" width="50" height="32" rx="6" fill="#f1f5f9" stroke="#64748b" stroke-width="2"/><text x="170" y="100" font-size="16" font-weight="bold" text-anchor="middle" fill="#0f172a">3</text></svg></div>`,
     tts: 'במשולש החלוקה: הקודקוד העליון הוא ארבע עשרה. בשורה האמצעית יש סימן שאלה ושמונה. בשורה התחתונה יש אחת, חמש, ושלוש. איזה מספר מחליף את סימן השאלה?',
     ans: '6',
     wrong: ['3', '5', '4'],
@@ -4049,7 +4049,17 @@ const GIFTED_SHAPES_MATRIX_BANK = [
   // Hard: Noam PDF Page 15 (תנועת משבצת שחורה ברשת 3x3)
   {
     title: 'סִדְרַת מִשְׁבָּצוֹת 3x3 (מִבְחַן נוֹעַם עַמּוּד 15)',
-    visual: '<div style="font-size:1.05rem;background:rgba(139,92,246,0.08);padding:10px;border-radius:12px;border:2px solid #8b5cf6;">רשת 3x3: הריבוע השחור נע שלב-אחר-שלב:<br>1. פינה ימנית תחתונה ➔ 2. אמצע תחתון ➔ 3. פינה שמאלית תחתונה ➔ 4. אמצע שמאלי ➔ מה הבא?</div>',
+    visual: `<div style="display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;padding:6px;direction:ltr;">
+      <svg viewBox="0 0 36 36" width="44" height="44"><rect x="0" y="0" width="36" height="36" fill="#fff" stroke="#64748b" stroke-width="1.5"/><line x1="12" y1="0" x2="12" y2="36" stroke="#cbd5e1"/><line x1="24" y1="0" x2="24" y2="36" stroke="#cbd5e1"/><line x1="0" y1="12" x2="36" y2="12" stroke="#cbd5e1"/><line x1="0" y1="24" x2="36" y2="24" stroke="#cbd5e1"/><rect x="24" y="24" width="12" height="12" fill="#0f172a"/></svg>
+      <span>➔</span>
+      <svg viewBox="0 0 36 36" width="44" height="44"><rect x="0" y="0" width="36" height="36" fill="#fff" stroke="#64748b" stroke-width="1.5"/><line x1="12" y1="0" x2="12" y2="36" stroke="#cbd5e1"/><line x1="24" y1="0" x2="24" y2="36" stroke="#cbd5e1"/><line x1="0" y1="12" x2="36" y2="12" stroke="#cbd5e1"/><line x1="0" y1="24" x2="36" y2="24" stroke="#cbd5e1"/><rect x="12" y="24" width="12" height="12" fill="#0f172a"/></svg>
+      <span>➔</span>
+      <svg viewBox="0 0 36 36" width="44" height="44"><rect x="0" y="0" width="36" height="36" fill="#fff" stroke="#64748b" stroke-width="1.5"/><line x1="12" y1="0" x2="12" y2="36" stroke="#cbd5e1"/><line x1="24" y1="0" x2="24" y2="36" stroke="#cbd5e1"/><line x1="0" y1="12" x2="36" y2="12" stroke="#cbd5e1"/><line x1="0" y1="24" x2="36" y2="24" stroke="#cbd5e1"/><rect x="0" y="24" width="12" height="12" fill="#0f172a"/></svg>
+      <span>➔</span>
+      <svg viewBox="0 0 36 36" width="44" height="44"><rect x="0" y="0" width="36" height="36" fill="#fff" stroke="#64748b" stroke-width="1.5"/><line x1="12" y1="0" x2="12" y2="36" stroke="#cbd5e1"/><line x1="24" y1="0" x2="24" y2="36" stroke="#cbd5e1"/><line x1="0" y1="12" x2="36" y2="12" stroke="#cbd5e1"/><line x1="0" y1="24" x2="36" y2="24" stroke="#cbd5e1"/><rect x="0" y="12" width="12" height="12" fill="#0f172a"/></svg>
+      <span>➔</span>
+      <span style="font-size:1.5rem;font-weight:900;color:#8b5cf6;">?</span>
+    </div>`,
     tts: 'הריבוע השחור נע ברשת של שלוש על שלוש. איפה יופיע הריבוע השחור בתמונה הבאה?',
     ans: '↖️ פִּנָּה שְׂמָאלִית עֶלְיוֹנָה (תְּשׁוּבָה א׳)',
     wrong: ['↗️ פִּנָּה יְמָנִית עֶלְיוֹנָה', '⏹️ אֶמְצַע עֶלְיוֹן', '⏹️ מֶרְכַּז הָרֶשֶׁת'],

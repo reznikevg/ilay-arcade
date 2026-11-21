@@ -231,6 +231,63 @@ const LEXI_SCENES = {
         </g>
       </svg>
     `
+  },
+
+  beach: {
+    id: 'beach',
+    title: '🏖️ חוֹף הַיָּם וְהַקַּיִץ (Sunny Beach)',
+    bg: 'linear-gradient(180deg, #bae6fd 0%, #fef08a 100%)',
+    svg: `
+      <svg viewBox="0 0 400 260" width="100%" style="border-radius:18px;background:#e0f2fe;user-select:none;">
+        <rect x="0" y="0" width="400" height="115" fill="#bae6fd"/>
+        <rect x="0" y="115" width="400" height="65" fill="#38bdf8"/>
+        <rect x="0" y="180" width="400" height="80" fill="#fde68a"/>
+        <g class="lexi-obj" data-obj="blue_fish" style="cursor:pointer;">
+          <text x="95" y="155" font-size="38" text-anchor="middle">🐠</text>
+        </g>
+        <g class="lexi-obj" data-obj="sun_umbrella" style="cursor:pointer;">
+          <text x="290" y="168" font-size="52" text-anchor="middle">⛱️</text>
+        </g>
+        <g class="lexi-obj" data-obj="crab" style="cursor:pointer;">
+          <text x="72" y="226" font-size="40" text-anchor="middle">🦀</text>
+        </g>
+        <g class="lexi-obj" data-obj="ice_cream" style="cursor:pointer;">
+          <text x="190" y="224" font-size="42" text-anchor="middle">🍦</text>
+        </g>
+        <g class="lexi-obj" data-obj="beach_ball" style="cursor:pointer;">
+          <text x="335" y="228" font-size="40" text-anchor="middle">🏐</text>
+        </g>
+      </svg>
+    `
+  },
+
+  space: {
+    id: 'space',
+    title: '🚀 תַּחֲנַת הֶחָלָל וְהַכּוֹכָבִים (Space)',
+    bg: 'linear-gradient(180deg, #0f172a 0%, #312e81 100%)',
+    svg: `
+      <svg viewBox="0 0 400 260" width="100%" style="border-radius:18px;background:#0f172a;user-select:none;">
+        <circle cx="40" cy="40" r="2" fill="#fff"/>
+        <circle cx="150" cy="30" r="2" fill="#fff"/>
+        <circle cx="340" cy="50" r="2.5" fill="#fde047"/>
+        <circle cx="280" cy="190" r="2" fill="#fff"/>
+        <g class="lexi-obj" data-obj="moon" style="cursor:pointer;">
+          <text x="65" y="75" font-size="44" text-anchor="middle">🌙</text>
+        </g>
+        <g class="lexi-obj" data-obj="saturn" style="cursor:pointer;">
+          <text x="320" y="80" font-size="46" text-anchor="middle">🪐</text>
+        </g>
+        <g class="lexi-obj" data-obj="rocket" style="cursor:pointer;">
+          <text x="195" y="135" font-size="54" text-anchor="middle">🚀</text>
+        </g>
+        <g class="lexi-obj" data-obj="astronaut" style="cursor:pointer;">
+          <text x="95" y="210" font-size="46" text-anchor="middle">👩‍🚀</text>
+        </g>
+        <g class="lexi-obj" data-obj="earth" style="cursor:pointer;">
+          <text x="305" y="215" font-size="48" text-anchor="middle">🌍</text>
+        </g>
+      </svg>
+    `
   }
 };
 
@@ -246,7 +303,15 @@ const LEXI_TASKS_LIA = [
   { scene: 'magic_room', target: 'unicorn', speakEn: 'Touch the magic unicorn!', speakSay: 'Unicorn', hebPrompt: 'גְּעִי בְּחַד-הַקֶּרֶן הַקָּסוּם! 🦄', nameEn: 'unicorn' },
   { scene: 'magic_room', target: 'gold_crown', speakEn: 'Circle the golden crown!', speakSay: 'Gold crown', hebPrompt: 'הַקִּיפִי אֶת הַכֶּתֶר הַזָּהוּב! 👑', nameEn: 'crown' },
   { scene: 'magic_room', target: 'yellow_star', speakEn: 'Tap the yellow star!', speakSay: 'Star', hebPrompt: 'גְּעִי בַּכּוֹכָב הַצָּהֹב! ⭐', nameEn: 'star' },
-  { scene: 'soccer_park', target: 'dog', speakEn: 'Touch the cute dog!', speakSay: 'Dog', hebPrompt: 'גְּעִי בַּכֶּלֶב הֶחָמוּד! 🐶', nameEn: 'dog' }
+  { scene: 'soccer_park', target: 'dog', speakEn: 'Touch the cute dog!', speakSay: 'Dog', hebPrompt: 'גְּעִי בַּכֶּלֶב הֶחָמוּד! 🐶', nameEn: 'dog' },
+  { scene: 'beach', target: 'blue_fish', speakEn: 'Tap the fish in the water!', speakSay: 'Fish', hebPrompt: 'גְּעִי בַּדָּג שֶׁבַּמַּיִם! 🐠', nameEn: 'fish' },
+  { scene: 'beach', target: 'ice_cream', speakEn: 'Touch the ice cream!', speakSay: 'Ice cream', hebPrompt: 'גְּעִי בַּגְּלִידָה הַטְּעִימָה! 🍦', nameEn: 'ice cream' },
+  { scene: 'beach', target: 'crab', speakEn: 'Find the red crab on the sand!', speakSay: 'Red crab', hebPrompt: 'מִצְאִי אֶת הַסַּרְטָן הָאָדֹם! 🦀', nameEn: 'crab' },
+  { scene: 'beach', target: 'beach_ball', speakEn: 'Circle the beach ball!', speakSay: 'Beach ball', hebPrompt: 'הַקִּיפִי אֶת כַּדּוּר הַיָּם! 🏐', nameEn: 'beach ball' },
+  { scene: 'space', target: 'moon', speakEn: 'Tap the yellow moon!', speakSay: 'Moon', hebPrompt: 'גְּעִי בַּיָּרֵחַ הַצָּהֹב! 🌙', nameEn: 'moon' },
+  { scene: 'space', target: 'rocket', speakEn: 'Touch the space rocket!', speakSay: 'Rocket', hebPrompt: 'גְּעִי בַּטִּיל הֶחָלָל! 🚀', nameEn: 'rocket' },
+  { scene: 'space', target: 'earth', speakEn: 'Find planet Earth!', speakSay: 'Earth', hebPrompt: 'מִצְאִי אֶת כַּדּוּר הָאָרֶץ! 🌍', nameEn: 'Earth' },
+  { scene: 'space', target: 'saturn', speakEn: 'Circle the planet with rings!', speakSay: 'Planet', hebPrompt: 'הַקִּיפִי אֶת כּוֹכַב הַלֶּכֶת עִם הַטַּבָּעוֹת! 🪐', nameEn: 'planet' }
 ];
 
 const LEXI_TASKS_ILAY = [
@@ -261,7 +326,15 @@ const LEXI_TASKS_ILAY = [
   { scene: 'soccer_park', target: 'yellow_boots', speakEn: 'Find the boots UNDER the bench!', speakSay: 'Boots under the bench', hebPrompt: 'מְצָא אֶת הַנַּעֲלַיִם שֶׁמִּתַּחַת לַסַּפְסָל! (UNDER)', nameEn: 'boots under the bench' },
   { scene: 'picnic', target: 'pink_flower', speakEn: 'Touch the pink flower next to the blanket!', speakSay: 'Pink flower', hebPrompt: 'גַּע בַּפֶּרַח שֶׁלְּיַד הַשְּׂמִיכָה!', nameEn: 'pink flower' },
   { scene: 'magic_room', target: 'robot', speakEn: 'Tap the blue robot!', speakSay: 'Blue robot', hebPrompt: 'גַּע בָּרוֹבּוֹט הַכָּחֹל! 🤖', nameEn: 'robot' },
-  { scene: 'magic_room', target: 'red_car', speakEn: 'Circle the red toy car!', speakSay: 'Red car', hebPrompt: 'הַקֵּף אֶת הַמְּכוֹנִית הָאֲדֻמָּה! 🚗', nameEn: 'red car' }
+  { scene: 'magic_room', target: 'red_car', speakEn: 'Circle the red toy car!', speakSay: 'Red car', hebPrompt: 'הַקֵּף אֶת הַמְּכוֹנִית הָאֲדֻמָּה! 🚗', nameEn: 'red car' },
+  { scene: 'beach', target: 'blue_fish', speakEn: 'Tap the fish swimming IN the sea!', speakSay: 'Fish in the sea', hebPrompt: 'גַּע בַּדָּג שֶׁשּׂוֹחֶה בְּתוֹךְ הַיָּם! (IN)', nameEn: 'fish in the sea' },
+  { scene: 'beach', target: 'ice_cream', speakEn: 'Tap the ice cream BETWEEN the crab and the ball!', speakSay: 'Ice cream between', hebPrompt: 'גַּע בַּגְּלִידָה שֶׁבֵּין הַסַּרְטָן לַכַּדּוּר! (BETWEEN)', nameEn: 'ice cream' },
+  { scene: 'beach', target: 'sun_umbrella', speakEn: 'Circle the big beach umbrella!', speakSay: 'Beach umbrella', hebPrompt: 'הַקֵּף אֶת הַשִּׁמְשִׁיָּה הַגְּדוֹלָה! ⛱️', nameEn: 'beach umbrella' },
+  { scene: 'beach', target: 'crab', speakEn: 'Find the crab ON the sand!', speakSay: 'Crab on the sand', hebPrompt: 'מְצָא אֶת הַסַּרְטָן עַל הַחוֹל! 🦀', nameEn: 'crab on the sand' },
+  { scene: 'space', target: 'rocket', speakEn: 'Tap the rocket flying IN space!', speakSay: 'Rocket in space', hebPrompt: 'גַּע בַּטִּיל שֶׁטָּס בֶּחָלָל! 🚀', nameEn: 'rocket' },
+  { scene: 'space', target: 'astronaut', speakEn: 'Circle the astronaut next to planet Earth!', speakSay: 'Astronaut', hebPrompt: 'הַקֵּף אֶת הָאַסְטְרוֹנָאוּט לְיַד כַּדּוּר הָאָרֶץ! 👩‍🚀', nameEn: 'astronaut' },
+  { scene: 'space', target: 'saturn', speakEn: 'Tap the planet ABOVE planet Earth!', speakSay: 'Planet above Earth', hebPrompt: 'גַּע בְּכוֹכַב הַלֶּכֶת שֶׁמֵּעַל כַּדּוּר הָאָרֶץ! (ABOVE)', nameEn: 'planet above Earth' },
+  { scene: 'space', target: 'moon', speakEn: 'Find the moon at the top left!', speakSay: 'The moon', hebPrompt: 'מְצָא אֶת הַיָּרֵחַ בַּפִּנָּה הַשְּׂמָאלִית הָעֶלְיוֹנָה! 🌙', nameEn: 'moon' }
 ];
 
 let lexiSession = {

@@ -848,6 +848,7 @@ function updateHeaderUI() {
       if (practiceHeading) practiceHeading.textContent = 'תרגול לימודי (כיתה ב׳ • לחץ על 🔊 להקראה):';
     }
   }
+  if (typeof renderHeroDailyCompanion === 'function') renderHeroDailyCompanion();
 
   // Update Bottom Nav buttons for Lia vs Ilay so Lia NEVER lands in 2nd-grade keyboard dictation!
   const nav2Icon = document.getElementById('nav-2-icon');
@@ -6538,5 +6539,120 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   setupSoccerHubListeners();
+  updateDailyStreakIfNeeded();
+  renderHeroDailyCompanion();
 });
+
+// ==================== DAILY STREAK, MASCOT COMPANION & ACHIEVEMENT BADGES (DUOLINGO / PRODIGY POLISH) ====================
+
+function updateDailyStreakIfNeeded() {
+  const today = new Date().toISOString().slice(0, 10);
+  const target = isLiaActive() ? appState.liaProfile : appState;
+  if (!target.lastPlayedDate) {
+    target.lastPlayedDate = today;
+    target.dailyStreak = 1;
+    saveState();
+    return;
+  }
+  if (target.lastPlayedDate === today) return;
+
+  const prev = new Date(target.lastPlayedDate);
+  const curr = new Date(today);
+  const diffDays = Math.round((curr - prev) / (1000 * 60 * 60 * 24));
+  if (diffDays === 1) {
+    target.dailyStreak = (target.dailyStreak || 1) + 1;
+  } else if (diffDays > 1) {
+    target.dailyStreak = 1;
+  }
+  target.lastPlayedDate = today;
+  saveState();
+}
+
+function getEarnedAchievementBadges() {
+  const lia = isLiaActive();
+  const stats = getActiveTopicStats();
+  const totalSolved = Object.values(stats).reduce((acc, s) => acc + (s.correct || 0), 0);
+  const badges = [];
+
+  if (lia) {
+    if (totalSolved >= 5) badges.push({ icon: '🦄', title: 'חברת חד-קרן' });
+    if ((appState.liaProfile?.kinderStars || 0) >= 5) badges.push({ icon: '🌟', title: 'כוכבת הגן' });
+    if ((appState.liaProfile?.unlockedStickers?.length || 0) >= 4) badges.push({ icon: '👑', title: 'אספנית מדבקות' });
+    if (badges.length === 0) badges.push({ icon: '💖', title: 'נסיכת הקסם' });
+  } else {
+    const fastGoals = appState.soccerRewards?.fastGoals || 0;
+    const goals = appState.soccerRewards?.goalsScored || 0;
+    if (fastGoals >= 3) badges.push({ icon: '⚡', title: 'חלוץ בזק' });
+    if (goals >= 10) badges.push({ icon: '⚽', title: 'מלך השערים' });
+    if (totalSolved >= 20) badges.push({ icon: '🧠', title: 'מוח מחונן' });
+    if ((appState.dailyStreak || 1) >= 2) badges.push({ icon: '🔥', title: 'מתמיד אלוף' });
+    if (badges.length === 0) badges.push({ icon: '🦁', title: 'שחקן הרכב' });
+  }
+  return badges;
+}
+
+function renderHeroDailyCompanion() {
+  const host = document.getElementById('hero-daily-companion');
+  if (!host) return;
+  const lia = isLiaActive();
+  const target = lia ? appState.liaProfile : appState;
+  const streak = target.dailyStreak || 1;
+  const badges = getEarnedAchievementBadges();
+  const badgesHtml = badges.map(b => `<span style="background:rgba(255,255,255,0.16);border:1px solid rgba(255,255,255,0.28);padding:2px 8px;border-radius:99px;font-size:0.74rem;font-weight:800;">${b.icon} ${b.title}</span>`).join(' ');
+
+  if (lia) {
+    host.innerHTML = `
+      <div onclick="tapCompanionMascot()" style="cursor:pointer;background:linear-gradient(135deg,#f472b6 0%,#c084fc 100%);border:2px solid #fbcfe8;border-radius:18px;padding:10px 14px;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:10px;box-shadow:0 4px 14px rgba(244,114,182,0.28);">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:2.2rem;background:rgba(255,255,255,0.22);padding:4px 8px;border-radius:14px;">🦄💙</span>
+          <div>
+            <div style="font-weight:900;font-size:0.95rem;">הַיּוֹם לִיָּה מְשַׂחֶקֶת וְלוֹמֶדֶת! ✨</div>
+            <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:4px;">${badgesHtml}</div>
+          </div>
+        </div>
+        <div style="text-align:center;background:rgba(255,255,255,0.22);padding:5px 10px;border-radius:12px;">
+          <div style="font-size:1.1rem;font-weight:900;">🔥 ${streak}</div>
+          <div style="font-size:0.68rem;">ימים ברצף</div>
+        </div>
+      </div>
+    `;
+  } else {
+    host.innerHTML = `
+      <div onclick="tapCompanionMascot()" style="cursor:pointer;background:linear-gradient(135deg,#0f172a 0%,#1e3a8a 100%);border:2px solid #facc15;border-radius:18px;padding:10px 14px;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:10px;box-shadow:0 4px 14px rgba(30,58,138,0.28);">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:2.2rem;background:rgba(250,204,21,0.18);padding:4px 8px;border-radius:14px;">🦁</span>
+          <div>
+            <div style="font-weight:900;font-size:0.95rem;color:#fde047;">שָׁלוֹם עִילַי הָאַלּוּף! לְחַץ עַל הָאַרְיֵה לְעִדּוּד 🔊</div>
+            <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:4px;">${badgesHtml}</div>
+          </div>
+        </div>
+        <div style="text-align:center;background:rgba(250,204,21,0.18);border:1px solid #facc15;padding:5px 10px;border-radius:12px;">
+          <div style="font-size:1.1rem;font-weight:900;color:#fde047;">🔥 ${streak}</div>
+          <div style="font-size:0.68rem;color:#fef08a;">ימים ברצף</div>
+        </div>
+      </div>
+    `;
+  }
+}
+
+function tapCompanionMascot() {
+  const lia = isLiaActive();
+  if (lia) {
+    arcadeAudio.playMagicSparkle();
+    const msgs = [
+      'ליה הנסיכה, סטיץ׳ וחד-קרן אוהבים אותך! בואי נשחק!',
+      'איזו חכמה את ליה! כל יום לומדים דברים חדשים וקסומים!',
+      'ליה האלופה, קדימה להרפתקה באנגלית ובצבעים!'
+    ];
+    arcadeAudio.speak(msgs[Math.floor(Math.random() * msgs.length)], 'he-IL', 0.88);
+  } else {
+    arcadeAudio.playGoalSuccess();
+    const msgs = [
+      'יאללה עילי האלוף! היום מבקיעים מלא שערים ומנצחים את מבחן המחוננים!',
+      'כל הכבוד על ההתמדה עילי! המוח שלך מתחזק מיום ליום כמו אלוף ליגת האלופות!',
+      'תותח על עילי! בוא נעשה משחק מהיר ונשבור עוד שיא מהירות!'
+    ];
+    arcadeAudio.speak(msgs[Math.floor(Math.random() * msgs.length)], 'he-IL', 0.9);
+  }
+}
 
