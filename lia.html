@@ -127,6 +127,12 @@
             <div class="bento-title">מוכנות לגן חובה</div>
             <div class="bento-sub">אותיות, חרוזים וספירה עד 10</div>
           </button>
+
+          <button type="button" class="bento-card" id="quick-open-lexi-lia" onclick="startLexiEnglishAdventure()" style="grid-column:span 2;background:linear-gradient(135deg,#ec4899 0%,#a855f7 100%);color:#fff;border:2px solid #f9a8d4;box-shadow:0 6px 16px rgba(236,72,153,0.3);">
+            <div class="bento-icon-wrap" style="background:rgba(255,255,255,0.22);">🗣️🦄</div>
+            <div class="bento-title" style="color:#fff;font-size:1.1rem;">הַקְשִׁיבִי וּמִצְאִי בְּאַנְגְּלִית! (Lexi) ✨</div>
+            <div class="bento-sub" style="color:#fce7f3;">"Circle the red ball!" — לגעת בחפצים בחדר, בגינה ובפיקניק!</div>
+          </button>
         </div>
 
         <!-- SCIENCE & HOW THINGS WORK DISCOVERY BANNER (For both Ilay & Lia!) -->
@@ -1189,6 +1195,46 @@
         </div>
       </section>
 
+      <!-- ==================== VIEW: LEXI-STYLE INTERACTIVE VISUAL ENGLISH ==================== -->
+      <section id="view-lexi-english" class="view-section">
+        <div class="screen-nav-bar">
+          <button type="button" class="btn-back" onclick="switchView('home')">‹ חזרה</button>
+          <span class="screen-title">🗣️✨ הקשיבי ומצאי באנגלית</span>
+          <span class="badge-counter">⭐ <span id="lexi-star-count">0</span></span>
+        </div>
+
+        <div style="width:100%;height:10px;background:#e2e8f0;border-radius:99px;overflow:hidden;margin-bottom:12px;">
+          <div id="lexi-progress-fill" style="width:12%;height:100%;background:linear-gradient(90deg,#f472b6,#a855f7);transition:width 0.35s ease;"></div>
+        </div>
+
+        <div class="surface-card" style="background:linear-gradient(135deg,#ec4899,#8b5cf6);color:#fff;margin-bottom:12px;border:2px solid #f9a8d4;">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+            <div id="lexi-coach-avatar" style="font-size:2.4rem;background:rgba(255,255,255,0.2);padding:6px 10px;border-radius:16px;">🦄👩‍🏫</div>
+            <div style="flex:1;">
+              <div id="lexi-en-prompt" dir="ltr" style="font-size:1.25rem;font-weight:900;color:#fde047;text-align:left;">Circle the red ball!</div>
+              <div id="lexi-heb-sub" style="font-size:0.9rem;color:#fce7f3;margin-top:2px;">הַקִּיפִי אֶת הַכַּדּוּר הָאָדֹם!</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button type="button" class="btn-chip" id="btn-lexi-listen" style="background:#facc15;color:#090d16;font-weight:900;border:none;">🔊 הקשיבי באנגלית</button>
+            <button type="button" class="btn-chip" id="btn-lexi-slow" style="background:rgba(255,255,255,0.2);color:#fff;font-weight:800;border:none;">🐢 לאט</button>
+          </div>
+        </div>
+
+        <div class="surface-card" style="padding:10px;margin-bottom:12px;border:2px solid #f9a8d4;" id="lexi-scene-stage"></div>
+
+        <div class="surface-card" style="background:#fdf2f8;border:2px solid #f472b6;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;">
+          <div>
+            <div style="font-size:0.9rem;font-weight:900;color:#831843;">🎙️ אמרי בקול: <span id="lexi-speak-phrase" dir="ltr" style="color:#be185d;">"Red ball"</span></div>
+            <div id="lexi-speak-status" style="font-size:0.78rem;color:#9d174d;">לחצי ואמרי באנגלית (+5 🪙)</div>
+          </div>
+          <button type="button" class="btn-primary-action" id="btn-lexi-speak" style="background:#ec4899;color:#fff;font-weight:900;border:none;white-space:nowrap;">🎙️ אמרי!</button>
+        </div>
+
+        <div class="feedback-banner hidden" id="lexi-feedback" style="margin-bottom:10px;"></div>
+        <button type="button" class="btn-success-action hidden" id="btn-lexi-next" style="width:100%;padding:12px;font-size:1.1rem;">למשימה הבאה! ⬅️</button>
+      </section>
+
     </main>
 
     <!-- Fixed iOS Bottom Tab Bar (Lia Dedicated) -->
@@ -1229,6 +1275,7 @@
   <script src="js/questions.js?v=7.2"></script>
   <script src="js/cards_svg.js?v=7.2"></script>
   <script src="js/app.js?v=7.2"></script>
+  <script src="js/lexi_english.js?v=8.2"></script>
 </body>
 </html>
 

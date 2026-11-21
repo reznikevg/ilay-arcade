@@ -269,6 +269,18 @@
           <span class="fc27-banner-play" style="background:rgba(52,211,153,0.22);border-color:#6ee7b7;color:#fff;">למילון 🔊</span>
         </div>
 
+        <!-- LEXI-STYLE INTERACTIVE VISUAL ENGLISH ADVENTURE -->
+        <div class="fc27-home-banner" id="lexi-home-banner" onclick="startLexiEnglishAdventure()" style="background:linear-gradient(135deg,#ec4899 0%,#8b5cf6 100%);border-color:#f9a8d4;box-shadow:0 6px 18px rgba(236,72,153,0.28);margin-bottom:12px;cursor:pointer;">
+          <div class="fc27-banner-left">
+            <div class="fc27-logo-pill" style="background:#facc15;color:#090d16;box-shadow:0 0 12px rgba(250,204,21,0.6);font-size:0.75rem;">ENGLISH<br>LIVE 🗣️</div>
+            <div class="fc27-banner-text">
+              <h4 style="color:#fff;">🗣️✨ הרפתקת האנגלית החיה (בסגנון Lexi): הקשיבו, מצאו חפצים ודברו!</h4>
+              <p style="color:#fce7f3;">"Circle the red ball on the table!" — לוחצים על החפץ בחדר, מתרגלים on/under/in ומדברים בלי פחד!</p>
+            </div>
+          </div>
+          <span class="fc27-banner-play" style="background:rgba(255,255,255,0.22);border-color:#fff;color:#fff;">שחקו עכשיו 🎯</span>
+        </div>
+
         <!-- SOCCER HUB: BEITAR JERUSALEM & REAL MADRID HIGHLIGHTS, FIXTURES & STANDINGS BANNER -->
         <div class="fc27-home-banner" id="soccer-home-banner" style="background:linear-gradient(135deg,#18181b 0%,#1e3a8a 100%);border-color:#facc15;box-shadow:0 6px 18px rgba(250,204,21,0.22);margin-bottom:12px;">
           <div class="fc27-banner-left">
@@ -1694,6 +1706,50 @@
         </div>
       </section>
 
+      <!-- ==================== VIEW 19: LEXI-STYLE INTERACTIVE VISUAL ENGLISH ==================== -->
+      <section id="view-lexi-english" class="view-section">
+        <div class="screen-nav-bar">
+          <button type="button" class="btn-back" onclick="switchView('home')">‹ חזרה</button>
+          <span class="screen-title">🗣️✨ הרפתקת האנגלית החיה</span>
+          <span class="badge-counter">⭐ <span id="lexi-star-count">0</span></span>
+        </div>
+
+        <!-- Progress Bar -->
+        <div style="width:100%;height:10px;background:#e2e8f0;border-radius:99px;overflow:hidden;margin-bottom:12px;">
+          <div id="lexi-progress-fill" style="width:12%;height:100%;background:linear-gradient(90deg,#38bdf8,#10b981);transition:width 0.35s ease;"></div>
+        </div>
+
+        <!-- Coach Bubble -->
+        <div class="surface-card" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;margin-bottom:12px;border:2px solid #c084fc;">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+            <div id="lexi-coach-avatar" style="font-size:2.4rem;background:rgba(255,255,255,0.2);padding:6px 10px;border-radius:16px;">⚽👩‍🏫</div>
+            <div style="flex:1;">
+              <div id="lexi-en-prompt" dir="ltr" style="font-size:1.25rem;font-weight:900;color:#fde047;text-align:left;">Circle the red ball on the table!</div>
+              <div id="lexi-heb-sub" style="font-size:0.9rem;color:#f3e8ff;margin-top:2px;">הַקֵּף אֶת הַכַּדּוּר הָאָדֹם שֶׁעַל הַשֻּׁלְחָן!</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button type="button" class="btn-chip" id="btn-lexi-listen" style="background:#facc15;color:#090d16;font-weight:900;border:none;">🔊 הקשב באנגלית</button>
+            <button type="button" class="btn-chip" id="btn-lexi-slow" style="background:rgba(255,255,255,0.2);color:#fff;font-weight:800;border:none;">🐢 לאט וברור</button>
+          </div>
+        </div>
+
+        <!-- Interactive Illustrated SVG Scene Stage -->
+        <div class="surface-card" style="padding:10px;margin-bottom:12px;border:2px solid #cbd5e1;" id="lexi-scene-stage"></div>
+
+        <!-- Speaking Confidence Practice -->
+        <div class="surface-card" style="background:#f0fdf4;border:2px solid #34d399;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;">
+          <div>
+            <div style="font-size:0.9rem;font-weight:900;color:#065f46;">🎙️ דְּבַר אַנְגְּלִית בְּלִי פַּחַד! אמור בקול: <span id="lexi-speak-phrase" dir="ltr" style="color:#0284c7;">"Red ball"</span></div>
+            <div id="lexi-speak-status" style="font-size:0.78rem;color:#047857;">לחץ על המיקרופון ואמור בקול רם (+5 🪙)</div>
+          </div>
+          <button type="button" class="btn-primary-action" id="btn-lexi-speak" style="background:#10b981;color:#fff;font-weight:900;border:none;white-space:nowrap;">🎙️ אמור עכשיו</button>
+        </div>
+
+        <div class="feedback-banner hidden" id="lexi-feedback" style="margin-bottom:10px;"></div>
+        <button type="button" class="btn-success-action hidden" id="btn-lexi-next" style="width:100%;padding:12px;font-size:1.1rem;">למשימה הבאה! ⬅️</button>
+      </section>
+
     </main>
 
     <!-- Fixed iOS Bottom Tab Bar -->
@@ -1734,6 +1790,7 @@
   <script src="js/questions.js?v=7.2"></script>
   <script src="js/cards_svg.js?v=7.2"></script>
   <script src="js/app.js?v=7.2"></script>
+  <script src="js/lexi_english.js?v=8.2"></script>
 </body>
 </html>
 
