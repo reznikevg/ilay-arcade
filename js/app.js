@@ -1960,6 +1960,7 @@ const SMART_MIX_TOPICS = [
   { id: 'gifted_numbers_shapes', name: 'מספרים בצורות 🔢', targetSec: 20 },
   { id: 'gifted_shapes_matrix', name: 'חשיבה צורנית 📐', targetSec: 20 },
   { id: 'gifted_reading_comp', name: 'הבנת הנקרא 📖', targetSec: 28 },
+  { id: 'gifted_odd_one_out', name: 'יוצא דופן 🔍', targetSec: 15 },
   { id: 'math_inequalities', name: 'אי-שוויונות ⚖️', targetSec: 15 },
   { id: 'math_missing', name: 'מספר חסר ❓', targetSec: 14 },
   { id: 'logic_series', name: 'סדרות ולוגיקה ⚡', targetSec: 18 },
