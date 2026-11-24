@@ -2108,8 +2108,9 @@ function startMatch(topicId, topicTitle, isDailyBonus = false) {
   const lia = isLiaActive();
 
   const isSmartMix = topicId === 'smart_adaptive_mix';
+  const isWeaknessBooster = topicId === 'weakness_booster';
   // Keep games short, fun, and zero-fatigue (6 for Lia, 10 for Smart Mix, 8 for regular)
-  const count = isSmartMix ? 10 : (appState.gameMode === 'penalty' ? 5 : appState.gameMode === 'arcade' ? 15 : (lia ? 6 : 8));
+  const count = isSmartMix ? 10 : (isWeaknessBooster ? 8 : (appState.gameMode === 'penalty' ? 5 : appState.gameMode === 'arcade' ? 15 : (lia ? 6 : 8)));
 
   const statsObj = getActiveTopicStats();
   const topicStat = statsObj[topicId] || { solved: 0, correct: 0, stars: 0 };
@@ -2141,6 +2142,7 @@ function startMatch(topicId, topicTitle, isDailyBonus = false) {
     questionStartTime: Date.now(),
     matchTimingsMs: [],
     fastGoalsThisMatch: 0,
+    remediationsInjected: 0,
     secondsLeft: 60,
     penaltyHistory: [],
     chestOpened: false
@@ -2148,7 +2150,17 @@ function startMatch(topicId, topicTitle, isDailyBonus = false) {
 
   const sessionSeenKeys = new Set();
   const persistentSeen = getActiveSeenQuestionKeys();
-  const smartPlan = isSmartMix ? pickSmartAdaptiveTopicsForMatch(count) : null;
+  let smartPlan = null;
+  if (isSmartMix) {
+    smartPlan = pickSmartAdaptiveTopicsForMatch(count);
+  } else if (isWeaknessBooster) {
+    const scored = SMART_MIX_TOPICS.map(computeTopicNeedScore).sort((a, b) => b.needScore - a.needScore);
+    const focusPool = scored.slice(0, 3);
+    smartPlan = [];
+    for (let k = 0; k < count; k++) {
+      smartPlan.push(focusPool[k % focusPool.length].id);
+    }
+  }
 
   for (let i = 0; i < count; i++) {
     const qTopicId = smartPlan ? smartPlan[i] : topicId;
@@ -2281,6 +2293,48 @@ function speakQuestionPrompt(q) {
   }
 }
 
+const TOPIC_STRATEGY_TIPS = {
+  math_inequalities: '🐊 טריק האי-שוויונות: הפה הגדול של התנין (<) תמיד אוכל את הגדול! ובחיסור (30 − ?), ככל שמורידים פחות – נשאר יותר!',
+  gifted_odd_one_out: '🔍 טריק יוצא דופן: בדוק מה המשותף ל-3 פריטים (קבוצה, חומר, או זוגי/אי-זוגי) – ומי יוצא מהכלל!',
+  gifted_verbal_analogies: '🔄 שיטת המשפט: בנה משפט קצר בין שתי המילים הראשונות ("סכין משמשת לחיתוך"), ומצא את הזוג שמקיים אותו משפט!',
+  gifted_picture_riddles: '🧩 סוד הסמלים: התחל תמיד מהשורה עם סמל כפול (☀️ + ☀️ = 10 ➔ 5), והצב בשורה הבאה!',
+  gifted_word_problems: '🧮 טריק הבעיות: פרק לשלבים קטנים! שים לב למילים "פי 2", "מחלקים שווה", או "נשאר".',
+  gifted_numbers_shapes: '🔢 טריק הפירמידה והמעגל: בדוק אם המספר העליון הוא חיבור או כפל של המספרים שמתחתיו!',
+  gifted_shapes_matrix: '📐 טריק הצורות: בדוק 3 דברים: סיבוב עם השעון, צבע (שחור/לבן), ומספר צלעות!'
+};
+
+function injectImmediateRemediationQuestion(failedQ) {
+  if (!failedQ || failedQ.isRemediationQuestion) return false;
+  if ((session.remediationsInjected || 0) >= 3) return false;
+  const targetTopic = failedQ.topicId || session.topicId;
+  const targetDiff = levelToDiff(Math.max(1, session.currentLevel || 2));
+
+  let proofQ = null;
+  for (let attempt = 0; attempt < 25; attempt++) {
+    const candidate = generateQuestionForTopic(targetTopic, targetDiff, appState.customQuestions);
+    if (!candidate) continue;
+    if (String(candidate.uniqueKey) !== String(failedQ.uniqueKey)) {
+      proofQ = candidate;
+      break;
+    }
+    proofQ = candidate;
+  }
+  if (!proofQ) return false;
+
+  proofQ.topicId = targetTopic;
+  proofQ.isRemediationQuestion = true;
+  proofQ.progressiveStage = failedQ.progressiveStage || 2;
+
+  session.remediationsInjected = (session.remediationsInjected || 0) + 1;
+  session.questions.splice(session.currentIndex + 1, 0, proofQ);
+  session.totalQuestions = session.questions.length;
+
+  const totalEl = document.getElementById('q-total-num');
+  if (totalEl) totalEl.textContent = session.totalQuestions;
+  renderPenaltyTrack();
+  return true;
+}
+
 function renderCurrentQuestion() {
   const q = session.questions[session.currentIndex];
   const lia = isLiaActive();
@@ -2353,7 +2407,17 @@ function renderCurrentQuestion() {
     btnSpeak.textContent = q.isEnglish ? '🔊 הקרא שוב (עברית + אנגלית)' : '🔊 הקרא שאלה שוב';
   }
 
-  document.getElementById('q-instruction').innerHTML = q.instruction;
+  let instrHtml = q.instruction;
+  if (q.isRemediationQuestion) {
+    instrHtml = `<div style="background:linear-gradient(135deg,#fef08a,#fde047);color:#713f12;padding:5px 10px;border-radius:10px;font-size:0.84rem;font-weight:900;margin-bottom:6px;border:2px solid #ca8a04;">🎯 שאלת הוכחה מידית! בוא נראה שהבנת את ההסבר (+15 🪙 בונוס)</div>` + instrHtml;
+  } else if (!lia && TOPIC_STRATEGY_TIPS[q.topicId]) {
+    const st = getActiveTopicStats()[q.topicId];
+    const acc = st && st.solved > 0 ? Math.round((st.correct / st.solved) * 100) : 0;
+    if (!st || st.solved < 5 || acc < 85 || q.topicId === 'math_inequalities' || q.topicId === 'gifted_odd_one_out') {
+      instrHtml += `<div style="background:#f0f9ff;color:#0369a1;padding:4px 9px;border-radius:8px;font-size:0.78rem;font-weight:800;margin-top:5px;border:1px solid #bae6fd;">${TOPIC_STRATEGY_TIPS[q.topicId]}</div>`;
+    }
+  }
+  document.getElementById('q-instruction').innerHTML = instrHtml;
   const hintBox = document.getElementById('hint-box');
   hintBox.classList.add('hidden');
   hintBox.textContent = `💡 הסבר ורמז: ${q.hint}`;
@@ -2545,8 +2609,9 @@ function checkCurrentAnswer() {
     const baseReward = session.attemptsOnCurrent === 1 ? 10 : 8;
     const streakBonus = session.currentStreak >= 3 ? 5 : 0;
     const fastBonus = isFastGoal ? 5 : 0;
+    const remediationBonus = q.isRemediationQuestion ? 15 : 0;
     const mult = session.isDailyBonus ? 2 : 1;
-    const earned = (baseReward + streakBonus + stageBonus + fastBonus) * mult;
+    const earned = (baseReward + streakBonus + stageBonus + fastBonus + remediationBonus) * mult;
 
     session.coinsEarned += earned;
     addActiveCoins(earned);
@@ -2588,6 +2653,7 @@ function checkCurrentAnswer() {
     if (ball) ball.classList.add('shoot-anim');
     if (gk) gk.classList.add('dive-right');
 
+    const remMsg = q.isRemediationQuestion ? ` 💪 הוכחת שהבנת! (+15 🪙)` : '';
     const fastMsg = isFastGoal ? ` ⚡ שער בזק (${elapsedSec} שנ׳)!` : '';
     const streakMsg = session.currentStreak >= 3 ? ` 🔥 רצף ${session.currentStreak}!` : '';
     const levelUpMsg = inMatchLevelUp
@@ -2596,12 +2662,16 @@ function checkCurrentAnswer() {
     fb.className = 'feedback-banner success';
     fb.textContent = lia
       ? `כל הכבוד ליה אלופה! +${earned} 🪙${streakMsg}${levelUpMsg}`
-      : `גווווול! +${earned} 🪙${fastMsg}${streakMsg}${levelUpMsg}`;
+      : q.isRemediationQuestion
+        ? `🎉 תיקנת והוכחת הבנה! +${earned} 🪙${fastMsg}`
+        : `גווווול! +${earned} 🪙${fastMsg}${streakMsg}${levelUpMsg}`;
     document.getElementById('commentator-text').textContent = lia
       ? `🦄 "סטיץ׳ וחד-קרן מוחאים כפיים לליה!"`
-      : isFastGoal
-        ? `⚡ "בעיטת טיל של עילי לחיבורים תוך ${elapsedSec} שניות!"`
-        : `🎙️ "שעררר אדיר של עילי!"`;
+      : q.isRemediationQuestion
+        ? `💪 "איזו למידה מדהימה של עילי! תיקון מושלם!"`
+        : isFastGoal
+          ? `⚡ "בעיטת טיל של עילי לחיבורים תוך ${elapsedSec} שניות!"`
+          : `🎙️ "שעררר אדיר של עילי!"`;
 
     // Speak praise / English reinforcement
     if (newLevelInfo.level > prevLevel) {
@@ -2710,9 +2780,15 @@ function checkCurrentAnswer() {
       });
 
       const cleanAns = q.correctAnswers.join(' , ').replace(/<[^>]+>/g, '');
+      const didInject = !lia && injectImmediateRemediationQuestion(q);
       fb.className = 'feedback-banner error';
-      fb.textContent = `התשובה הנכונה: ${cleanAns} — ${q.hint || ''}`;
-      arcadeAudio.speak(`התשובה הנכונה היא: ${cleanAns}. ${q.hint || ''}`, 'he-IL', 0.88);
+      fb.textContent = didInject
+        ? `💡 הבנה ותיקון: התשובה היא ${cleanAns}. ${q.hint || ''} — השאלה הבאה דומה כדי שתוכיח שהבנת! 🎯`
+        : `התשובה הנכונה: ${cleanAns} — ${q.hint || ''}`;
+      const speakMsg = didInject
+        ? `התשובה הנכונה היא: ${cleanAns}. ${q.hint || ''}. הקשב טוב — השאלה הבאה דומה בדיוק כדי שתוכיח שהבנת!`
+        : `התשובה הנכונה היא: ${cleanAns}. ${q.hint || ''}`;
+      arcadeAudio.speak(speakMsg, 'he-IL', 0.88);
       renderPenaltyTrack();
 
       document.getElementById('btn-check-answer').classList.add('hidden');
@@ -6386,7 +6462,8 @@ function renderGiftedCoachAnalytics() {
     html += `</div>`;
   }
 
-  html += `<div style="background:#e2e8f0;padding:6px 10px;border-radius:10px;font-weight:800;color:#0f172a;">⚽ שערים בקריירה: ${goals} &nbsp;|&nbsp; ⚡ שערי בזק: ${fastGoals}</div>`;
+  html += `<div style="background:#e2e8f0;padding:6px 10px;border-radius:10px;font-weight:800;color:#0f172a;margin-bottom:8px;">⚽ שערים בקריירה: ${goals} &nbsp;|&nbsp; ⚡ שערי בזק: ${fastGoals}</div>`;
+  html += `<button type="button" onclick="startMatch('weakness_booster', '🎯 אימון תיקון חולשות ממוקד', false)" style="width:100%;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;font-weight:900;border:none;border-radius:12px;padding:10px;font-size:0.92rem;cursor:pointer;box-shadow:0 3px 10px rgba(217,119,6,0.3);">🎯 הפעל אימון תיקון חולשות ממוקד (חיזוק בטעויות ובזמן!)</button>`;
   container.innerHTML = html;
 }
 
