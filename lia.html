@@ -140,6 +140,12 @@
             <div class="bento-title" style="color:#fff;font-size:1.1rem;">קְפִיצוֹת נִקּוּד וּמִילִים בָּאֲגַם! (אותיות בדרך) ✨</div>
             <div class="bento-sub" style="color:#d1fae5;">יָם, גַּן, דָּג, קָמָץ וּפַתַח — מקשיבים וקופצים על עלי המים!</div>
           </button>
+
+          <button type="button" class="bento-card" id="quick-open-drawing-lia" onclick="startLiaDrawingStudio()" style="grid-column:span 2;background:linear-gradient(135deg,#f59e0b 0%,#ec4899 100%);color:#fff;border:2px solid #fde047;box-shadow:0 6px 16px rgba(245,158,11,0.32);">
+            <div class="bento-icon-wrap" style="background:rgba(255,255,255,0.22);">🖌️🌈</div>
+            <div class="bento-title" style="color:#fff;font-size:1.1rem;">סְטוּדְיוֹ הַצִּיּוּר הַקָּסוּם שֶׁל לִיָּה! ✨</div>
+            <div class="bento-sub" style="color:#fef9c3;">ציור חופשי, ניאון זוהר, מנדלה סימטרית, דף גירוד וחיבור נקודות!</div>
+          </button>
         </div>
 
         <div id="lia-pet-sanctuary"></div>
@@ -1269,6 +1275,34 @@
         <button type="button" class="btn-success-action hidden" id="btn-lia-otiyot-next" style="width:100%;padding:12px;font-size:1.1rem;">לַקְּפִיצָה הַבָּאָה! 🐸⬅️</button>
       </section>
 
+      <!-- ==================== VIEW: LIA 5-IN-1 MAGICAL DRAWING STUDIO ==================== -->
+      <section id="view-lia-drawing" class="view-section">
+        <div class="screen-nav-bar">
+          <button type="button" class="btn-back" onclick="switchView('home')">‹ חזרה</button>
+          <span class="screen-title">🖌️✨ הַצִּיּוּר הַקָּסוּם שֶׁל לִיָּה</span>
+          <div style="display:flex;gap:6px;">
+            <button type="button" class="btn-chip" onclick="undoLiaDraw()" style="background:#fef3c7;color:#92400e;font-weight:900;border:none;">↩️ אחורה</button>
+            <button type="button" class="btn-chip" onclick="clearLiaDrawCanvas(true)" style="background:#fee2e2;color:#991b1b;font-weight:900;border:none;">🗑️ נקה</button>
+          </div>
+        </div>
+
+        <div class="segmented-tabs" id="lia-draw-modes" style="margin-bottom:10px;overflow-x:auto;"></div>
+
+        <div class="surface-card" style="padding:8px;margin-bottom:10px;border:3px solid #f472b6;background:#fdf2f8;">
+          <canvas id="lia-draw-canvas" width="360" height="260" style="width:100%;height:auto;display:block;border-radius:14px;background:#ffffff;touch-action:none;cursor:crosshair;box-shadow:inset 0 0 10px rgba(0,0,0,0.06);"></canvas>
+        </div>
+
+        <div id="lia-draw-colors" style="display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;"></div>
+        <div id="lia-draw-stamps" style="display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;margin-bottom:12px;"></div>
+
+        <div class="feedback-banner hidden" id="lia-draw-fb" style="margin-bottom:10px;"></div>
+        <button type="button" class="btn-primary-large" onclick="finishLiaDrawingArtwork()" style="width:100%;background:linear-gradient(135deg,#ec4899,#8b5cf6);font-weight:900;border:none;margin-bottom:12px;">
+          🎉 סִיַּמְתִּי לְצַיֵּר! שְׁמוֹר בַּגַּלֶרְיָה (+20 🪙)
+        </button>
+
+        <div id="lia-draw-gallery"></div>
+      </section>
+
     </main>
 
     <!-- Fixed iOS Bottom Tab Bar (Lia Dedicated) -->
@@ -1311,6 +1345,7 @@
   <script src="js/app.js?v=7.2"></script>
   <script src="js/lexi_english.js?v=8.2"></script>
   <script src="js/otiyot_lia.js?v=8.5"></script>
+  <script src="js/lia_drawing.js?v=8.7"></script>
 </body>
 </html>
 
