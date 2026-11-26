@@ -134,6 +134,12 @@
             <div class="bento-title" style="color:#fff;font-size:1.1rem;">הַקְשִׁיבִי וּמִצְאִי בְּאַנְגְּלִית! (Lexi) ✨</div>
             <div class="bento-sub" style="color:#fce7f3;">"Circle the red ball!" — לגעת בחפצים בחדר, בגינה ובפיקניק!</div>
           </button>
+
+          <button type="button" class="bento-card" id="quick-open-otiyot-lia" onclick="startLiaOtiyotAdventure()" style="grid-column:span 2;background:linear-gradient(135deg,#10b981 0%,#0284c7 100%);color:#fff;border:2px solid #6ee7b7;box-shadow:0 6px 16px rgba(16,185,129,0.3);">
+            <div class="bento-icon-wrap" style="background:rgba(255,255,255,0.22);">🐸🌿</div>
+            <div class="bento-title" style="color:#fff;font-size:1.1rem;">קְפִיצוֹת נִקּוּד וּמִילִים בָּאֲגַם! (אותיות בדרך) ✨</div>
+            <div class="bento-sub" style="color:#d1fae5;">יָם, גַּן, דָּג, קָמָץ וּפַתַח — מקשיבים וקופצים על עלי המים!</div>
+          </button>
         </div>
 
         <!-- SCIENCE & HOW THINGS WORK DISCOVERY BANNER (For both Ilay & Lia!) -->
@@ -1236,6 +1242,31 @@
         <button type="button" class="btn-success-action hidden" id="btn-lexi-next" style="width:100%;padding:12px;font-size:1.1rem;">למשימה הבאה! ⬅️</button>
       </section>
 
+      <!-- ==================== VIEW: OTIYOT-STYLE LILY-PAD NIQQUD ADVENTURE ==================== -->
+      <section id="view-lia-otiyot" class="view-section">
+        <div class="screen-nav-bar">
+          <button type="button" class="btn-back" onclick="switchView('home')">‹ חזרה</button>
+          <span class="screen-title">🐸 קְפִיצוֹת נִקּוּד וּמִילִים</span>
+          <span class="badge-counter">🌿 <span id="lia-otiyot-hops">0/6</span></span>
+        </div>
+
+        <div style="width:100%;height:10px;background:#e2e8f0;border-radius:99px;overflow:hidden;margin-bottom:12px;">
+          <div id="lia-otiyot-progress" style="width:12%;height:100%;background:linear-gradient(90deg,#10b981,#38bdf8);transition:width 0.35s ease;"></div>
+        </div>
+
+        <div class="surface-card" style="background:linear-gradient(135deg,#059669,#0284c7);color:#fff;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;">
+          <div>
+            <div style="font-size:1.1rem;font-weight:900;">🔊 אֵיזוֹ מִילָה אַתְּ שׁוֹמַעַת?</div>
+            <div style="font-size:0.84rem;color:#d1fae5;">הַקְשִׁיבִי וְלַחֲצִי עַל עֲלֵה הַמַּיִם הַנָּכוֹן!</div>
+          </div>
+          <button type="button" class="btn-chip" id="btn-lia-otiyot-listen" style="background:#facc15;color:#090d16;font-weight:900;border:none;padding:8px 14px;">🔊 שְׁמַע שׁוּב</button>
+        </div>
+
+        <div id="lia-otiyot-stage" style="margin-bottom:12px;"></div>
+        <div class="feedback-banner hidden" id="lia-otiyot-fb" style="margin-bottom:10px;"></div>
+        <button type="button" class="btn-success-action hidden" id="btn-lia-otiyot-next" style="width:100%;padding:12px;font-size:1.1rem;">לַקְּפִיצָה הַבָּאָה! 🐸⬅️</button>
+      </section>
+
     </main>
 
     <!-- Fixed iOS Bottom Tab Bar (Lia Dedicated) -->
@@ -1277,6 +1308,7 @@
   <script src="js/cards_svg.js?v=7.2"></script>
   <script src="js/app.js?v=7.2"></script>
   <script src="js/lexi_english.js?v=8.2"></script>
+  <script src="js/otiyot_lia.js?v=8.5"></script>
 </body>
 </html>
 

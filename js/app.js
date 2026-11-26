@@ -2335,6 +2335,55 @@ function injectImmediateRemediationQuestion(failedQ) {
   return true;
 }
 
+function enableTapAnyWordInStimulus(stimEl) {
+  if (!stimEl) return;
+  const walker = document.createTreeWalker(stimEl, NodeFilter.SHOW_TEXT, null);
+  const textNodes = [];
+  let node;
+  while ((node = walker.nextNode())) {
+    if (/[\u0590-\u05FF]{2,}/.test(node.nodeValue || '')) {
+      textNodes.push(node);
+    }
+  }
+  let wordCount = 0;
+  textNodes.forEach(tn => {
+    const parts = (tn.nodeValue || '').split(/(\s+)/);
+    const frag = document.createDocumentFragment();
+    parts.forEach(part => {
+      if (/[\u0590-\u05FF]{2,}/.test(part)) {
+        wordCount++;
+        const span = document.createElement('span');
+        span.className = 'tap-word';
+        span.textContent = part;
+        span.style.cursor = 'pointer';
+        span.style.borderBottom = '1.5px dotted rgba(56,189,248,0.6)';
+        span.style.borderRadius = '4px';
+        span.title = 'לחץ לשמיעת המילה';
+        span.addEventListener('click', (ev) => {
+          ev.stopPropagation();
+          const clean = part.replace(/[.,!?:;"'״׳()]/g, '').trim();
+          if (clean && typeof arcadeAudio !== 'undefined') {
+            span.style.background = 'rgba(250,204,21,0.45)';
+            setTimeout(() => { span.style.background = ''; }, 550);
+            arcadeAudio.speak(clean, 'he-IL', 0.82);
+          }
+        });
+        frag.appendChild(span);
+      } else {
+        frag.appendChild(document.createTextNode(part));
+      }
+    });
+    if (tn.parentNode) tn.parentNode.replaceChild(frag, tn);
+  });
+
+  if (wordCount >= 5) {
+    const tip = document.createElement('div');
+    tip.style.cssText = 'font-size:0.74rem;color:#0284c7;font-weight:800;margin-top:8px;text-align:center;';
+    tip.textContent = '💡 נתקעת במילה? לחץ על כל מילה בטקסט כדי לשמוע אותה 🔊';
+    stimEl.appendChild(tip);
+  }
+}
+
 function renderCurrentQuestion() {
   const q = session.questions[session.currentIndex];
   const lia = isLiaActive();
@@ -2425,6 +2474,9 @@ function renderCurrentQuestion() {
   const stim = document.getElementById('q-stimulus');
   stim.className = 'q-stimulus-box' + (q.rtlStimulus ? ' rtl-stimulus' : '');
   stim.innerHTML = q.stimulusHtml;
+  if (!lia && q.rtlStimulus && typeof document.createTreeWalker === 'function') {
+    enableTapAnyWordInStimulus(stim);
+  }
   stim.querySelectorAll('[data-fc27-key]').forEach(el => {
     el.addEventListener('click', () => {
       const k = el.dataset.fc27Key;
