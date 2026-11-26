@@ -147,6 +147,17 @@ function getLiaDrawCanvas() {
   return document.getElementById('lia-draw-canvas');
 }
 
+function getLiaDrawCtx() {
+  const canvas = getLiaDrawCanvas();
+  if (!canvas) return null;
+  const ctx = canvas.getContext('2d');
+  // Logical coordinate system is 360x260 mapped to 720x520 HD Retina pixels
+  const scaleX = canvas.width / 360;
+  const scaleY = canvas.height / 260;
+  ctx.setTransform(scaleX, 0, 0, scaleY, 0, 0);
+  return ctx;
+}
+
 function initLiaDrawCanvas() {
   const canvas = getLiaDrawCanvas();
   if (!canvas || canvas.dataset.bound === '1') return;
@@ -154,16 +165,19 @@ function initLiaDrawCanvas() {
 
   const getCoords = (e) => {
     const rect = canvas.getBoundingClientRect();
-    const clientX = e.touches && e.touches.length ? e.touches[0].clientX : e.clientX;
-    const clientY = e.touches && e.touches.length ? e.touches[0].clientY : e.clientY;
+    const clientX = (e.touches && e.touches.length) ? e.touches[0].clientX : e.clientX;
+    const clientY = (e.touches && e.touches.length) ? e.touches[0].clientY : e.clientY;
     return {
-      x: ((clientX - rect.left) / rect.width) * canvas.width,
-      y: ((clientY - rect.top) / rect.height) * canvas.height
+      x: ((clientX - rect.left) / rect.width) * 360,
+      y: ((clientY - rect.top) / rect.height) * 260
     };
   };
 
   const onDown = (e) => {
     e.preventDefault();
+    if (e.pointerId && canvas.setPointerCapture) {
+      try { canvas.setPointerCapture(e.pointerId); } catch (err) {}
+    }
     const pt = getCoords(e);
 
     if (liaDrawState.mode === 'dots') {
@@ -173,11 +187,12 @@ function initLiaDrawCanvas() {
 
     if (liaDrawState.brushType === 'stamp' && liaDrawState.mode !== 'scratch') {
       saveLiaDrawSnapshot();
-      const ctx = canvas.getContext('2d');
+      const ctx = getLiaDrawCtx();
+      if (!ctx) return;
       ctx.save();
       ctx.shadowBlur = liaDrawState.mode === 'glow' ? 16 : 4;
       ctx.shadowColor = 'rgba(250,204,21,0.7)';
-      ctx.font = '46px serif';
+      ctx.font = '42px serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(liaDrawState.stamp, pt.x, pt.y);
@@ -202,17 +217,26 @@ function initLiaDrawCanvas() {
     liaDrawState.lastY = pt.y;
   };
 
-  const onUp = () => {
+  const onUp = (e) => {
     liaDrawState.isDrawing = false;
+    if (e && e.pointerId && canvas.releasePointerCapture) {
+      try { canvas.releasePointerCapture(e.pointerId); } catch (err) {}
+    }
   };
 
-  canvas.addEventListener('mousedown', onDown);
-  canvas.addEventListener('mousemove', onMove);
-  window.addEventListener('mouseup', onUp);
-
-  canvas.addEventListener('touchstart', onDown, { passive: false });
-  canvas.addEventListener('touchmove', onMove, { passive: false });
-  window.addEventListener('touchend', onUp);
+  if (window.PointerEvent) {
+    canvas.addEventListener('pointerdown', onDown);
+    canvas.addEventListener('pointermove', onMove);
+    canvas.addEventListener('pointerup', onUp);
+    canvas.addEventListener('pointercancel', onUp);
+  } else {
+    canvas.addEventListener('mousedown', onDown);
+    canvas.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+    canvas.addEventListener('touchstart', onDown, { passive: false });
+    canvas.addEventListener('touchmove', onMove, { passive: false });
+    window.addEventListener('touchend', onUp);
+  }
 }
 
 function saveLiaDrawSnapshot() {
@@ -244,9 +268,8 @@ function getStrokeColorForMode() {
 }
 
 function drawLiaStroke(x1, y1, x2, y2) {
-  const canvas = getLiaDrawCanvas();
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
+  const ctx = getLiaDrawCtx();
+  if (!ctx) return;
   const strokeCol = getStrokeColorForMode();
 
   if (liaDrawState.brushType !== 'eraser') {
@@ -317,8 +340,8 @@ function drawLiaStroke(x1, y1, x2, y2) {
 
   if (liaDrawState.mode === 'symmetry') {
     // 6-way spinning Kaleidoscope mirror!
-    const cx = canvas.width / 2;
-    const cy = canvas.height / 2;
+    const cx = 180;
+    const cy = 130;
     ctx.shadowBlur = 12;
     ctx.shadowColor = strokeCol;
     const dx1 = x1 - cx, dy1 = y1 - cy;
@@ -375,8 +398,8 @@ function nextGuidedDrawStep() {
     liaDrawState.guidedStep = 0;
     clearLiaDrawCanvas(true);
   } else {
-    const canvas = getLiaDrawCanvas();
-    if (canvas) drawGuidedStepOverlay(canvas.getContext('2d'));
+    const ctx = getLiaDrawCtx();
+    if (ctx) drawGuidedStepOverlay(ctx);
   }
   renderLiaDrawToolbar();
   const curTpl = LIA_GUIDED_DRAWINGS[liaDrawState.guidedIdx];
@@ -398,19 +421,18 @@ function drawGuidedStepOverlay(ctx) {
 }
 
 function clearLiaDrawCanvas(keepModeOverlay = false) {
-  const canvas = getLiaDrawCanvas();
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
+  const ctx = getLiaDrawCtx();
+  if (!ctx) return;
 
   if (liaDrawState.mode === 'glow' || liaDrawState.mode === 'symmetry') {
     ctx.fillStyle = '#090d16';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillRect(0, 0, 360, 260);
     if (liaDrawState.mode === 'symmetry') {
       ctx.save();
       ctx.strokeStyle = 'rgba(255,255,255,0.12)';
       ctx.lineWidth = 1.5;
       ctx.setLineDash([5, 5]);
-      const cx = canvas.width / 2, cy = canvas.height / 2;
+      const cx = 180, cy = 130;
       for (let k = 0; k < 6; k++) {
         const ang = (k * Math.PI) / 3;
         ctx.beginPath();
@@ -421,20 +443,20 @@ function clearLiaDrawCanvas(keepModeOverlay = false) {
       ctx.restore();
     }
   } else if (liaDrawState.mode === 'scratch') {
-    const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+    const grad = ctx.createLinearGradient(0, 0, 360, 260);
     grad.addColorStop(0, '#1e1b4b');
     grad.addColorStop(1, '#3b0764');
     ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillRect(0, 0, 360, 260);
     ctx.save();
     ctx.fillStyle = 'rgba(255,255,255,0.28)';
     ctx.font = 'bold 16px Arial';
     ctx.textAlign = 'center';
-    ctx.fillText('🪄 גרדי כאן עם האצבע ותגלי הפתעות!', canvas.width / 2, 28);
+    ctx.fillText('🪄 גרדי כאן עם האצבע ותגלי הפתעות!', 180, 28);
     ctx.restore();
   } else {
     ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillRect(0, 0, 360, 260);
   }
 
   if (keepModeOverlay) {
@@ -479,8 +501,8 @@ function handleLiaDotTap(x, y) {
 
   const dist = Math.hypot(x - targetPt.x, y - targetPt.y);
   if (dist <= 36) {
-    const canvas = getLiaDrawCanvas();
-    const ctx = canvas.getContext('2d');
+    const ctx = getLiaDrawCtx();
+    if (!ctx) return;
     if (liaDrawState.dotsNextNum > 1) {
       const prevPt = tpl.points.find(p => p.n === liaDrawState.dotsNextNum - 1);
       ctx.beginPath();
@@ -525,11 +547,10 @@ function handleLiaDotTap(x, y) {
 }
 
 function addLiaPrincessFrame() {
-  const canvas = getLiaDrawCanvas();
-  if (!canvas) return;
+  const ctx = getLiaDrawCtx();
+  if (!ctx) return;
   saveLiaDrawSnapshot();
-  const ctx = canvas.getContext('2d');
-  const w = canvas.width, h = canvas.height;
+  const w = 360, h = 260;
   ctx.save();
   ctx.strokeStyle = '#facc15';
   ctx.lineWidth = 8;
@@ -624,6 +645,12 @@ function renderLiaDrawToolbar() {
     `).join('');
 
     colorBar.innerHTML = guidedBanner + `
+      <div style="width:100%;display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:4px;">
+        <span style="font-size:0.78rem;font-weight:800;color:#475569;">עוֹבִי:</span>
+        <button type="button" onclick="liaDrawState.size=6;renderLiaDrawToolbar();" style="padding:3px 10px;border-radius:99px;font-size:0.74rem;font-weight:900;background:${liaDrawState.size===6?'#0f172a':'#f1f5f9'};color:${liaDrawState.size===6?'#fff':'#0f172a'};border:none;cursor:pointer;">● דק</button>
+        <button type="button" onclick="liaDrawState.size=12;renderLiaDrawToolbar();" style="padding:3px 10px;border-radius:99px;font-size:0.78rem;font-weight:900;background:${liaDrawState.size===12?'#0f172a':'#f1f5f9'};color:${liaDrawState.size===12?'#fff':'#0f172a'};border:none;cursor:pointer;">⬤ בינוני</button>
+        <button type="button" onclick="liaDrawState.size=22;renderLiaDrawToolbar();" style="padding:3px 10px;border-radius:99px;font-size:0.82rem;font-weight:900;background:${liaDrawState.size===22?'#0f172a':'#f1f5f9'};color:${liaDrawState.size===22?'#fff':'#0f172a'};border:none;cursor:pointer;">⭕ עבה</button>
+      </div>
       ${colorBtns}
       <button type="button" onclick="liaDrawState.brushType='rainbow';renderLiaDrawToolbar();" style="padding:6px 10px;border-radius:99px;background:linear-gradient(90deg,#ef4444,#facc15,#22c55e,#3b82f6,#a855f7);color:#fff;font-weight:900;font-size:0.78rem;border:${liaDrawState.brushType === 'rainbow' ? '3px solid #0f172a' : 'none'};cursor:pointer;">🌈 קשת</button>
       <button type="button" onclick="liaDrawState.brushType='bubbles';renderLiaDrawToolbar();" style="padding:6px 10px;border-radius:99px;background:#e0f2fe;color:#0369a1;font-weight:900;font-size:0.78rem;border:${liaDrawState.brushType === 'bubbles' ? '3px solid #0f172a' : '1.5px solid #38bdf8'};cursor:pointer;">🫧 בועות</button>
