@@ -20,7 +20,16 @@ const LIA_POND_ROUNDS = [
   { word: 'לָ', speak: 'לָה! לָמֶד עִם קָמָץ — לָה', distractors: ['נָ', 'בָּ'], scene: 'ice' },
   // Chirik Words
   { word: 'פִּיל', speak: 'פִּיל! פִּיל גָּדוֹל', distractors: ['שִׁיר', 'גִּיל'], scene: 'pond' },
-  { word: 'שִׁיר', speak: 'שִׁיר! שָׁרִים שִׁיר', distractors: ['פִּיל', 'מִי'], scene: 'ice' }
+  { word: 'שִׁיר', speak: 'שִׁיר! שָׁרִים שִׁיר', distractors: ['פִּיל', 'מִי'], scene: 'ice' },
+  // More Fun Niqqud Words (Shuruk, Cholam, Segol, Kamatz)
+  { word: 'תּוּת', speak: 'תּוּת! תּוּת אָדֹם וּמָתוֹק', distractors: ['סוּס', 'דוּב'], scene: 'pond' },
+  { word: 'סוּס', speak: 'סוּס! סוּס דּוֹהֵר', distractors: ['תּוּת', 'כּוֹס'], scene: 'ice' },
+  { word: 'דוּב', speak: 'דּוּב! דּוּב חָמוּד', distractors: ['לֵב', 'תּוּת'], scene: 'pond' },
+  { word: 'לֵב', speak: 'לֵב! לֵב וָרֹד', distractors: ['עֵץ', 'אֵשׁ'], scene: 'pond' },
+  { word: 'עֵץ', speak: 'עֵץ! עֵץ גָּבוֹהַּ', distractors: ['לֵב', 'כַּף'], scene: 'pond' },
+  { word: 'כּוֹס', speak: 'כּוֹס! כּוֹס מַיִם', distractors: ['סוּס', 'דוּב'], scene: 'ice' },
+  { word: 'בַּת', speak: 'בַּת! יַלְדָּה חֲמוּדָה', distractors: ['גַּן', 'כַּף'], scene: 'pond' },
+  { word: 'כַּף', speak: 'כַּף! כַּף יָד', distractors: ['בַּת', 'יָם'], scene: 'ice' }
 ];
 
 let liaPondSession = {
@@ -177,4 +186,82 @@ document.addEventListener('DOMContentLoaded', () => {
       renderLiaOtiyotRound();
     });
   }
+  renderLiaPetSanctuary();
 });
+
+// ==================== LIA VIRTUAL PET SANCTUARY (BUY PETS WITH COINS!) ====================
+const LIA_PETS_CATALOG = [
+  { id: 'pet_dog', icon: '🐶', name: 'גּוּר כְּלָבִים', cost: 0, sound: 'הַאוּ הַאוּ! אֲנִי אוֹהֵב אוֹתָךְ לִיָּה!' },
+  { id: 'pet_cat', icon: '🐱', name: 'חֲתַלְתּוּל מָתוֹק', cost: 25, sound: 'מְיָאוּ! לִיָּה הִיא הַחֲבֵרָה הֲכִי טוֹבָה שֶׁלִּי!' },
+  { id: 'pet_bunny', icon: '🐰', name: 'אַרְנָבוֹן קָפְצָן', cost: 40, sound: 'קְפִיץ קְפוֹץ! אֵיזוֹ חֲכָמָה אַתְּ לִיָּה!' },
+  { id: 'pet_unicorn', icon: '🦄', name: 'סוּס חַד-קֶרֶן', cost: 60, sound: 'קֶסֶם שֶׁל נִיצוֹצוֹת! אַתְּ נְסִיכָה אֲמִתִּית!' },
+  { id: 'pet_panda', icon: '🐼', name: 'פַּנְדָּה חַבְרוּתִית', cost: 80, sound: 'חִבּוּק עֲנָק שֶׁל פַּנְדָּה לְלִיָּה!' },
+  { id: 'pet_parrot', icon: '🦜', name: 'תֻּכִּי מְדַבֵּר', cost: 100, sound: 'שָׁלוֹם לִיָּה! בּוֹאִי נְדַבֵּר אַנְגְּלִית!' }
+];
+
+function getLiaAdoptedPets() {
+  if (typeof appState === 'undefined' || !appState.liaProfile) return ['pet_dog'];
+  if (!Array.isArray(appState.liaProfile.adoptedPets)) appState.liaProfile.adoptedPets = ['pet_dog'];
+  return appState.liaProfile.adoptedPets;
+}
+
+function renderLiaPetSanctuary() {
+  const host = document.getElementById('lia-pet-sanctuary');
+  if (!host) return;
+  const adopted = getLiaAdoptedPets();
+  const coins = (typeof getActiveCoins === 'function') ? getActiveCoins() : 0;
+
+  host.innerHTML = `
+    <div style="background:linear-gradient(135deg,#fff1f2,#fef3c7);border:2px solid #f472b6;border-radius:18px;padding:12px;margin-bottom:14px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <span style="font-weight:900;font-size:1rem;color:#9d174d;">🐾 חַיּוֹת הַמַּחְמָד שֶׁל לִיָּה (לַחֲצִי לְחִבּוּק!)</span>
+        <span style="background:#facc15;color:#090d16;font-weight:900;padding:2px 8px;border-radius:99px;font-size:0.78rem;">🪙 ${coins}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+        ${LIA_PETS_CATALOG.map(pet => {
+          const isOwned = adopted.includes(pet.id);
+          return `
+            <button type="button" onclick="adoptOrPlayLiaPet('${pet.id}')" style="background:${isOwned ? '#ffffff' : 'rgba(255,255,255,0.6)'};border:2px solid ${isOwned ? '#ec4899' : '#cbd5e1'};border-radius:14px;padding:8px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;">
+              <span style="font-size:2.1rem;${isOwned ? '' : 'filter:grayscale(0.7);opacity:0.75;'}">${pet.icon}</span>
+              <span style="font-size:0.76rem;font-weight:900;color:#0f172a;">${pet.name}</span>
+              <span style="font-size:0.72rem;font-weight:800;color:${isOwned ? '#db2777' : '#64748b'};">${isOwned ? '💖 שֶׁלָּךְ!' : `🪙 ${pet.cost}`}</span>
+            </button>
+          `;
+        }).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function adoptOrPlayLiaPet(petId) {
+  const pet = LIA_PETS_CATALOG.find(p => p.id === petId);
+  if (!pet) return;
+  const adopted = getLiaAdoptedPets();
+  if (adopted.includes(petId)) {
+    if (typeof arcadeAudio !== 'undefined') {
+      arcadeAudio.playMagicSparkle();
+      arcadeAudio.speak(pet.sound, 'he-IL', 0.9);
+    }
+    if (typeof confetti !== 'undefined') confetti.burst(40);
+    return;
+  }
+
+  const coins = (typeof getActiveCoins === 'function') ? getActiveCoins() : 0;
+  if (coins >= pet.cost) {
+    if (typeof addActiveCoins === 'function') addActiveCoins(-pet.cost);
+    adopted.push(petId);
+    if (typeof saveState === 'function') saveState(true);
+    if (typeof updateHeaderUI === 'function') updateHeaderUI();
+    if (typeof arcadeAudio !== 'undefined') {
+      arcadeAudio.playWhistleVictory();
+      arcadeAudio.speak(`אֵיזֶה כֵּיף לִיָּה! אִמַּצְתְּ אֶת ${pet.name}! ${pet.sound}`, 'he-IL', 0.88);
+    }
+    if (typeof confetti !== 'undefined') confetti.burst(95);
+    renderLiaPetSanctuary();
+  } else {
+    if (typeof arcadeAudio !== 'undefined') {
+      arcadeAudio.playClick();
+      arcadeAudio.speak(`לְ-${pet.name} צָרִיךְ ${pet.cost} מַטְבְּעוֹת! שַׂחֲקִי עוֹד קְצָת וְתַאֲסְפִי!`, 'he-IL', 0.88);
+    }
+  }
+}

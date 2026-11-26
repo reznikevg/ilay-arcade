@@ -282,6 +282,18 @@
           <span class="fc27-banner-play" style="background:rgba(255,255,255,0.22);border-color:#fff;color:#fff;">שחקו עכשיו 🎯</span>
         </div>
 
+        <!-- ILAY'S TAP-ANY-WORD READING CHALLENGE BANNER -->
+        <div class="fc27-home-banner" id="stories-home-banner" onclick="startIlayStoryChallenge()" style="background:linear-gradient(135deg,#0284c7 0%,#0369a1 100%);border-color:#7dd3fc;box-shadow:0 6px 18px rgba(2,132,199,0.28);margin-bottom:12px;cursor:pointer;">
+          <div class="fc27-banner-left">
+            <div class="fc27-logo-pill" style="background:#facc15;color:#090d16;box-shadow:0 0 12px rgba(250,204,21,0.6);font-size:0.75rem;">STORIES<br>2026 📖</div>
+            <div class="fc27-banner-text">
+              <h4 style="color:#fff;">📖 אתגר הקריאה של עילי: סיפורים מרתקים עם הקראת מילה-מילה!</h4>
+              <p style="color:#e0f2fe;">סיפורים קצרים על בית״ר, מאדים, דולפינים ודינוזאורים — נתקעת במילה? לחץ עליה ותשמע מיד! 🔊</p>
+            </div>
+          </div>
+          <span class="fc27-banner-play" style="background:rgba(255,255,255,0.22);border-color:#fff;color:#fff;">קרא סיפור 📖</span>
+        </div>
+
         <!-- SOCCER HUB: BEITAR JERUSALEM & REAL MADRID HIGHLIGHTS, FIXTURES & STANDINGS BANNER -->
         <div class="fc27-home-banner" id="soccer-home-banner" style="background:linear-gradient(135deg,#18181b 0%,#1e3a8a 100%);border-color:#facc15;box-shadow:0 6px 18px rgba(250,204,21,0.22);margin-bottom:12px;">
           <div class="fc27-banner-left">
@@ -1751,6 +1763,28 @@
         <button type="button" class="btn-success-action hidden" id="btn-lexi-next" style="width:100%;padding:12px;font-size:1.1rem;">למשימה הבאה! ⬅️</button>
       </section>
 
+      <!-- ==================== VIEW 20: ILAY'S TAP-ANY-WORD STORIES ==================== -->
+      <section id="view-ilay-stories" class="view-section">
+        <div class="screen-nav-bar">
+          <button type="button" class="btn-back" onclick="switchView('home')">‹ חזרה</button>
+          <span class="screen-title">📖 אתגר הקריאה של עילי</span>
+          <button type="button" class="btn-chip" id="btn-story-speak-all" style="background:#facc15;color:#090d16;font-weight:900;border:none;">🔊 הקרא הכל</button>
+        </div>
+
+        <div class="surface-card" style="background:linear-gradient(135deg,#fffbeb,#fef3c7);border:2px solid #f59e0b;margin-bottom:12px;">
+          <div id="story-title" style="font-size:1.2rem;font-weight:900;color:#92400e;margin-bottom:8px;">⚽ הַגּוֹל בַּדַּקָּה הָאַחֲרוֹנָה</div>
+          <div id="story-text-box" dir="rtl" style="font-size:1.22rem;line-height:1.85;font-weight:700;color:#0f172a;background:#fff;padding:14px;border-radius:14px;border:1.5px solid #fde68a;"></div>
+        </div>
+
+        <div class="surface-card" style="background:#f8fafc;border:2px solid #cbd5e1;margin-bottom:12px;">
+          <div id="story-question-box" style="font-size:1.05rem;font-weight:900;color:#0f172a;margin-bottom:10px;"></div>
+          <div id="story-options-box" style="display:flex;flex-direction:column;gap:8px;"></div>
+        </div>
+
+        <div class="feedback-banner hidden" id="story-feedback" style="margin-bottom:10px;"></div>
+        <button type="button" class="btn-success-action hidden" id="btn-story-next" style="width:100%;padding:12px;font-size:1.1rem;">לשאלה הבאה! ⬅️</button>
+      </section>
+
     </main>
 
     <!-- Fixed iOS Bottom Tab Bar -->
@@ -1792,6 +1826,7 @@
   <script src="js/cards_svg.js?v=7.2"></script>
   <script src="js/app.js?v=7.2"></script>
   <script src="js/lexi_english.js?v=8.2"></script>
+  <script src="js/reading_stories.js?v=8.6"></script>
 </body>
 </html>
 
